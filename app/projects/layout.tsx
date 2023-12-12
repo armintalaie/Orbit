@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/command';
 import Link from 'next/link';
 import { BoxIcon, PinIcon } from 'lucide-react';
+import { Changelog } from '@/components/changelog';
 
 export default function ProjectLayout({
   children,
@@ -141,7 +142,10 @@ export default function ProjectLayout({
             <span>Settings</span>
           </Link>
 
+<div className='flex flex-row  gap-2 overflow-y-auto '>
           <FeedbackButton />
+          <Changelog />
+          </div>
         </div>
       </section>
       {children}

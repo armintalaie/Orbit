@@ -15,21 +15,22 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { QuestionMarkCircledIcon } from '@radix-ui/react-icons';
 
-export function FeedbackButton() {
+export function Changelog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
         <button className='flex h-8 w-full items-center rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-xs text-gray-500 shadow-sm'>
-          <BugIcon className='mr-2 h-3 w-3' />
-          <span>Feedback</span>
+          <QuestionMarkCircledIcon className='mr-2 h-3 w-3' />
+          <span>Changelog</span>
         </button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle>Feedback</DialogTitle>
+          <DialogTitle>Changelog</DialogTitle>
           <DialogDescription>
-            Log an issue or request a feature.
+            View the latest changes to Orbit.
           </DialogDescription>
         </DialogHeader>
         <div className='flex items-center space-x-2'>
@@ -39,7 +40,7 @@ export function FeedbackButton() {
             </Label>
             <Input
               id='link'
-              defaultValue='https://github.com/armintalaie/Orbit/issues'
+              defaultValue='https://github.com/armintalaie/Orbit/blob/main/CHANGELOG.md'
               readOnly
             />
           </div>

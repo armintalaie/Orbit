@@ -1,3 +1,10 @@
+import path from 'path';
+import { remark } from 'remark';
+import html from 'remark-html';
+import fs from 'fs';
+import * as matter from 'gray-matter';
+
+
 export function dateFormater(date: string) {
   // if within a week, return day of week (e.g. Monday)
   // if within a year, return month and day (e.g. Jan 1)
@@ -62,3 +69,26 @@ export function isOverdue(date: string) {
   }
   return false;
 }
+
+
+
+// export async function getPostData(id) {
+//   const fullPath = path.join(postsDirectory, `${id}.md`);
+//   const fileContents = fs.readFileSync(fullPath, 'utf8');
+
+//   // Use gray-matter to parse the post metadata section
+//   const matterResult = matter(fileContents);
+
+//   // Use remark to convert markdown into HTML string
+//   const processedContent = await remark()
+//     .use(html)
+//     .process(matterResult.content);
+//   const contentHtml = processedContent.toString();
+
+//   // Combine the data with the id and contentHtml
+//   return {
+//     id,
+//     contentHtml,
+//     ...matterResult.data,
+//   };
+// }
