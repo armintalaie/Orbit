@@ -4,13 +4,10 @@
 // // import { Database } from '../database.types'
 // export default async function Account() {
 //   const supabase = createServerComponentClient<any>({ cookies })
-"use client"
-import { ProfileForm } from "@/components/settings/profile-form";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-
-
-
+'use client';
+import { ProfileForm } from '@/components/settings/profile-form';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 //   const {
 //     data: { session },
@@ -26,36 +23,32 @@ import Link from "next/link";
 // import { Separator } from "@/components/ui/separator"
 
 export default function SettingsProfilePage() {
-
   async function signout() {
-    const res = await fetch('/api/auth/signout', 
-    {
+    const res = await fetch('/api/auth/signout', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({}),
-    }
-    );
+    });
     if (res.redirected) {
       window.location.href = res.url;
     } else {
-      console.log("signout");
+      console.log('signout');
     }
-}
+  }
   return (
-    <div className="space-y-6">
-      <div>
-       
-      </div>
-      <Button variant="outline"
-       onClick={() => signout()}
-      className="w-32 text-left px-4 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition"
-     >
-      Sign out
+    <div className='space-y-6'>
+      <div></div>
+      <Button
+        variant='outline'
+        onClick={() => signout()}
+        className='w-32 rounded-md px-4 py-2 text-left text-sm font-medium text-gray-900 transition hover:bg-gray-100 focus:bg-gray-100 focus:outline-none'
+      >
+        Sign out
       </Button>
 
       {/* <ProfileForm /> */}
     </div>
-  )
+  );
 }

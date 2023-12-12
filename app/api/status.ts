@@ -1,11 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { NextResponse } from 'next/server'
- 
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
+
 type ResponseData = {
-  message: string
-}
+  message: string;
+};
 
-
-export default function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
-   return Response.json('Hello World')
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ResponseData>
+) {
+  return Response.json('Hello World');
 }
