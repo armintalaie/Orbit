@@ -111,3 +111,13 @@ git push -u origin fix-404-page
 Finally, open a pull request on GitHub and describe the changes you have made and mention the issue you have fixed.
 
 To submit new issues, use the [Issues](https://github.com/armintalaie/Orbit/issues) tab and follow the provided template.
+
+## Screenshots
+
+![issue page](./assets/signin.jpeg)
+
+![team page](./assets/team.jpeg)
+
+![projects page](./assets/projects.jpeg)
+
+![new project](./assets/newproject.jpeg)
