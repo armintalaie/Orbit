@@ -68,7 +68,6 @@ export default function TeamPage() {
   );
 }
 
-
 function TableView({ teams }) {
   return (
     <div className='flex h-full w-full flex-col '>
@@ -103,7 +102,6 @@ function TableView({ teams }) {
     </div>
   );
 }
-
 
 const ToggleGroupDemo = ({ viewType, setViewType }) => {
   return (

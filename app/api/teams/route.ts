@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const { data } = await supabase.from('team').insert(team);
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: error.member}, { status: 405 });
+    return NextResponse.json({ error: error.member }, { status: 405 });
   }
 }
 

@@ -68,11 +68,19 @@ To learn more about the technologies used in this project, take a look at the fo
 
 ## Deployment
 
-For production, run the following command:
+For production, run the following command to ensure everything works as expected:
 
 ```bash
 npm run build
 ```
+
+The repository is configured to be deployed to [Railway](https://railway.app/). The main branch is automatically deployed to Railway. If additional environments are needed, they can be created in Railway and the corresponding environment variables can be added to the [Railway dashboard](https://railway.app/).
+
+You can always create your own deployment platfomr on Railway or other platforms. The following are some of the options:
+
+- [Vercel](https://vercel.com/)
+- [Netlify](https://www.netlify.com/)
+- [Heroku](https://www.heroku.com/)
 
 This command builds the application for production usage and optimizes the build for the best performance.
 

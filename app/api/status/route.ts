@@ -1,5 +1,3 @@
-
-
 type ResponseData = {
   message: string;
 };

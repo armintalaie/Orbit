@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
- const issueSchema = z.object({
+const issueSchema = z.object({
   title: z.string(),
   contents: z.object({
     body: z.string(),
