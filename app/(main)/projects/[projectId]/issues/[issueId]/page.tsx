@@ -1,13 +1,11 @@
 'use client';
 
-import { DialogCloseButton } from '@/components/dialogClose';
 import { NewIssue } from '@/components/newIssue';
 import { CardHeader, CardContent } from '@/components/ui/card';
 import { dateFormater, isOverdue } from '@/lib/util';
 import {
   TableIcon,
   BoxIcon,
-  CaretDownIcon,
   DotsVerticalIcon,
   DotsHorizontalIcon,
 } from '@radix-ui/react-icons';
@@ -21,71 +19,104 @@ import {
   Table,
 } from '@radix-ui/themes';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FilterIcon } from 'lucide-react';
 import Link from 'next/link';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import TextEditor from '@/components/editor/textEditor';
+import { useRouter } from 'next/router';
 
-export default function ProjectPage() {
-  const params = useParams();
-  const [tasks, setTasks] = useState([]);
-  const [project, setProject] = useState([]);
-  const viewTypes = ['board', 'table'];
-  const [viewType, setViewType] = useState(viewTypes[0]);
+export default function IssuePage() {
+  const router = useParams();
+  const { projectId, issueId } = router;
+  const [issue, setIssue] = useState(undefined);
+  async function fetchIssue() {
+    const res = await fetch(`/api/projects/${projectId}/issues/${issueId}`);
+    const resultIssue = await res.json();
+    setIssue(resultIssue);
+  }
 
   useEffect(() => {
-    async function fetchTasks() {
-      const res = await fetch(`/api/projects/${params.projectId}/issues`);
-      const tasks = await res.json();
-      setTasks(tasks);
-    }
-    async function fetchProject() {
-      const res = await fetch(`/api/projects/${params.projectId}`);
-      const project = await res.json();
-      setProject(project);
-    }
-    fetchProject();
-    // fetchTasks();
+    fetchIssue();
   }, []);
+
+  if (!issue) return <div>Loading...</div>;
 
   return (
     <div className='flex min-h-screen w-full flex-col'>
-      <div className=' flex h-full w-full flex-1 flex-col '>
-        <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-          <div className='flex flex-row items-center gap-2'>
-            <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
-              {project.title}
-            </h1>
-            <ProjectOptions projectId={project.id} />
+      <div className='flex h-full w-full'>
+        <div className=' flex h-full w-full flex-1 flex-col '>
+          <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
+            <div className='flex flex-row items-center gap-2'>
+              <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
+                {issue.title}
+              </h1>
+              {/* <ProjectOptions projectId={issue.id} /> */}
+            </div>
+            <div className='flex h-full items-center justify-center gap-2'></div>
           </div>
-          <div className='flex h-full items-center justify-center gap-2'>
-            <NewIssue button={true} />
+
+          <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
+            <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-2 py-3'></div>
+            <div className=' flex h-full flex-grow flex-col'>
+              <TextEditor />
+            </div>
           </div>
         </div>
 
-        <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='flex flex-row items-center justify-between border-y border-gray-100 bg-white p-2 py-3'>
-            {/* <FilterGroup/> */}
+        <div className=' flex h-full w-80 flex-col border-l border-gray-100 bg-white '>
+          <div className='flex h-12 w-full items-center justify-between bg-white  p-4 px-4 '></div>
+          <div className=' flex h-full w-full flex-1 flex-col bg-white '>
+            <div className='flex h-full flex-col justify-between gap-3 border-t border-gray-100 bg-white p-2 py-3'>
+              <div className='flex h-6 flex-row items-center gap-2'>
+                <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  Deadline
+                </p>
+                <p className='items-center   pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  {isOverdue(issue.deadline) ? (
+                    <Badge color='red'>{dateFormater(issue.deadline)}</Badge>
+                  ) : (
+                    <Badge color='gray'> {dateFormater(issue.deadline)}</Badge>
+                  )}
+                </p>
+              </div>
 
-            <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
-          </div>
-          <div className=' flex h-full flex-grow flex-col'>
-            {/* {viewType === 'table' ? <TableView tasks={tasks} /> : <KanbanView tasks={tasks} />} */}
+              <div className='flex h-6 flex-row items-center gap-2'>
+                <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  Status
+                </p>
+                <p className='items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  {issue.statusid}
+                </p>
+              </div>
+
+              <div className='flex h-6 flex-row items-center gap-2'>
+                <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  Project
+                </p>
+                <p className='items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  {issue.projectid}
+                </p>
+              </div>
+
+              <div className='flex h-6 flex-row items-center gap-2'>
+                <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  Status
+                </p>
+                <p className='items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  {issue.statusid}
+                </p>
+              </div>
+              <div className='flex h-full items-center justify-center gap-2'></div>
+            </div>
           </div>
         </div>
       </div>
@@ -97,11 +128,7 @@ function TaskCard({ task }) {
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger>
-        <Link
-          href={`/projects/1/issues/${task.id}`}
-          className={'pointer-events-none'}
-          aria-disabled={true}
-        >
+        <Link href={`/projects/1/issues/${task.id}`} aria-disabled={true}>
           <Box className='flex flex-col gap-2 rounded-sm border border-gray-200 bg-white  p-2 shadow-sm hover:shadow-md'>
             <div className='flex w-full flex-row justify-between gap-2 py-0'>
               <Text size='1' className='text-gray-600'>
@@ -117,7 +144,7 @@ function TaskCard({ task }) {
 
             <div className='flex w-full flex-row justify-between gap-2'>
               <Text size='1' className='font-semibold text-gray-500 '>
-                Jake j
+                Unassigned
               </Text>
               {isOverdue(task.deadline) ? (
                 <Badge color='red'>{dateFormater(task.deadline)}</Badge>
@@ -133,7 +160,7 @@ function TaskCard({ task }) {
         {/* <ContextMenu.Item shortcut="⌘ E">Edit</ContextMenu.Item> */}
         <ContextMenu.Item shortcut='⌘ D'>Duplicate</ContextMenu.Item>
         <ContextMenu.Separator />
-        <ContextMenu.Item shortcut='⌘ N'>Archive</ContextMenu.Item>
+        {/* <ContextMenu.Item shortcut='⌘ N'>Archive</ContextMenu.Item> */}
         <ContextMenu.Item>Move to project…</ContextMenu.Item>
 
         <ContextMenu.Sub>
@@ -156,16 +183,33 @@ function TaskCard({ task }) {
 }
 
 function TableView({ tasks }) {
+  const groupedTasks = groupByStatus(tasks);
+  // console.log(tasks);
+  function groupByStatus(tasks) {
+    const grouped = tasks.reduce((acc, task) => {
+      if (!acc[task.statusid]) {
+        acc[task.statusid] = [];
+      }
+      acc[task.statusid].push(task);
+      return acc;
+    }, {});
+    return Object.keys(grouped).map((statusid) => ({
+      statusid: statusid,
+      tasks: grouped[statusid],
+    }));
+  }
+
+  console.log(groupedTasks);
   return (
     <div className='flex h-full w-full flex-col '>
       <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
         <Table.Body>
-          {tasks.map((taskType) => (
+          {groupedTasks.map((taskType) => (
             // <Table.RowGroup key={taskType.status}>
             <>
               <Table.Row className='bg-gray-50  '>
                 <Table.Cell colSpan={5}>
-                  <Heading size='3'>{taskType.status}</Heading>
+                  <Heading size='3'>{taskType.statusid}</Heading>
                 </Table.Cell>
               </Table.Row>
               {taskType.tasks.map((task) => (
@@ -200,13 +244,29 @@ function TableView({ tasks }) {
 }
 
 function KanbanView({ tasks }) {
+  const groupedTasks = groupByStatus(tasks);
+  // console.log(tasks);
+  function groupByStatus(tasks) {
+    const grouped = tasks.reduce((acc, task) => {
+      if (!acc[task.statusid]) {
+        acc[task.statusid] = [];
+      }
+      acc[task.statusid].push(task);
+      return acc;
+    }, {});
+    return Object.keys(grouped).map((statusid) => ({
+      statusid: statusid,
+      tasks: grouped[statusid],
+    }));
+  }
+
   return (
     <div className='flex h-full flex-1 flex-row gap-8 p-4 px-2'>
-      {tasks.map((task) => (
-        <div key={task.status}>
+      {groupedTasks.map((task) => (
+        <div key={task.statusid}>
           <div className='h-full w-72 rounded-sm p-0 '>
             <CardHeader className='flex flex-row items-center justify-between px-1'>
-              <Heading size='3'>{task.status}</Heading>
+              <Heading size='3'>{task.statusid}</Heading>
               <NewIssue button={false} />
             </CardHeader>
 
@@ -334,14 +394,14 @@ function ProjectOptions({ projectId }: { projectId: string }) {
       <DropdownMenuContent className='w-56'>
         <DropdownMenuLabel>Project Settings</DropdownMenuLabel>
 
-        <DropdownMenuSub>
+        {/* <DropdownMenuSub>
           <DropdownMenuSubTrigger>Archive project</DropdownMenuSubTrigger>
-        </DropdownMenuSub>
+        </DropdownMenuSub> */}
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuGroup>
-          <DropdownMenuSub>
+        {/* <DropdownMenuGroup> */}
+        {/* <DropdownMenuSub>
             <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
             <DropdownMenuSubTrigger>Members</DropdownMenuSubTrigger>
             <DropdownMenuPortal>
@@ -352,9 +412,9 @@ function ProjectOptions({ projectId }: { projectId: string }) {
                 <DropdownMenuItem>More...</DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
-          </DropdownMenuSub>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+          </DropdownMenuSub> */}
+        {/* </DropdownMenuGroup> */}
+        {/* <DropdownMenuSeparator /> */}
 
         <DropdownMenuItem>
           <Button variant='ghost' onClick={() => deleteProject()}>

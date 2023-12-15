@@ -27,29 +27,16 @@ import {
 } from './ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { DeadlineField } from './issues/form/deadlineField';
-import { StatusField } from './issues/form/statusField';
 import { Textarea } from '@/components/ui/textarea';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
 
-export const projectSchema = z.object({
-  title: z.string(),
+export const teamSchema = z.object({
+  name: z.string(),
   description: z.string(),
-  statusid: z.number(),
-  deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
-export const formSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  statusid: z.number(),
-  deadline: z.object({
-    from: z.date(),
-    to: z.date(),
-  }),
-});
-
-export function NewProject({
+export function NewTeam({
   button,
   reload,
   teamid,
@@ -60,30 +47,18 @@ export function NewProject({
 }) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: '',
-      statusid: 1,
-      description: '',
-      deadline: {
-        from: new Date(),
-        to: new Date(),
-      },
-    },
+  const form = useForm<z.infer<typeof teamSchema>>({
+    resolver: zodResolver(teamSchema),
   });
-  async function onSubmit(e) {
+  async function onSubmit() {
     const formVals = form.getValues();
-    const project = {
-      title: formVals.title,
+    const team = {
+      name: formVals.name,
       description: formVals.description,
-      statusid: formVals.statusid,
-      deadline: formVals.deadline.to.toISOString().split('T')[0],
-      datestarted: formVals.deadline.from.toISOString().split('T')[0],
     };
-    const URL = teamid ? `/api/teams/${teamid}/projects` : '/api/projects';
+    const URL = '/api/teams/';
     const res = await fetch(URL, {
-      body: JSON.stringify(project),
+      body: JSON.stringify(team),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -93,14 +68,13 @@ export function NewProject({
     if (!res.ok) {
       console.log(res);
       toast({
-        title: 'Project not created',
+        title: 'Team not created',
         description: 'something went wrong',
       });
     } else {
-      // const data = await res.json();
       reload();
       toast({
-        title: 'Project created',
+        title: 'Team created',
         description: `Project successfully created`,
       });
       setOpen(false);
@@ -112,7 +86,7 @@ export function NewProject({
       <DialogTrigger asChild>
         {button ? (
           <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
-            New Project
+            New Team
           </Button>
         ) : (
           <button>
@@ -122,20 +96,34 @@ export function NewProject({
       </DialogTrigger>
       <DialogContent className='sm:max-w-3xl'>
         <DialogHeader>
-          <DialogTitle>New Project</DialogTitle>
-          <DialogDescription>Create a new project</DialogDescription>
+          <DialogTitle>New Team</DialogTitle>
+          <DialogDescription className='pb-2'>
+            Create a new team
+          </DialogDescription>
+
+          <Alert>
+            <InfoCircledIcon className='h-4 w-4' />
+            <AlertTitle>Heads up!</AlertTitle>
+            <AlertDescription>
+              By creating a new team, you will not be the member of the team.
+              You can add more members later on the team page.
+            </AlertDescription>
+          </Alert>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField
               control={form.control}
-              name='title'
+              name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder='next big thing' {...field} />
+                    <Input
+                      placeholder='What shall be the title of this legendary team'
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -151,9 +139,9 @@ export function NewProject({
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Type your message here.'
+                      placeholder='Let the orbiters know what this team is about'
                       id='message-2'
-                      className='h-60'
+                      className='h-10 resize-none'
                       {...field}
                     />
                   </FormControl>
@@ -162,37 +150,6 @@ export function NewProject({
                 </FormItem>
               )}
             />
-
-            <div className='flex flex-row space-x-4'>
-              <FormField
-                control={form.control}
-                name='statusid'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <FormControl>
-                      <StatusField {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='deadline'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Deadline</FormLabel>
-                    <FormControl>
-                      <DeadlineField field={field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
             <Button type='submit'>Create</Button>
           </form>

@@ -1,3 +1,18 @@
-{
-  "extends": ["next", "prettier"]
+{  
+  "extends": ["eslint:recommended", "next", "prettier"],
+  "rules": {
+    "react/no-unescaped-entities": "off",
+    "@next/next/no-page-custom-font": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-no-undef": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react/prop-types": "off",
+    "react/no-children-prop": "off",
+    "react/display-name": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["off"],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off"
+  }
 }

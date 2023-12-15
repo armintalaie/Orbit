@@ -28,47 +28,35 @@ import {
 } from '@/components/ui/popover';
 
 interface Profile {
-  memberid: string | undefined;
-  profile: {
-    full_name: string;
-    avatar_url: string;
-    username: string;
-  };
+  id: string | undefined;
+  full_name: string;
+  avatar_url: string;
+  username: string;
   label: string;
 }
 
-const noAssignee: Profile = {
-  memberid: '-1',
-  profile: {
-    full_name: 'Unassigned',
-    avatar_url: '',
-    username: '',
-  },
-  label: 'Unassigned',
-};
-
-export function AssigneeField({ field, projectid }) {
+export function UserFinder({ val, setVal, teamid }) {
   const [memberOptions, setMemberOptions] = React.useState<{
     [key: string]: Profile;
   }>({}); // [key: string, value: Profile][
   const [open, setOpen] = React.useState(false);
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
-    field.value
+    null
   );
 
   React.useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/projects/${projectid}/members`);
-      const members = await res.json();
+      const res = await fetch(`/api/profiles/`); //TODO
+      const profiles = await res.json();
       const options: { [key: string]: Profile } = {};
-      options[noAssignee.memberid as string] = noAssignee;
-      for (const member of members) {
-        options[member.memberid] = {
-          ...member,
-          label: member.profile.full_name,
+
+      for (const profile of profiles) {
+        options[profile.id] = {
+          ...profile,
+          label: profile.full_name,
         };
       }
-      console.log('members: ', members);
+      console.log('members: ', profiles);
       setMemberOptions(options);
       console.log(options);
     }
@@ -78,14 +66,9 @@ export function AssigneeField({ field, projectid }) {
 
   return (
     <div className='flex items-center space-x-4'>
-      {/* <p className="text-sm text-muted-foreground">Status</p> */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant='outline'
-            size='sm'
-            className='w-[150px] justify-start'
-          >
+          <Button variant='outline' size='sm' className='w-full justify-start'>
             {selectedStatus ? (
               <>
                 <UserIcon className='mr-2 h-4 w-4 shrink-0' />
@@ -93,7 +76,7 @@ export function AssigneeField({ field, projectid }) {
                 {selectedStatus}
               </>
             ) : (
-              <>+ Set Assignee</>
+              <>+ Search Profiles</>
             )}
           </Button>
         </PopoverTrigger>
@@ -107,7 +90,7 @@ export function AssigneeField({ field, projectid }) {
               console.log('search: ', search);
               console.log('memberOptions: ', memberOptions);
               console.log('memberOptions[value]: ', memberOptions[value].label);
-              return memberOptions[value].profile.full_name
+              return memberOptions[value].full_name
                 .toLowerCase()
                 .indexOf(search.toLowerCase()) !== -1
                 ? 1
@@ -120,21 +103,26 @@ export function AssigneeField({ field, projectid }) {
               <CommandGroup>
                 {Object.entries(memberOptions).map(([key, member]) => (
                   <CommandItem
-                    key={member.memberid}
-                    value={member.memberid}
+                    key={member.id}
+                    value={member.id}
                     onSelect={(value) => {
-                      setSelectedStatus(
-                        memberOptions.find(
-                          (m) => m.profile.memberid === value
-                        ) || null
+                      const match = Object.values(memberOptions).find(
+                        (m) => m.id === value
                       );
-                      field.onChange(value);
+                      if (match) {
+                        console.log('match: ', match);
+                        setSelectedStatus(match.full_name as string);
+                      } else {
+                        console.log('no match');
+                        setSelectedStatus(null);
+                      }
+                      setVal(value);
                       setOpen(false);
                     }}
                   >
                     <UserIcon className='mr-2 h-4 w-4 shrink-0' />
 
-                    <span>{member.profile.full_name}</span>
+                    <span>{member.full_name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

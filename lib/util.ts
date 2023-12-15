@@ -4,7 +4,6 @@ import html from 'remark-html';
 import fs from 'fs';
 import * as matter from 'gray-matter';
 
-
 export function dateFormater(date: string) {
   // if within a week, return day of week (e.g. Monday)
   // if within a year, return month and day (e.g. Jan 1)
@@ -69,8 +68,6 @@ export function isOverdue(date: string) {
   }
   return false;
 }
-
-
 
 // export async function getPostData(id) {
 //   const fullPath = path.join(postsDirectory, `${id}.md`);

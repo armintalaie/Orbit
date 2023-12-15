@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Orbit
+
+A simple, intuitive, and beautiful way to manage your projects.
+
+## Features
+
+- TODO
+
+## Roadmap
+
+Check the [CHANGELOG.md](CHANGELOG.md) file for the latest changes.
+
+- TODO
 
 ## Getting Started
 
-First, run the development server:
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+### Prerequisites
+
+- Have [Node.js](https://nodejs.org/en/) installed.
+- Have [npm](https://www.npmjs.com/) installed.
+- Have [Git](https://git-scm.com/) installed.
+- Setup a [Supabase](https://supabase.com/) project or use an existing one.
+  - For Google authentication, follow the instructions [here](https://supabase.io/docs/guides/auth#sign-in-with-google) to setup Google authentication for your Supabase project.
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/armintalaie/Orbit.git
+```
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env.local` file in the root directory of the project and add the following environment variables:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=<supabase_url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase_anon_key>
+GOOGE_CLIENT_ID=<google_client_id>
+GOOGLE_CLIENT_SECRET=<google_client_secret>
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about the technologies used in this project, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - learn about Tailwind CSS features and API.
+- [Shadcn](https://ui.shadcn.com/) - Re-usable components built using Radix UI and Tailwind CSS.
+- [Radix UI](https://www.radix-ui.com/) - A collection of open source UI components for building high-quality, accessible design systems and web apps.
+- [Supabase](https://supabase.com) - The open source Firebase alternative. Instant APIs, authentication, and realtime subscriptions.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+For production, run the following command:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run build
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This command builds the application for production usage and optimizes the build for the best performance.
+
+- TODO
+
+## Contributing
+
+_Under construction_
+
+Contributions are always welcome!
+
+To contribute to Orbit, clone this repo locally and follow the [Getting Started](#getting-started) instructions. Check the currently open issues in the [Issues](https://github.com/armintalaie/Orbit/issues) tab for ideas on how to contribute.
+
+When you are ready to start working on an issue, create a new branch with a descriptive name, for example:
+
+```bash
+git checkout -b fix-404-page
+```
+
+After you have made the necessary changes, commit your changes and push your branch to GitHub:
+
+```bash
+git add .
+git commit -m "Fix 404 page"
+git push -u origin fix-404-page
+```
+
+Finally, open a pull request on GitHub and describe the changes you have made and mention the issue you have fixed.
+
+To submit new issues, use the [Issues](https://github.com/armintalaie/Orbit/issues) tab and follow the provided template.

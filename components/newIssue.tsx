@@ -27,65 +27,91 @@ import {
 } from './ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { DeadlineField } from './issues/form/deadlineField';
-import { AssigneeField } from './issues/form/assigneeField';
 import { StatusField } from './issues/form/statusField';
 import { Textarea } from '@/components/ui/textarea';
+import { AssigneeField } from './issues/form/assigneeField';
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
+export const issueSchema = z.object({
+  title: z.string(),
+  contents: z.object({
+    body: z.string(),
   }),
+  statusid: z.number(),
+  deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  assignee: z.array(z.string()),
 });
 
-export function NewIssue({ button }: { button?: boolean }) {
+export const formSchema = z.object({
+  title: z.string(),
+  body: z.string(),
+  statusid: z.number(),
+  deadline: z.object({
+    from: z.date(),
+    to: z.date(),
+  }),
+  assignee: z.string().nullable(),
+});
+
+export function NewIssue({
+  projectid,
+  button,
+  reload,
+}: {
+  projectid: number;
+  button?: boolean;
+  reload: Function;
+}) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: '',
-      status: '',
+      title: '',
+      statusid: 1,
+      assignee: '-1',
+      body: '',
+      deadline: {
+        from: new Date(),
+        to: new Date(),
+      },
     },
   });
   async function onSubmit(e) {
-    console.log(e);
-    e.preventDefault();
-    const title = e.target.elements.title.value;
-    const description = e.target.elements.description.value;
-    const status = e.target.elements.status.value;
-    const assignee = e.target.elements.assignee.value;
-    const deadline = e.target.elements.deadline.value;
-
-    const data = {
-      title,
-      description,
-      status,
-      assignee,
-      deadline,
+    const formVals = form.getValues();
+    const issue = {
+      title: formVals.title,
+      contents: {
+        body: formVals.body,
+      },
+      statusid: formVals.statusid,
+      deadline: formVals.deadline.to.toISOString().split('T')[0],
+      datestarted: formVals.deadline.from.toISOString().split('T')[0],
     };
-    const rest = await fetch('/api/projects/1/issues', {
-      method: 'POST',
+    const res = await fetch(`/api/projects/${projectid}/issues`, {
+      body: JSON.stringify(issue),
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      method: 'POST',
     });
 
-    const result = await rest.json();
-    setOpen(false);
-
-    toast({
-      title: 'Issue created',
-      description: result.message,
-    });
+    if (!res.ok) {
+      console.log(res);
+      toast({
+        title: 'Issue not created',
+        description: 'something went wrong',
+      });
+    } else {
+      // const data = await res.json();
+      reload();
+      toast({
+        title: 'Issue created',
+        description: `Project successfully created`,
+      });
+      setOpen(false);
+    }
   }
 
   return (
@@ -104,19 +130,19 @@ export function NewIssue({ button }: { button?: boolean }) {
       <DialogContent className='sm:max-w-3xl'>
         <DialogHeader>
           <DialogTitle>New Issue</DialogTitle>
-          <DialogDescription>Create a new issue</DialogDescription>
+          <DialogDescription>Create a new Issue</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField
               control={form.control}
-              name='username'
+              name='title'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder='shadcn' {...field} />
+                    <Input placeholder='next big thing' {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -126,15 +152,16 @@ export function NewIssue({ button }: { button?: boolean }) {
 
             <FormField
               control={form.control}
-              name='username'
+              name='body'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Contents</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder='Type your message here.'
                       id='message-2'
                       className='h-60'
+                      {...field}
                     />
                   </FormControl>
 
@@ -146,12 +173,12 @@ export function NewIssue({ button }: { button?: boolean }) {
             <div className='flex flex-row space-x-4'>
               <FormField
                 control={form.control}
-                name='status'
+                name='statusid'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
                     <FormControl>
-                      <StatusField />
+                      <StatusField {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -161,21 +188,12 @@ export function NewIssue({ button }: { button?: boolean }) {
 
               <FormField
                 control={form.control}
-                name='status'
+                name='assignee'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Priority</FormLabel>
+                    <FormLabel>Assignee</FormLabel>
                     <FormControl>
-                      <Select>
-                        <SelectTrigger className='w-[100px]'>
-                          <SelectValue placeholder='none' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value='light'>Light</SelectItem>
-                          <SelectItem value='dark'>Dark</SelectItem>
-                          <SelectItem value='system'>System</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <AssigneeField field={field} projectid={projectid} />
                     </FormControl>
 
                     <FormMessage />
@@ -185,36 +203,20 @@ export function NewIssue({ button }: { button?: boolean }) {
 
               <FormField
                 control={form.control}
-                name='status'
+                name='deadline'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Deadline</FormLabel>
                     <FormControl>
-                      <DeadlineField />
+                      <DeadlineField field={field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name='status'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Assignee</FormLabel>
-                  <FormControl>
-                    <AssigneeField />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button type='submit'>Submit</Button>
+            <Button type='submit'>Create</Button>
           </form>
         </Form>
 

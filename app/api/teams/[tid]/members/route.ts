@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
- const issueSchema = z.object({
+const issueSchema = z.object({
   title: z.string(),
   contents: z.object({
     body: z.string(),
@@ -39,11 +39,22 @@ export async function POST(
 
 export async function GET(
   req: Request,
-  { params }: { params: { pid: string } }
+  { params }: { params: { tid: string } }
 ) {
-  const data = await supabase
-    .from('issue')
-    .select()
-    .eq('projectid', Number(params.pid));
-  return NextResponse.json(data.data);
+  let { data, error } = await supabase
+    .from('team_member')
+    .select(
+      `
+    memberid,
+    profile: profiles (full_name, username, avatar_url)
+  `
+    )
+    .eq('teamid', Number(params.tid));
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+  console.log(data);
+
+  return NextResponse.json(data);
 }

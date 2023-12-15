@@ -2,31 +2,27 @@ import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
- const issueSchema = z.object({
+const projectSchema = z.object({
   title: z.string(),
-  contents: z.object({
-    body: z.string(),
-  }),
+  description: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  projectid: z.number(),
+  teamid: z.number(),
 });
 
 export async function POST(
   req: Request,
-  { params }: { params: { pid: string } }
+  { params }: { params: { tid: string } }
 ) {
   try {
-    const newIssue = await req.json();
-    console.log(newIssue);
-    console.log(params);
-    const issue = issueSchema.parse({
-      ...newIssue,
-      projectid: Number(params.pid),
+    const newProject = await req.json();
+    const project = projectSchema.parse({
+      ...newProject,
+      teamid: Number(params.tid),
     });
 
-    const { data, error } = await supabase.from('issue').insert(issue);
+    const { data, error } = await supabase.from('project').insert(project);
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
@@ -39,11 +35,11 @@ export async function POST(
 
 export async function GET(
   req: Request,
-  { params }: { params: { pid: string } }
+  { params }: { params: { tid: string } }
 ) {
   const data = await supabase
-    .from('issue')
+    .from('project')
     .select()
-    .eq('projectid', Number(params.pid));
+    .eq('teamid', Number(params.tid));
   return NextResponse.json(data.data);
 }

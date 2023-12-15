@@ -1,9 +1,9 @@
 'use client';
 import { FeedbackButton } from '@/components/feedback';
 import { Box, Container, Text } from '@radix-ui/themes';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Collapsible from '@radix-ui/react-collapsible';
-import { RowSpacingIcon, Cross2Icon, GearIcon } from '@radix-ui/react-icons';
+import { GearIcon } from '@radix-ui/react-icons';
 import {
   Command,
   CommandDialog,
@@ -12,7 +12,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
   CommandShortcut,
 } from '@/components/ui/command';
 import Link from 'next/link';
@@ -25,7 +24,6 @@ export default function ProjectLayout({
   children: React.ReactNode;
 }) {
   const [projects, setProjects] = useState([]);
-  const [openP, setOpenP] = useState(true);
   const [teams, setTeams] = useState([]);
   const [openT, setOpenT] = useState(true);
   const [search, openSearch] = useState(false);
@@ -43,14 +41,14 @@ export default function ProjectLayout({
 
   useEffect(() => {
     // fetchProjects();
-    fetchTeams();
+    // fetchTeams();
   }, []);
 
   return (
     <div className='flex h-screen w-screen flex-row'>
       <section
         id='sidebar'
-        className='flex w-1/6 max-w-sm flex-col border-r border-gray-100 '
+        className='min-w-32  flex max-w-sm flex-col border-r border-gray-100 '
       >
         <Text size='4' className='h-12 p-4 font-bold'>
           Orbit
@@ -77,7 +75,17 @@ export default function ProjectLayout({
             >
               <BoxIcon className='h-3 w-3 ' />
               <span className='flex h-full items-center justify-between pl-2'>
-                projects
+                Projects
+              </span>
+            </Link>
+
+            <Link
+              href={'/teams'}
+              className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
+            >
+              <BoxIcon className='h-3 w-3 ' />
+              <span className='flex h-full items-center justify-between pl-2'>
+                Teams
               </span>
             </Link>
           </section>
@@ -109,29 +117,38 @@ export default function ProjectLayout({
                     </Collapsible.Root>
 
                     </section> */}
-          {/* <section id="teams" className="flex flex-col border-t border-gray-100 ">
-                    <Collapsible.Root open={openT} onOpenChange={setOpenT}>
-                        <span className="flex flex-row items-center justify-between px-1">
-                    <Text size="2" className="p-2 font-medium text-gray-700">Teams</Text>
-                    <Collapsible.Trigger asChild>
-                        <button className="IconButton">{openT ? <Cross2Icon /> : <RowSpacingIcon />}</button>
-                        </Collapsible.Trigger>
-        </span>
-                   
-                    <Collapsible.Content>
-                    <div className="flex flex-col flex-grow overflow-y-auto p-2 gap-2 pl-4">
-                        {teams.map((team) => (
-                            <li key={team.id} className="flex flex-row items-center justify-between px-1">
-                                <a href={`/teams/${team.id}`}>
-                                <Text size="1">{team.name}</Text>
-                                </a>
-                            </li>
-                        ))}
-                    </div>
-                    </Collapsible.Content>
-                    </Collapsible.Root>
+          {/* <section
+            id='teams'
+            className='flex flex-col border-t border-gray-100 '
+          >
+            <Collapsible.Root open={openT} onOpenChange={setOpenT}>
+              <span className='flex flex-row items-center justify-between px-1'>
+                <Text size='2' className='p-2 font-medium text-gray-700'>
+                  Your Teams
+                </Text>
+                <Collapsible.Trigger asChild>
+                  <button className='IconButton'>
+                    {openT ? <Cross2Icon /> : <RowSpacingIcon />}
+                  </button>
+                </Collapsible.Trigger>
+              </span>
 
-                    </section> */}
+              <Collapsible.Content>
+                <div className='flex flex-grow flex-col gap-2 overflow-y-auto p-2 pl-4'>
+                  {teams.map((team) => (
+                    <li
+                      key={team.id}
+                      className='flex flex-row items-center justify-between px-1'
+                    >
+                      <a href={`/teams/${team.name}`}>
+                        <Text size='1'>{team.name}</Text>
+                      </a>
+                    </li>
+                  ))}
+                </div>
+              </Collapsible.Content>
+            </Collapsible.Root>
+          </section> */}
         </div>
         <div className='flex flex-col  gap-2 overflow-y-auto p-2'>
           <Link
@@ -142,9 +159,9 @@ export default function ProjectLayout({
             <span>Settings</span>
           </Link>
 
-<div className='flex flex-row  gap-2 overflow-y-auto '>
-          <FeedbackButton />
-          <Changelog />
+          <div className='flex flex-row  gap-2 overflow-y-auto '>
+            <FeedbackButton />
+            <Changelog />
           </div>
         </div>
       </section>
@@ -167,14 +184,14 @@ export function CommandMenu({ open, setOpen }) {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder='Type a command or search...' />
+      <CommandInput placeholder='Under Development... stay tuned :)' />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading='Suggestions'>
+        {/* <CommandGroup heading='Suggestions'>
           <CommandItem>Calendar</CommandItem>
           <CommandItem>Search Emoji</CommandItem>
           <CommandItem>Calculator</CommandItem>
-        </CommandGroup>
+        </CommandGroup> */}
       </CommandList>
     </CommandDialog>
   );

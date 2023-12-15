@@ -1,37 +1,35 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
-
-// import { Separator } from "@/registry/new-york/ui/separator"
 import { SidebarNav } from '../../components/settings/sidebar-nav';
 import { Separator } from '@radix-ui/themes';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'Forms',
   description: 'Advanced form example using react-hook-form and Zod.',
 };
 
-const sidebarNavItems = [
-  //   {
-  //     title: "Profile",
-  //     href: "/examples/forms",
-  //   },
-  //   {
-  //     title: "Account",
-  //     href: "/examples/forms/account",
-  //   },
-  //   {
-  //     title: "Appearance",
-  //     href: "/examples/forms/appearance",
-  //   },
-  //   {
-  //     title: "Notifications",
-  //     href: "/examples/forms/notifications",
-  //   },
-  //   {
-  //     title: "Display",
-  //     href: "/examples/forms/display",
-  //   },
-];
+// const sidebarNavItems = [
+//   //   {
+//   //     title: "Profile",
+//   //     href: "/examples/forms",
+//   //   },
+//   //   {
+//   //     title: "Account",
+//   //     href: "/examples/forms/account",
+//   //   },
+//   //   {
+//   //     title: "Appearance",
+//   //     href: "/examples/forms/appearance",
+//   //   },
+//   //   {
+//   //     title: "Notifications",
+//   //     href: "/examples/forms/notifications",
+//   //   },
+//   //   {
+//   //     title: "Display",
+//   //     href: "/examples/forms/display",
+//   //   },
+// ];
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
