@@ -46,7 +46,9 @@ export function UserFinder({ val, setVal, teamid }) {
 
   React.useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/profiles/`); //TODO
+      const res = await fetch(`/api/profiles/`, {
+        next: {revalidate: 10}
+      }); //TODO
       const profiles = await res.json();
       const options: { [key: string]: Profile } = {};
 

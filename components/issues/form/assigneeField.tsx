@@ -58,7 +58,9 @@ export function AssigneeField({ field, projectid }) {
 
   React.useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/projects/${projectid}/members`);
+      const res = await fetch(`/api/projects/${projectid}/members`, {
+        next: { revalidate: 10 },
+      });
       const members = await res.json();
       const options: { [key: string]: Profile } = {};
       options[noAssignee.memberid as string] = noAssignee;
