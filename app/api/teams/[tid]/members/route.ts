@@ -56,5 +56,5 @@ export async function GET(
   }
   console.log(data);
 
-  return NextResponse.json(data);
+  return NextResponse.json(data, { headers: { 'Cache-Control': 's-maxage=3, stale-while-revalidate' } });
 }
