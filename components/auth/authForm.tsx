@@ -3,9 +3,13 @@
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useEffect, useState } from 'react';
 
 export default function AuthForm() {
-  const path = window.location.origin;
+  const [path, setPath] = useState('');
+  useEffect(() => {
+    setPath(window.location.origin);
+  }, []);
   const supabase = createClientComponentClient<any>();
 
   return (
