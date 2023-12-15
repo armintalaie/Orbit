@@ -5,9 +5,6 @@ import { type NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   const cookieStore = cookies();
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
-
-  // Check if we have a session
-  console.log('req.url', req.url);
   const {
     data: { session },
   } = await supabase.auth.getSession();
