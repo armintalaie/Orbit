@@ -26,13 +26,21 @@ import { NewTeamMember } from '@/components/newTeamMember';
 import { NewProject } from '@/components/newProject';
 import { Toast } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  ChevronRightSquareIcon,
+  Dot,
+  GanttChartSquare,
+  MapIcon,
+} from 'lucide-react';
+import ProjectsTimelineView from '@/components/projects/projectsTimeline';
+import { ca } from 'date-fns/locale';
 
 export default function ProjectPage() {
   const params = useParams();
   const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
   const [team, setTeam] = useState([]);
-  const viewTypes = ['board', 'table'];
+  const viewTypes = ['board', 'table', 'timeline'];
   const [viewType, setViewType] = useState(viewTypes[0]);
 
   async function fetchProjects() {
@@ -67,11 +75,17 @@ export default function ProjectPage() {
     <div className='flex min-h-screen w-full flex-col'>
       <div className=' flex h-full w-full flex-1 flex-col '>
         <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-          <div className='flex flex-row items-center gap-2'>
-            <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
+          <div className='flex flex-row items-center'>
+            <h1 className='text-md h-full  font-medium leading-tight text-gray-700'>
               {team.name}
             </h1>
-            <TeamOptions teamId={team.id} />
+            <p className='flex items-center text-xs  italic text-gray-600'>
+              <Dot className='h-4 w-4' size={30} />
+              {team.description}
+            </p>
+            <div className='flex items-center pl-2'>
+              <TeamOptions teamId={team.id} />
+            </div>
           </div>
           <div className='flex h-full items-center justify-center gap-2'>
             <NewProject button={true} reload={reload} teamid={team.id} />
@@ -79,12 +93,23 @@ export default function ProjectPage() {
         </div>
 
         <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-2 py-3'>
-            {/* <ToggleGroupDemo viewType={viewType} setViewType={setViewType} /> */}
+          <div className='flex h-15 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
+            <div></div>
+            <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
           </div>
           <div className=' flex h-full flex-grow flex-col'>
-            <div className=' flex w-full  flex-col '>
-              <ProjectsTableView projects={projects} />
+            <div className=' flex w-full  flex-col p-2 overflow-hidden  '>
+              {(() => {
+                switch (viewType) {
+                  case 'table':
+                    return <ProjectsTableView projects={projects} />;
+                  case 'timeline':
+                    return <ProjectsTimelineView projects={projects} />;
+                  case 'board':
+                  default:
+                    return <ProjectsTableView projects={projects} />;
+                }
+              })()}
             </div>
 
             <div className=' flex w-full  flex-col px-4'>
@@ -139,6 +164,17 @@ const ToggleGroupDemo = ({ viewType, setViewType }) => {
         onClick={() => setViewType('board')}
       >
         <BoxIcon />
+      </ToggleGroup.Item>
+
+      <ToggleGroup.Item
+        className={`flex w-9 items-center justify-center p-2 ${
+          viewType === 'timeline' ? 'bg-gray-100' : 'bg-inherit'
+        }`}
+        value='timeline'
+        aria-label='Center aligned'
+        onClick={() => setViewType('timeline')}
+      >
+        <GanttChartSquare className='stroke-1' />
       </ToggleGroup.Item>
     </ToggleGroup.Root>
   );

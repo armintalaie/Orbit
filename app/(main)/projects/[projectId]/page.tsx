@@ -2,7 +2,7 @@
 
 import { NewIssue } from '@/components/newIssue';
 import { CardHeader, CardContent } from '@/components/ui/card';
-import { dateFormater, isOverdue } from '@/lib/util';
+import { STATUS, dateFormater, getStatus, isOverdue } from '@/lib/util';
 import { TableIcon, BoxIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import {
   Badge,
@@ -10,7 +10,6 @@ import {
   Heading,
   Box,
   Text,
-  ContextMenu,
   Table,
 } from '@radix-ui/themes';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
@@ -33,6 +32,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { statusIconMapper } from '@/components/statusIconMapper';
+
 
 export default function ProjectPage() {
   const params = useParams();
@@ -40,6 +41,7 @@ export default function ProjectPage() {
   const [project, setProject] = useState([]);
   const viewTypes = ['board', 'table'];
   const [viewType, setViewType] = useState(viewTypes[0]);
+
 
   async function fetchIssues() {
     const res = await fetch(`/api/projects/${params.projectId}/issues`);
@@ -53,6 +55,8 @@ export default function ProjectPage() {
       const project = await res.json();
       setProject(project);
     }
+    // const getstatus = getStatus();
+    // setStatus(getstatus);
     fetchProject();
     fetchIssues();
   }, []);
@@ -77,8 +81,8 @@ export default function ProjectPage() {
         </div>
 
         <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-2 py-3'>
-            {/* <FilterGroup/> */}
+          <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
+            {/* <FilterGroup filters={undefined} setFilters={undefined}/> */}
             <div></div>
 
             <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
@@ -99,10 +103,9 @@ export default function ProjectPage() {
 
 function TaskCard({ task }) {
   return (
-    <ContextMenu.Root>
-      <ContextMenu.Trigger>
+   
         <Link href={`/projects/1/issues/${task.id}`} aria-disabled={true}>
-          <Box className='flex flex-col gap-2 rounded-sm border border-gray-200 bg-white  p-2 shadow-sm hover:shadow-md'>
+          <Box className='flex flex-col gap-2 rounded-sm border border-gray-100 bg-white  p-2 '>
             <div className='flex w-full flex-row justify-between gap-2 py-0'>
               <Text size='1' className='text-gray-600'>
                 #{task.id}
@@ -111,8 +114,8 @@ function TaskCard({ task }) {
                 <Badge color='gray'>{'!'.repeat(task.priority)}</Badge>
               )}
             </div>
-            <Text size='2' className='p-0 font-semibold  text-gray-700'>
-              {task.name}
+            <Text size='2' className='pb-2 font-medium  text-gray-800'>
+              {task.title}
             </Text>
 
             <div className='flex w-full flex-row justify-between gap-2'>
@@ -127,31 +130,7 @@ function TaskCard({ task }) {
             </div>
           </Box>
         </Link>
-        {/* <RightClickZone style={{ height: 150 }} /> */}
-      </ContextMenu.Trigger>
-      <ContextMenu.Content size='2'>
-        {/* <ContextMenu.Item shortcut="⌘ E">Edit</ContextMenu.Item> */}
-        <ContextMenu.Item shortcut='⌘ D'>Duplicate</ContextMenu.Item>
-        <ContextMenu.Separator />
-        {/* <ContextMenu.Item shortcut='⌘ N'>Archive</ContextMenu.Item> */}
-        <ContextMenu.Item>Move to project…</ContextMenu.Item>
 
-        <ContextMenu.Sub>
-          <ContextMenu.SubTrigger>More</ContextMenu.SubTrigger>
-          <ContextMenu.SubContent>
-            <ContextMenu.Separator />
-            <ContextMenu.Item>Advanced options…</ContextMenu.Item>
-          </ContextMenu.SubContent>
-        </ContextMenu.Sub>
-
-        <ContextMenu.Separator />
-        <ContextMenu.Item>Share</ContextMenu.Item>
-        <ContextMenu.Separator />
-        <ContextMenu.Item shortcut='⌘ ⌫' color='red'>
-          Delete
-        </ContextMenu.Item>
-      </ContextMenu.Content>
-    </ContextMenu.Root>
   );
 }
 
@@ -217,38 +196,42 @@ function TableView({ tasks }) {
 }
 
 function KanbanView({ tasks }) {
+
+  const status = STATUS || [];
+  console.log(status);
   const groupedTasks = groupByStatus(tasks);
   // console.log(tasks);
   function groupByStatus(tasks) {
-    const grouped = tasks.reduce((acc, task) => {
+    return tasks.reduce((acc, task) => {
       if (!acc[task.statusid]) {
-        acc[task.statusid] = [];
+        acc[task.statusid] = { tasks: [] };
       }
-      acc[task.statusid].push(task);
+      acc[task.statusid].tasks.push(task);
       return acc;
     }, {});
-    return Object.keys(grouped).map((statusid) => ({
-      statusid: statusid,
-      tasks: grouped[statusid],
-    }));
   }
+  console.log(groupedTasks);
 
   return (
-    <div className='flex h-full flex-1 flex-row gap-8 p-4 px-2'>
-      {groupedTasks.map((task) => (
-        <div key={task.statusid}>
+    <div className='flex h-full flex-1 flex-row gap-12 p-4 px-2 overflow-scroll'>
+      {status.map((status) => (
+        <div key={status.id}>
           <div className='h-full w-72 rounded-sm p-0 '>
             <CardHeader className='flex flex-row items-center justify-between px-1'>
-              <Heading size='3'>{task.statusid}</Heading>
+              <div className='flex flex-row items-center gap-2'>
+                {statusIconMapper(status.label, 'h-4 w-4')}
+ <Heading size='1' className='text-gray-700'>{status.label}</Heading>
+              </div>
+             
               <NewIssue button={false} />
             </CardHeader>
-
             <CardContent className='flex-1 overflow-y-auto p-0'>
               <ul className='space-y-3'>
-                {task.tasks.map((task) => (
-                  <li key={task.id}>
+                {groupedTasks[status.id] && groupedTasks[status.id].tasks.map((task) => (
+                  <div key={task.id}>
+                
                     <TaskCard task={task} />
-                  </li>
+                  </div>
                 ))}
               </ul>
             </CardContent>

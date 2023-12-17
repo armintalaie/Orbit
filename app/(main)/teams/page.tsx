@@ -19,11 +19,12 @@ import { useEffect, useState } from 'react';
 import { FilterIcon } from 'lucide-react';
 import Link from 'next/link';
 import { NewTeam } from '@/components/newTeam';
+import TeamGrid from '@/components/teams/teamGrid';
 
 export default function TeamPage() {
   const [teams, setTeams] = useState([]);
   const viewTypes = ['board', 'table'];
-  // const [viewType, setViewType] = useState(viewTypes[0]);
+  const [viewType, setViewType] = useState(viewTypes[0]);
 
   async function reload() {
     const res = await fetch(`/api/teams`);
@@ -45,6 +46,7 @@ export default function TeamPage() {
     <div className='flex min-h-screen w-full flex-col'>
       <div className=' flex h-full w-full flex-1 flex-col '>
         <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
+          
           <h1 className='text-md h-full font-medium leading-tight text-gray-700'>
             Teams
           </h1>
@@ -54,13 +56,18 @@ export default function TeamPage() {
         </div>
 
         <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-2 py-3'>
+          <div className='h-15 flex flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
             {/* <FilterGroup /> */}
+            <div></div>
 
-            {/* <ToggleGroupDemo viewType={viewType} setViewType={setViewType} /> */}
+            <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
           </div>
           <div className=' flex h-full flex-grow flex-col'>
-            <TableView teams={teams} />
+            {viewType === 'board' ? (
+              <TeamGrid teams={teams} />
+            ) : (
+              <TableView teams={teams} />
+            )}
           </div>
         </div>
       </div>

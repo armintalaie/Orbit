@@ -15,8 +15,19 @@ import {
   CommandShortcut,
 } from '@/components/ui/command';
 import Link from 'next/link';
-import { BoxIcon, PinIcon } from 'lucide-react';
+import { BoxIcon, MenuIcon, PinIcon } from 'lucide-react';
 import { Changelog } from '@/components/changelog';
+import NextBreadcrumb from '@/components/nextBreadcrumb';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';import { Button } from '@/components/ui/button';
 
 export default function ProjectLayout({
   children,
@@ -27,6 +38,7 @@ export default function ProjectLayout({
   const [teams, setTeams] = useState([]);
   const [openT, setOpenT] = useState(true);
   const [search, openSearch] = useState(false);
+  const [openP, setOpenP] = useState(false);
 
   async function fetchTeams() {
     const res = await fetch('/api/teams');
@@ -47,8 +59,9 @@ export default function ProjectLayout({
   return (
     <div className='flex h-screen w-screen flex-row'>
       <section
-        id='sidebar'
-        className='min-w-32  flex max-w-sm flex-col border-r border-gray-100 '
+        id='sidebar '
+        className='w-56 md:flex hidden  flex-col border-r border-gray-100'
+
       >
         <Text size='4' className='h-12 p-4 font-bold'>
           Orbit
@@ -165,7 +178,17 @@ export default function ProjectLayout({
           </div>
         </div>
       </section>
-      {children}
+      <div className='flex flex-grow flex-col overflow-hidden'>
+       <div className='flex h-15 w-full items-center justify-between  border-b border-gray-100  '>
+      <NextBreadcrumb
+          homeElement={<MenuDialog open={openP} setOpen={setOpenP} search={search} openSearch={openSearch}/> }
+          activeClasses='hidden'
+          containerClasses='flex py-5 px-2  from-purple-600 to-blue-600 h-12 items-center ' 
+          listClasses='hover:underline px-2 '
+          capitalizeLinks
+        /> 
+        </div>
+        {children}</div>
     </div>
   );
 }
@@ -196,3 +219,68 @@ export function CommandMenu({ open, setOpen }) {
     </CommandDialog>
   );
 }
+
+
+function MenuDialog({ open, setOpen, search, openSearch }) {
+  
+ return ( <Dialog open={open} onOpenChange={setOpen}  >
+      <DialogTrigger asChild>
+        <MenuIcon className='h-4 w-4' />
+      </DialogTrigger>
+      <DialogContent className='w-screen   h-full'>
+        <section
+        id='sidebar '
+        className='flex h-full w-full  flex-col  border-gray-100'
+
+      >
+        <Text size='4' className='h-12 p-4 font-bold'>
+          Orbit
+        </Text>
+        <div className='flex flex-grow flex-col gap-3 overflow-y-auto border-t border-gray-100 p-2'>
+          <CommandMenu setOpen={openSearch} open={search} />
+          <Box className='w-full p-1 pb-3'>
+            <button
+              className='h-8 w-full rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-xs text-gray-500 shadow-sm'
+              onClick={() => openSearch(true)}
+            >
+              <span className='flex items-center justify-between'>
+                Search{' '}
+                <span className='rounded-sm border border-gray-200 bg-gray-100 px-1 text-[9px] shadow-sm'>
+                  cmd + k
+                </span>
+              </span>
+            </button>
+          </Box>
+          <section className='flex flex-col border-gray-100 '>
+            <Link
+              href={'/projects'}
+              className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
+            >
+              <BoxIcon className='h-3 w-3 ' />
+              <span className='flex h-full items-center justify-between pl-2'>
+                Projects
+              </span>
+            </Link>
+
+            <Link
+              href={'/teams'}
+              className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
+            >
+              <BoxIcon className='h-3 w-3 ' />
+              <span className='flex h-full items-center justify-between pl-2'>
+                Teams
+              </span>
+            </Link>
+          </section>
+          
+</div>
+</section>
+       
+        <DialogFooter className='sm:justify-start'>
+          <DialogClose asChild></DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+
+        }
