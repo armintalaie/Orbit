@@ -69,6 +69,22 @@ export function isOverdue(date: string) {
   return false;
 }
 
+
+export async function getStatus() {
+  const res = await fetch('/api/status');
+  const data = await res.json();
+
+  return data;
+}
+
+
+export let STATUS;
+
+const setStatus = async () => {
+  STATUS = await getStatus();
+};
+
+setStatus();
 // export async function getPostData(id) {
 //   const fullPath = path.join(postsDirectory, `${id}.md`);
 //   const fileContents = fs.readFileSync(fullPath, 'utf8');

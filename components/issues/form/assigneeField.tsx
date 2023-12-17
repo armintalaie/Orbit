@@ -1,9 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  UserIcon,
-} from 'lucide-react';
+import { UserIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
