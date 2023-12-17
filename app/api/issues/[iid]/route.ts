@@ -4,7 +4,7 @@ export async function GET(
   req: Request,
   { params }: { params: { pid: string; iid: string } }
 ) {
-  const { iid } = params;
+  const { pid, iid } = params;
   const data = await supabase.from('issue').select().eq('id', Number(iid));
   return Response.json(data.data[0]);
 }
@@ -18,7 +18,7 @@ export async function DELETE(
   return Response.json({ message: 'success' });
 }
 
-export async function PUT(
+export async function PATCH(
   req: Request,
   { params }: { params: { iid: string } }
 ) {
@@ -27,7 +27,7 @@ export async function PUT(
     const newIssue = await req.json();
     const issue = newIssue;
     const data = await supabase
-      .from('project')
+      .from('issue')
       .update({ ...issue, dateupdated: new Date().toISOString() })
       .eq('id', Number(iid));
     return Response.json(data.data);

@@ -58,9 +58,7 @@ export function UserFinder({ val, setVal, teamid }) {
           label: profile.full_name,
         };
       }
-      console.log('members: ', profiles);
       setMemberOptions(options);
-      console.log(options);
     }
 
     fetchMembers();
@@ -88,10 +86,6 @@ export function UserFinder({ val, setVal, teamid }) {
               if (!value) {
                 return 0;
               }
-              console.log('value: ', value);
-              console.log('search: ', search);
-              console.log('memberOptions: ', memberOptions);
-              console.log('memberOptions[value]: ', memberOptions[value].label);
               return memberOptions[value].full_name
                 .toLowerCase()
                 .indexOf(search.toLowerCase()) !== -1
@@ -112,10 +106,8 @@ export function UserFinder({ val, setVal, teamid }) {
                         (m) => m.id === value
                       );
                       if (match) {
-                        console.log('match: ', match);
                         setSelectedStatus(match.full_name as string);
                       } else {
-                        console.log('no match');
                         setSelectedStatus(null);
                       }
                       setVal(value);

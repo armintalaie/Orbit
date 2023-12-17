@@ -266,9 +266,7 @@ export default function TextEditor() {
       }),
       Placeholder.configure({
         placeholder: ({ node }) => {
-          console.log(node);
           if (node.type.name === 'heading') {
-            console.log('heading');
             return 'Whats the title?';
           }
 

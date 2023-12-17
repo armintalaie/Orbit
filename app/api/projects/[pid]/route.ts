@@ -14,9 +14,7 @@ export async function GET(
   { params }: { params: { pid: string } }
 ) {
   const { pid } = params;
-  console.log(pid);
   const data = await supabase.from('project').select().eq('id', Number(pid));
-  console.log(data);
   return Response.json(data.data[0]);
 }
 
@@ -25,7 +23,6 @@ export async function DELETE(
   { params }: { params: { pid: string } }
 ) {
   const { pid } = params;
-  console.log(pid);
   await supabase.from('project').delete().eq('id', Number(pid));
   return Response.json({ message: 'success' });
 }
@@ -38,12 +35,10 @@ export async function PUT(
     const { pid } = params;
     const newProject = await req.json();
     const project = newProject;
-    console.log(pid);
     const data = await supabase
       .from('project')
       .update({ ...project, dateupdated: new Date().toISOString() })
       .eq('id', Number(pid));
-    console.log(data);
     return Response.json(data.data);
   } catch (error) {
     console.log(error);

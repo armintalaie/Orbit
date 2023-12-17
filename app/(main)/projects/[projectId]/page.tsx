@@ -4,14 +4,7 @@ import { NewIssue } from '@/components/newIssue';
 import { CardHeader, CardContent } from '@/components/ui/card';
 import { STATUS, dateFormater, getStatus, isOverdue } from '@/lib/util';
 import { TableIcon, BoxIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
-import {
-  Badge,
-  Button,
-  Heading,
-  Box,
-  Text,
-  Table,
-} from '@radix-ui/themes';
+import { Badge, Button, Heading, Box, Text, Table } from '@radix-ui/themes';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -34,14 +27,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { statusIconMapper } from '@/components/statusIconMapper';
 
-
 export default function ProjectPage() {
   const params = useParams();
   const [tasks, setTasks] = useState([]);
   const [project, setProject] = useState([]);
   const viewTypes = ['board', 'table'];
   const [viewType, setViewType] = useState(viewTypes[0]);
-
 
   async function fetchIssues() {
     const res = await fetch(`/api/projects/${params.projectId}/issues`);
@@ -103,40 +94,37 @@ export default function ProjectPage() {
 
 function TaskCard({ task }) {
   return (
-   
-        <Link href={`/projects/1/issues/${task.id}`} aria-disabled={true}>
-          <Box className='flex flex-col gap-2 rounded-sm border border-gray-100 bg-white  p-2 '>
-            <div className='flex w-full flex-row justify-between gap-2 py-0'>
-              <Text size='1' className='text-gray-600'>
-                #{task.id}
-              </Text>
-              {task.priority != 0 && (
-                <Badge color='gray'>{'!'.repeat(task.priority)}</Badge>
-              )}
-            </div>
-            <Text size='2' className='pb-2 font-medium  text-gray-800'>
-              {task.title}
-            </Text>
+    <Link href={`/projects/1/issues/${task.id}`} aria-disabled={true}>
+      <Box className='flex flex-col gap-2 rounded-sm border border-gray-100 bg-white  p-2 '>
+        <div className='flex w-full flex-row justify-between gap-2 py-0'>
+          <Text size='1' className='text-gray-600'>
+            #{task.id}
+          </Text>
+          {task.priority != 0 && (
+            <Badge color='gray'>{'!'.repeat(task.priority)}</Badge>
+          )}
+        </div>
+        <Text size='2' className='pb-2 font-medium  text-gray-800'>
+          {task.title}
+        </Text>
 
-            <div className='flex w-full flex-row justify-between gap-2'>
-              <Text size='1' className='font-semibold text-gray-500 '>
-                Jake j
-              </Text>
-              {isOverdue(task.deadline) ? (
-                <Badge color='red'>{dateFormater(task.deadline)}</Badge>
-              ) : (
-                <Badge color='gray'> {dateFormater(task.deadline)}</Badge>
-              )}
-            </div>
-          </Box>
-        </Link>
-
+        <div className='flex w-full flex-row justify-between gap-2'>
+          <Text size='1' className='font-semibold text-gray-500 '>
+            Jake j
+          </Text>
+          {isOverdue(task.deadline) ? (
+            <Badge color='red'>{dateFormater(task.deadline)}</Badge>
+          ) : (
+            <Badge color='gray'> {dateFormater(task.deadline)}</Badge>
+          )}
+        </div>
+      </Box>
+    </Link>
   );
 }
 
 function TableView({ tasks }) {
   const groupedTasks = groupByStatus(tasks);
-  // console.log(tasks);
   function groupByStatus(tasks) {
     const grouped = tasks.reduce((acc, task) => {
       if (!acc[task.statusid]) {
@@ -151,7 +139,6 @@ function TableView({ tasks }) {
     }));
   }
 
-  console.log(groupedTasks);
   return (
     <div className='flex h-full w-full flex-col '>
       <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
@@ -196,11 +183,8 @@ function TableView({ tasks }) {
 }
 
 function KanbanView({ tasks }) {
-
   const status = STATUS || [];
-  console.log(status);
   const groupedTasks = groupByStatus(tasks);
-  // console.log(tasks);
   function groupByStatus(tasks) {
     return tasks.reduce((acc, task) => {
       if (!acc[task.statusid]) {
@@ -210,29 +194,30 @@ function KanbanView({ tasks }) {
       return acc;
     }, {});
   }
-  console.log(groupedTasks);
 
   return (
-    <div className='flex h-full flex-1 flex-row gap-12 p-4 px-2 overflow-scroll'>
+    <div className='flex h-full flex-1 flex-row gap-12 overflow-scroll p-4 px-2'>
       {status.map((status) => (
         <div key={status.id}>
           <div className='h-full w-72 rounded-sm p-0 '>
             <CardHeader className='flex flex-row items-center justify-between px-1'>
               <div className='flex flex-row items-center gap-2'>
                 {statusIconMapper(status.label, 'h-4 w-4')}
- <Heading size='1' className='text-gray-700'>{status.label}</Heading>
+                <Heading size='1' className='text-gray-700'>
+                  {status.label}
+                </Heading>
               </div>
-             
+
               <NewIssue button={false} />
             </CardHeader>
             <CardContent className='flex-1 overflow-y-auto p-0'>
               <ul className='space-y-3'>
-                {groupedTasks[status.id] && groupedTasks[status.id].tasks.map((task) => (
-                  <div key={task.id}>
-                
-                    <TaskCard task={task} />
-                  </div>
-                ))}
+                {groupedTasks[status.id] &&
+                  groupedTasks[status.id].tasks.map((task) => (
+                    <div key={task.id}>
+                      <TaskCard task={task} />
+                    </div>
+                  ))}
               </ul>
             </CardContent>
           </div>

@@ -61,9 +61,7 @@ export function AssigneeField({ field, projectid }) {
           label: member.profile.full_name,
         };
       }
-      console.log('members: ', members);
       setMemberOptions(options);
-      console.log(options);
     }
 
     fetchMembers();
@@ -96,10 +94,7 @@ export function AssigneeField({ field, projectid }) {
               if (!value) {
                 return 0;
               }
-              console.log('value: ', value);
-              console.log('search: ', search);
-              console.log('memberOptions: ', memberOptions);
-              console.log('memberOptions[value]: ', memberOptions[value].label);
+
               return memberOptions[value].profile.full_name
                 .toLowerCase()
                 .indexOf(search.toLowerCase()) !== -1

@@ -30,7 +30,6 @@ export async function GET(
   if (teamError) {
     return NextResponse.json({ error: teamError.message }, { status: 400 });
   }
-  console.log(teamData);
 
   return NextResponse.json(teamData, {
     headers: { 'Cache-Control': 's-maxage=3, stale-while-revalidate' },
