@@ -47,10 +47,12 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
         next: { revalidate: 10 },
       });
       let members = await res.json();
-      members = members.map((member) => ({
-        ...member.profile,
-        id: member.memberid,
-      }));
+      members = members.map(
+        (member: { profile: Profile; memberid: string }) => ({
+          ...member.profile,
+          id: member.memberid,
+        })
+      );
 
       const options: { [key: string]: Profile } = {};
       options[noAssignee.id as string] = noAssignee;
@@ -84,7 +86,6 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
 
   return (
     <div className='flex items-center space-x-4'>
-      {/* <p className="text-sm text-muted-foreground">Status</p> */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -95,8 +96,6 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
             {selectedStatus ? (
               <>
                 <CircleUser className=' h-4 w-4 shrink-0 ' />
-                {/* {selectedStatus} */}
-
                 {memberOptions &&
                   memberOptions[selectedStatus] &&
                   memberOptions[selectedStatus].full_name}

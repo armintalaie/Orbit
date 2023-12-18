@@ -80,7 +80,11 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
             <ProjectOptions projectId={project.id} />
           </div>
           <div className='flex h-full items-center justify-center gap-2'>
-            <NewIssue button={true} reload={fetchIssues} projectid={projectId} />
+            <NewIssue
+              button={true}
+              reload={fetchIssues}
+              projectid={projectId}
+            />
           </div>
         </div>
         <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>

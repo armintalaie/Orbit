@@ -89,6 +89,7 @@ export function NewIssue({
       statusid: formVals.statusid,
       deadline: formVals.deadline.to.toISOString().split('T')[0],
       datestarted: formVals.deadline.from.toISOString().split('T')[0],
+      assignee: formVals.assignee || null,
     };
     const res = await fetch(`/api/projects/${projectid}/issues`, {
       body: JSON.stringify(issue),
@@ -107,7 +108,7 @@ export function NewIssue({
       reload();
       toast({
         title: 'Issue created',
-        description: `Project successfully created`,
+        description: `Issue successfully created`,
       });
       setOpen(false);
     }
@@ -141,7 +142,7 @@ export function NewIssue({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder='next big thing' {...field} />
+                    <Input placeholder='Next big thing...' {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -157,7 +158,7 @@ export function NewIssue({
                   <FormLabel>Contents</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Type your message here.'
+                      placeholder='Add some details about the issue or add them later...'
                       id='message-2'
                       className='h-60'
                       {...field}
@@ -169,7 +170,7 @@ export function NewIssue({
               )}
             />
 
-            <div className='flex flex-row space-x-4'>
+            <div className='flex flex-row flex-wrap gap-6'>
               <FormField
                 control={form.control}
                 name='statusid'
@@ -178,21 +179,6 @@ export function NewIssue({
                     <FormLabel>Status</FormLabel>
                     <FormControl>
                       <StatusField {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='assignee'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Assignee</FormLabel>
-                    <FormControl>
-                      <AssigneeField field={field} projectid={projectid} />
                     </FormControl>
 
                     <FormMessage />
@@ -214,6 +200,21 @@ export function NewIssue({
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name='assignee'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Assignee</FormLabel>
+                  <FormControl>
+                    <AssigneeField field={field} projectid={projectid} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <Button type='submit'>Create</Button>
           </form>
