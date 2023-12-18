@@ -52,7 +52,6 @@ export const formSchema = z.object({
     to: z.date(),
   }),
   assignee: z.string().nullable(),
-  projectid: z.number(),
 });
 
 export function NewIssue({
@@ -71,15 +70,15 @@ export function NewIssue({
     defaultValues: {
       title: '',
       statusid: 1,
-      assignee: '-1',
       body: '',
       deadline: {
         from: new Date(),
         to: new Date(),
       },
+      assignee: null,
     },
   });
-  async function onSubmit() {
+  async function onSubmit(e) {
     const formVals = form.getValues();
     const issue = {
       title: formVals.title,

@@ -87,3 +87,15 @@ const setStatus = async () => {
 };
 
 setStatus();
+
+export function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map((word) => word[0])
+    .join('');
+}
+
+export function getFirstNameAndLastInitial(name: string) {
+  const [first, last] = name.split(' ');
+  return `${first} ${last[0]}.`;
+}

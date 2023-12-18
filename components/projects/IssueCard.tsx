@@ -3,6 +3,8 @@
 import { dateFormater, isOverdue } from '@/lib/util';
 import { Badge, Box, Text } from '@radix-ui/themes';
 import Link from 'next/link';
+import { Avatar } from '../ui/avatar';
+import AssigneeAvatar from './AssigneeAvatar';
 
 export interface IssueCardProps {
   issue: {
@@ -12,7 +14,17 @@ export interface IssueCardProps {
     priority: number;
     projectid: number;
     statusid: number;
+    assignee: {
+      dateassigned: string;
+      profile: Profile;
+    }[];
   };
+}
+
+interface Profile {
+  id: string;
+  full_name: string;
+  avatar_url: string;
 }
 
 export default function IssueCard({ issue }: IssueCardProps) {
@@ -26,23 +38,32 @@ export default function IssueCard({ issue }: IssueCardProps) {
           <Text size='1' className='text-gray-600'>
             #{issue.id}
           </Text>
-          {issue.priority != 0 && (
-            <Badge color='gray'>{'!'.repeat(issue.priority)}</Badge>
+          {isOverdue(issue.deadline) ? (
+            <span className='text-xs text-red-600'>
+              {dateFormater(issue.deadline)}
+            </span>
+          ) : (
+            <span className='text-xs text-gray-600'>
+              {' '}
+              {dateFormater(issue.deadline)}
+            </span>
           )}
+          {/* {issue.priority != 0 && (
+            <Badge color='gray'>{'!'.repeat(issue.priority)}</Badge>
+          )} */}
         </div>
         <Text size='2' className='pb-2 font-medium  text-gray-800'>
           {issue.title}
         </Text>
 
-        <div className='flex w-full flex-row justify-between gap-2'>
+        <div className='flex w-full flex-row justify-end gap-2'>
           <Text size='1' className='font-semibold text-gray-500 '>
-            No assignee
+            {issue.assignee.map((assignee) => {
+              return (
+                <AssigneeAvatar key={assignee.profile.id} assignee={assignee} />
+              );
+            })}
           </Text>
-          {isOverdue(issue.deadline) ? (
-            <Badge color='red'>{dateFormater(issue.deadline)}</Badge>
-          ) : (
-            <Badge color='gray'> {dateFormater(issue.deadline)}</Badge>
-          )}
         </div>
       </Box>
     </Link>

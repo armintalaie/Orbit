@@ -87,7 +87,7 @@ export default function ProjectLayout({
           </Box>
           <section className='flex flex-col border-gray-100 '>
             <Link
-              href={'/issues'}
+              href={'/issues/me'}
               className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
             >
               <CircleDot className='h-3 w-3 ' />
