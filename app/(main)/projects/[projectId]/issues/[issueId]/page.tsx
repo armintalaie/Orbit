@@ -72,7 +72,7 @@ export default function IssuePage() {
             
               
             </div> */}
-            <div className=' flex flex-grow flex-col bg-gray-50 h-full'>
+            <div className=' flex h-full flex-grow flex-col bg-gray-50'>
               <TextEditor />
             </div>
             <div className='flex h-full w-full flex-col items-center  gap-2 border-t border-gray-100 py-2'>
@@ -98,7 +98,7 @@ export default function IssuePage() {
           <div className='flex h-12 w-full items-center justify-between bg-white  p-4 px-4 '></div>
           <div className='flex flex-grow flex-col justify-between gap-3 divide-y divide-gray-100 border-t border-gray-100 bg-white  py-3'>
             <div className='flex  flex-col  gap-6   p-4 py-3'>
-            <div className='flex h-6 flex-row items-center gap-2'>
+              <div className='flex h-6 flex-row items-center gap-2'>
                 <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
                   Status
                 </p>
@@ -125,14 +125,12 @@ export default function IssuePage() {
                 </p>
               </div>
 
-          
-
               <div className='flex h-6 flex-row items-center gap-2'>
                 <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
                   Started
                 </p>
                 <p className='items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
-                <Badge color='gray'> {dateFormater(issue.datestarted)}</Badge>
+                  <Badge color='gray'> {dateFormater(issue.datestarted)}</Badge>
                 </p>
               </div>
 

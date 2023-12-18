@@ -52,6 +52,7 @@ export const formSchema = z.object({
     to: z.date(),
   }),
   assignee: z.string().nullable(),
+  projectid: z.number(),
 });
 
 export function NewIssue({
@@ -78,7 +79,7 @@ export function NewIssue({
       },
     },
   });
-  async function onSubmit(e) {
+  async function onSubmit() {
     const formVals = form.getValues();
     const issue = {
       title: formVals.title,
@@ -103,7 +104,6 @@ export function NewIssue({
         description: 'something went wrong',
       });
     } else {
-      // const data = await res.json();
       reload();
       toast({
         title: 'Issue created',

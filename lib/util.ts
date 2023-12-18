@@ -3,6 +3,7 @@ import { remark } from 'remark';
 import html from 'remark-html';
 import fs from 'fs';
 import * as matter from 'gray-matter';
+import { GET } from '@/app/api/status/route';
 
 export function dateFormater(date: string) {
   // if within a week, return day of week (e.g. Monday)
@@ -70,36 +71,19 @@ export function isOverdue(date: string) {
 }
 
 export async function getStatus() {
-  const res = await fetch('/api/status');
+  const res = await GET({});
   const data = await res.json();
 
   return data;
 }
 
-export let STATUS;
+export let STATUS: {
+  id: number;
+  label: string;
+}[] = [];
 
 const setStatus = async () => {
   STATUS = await getStatus();
 };
 
 setStatus();
-// export async function getPostData(id) {
-//   const fullPath = path.join(postsDirectory, `${id}.md`);
-//   const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-//   // Use gray-matter to parse the post metadata section
-//   const matterResult = matter(fileContents);
-
-//   // Use remark to convert markdown into HTML string
-//   const processedContent = await remark()
-//     .use(html)
-//     .process(matterResult.content);
-//   const contentHtml = processedContent.toString();
-
-//   // Combine the data with the id and contentHtml
-//   return {
-//     id,
-//     contentHtml,
-//     ...matterResult.data,
-//   };
-// }

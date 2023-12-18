@@ -19,21 +19,23 @@ import {
 } from '@/components/ui/popover';
 
 interface Profile {
-    id: string | undefined;
-    full_name: string;
-    avatar_url: string;
-    username: string;
+  id: string | undefined;
+  full_name: string;
+  avatar_url: string;
+  username: string;
 }
 
 const noAssignee: Profile = {
   id: '-1',
-    full_name: 'Unassigned',
-    avatar_url: '',
-    username: '',
+  full_name: 'Unassigned',
+  avatar_url: '',
+  username: '',
 };
 
 export function AssigneeUpdateField({ issueid, user, projectid }) {
-  const [memberOptions, setMemberOptions] = React.useState<{[key: string]: Profile}>({});
+  const [memberOptions, setMemberOptions] = React.useState<{
+    [key: string]: Profile;
+  }>({});
   const [open, setOpen] = React.useState(false);
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
     user ? user.id : null
@@ -54,7 +56,7 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
       options[noAssignee.id as string] = noAssignee;
       for (const member of members) {
         options[member.id] = {
-          ...member
+          ...member,
         };
       }
       setMemberOptions(options);
@@ -94,10 +96,10 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
               <>
                 <CircleUser className=' h-4 w-4 shrink-0 ' />
                 {/* {selectedStatus} */}
-               
-                {memberOptions && memberOptions[selectedStatus] &&
-                  memberOptions[selectedStatus].full_name}
 
+                {memberOptions &&
+                  memberOptions[selectedStatus] &&
+                  memberOptions[selectedStatus].full_name}
               </>
             ) : (
               <>
