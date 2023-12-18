@@ -66,7 +66,6 @@ export function NewTeam({
     });
 
     if (!res.ok) {
-      console.log(res);
       toast({
         title: 'Team not created',
         description: 'something went wrong',

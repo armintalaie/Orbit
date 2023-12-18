@@ -77,7 +77,6 @@ export function NewTeamMember({
     });
 
     if (!res.ok) {
-      console.log(res);
       toast({
         title: 'Member not added',
         description: 'something went wrong',

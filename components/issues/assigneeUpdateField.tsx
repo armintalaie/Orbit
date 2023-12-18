@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { UserIcon } from 'lucide-react';
+import { CircleUser } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,32 +19,24 @@ import {
 } from '@/components/ui/popover';
 
 interface Profile {
-  memberid: string | undefined;
-  profile: {
+    id: string | undefined;
     full_name: string;
     avatar_url: string;
     username: string;
-  };
-  label: string;
 }
 
 const noAssignee: Profile = {
-  memberid: '-1',
-  profile: {
+  id: '-1',
     full_name: 'Unassigned',
     avatar_url: '',
     username: '',
-  },
-  label: 'Unassigned',
 };
 
-export function AssigneeField({ field, projectid }) {
-  const [memberOptions, setMemberOptions] = React.useState<{
-    [key: string]: Profile;
-  }>({}); // [key: string, value: Profile][
+export function AssigneeUpdateField({ issueid, user, projectid }) {
+  const [memberOptions, setMemberOptions] = React.useState<{[key: string]: Profile}>({});
   const [open, setOpen] = React.useState(false);
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
-    field.value
+    user ? user.id : null
   );
 
   React.useEffect(() => {
@@ -52,20 +44,41 @@ export function AssigneeField({ field, projectid }) {
       const res = await fetch(`/api/projects/${projectid}/members`, {
         next: { revalidate: 10 },
       });
-      const members = await res.json();
+      let members = await res.json();
+      members = members.map((member) => ({
+        ...member.profile,
+        id: member.memberid,
+      }));
+
       const options: { [key: string]: Profile } = {};
-      options[noAssignee.memberid as string] = noAssignee;
+      options[noAssignee.id as string] = noAssignee;
       for (const member of members) {
-        options[member.memberid] = {
-          ...member,
-          label: member.profile.full_name,
+        options[member.id] = {
+          ...member
         };
       }
       setMemberOptions(options);
     }
-
     fetchMembers();
   }, []);
+
+  async function updateAssignee(id) {
+    if (!id) {
+      fetch(`/api/issues/${issueid}/assignees`, {
+        method: 'DELETE',
+      }).then(() => {
+        setSelectedStatus(null);
+      });
+    } else {
+      await fetch(`/api/issues/${issueid}/assignees`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: id }),
+      });
+    }
+  }
 
   return (
     <div className='flex items-center space-x-4'>
@@ -73,18 +86,24 @@ export function AssigneeField({ field, projectid }) {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant='outline'
+            variant='ghost'
             size='sm'
-            className='w-[150px] justify-start'
+            className='justify-start gap-2 p-0 text-xs'
           >
             {selectedStatus ? (
               <>
-                <UserIcon className='mr-2 h-4 w-4 shrink-0' />
-                {/* <selectedStatus.icon className='mr-2 h-4 w-4 shrink-0' /> */}
-                {selectedStatus}
+                <CircleUser className=' h-4 w-4 shrink-0 ' />
+                {/* {selectedStatus} */}
+               
+                {memberOptions && memberOptions[selectedStatus] &&
+                  memberOptions[selectedStatus].full_name}
+
               </>
             ) : (
-              <>+ Set Assignee</>
+              <>
+                <CircleUser className=' h-4 w-4 shrink-0' />
+                <span>Unassigned</span>
+              </>
             )}
           </Button>
         </PopoverTrigger>
@@ -94,8 +113,7 @@ export function AssigneeField({ field, projectid }) {
               if (!value) {
                 return 0;
               }
-
-              return memberOptions[value].profile.full_name
+              return memberOptions[value].full_name
                 .toLowerCase()
                 .indexOf(search.toLowerCase()) !== -1
                 ? 1
@@ -108,21 +126,26 @@ export function AssigneeField({ field, projectid }) {
               <CommandGroup>
                 {Object.entries(memberOptions).map(([key, member]) => (
                   <CommandItem
-                    key={member.memberid}
-                    value={member.memberid}
+                    key={member.id}
+                    value={member.id}
                     onSelect={(value) => {
-                      setSelectedStatus(
-                        memberOptions.find(
-                          (m) => m.profile.memberid === value
-                        ) || null
-                      );
-                      field.onChange(value);
-                      setOpen(false);
+                      const matchId =
+                        Object.keys(memberOptions).find((m) => m === value) ||
+                        null;
+                      if (!matchId) {
+                        setSelectedStatus(null);
+                        return;
+                      }
+                      const found = memberOptions[matchId as string];
+                      setSelectedStatus(found.id);
+                      updateAssignee(found.id).then(() => {
+                        setOpen(false);
+                      });
                     }}
                   >
-                    <UserIcon className='mr-2 h-4 w-4 shrink-0' />
+                    <CircleUser className='mr-2 h-4 w-4 shrink-0' />
 
-                    <span>{member.profile.full_name}</span>
+                    <span>{member.full_name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

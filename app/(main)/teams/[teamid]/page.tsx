@@ -93,12 +93,12 @@ export default function ProjectPage() {
         </div>
 
         <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='flex h-15 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
+          <div className='h-15 flex flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
             <div></div>
             <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
           </div>
           <div className=' flex h-full flex-grow flex-col'>
-            <div className=' flex w-full  flex-col p-2 overflow-hidden  '>
+            <div className=' flex w-full  flex-col overflow-hidden p-2  '>
               {(() => {
                 switch (viewType) {
                   case 'table':
@@ -292,7 +292,6 @@ function MemberAvatar({ member, teamid, reload }) {
   }
 
   async function deleteMember() {
-    console.log(member);
     const res = await fetch(`/api/teams/${teamid}/members/${member.memberid}`, {
       method: 'DELETE',
       headers: {

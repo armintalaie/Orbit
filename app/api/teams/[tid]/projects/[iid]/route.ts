@@ -4,16 +4,14 @@ export async function GET(
   req: Request,
   { params }: { params: { pid: string; iid: string } }
 ) {
-  const { pid, iid } = params;
-  console.log(iid);
+  const { iid } = params;
   const data = await supabase.from('issue').select().eq('id', Number(iid));
-  console.log(data);
   return Response.json(data.data[0]);
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { pid: string } }
+  { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
   await supabase.from('issue').delete().eq('id', Number(iid));
@@ -22,7 +20,7 @@ export async function DELETE(
 
 export async function PUT(
   req: Request,
-  { params }: { params: { pid: string } }
+  { params }: { params: { iid: string } }
 ) {
   try {
     const { iid } = params;

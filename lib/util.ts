@@ -69,14 +69,12 @@ export function isOverdue(date: string) {
   return false;
 }
 
-
 export async function getStatus() {
   const res = await fetch('/api/status');
   const data = await res.json();
 
   return data;
 }
-
 
 export let STATUS;
 

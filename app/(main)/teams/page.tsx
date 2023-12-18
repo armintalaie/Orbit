@@ -46,7 +46,6 @@ export default function TeamPage() {
     <div className='flex min-h-screen w-full flex-col'>
       <div className=' flex h-full w-full flex-1 flex-col '>
         <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-          
           <h1 className='text-md h-full font-medium leading-tight text-gray-700'>
             Teams
           </h1>

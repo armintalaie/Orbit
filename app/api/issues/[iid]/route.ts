@@ -5,8 +5,19 @@ export async function GET(
   { params }: { params: { pid: string; iid: string } }
 ) {
   const { iid } = params;
+  const assignees = await supabase
+    .from('issue_assignee')
+    .select(
+      `user_id,
+  user:user_id ( id, full_name, email, avatar_url )
+  `
+    )
+    .eq('issue_id', Number(iid));
   const data = await supabase.from('issue').select().eq('id', Number(iid));
-  return Response.json(data.data[0]);
+  const issue = data.data[0];
+  const user = assignees.data.map((assignee: any) => assignee.user);
+  issue.assignees = user;
+  return Response.json(issue);
 }
 
 export async function DELETE(
@@ -14,11 +25,11 @@ export async function DELETE(
   { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
-  await supabase.from('issue').delete().eq('id', Number(iid));
+  await supabase.from('issue').delete().eq('id', iid);
   return Response.json({ message: 'success' });
 }
 
-export async function PUT(
+export async function PATCH(
   req: Request,
   { params }: { params: { iid: string } }
 ) {
@@ -27,7 +38,7 @@ export async function PUT(
     const newIssue = await req.json();
     const issue = newIssue;
     const data = await supabase
-      .from('project')
+      .from('issue')
       .update({ ...issue, dateupdated: new Date().toISOString() })
       .eq('id', Number(iid));
     return Response.json(data.data);

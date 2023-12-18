@@ -22,7 +22,6 @@ export function DeadlineField(
     to: field.value.to,
   });
 
-  console.log(field);
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover>

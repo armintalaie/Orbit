@@ -91,7 +91,6 @@ export function NewProject({
     });
 
     if (!res.ok) {
-      console.log(res);
       toast({
         title: 'Project not created',
         description: 'something went wrong',

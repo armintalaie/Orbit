@@ -19,8 +19,6 @@ export async function POST(
 ) {
   try {
     const newIssue = await req.json();
-    console.log(newIssue);
-    console.log(params);
     const issue = issueSchema.parse({
       ...newIssue,
       projectid: Number(params.pid),
@@ -54,7 +52,6 @@ export async function GET(
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
-  console.log(data);
 
   return NextResponse.json(data, {
     headers: { 'Cache-Control': 's-maxage=3, stale-while-revalidate' },

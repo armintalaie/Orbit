@@ -98,7 +98,6 @@ export function NewIssue({
     });
 
     if (!res.ok) {
-      console.log(res);
       toast({
         title: 'Issue not created',
         description: 'something went wrong',
