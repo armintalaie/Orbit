@@ -35,13 +35,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { AssigneeUpdateField } from '@/components/issues/assigneeUpdateField';
 
 export default function IssuePage() {
   const router = useParams();
   const { projectId, issueId } = router;
   const [issue, setIssue] = useState(undefined);
   async function fetchIssue() {
-    const res = await fetch(`/api/projects/${projectId}/issues/${issueId}`);
+    const res = await fetch(`/api/issues/${issueId}`);
     const resultIssue = await res.json();
     setIssue(resultIssue);
   }
@@ -71,7 +72,7 @@ export default function IssuePage() {
             
               
             </div> */}
-            <div className=' flex flex-grow flex-col bg-gray-50 '>
+            <div className=' flex flex-grow flex-col bg-gray-50 h-full'>
               <TextEditor />
             </div>
             <div className='flex h-full w-full flex-col items-center  gap-2 border-t border-gray-100 py-2'>
@@ -97,20 +98,7 @@ export default function IssuePage() {
           <div className='flex h-12 w-full items-center justify-between bg-white  p-4 px-4 '></div>
           <div className='flex flex-grow flex-col justify-between gap-3 divide-y divide-gray-100 border-t border-gray-100 bg-white  py-3'>
             <div className='flex  flex-col  gap-6   p-4 py-3'>
-              <div className='flex h-6 flex-row items-center gap-2'>
-                <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
-                  Deadline
-                </p>
-                <p className='items-center   pr-2 text-xs font-medium leading-tight text-gray-700'>
-                  {isOverdue(issue.deadline) ? (
-                    <Badge color='red'>{dateFormater(issue.deadline)}</Badge>
-                  ) : (
-                    <Badge color='gray'> {dateFormater(issue.deadline)}</Badge>
-                  )}
-                </p>
-              </div>
-
-              <div className='flex h-6 flex-row items-center gap-2'>
+            <div className='flex h-6 flex-row items-center gap-2'>
                 <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
                   Status
                 </p>
@@ -124,13 +112,27 @@ export default function IssuePage() {
                   )}
                 </p>
               </div>
+              <div className='flex h-6 flex-row items-center gap-2'>
+                <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  Deadline
+                </p>
+                <p className='items-center   pr-2 text-xs font-medium leading-tight text-gray-700'>
+                  {isOverdue(issue.deadline) ? (
+                    <Badge color='red'>{dateFormater(issue.deadline)}</Badge>
+                  ) : (
+                    <Badge color='gray'> {dateFormater(issue.deadline)}</Badge>
+                  )}
+                </p>
+              </div>
+
+          
 
               <div className='flex h-6 flex-row items-center gap-2'>
                 <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
                   Started
                 </p>
                 <p className='items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
-                  {dateFormater(issue.datestarted)}
+                <Badge color='gray'> {dateFormater(issue.datestarted)}</Badge>
                 </p>
               </div>
 
@@ -139,7 +141,11 @@ export default function IssuePage() {
                   Assignee
                 </p>
                 <p className='items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
-                  No assignee
+                  <AssigneeUpdateField
+                    issueid={issue.id}
+                    user={issue.assignees ? issue.assignees[0] : null}
+                    projectid={projectId}
+                  />
                 </p>
               </div>
             </div>
@@ -190,7 +196,7 @@ function ProjectOptions({ projectId }: { projectId: string }) {
     });
 
     if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
+    router.push(`/projects/${projectId}`);
   }
 
   async function archiveProject() {

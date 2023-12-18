@@ -1,9 +1,5 @@
 import { supabase } from '@/lib/supabase';
 
-type ResponseData = {
-  message: string;
-};
-
 export async function GET(req: any) {
   const { data, error } = await supabase
     .from('status')

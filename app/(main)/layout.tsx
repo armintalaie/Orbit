@@ -15,7 +15,7 @@ import {
   CommandShortcut,
 } from '@/components/ui/command';
 import Link from 'next/link';
-import { BoxIcon, MenuIcon, PinIcon } from 'lucide-react';
+import { BoxIcon, CircleDot, MenuIcon, PinIcon, Users } from 'lucide-react';
 import { Changelog } from '@/components/changelog';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
 import {
@@ -29,6 +29,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export default function ProjectLayout({
   children,
@@ -63,9 +64,12 @@ export default function ProjectLayout({
         id='sidebar '
         className='hidden w-56 flex-col  border-r border-gray-100 md:flex'
       >
-        <Text size='4' className='h-12 p-4 font-bold'>
-          Orbit
-        </Text>
+        <div className='flex flex-row items-center justify-between '>
+          {/* <Image src='/icon.png' alt='logo'   width={10} height={10}/> */}
+          <Text size='4' className='h-12 p-4 font-bold'>
+            Orbit
+          </Text>
+        </div>
         <div className='flex flex-grow flex-col gap-3 overflow-y-auto border-t border-gray-100 p-2'>
           <CommandMenu setOpen={openSearch} open={search} />
           <Box className='w-full p-1 pb-3'>
@@ -83,6 +87,15 @@ export default function ProjectLayout({
           </Box>
           <section className='flex flex-col border-gray-100 '>
             <Link
+              href={'/issues'}
+              className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
+            >
+              <CircleDot className='h-3 w-3 ' />
+              <span className='flex h-full items-center justify-between pl-2'>
+                My Issues
+              </span>
+            </Link>
+            <Link
               href={'/projects'}
               className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
             >
@@ -96,7 +109,7 @@ export default function ProjectLayout({
               href={'/teams'}
               className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
             >
-              <BoxIcon className='h-3 w-3 ' />
+              <Users className='h-3 w-3 ' />
               <span className='flex h-full items-center justify-between pl-2'>
                 Teams
               </span>
