@@ -62,7 +62,7 @@ export async function GET(req: any) {
 async function notifyUsersDiscord(userId: string, issueId: string) {
   const test_id = '23868b49-aa78-4ff9-bdd5-100e01202910';
   // TODO: remove userId check
-  const discord = (await supabase.from('discord_users').select(`discord_id, profiles(id, email)`).eq('profiles.id', userId === 'testing' ? test_id : userId)).data;
+  const discord = (await supabase.from('discord_users').select(`discord_id, discord_username, profiles(id, email)`).eq('profiles.id', userId === 'testing' ? test_id : userId)).data;
   const user = discord.find((d: any) => d.profiles !== null);
   console.log(user);
   if (user) {
@@ -75,11 +75,10 @@ async function notifyUsersDiscord(userId: string, issueId: string) {
       },
       body: JSON.stringify({
         discord_id: user.discord_id,
-        email: user.profiles.email,
+        discord_username: user.discord_username,
         issue_title: issue.title,
         issue_url: `https://orbit-production.up.railway.app/projects/${issue.projectid}/issues/${issue.id}`,
         issue_id: issue.id,
-        project_id: project.id,
         project_title: project.title,
         project_description: project.description,
       }),
