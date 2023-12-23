@@ -11,11 +11,11 @@ export interface TableViewProps {
     title: string;
     deadline: string;
     priority: number;
-    projectid: number;
+    projectid?: number;
     statusid: number;
   }[];
   reload: () => void;
-  projectId: number;
+  projectId?: number;
 }
 
 type Issue = {
@@ -23,7 +23,7 @@ type Issue = {
   title: string;
   deadline: string;
   priority: number;
-  projectid: number;
+  projectid?: number;
   statusid: number;
 };
 

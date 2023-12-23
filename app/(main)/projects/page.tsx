@@ -1,10 +1,11 @@
 'use client';
 
 import { NewProject } from '@/components/newProject';
-import { dateFormater, isOverdue } from '@/lib/util';
+import { STATUS, dateFormater, isOverdue } from '@/lib/util';
 import { Badge, Table } from '@radix-ui/themes';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { statusIconMapper } from '@/components/statusIconMapper';
 
 interface IProject {
   id: number;
@@ -61,38 +62,59 @@ export default function ProjectPage() {
 
 function TableView({ projects }: { projects: IProject[] }) {
   return (
-    <div className='flex h-full w-full flex-col '>
-      <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
-        <Table.Body>
-          {projects.map((project) => (
-            <Table.Row key={project.id}>
-              <Table.RowHeaderCell>
-                <Link
-                  href={{
-                    pathname: `/projects/${project.id}`,
-                    query: { id: project.id, title: project.title },
-                  }}
-                  shallow={true}
-                  className='underline'
-                >
-                  {project.title}
-                </Link>
-              </Table.RowHeaderCell>
-              <Table.Cell>{project.description}</Table.Cell>
-              <Table.Cell>{project.statusid}</Table.Cell>
-              <Table.Cell>
-                {isOverdue(project.deadline) ? (
-                  <Badge color='red'>{dateFormater(project.deadline)}</Badge>
-                ) : (
-                  <Badge color='gray'> {dateFormater(project.deadline)}</Badge>
-                )}
-              </Table.Cell>
-              <Table.Cell>{project.datecreated}</Table.Cell>
-              <Table.Cell>{project.dateupdated}</Table.Cell>
+    <div className='flex h-full w-full flex-col  '>
+      <div className='flex w-full flex-col items-center justify-between  bg-white  text-xs'>
+        <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
+          <Table.Body className='text-xs  '>
+            <Table.Row className='border-b-gray-100 bg-white text-xs '>
+              <Table.RowHeaderCell>Title</Table.RowHeaderCell>
+              <Table.RowHeaderCell>Description</Table.RowHeaderCell>
+              <Table.RowHeaderCell>Status</Table.RowHeaderCell>
+              <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
             </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
+            {projects.map((project) => (
+              <Table.Row key={project.id}>
+                <Table.RowHeaderCell>
+                  <Link
+                    href={{
+                      pathname: `/projects/${project.id}`,
+                      query: { id: project.id, title: project.title },
+                    }}
+                    shallow={true}
+                    className='underline'
+                  >
+                    {project.title}
+                  </Link>
+                </Table.RowHeaderCell>
+                <Table.Cell>{project.description}</Table.Cell>
+                <Table.Cell>
+                  {STATUS && STATUS[project.statusid] ? (
+                    <div className='flex flex-row items-center gap-2 '>
+                      {statusIconMapper(
+                        STATUS[project.statusid].label,
+                        'h-3 w-3'
+                      )}
+                      {STATUS[project.statusid].label}
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                </Table.Cell>
+                <Table.Cell>
+                  {isOverdue(project.deadline) ? (
+                    <Badge color='red'>{dateFormater(project.deadline)}</Badge>
+                  ) : (
+                    <Badge color='gray'>
+                      {' '}
+                      {dateFormater(project.deadline)}
+                    </Badge>
+                  )}
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </div>
     </div>
   );
 }

@@ -59,7 +59,7 @@ export function NewIssue({
   button,
   reload,
 }: {
-  projectid: number;
+  projectid?: number;
   button?: boolean;
   reload: Function;
 }) {
@@ -90,7 +90,8 @@ export function NewIssue({
       datestarted: formVals.deadline.from.toISOString().split('T')[0],
       assignee: formVals.assignee || null,
     };
-    const res = await fetch(`/api/projects/${projectid}/issues`, {
+    const URL = projectid ? `/api/projects/${projectid}/issues` : `/api/issues`;
+    const res = await fetch(`${URL}`, {
       body: JSON.stringify(issue),
       headers: {
         'Content-Type': 'application/json',
@@ -116,15 +117,16 @@ export function NewIssue({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {button ? (
-          <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
-            New Issue
-          </Button>
-        ) : (
-          <button>
-            <PlusIcon className='h-4 w-4' />
-          </button>
-        )}
+        {projectid &&
+          (button ? (
+            <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
+              New Issue
+            </Button>
+          ) : (
+            <button>
+              <PlusIcon className='h-4 w-4' />
+            </button>
+          ))}
       </DialogTrigger>
       <DialogContent className='sm:max-w-3xl'>
         <DialogHeader>

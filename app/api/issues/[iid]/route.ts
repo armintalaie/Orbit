@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 
 export async function GET(
   req: Request,
-  { params }: { params: { pid: string; iid: string } }
+  { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
   const assignees = await supabase
@@ -37,6 +37,7 @@ export async function PATCH(
     const { iid } = params;
     const newIssue = await req.json();
     const issue = newIssue;
+    console.log(issue);
     const data = await supabase
       .from('issue')
       .update({ ...issue, dateupdated: new Date().toISOString() })

@@ -39,7 +39,7 @@ export default function IssueCard({ issue }: IssueCardProps) {
             #{issue.id}
           </Text>
           {isOverdue(issue.deadline) ? (
-            <span className='text-xs text-red-600'>
+            <span className='text-xs text-red-500'>
               {dateFormater(issue.deadline)}
             </span>
           ) : (
@@ -57,12 +57,19 @@ export default function IssueCard({ issue }: IssueCardProps) {
         </Text>
 
         <div className='flex w-full flex-row justify-end gap-2'>
-          <Text size='1' className='font-semibold text-gray-500 '>
-            {issue.assignee.map((assignee) => {
-              return (
-                <AssigneeAvatar key={assignee.profile.id} assignee={assignee} />
-              );
-            })}
+          <Text size='1' className=' text-2xs text-gray-500'>
+            {issue.assignee.length > 0 ? (
+              issue.assignee.map((assignee) => {
+                return (
+                  <AssigneeAvatar
+                    key={assignee.profile.id}
+                    assignee={assignee}
+                  />
+                );
+              })
+            ) : (
+              <AssigneeAvatar />
+            )}
           </Text>
         </div>
       </Box>

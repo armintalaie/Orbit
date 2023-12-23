@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const issueSchema = z.object({
@@ -35,13 +35,29 @@ export async function POST(
   }
 }
 
-export async function GET(
-  req: Request,
-  { params }: { params: { pid: string } }
-) {
-  const data = await supabase
+export async function GET(req: NextRequest) {
+  let searchParams = JSON.parse(req.nextUrl.searchParams.get('q') || '{}');
+  let query = supabase.from('issue_assignee').select(`issue_id`);
+
+  if (searchParams.length > 0 || true) {
+    if (searchParams.assignee) {
+      query = query.eq('user_id', '09134631-de90-46a4-b5ed-f0b7e9368a6c');
+    }
+  }
+  let { data: issue_ids } = await query;
+  issue_ids = issue_ids.map((issue: any) => issue.issue_id);
+  console.log(issue_ids);
+  const { data, error } = await supabase
     .from('issue')
-    .select()
-    .eq('projectid', Number(params.pid));
-  return NextResponse.json(data.data);
+    .select(
+      `
+      id, title, statusid, deadline, datestarted, projectid, datecreated, dateupdated,
+      assignee: issue_assignee (
+        dateassigned,
+        profile: user_id ( * )
+      )
+    `
+    )
+    .in('id', issue_ids);
+  return NextResponse.json(data);
 }

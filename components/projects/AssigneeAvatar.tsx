@@ -1,8 +1,9 @@
 import { getInitials, getFirstNameAndLastInitial } from '@/lib/util';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { CircleDashedIcon, CircleUser, User2Icon } from 'lucide-react';
 
 type AssigneeAvatarProps = {
-  assignee: {
+  assignee?: {
     profile: {
       id: string;
 
@@ -13,12 +14,22 @@ type AssigneeAvatarProps = {
 };
 
 export default function AssigneeAvatar({ assignee }: AssigneeAvatarProps) {
+  if (!assignee) {
+    return (
+      <div className='flex  items-center gap-1  overflow-hidden'>
+        <p className='text-[10px]'></p>
+        <Avatar className='flex  h-5 w-5 items-center gap-4 '>
+          <CircleUser className='h-5 w-5' />
+        </Avatar>
+      </div>
+    );
+  }
   return (
     <div
       key={assignee.profile.id}
       className='flex  items-center gap-1  overflow-hidden'
     >
-      <p className='text-[11px]'>
+      <p className='text-[10px]'>
         {getFirstNameAndLastInitial(assignee.profile.full_name)}
       </p>
       <Avatar className='flex  h-5 w-5 items-center gap-4 '>

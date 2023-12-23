@@ -15,6 +15,12 @@ export async function GET(
     throw projectError;
   }
 
+  if (projectData.teamid === null) {
+    return NextResponse.json([], {
+      headers: { 'Cache-Control': 's-maxage=3, stale-while-revalidate' },
+    });
+  }
+
   const { data: teamData, error: teamError } = await supabase
     .from('team_member')
     .select(
@@ -31,7 +37,8 @@ export async function GET(
     return NextResponse.json({ error: teamError.message }, { status: 400 });
   }
 
-  return NextResponse.json(teamData, {
+  let results = teamData === null ? [] : teamData;
+  return NextResponse.json(results, {
     headers: { 'Cache-Control': 's-maxage=3, stale-while-revalidate' },
   });
 }

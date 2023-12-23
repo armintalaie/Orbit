@@ -21,8 +21,6 @@ import { statusIconMapper } from '@/components/statusIconMapper';
 export function StatusField(field: any) {
   const [open, setOpen] = useState(false);
   const statuses = STATUS || [];
-  console.log(statuses);
-  console.log(field.value, typeof field.value);
   const [selectedStatus, setSelectedStatus] = useState<any>(
     statuses.find((status) => status.id === field.value)
   );

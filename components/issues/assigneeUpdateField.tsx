@@ -121,7 +121,7 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
                 : 0;
             }}
           >
-            <CommandInput placeholder='Change status...' />
+            <CommandInput placeholder='Change Assignee...' />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
