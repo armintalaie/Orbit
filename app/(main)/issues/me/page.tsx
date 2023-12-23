@@ -1,5 +1,4 @@
 'use client';
-import { NewIssue } from '@/components/newIssue';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 
 export default function MyIssuePage() {

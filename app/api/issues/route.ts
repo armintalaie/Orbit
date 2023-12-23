@@ -39,15 +39,15 @@ export async function GET(req: NextRequest) {
   let searchParams = JSON.parse(req.nextUrl.searchParams.get('q') || '{}');
   let query = supabase.from('issue_assignee').select(`issue_id`);
 
-  if (searchParams.length > 0 || true) {
+  if (searchParams.length > 0) {
     if (searchParams.assignee) {
-      query = query.eq('user_id', '09134631-de90-46a4-b5ed-f0b7e9368a6c');
+      query = query.eq('user_id', searchParams.assignee);
     }
   }
   let { data: issue_ids } = await query;
+  issue_ids = issue_ids || [];
   issue_ids = issue_ids.map((issue: any) => issue.issue_id);
-  console.log(issue_ids);
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('issue')
     .select(
       `

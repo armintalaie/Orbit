@@ -17,6 +17,8 @@ import {
 import KanbanView from '@/components/projects/KanbanBoard';
 import TableView from '@/components/projects/tableView';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import IssuesTimelineView from '../issues/IssueTimelineView';
+import { GanttChartSquare } from 'lucide-react';
 
 interface ProjectPageProps {
   pid?: number;
@@ -58,10 +60,12 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
         <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
       </div>
       <div className=' flex h-full flex-grow flex-col'>
-        {viewType === 'table' ? (
+        {viewType === 'board' ? (
+          <KanbanView issues={issues} reload={reload} projectId={projectId} />
+        ) : viewType === 'table' ? (
           <TableView issues={issues} reload={reload} projectId={projectId} />
         ) : (
-          <KanbanView issues={issues} reload={reload} projectId={projectId} />
+          <IssuesTimelineView issues={issues} projectId={projectId} />
         )}
       </div>
     </div>
@@ -101,6 +105,16 @@ const ToggleGroupDemo = ({
         onClick={() => setViewType('board')}
       >
         <BoxIcon />
+      </ToggleGroup.Item>
+      <ToggleGroup.Item
+        className={`flex w-9 items-center justify-center p-2 ${
+          viewType === 'timeline' ? 'bg-gray-100' : 'bg-inherit'
+        }`}
+        value='timeline'
+        aria-label='Center aligned'
+        onClick={() => setViewType('timeline')}
+      >
+        <GanttChartSquare className='stroke-1' />
       </ToggleGroup.Item>
     </ToggleGroup.Root>
   );

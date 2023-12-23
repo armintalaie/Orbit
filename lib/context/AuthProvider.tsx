@@ -1,6 +1,9 @@
 import { Session } from '@supabase/supabase-js';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import './styles.css';
+
+const LoadingFallback = () => <div className='loading-fallback'></div>;
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -30,11 +33,13 @@ export default function AuthContextProvider({
   }, []);
 
   if (!session) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
   return (
-    <UserSessionContext.Provider value={session}>
-      {children}
-    </UserSessionContext.Provider>
+    <Suspense fallback={<LoadingFallback />}>
+      <UserSessionContext.Provider value={session}>
+        {children}
+      </UserSessionContext.Provider>
+    </Suspense>
   );
 }

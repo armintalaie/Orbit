@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const teamSchema = z.object({
@@ -18,7 +18,18 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
-  const data = await supabase.from('team').select();
+export async function GET(req: NextRequest) {
+  let searchParams = JSON.parse(req.nextUrl.searchParams.get('q') || '{}');
+  let query = supabase.from('team_member').select(`teamid`);
+
+  if (searchParams.length > 0) {
+    if (searchParams.member) {
+      query = query.eq('memberid', searchParams.member);
+    }
+  }
+  let { data: teams } = await query;
+  teams = teams || [];
+  const teamIds = teams.map((team: any) => team.teamid);
+  const data = await supabase.from('team').select().in('id', teamIds);
   return NextResponse.json(data.data);
 }

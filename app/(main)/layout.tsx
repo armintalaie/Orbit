@@ -1,7 +1,7 @@
 'use client';
 import { FeedbackButton } from '@/components/feedback';
 import { Box, Text } from '@radix-ui/themes';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   CommandDialog,
   CommandEmpty,
@@ -9,12 +9,31 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import Link from 'next/link';
-import { BoxIcon, CircleDot, MenuIcon, Users } from 'lucide-react';
+import {
+  BoxIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  CircleDot,
+  FolderClosed,
+  MenuIcon,
+  Users,
+  Users2Icon,
+} from 'lucide-react';
 import { Changelog } from '@/components/changelog';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
-import AuthContextProvider from '@/lib/context/AuthProvider';
+import AuthContextProvider, {
+  UserSessionContext,
+} from '@/lib/context/AuthProvider';
 import { SettingsModalButton } from '@/components/settings/SettingsModal';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
+import { CaretSortIcon } from '@radix-ui/react-icons';
+
+import { Button } from '@/components/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 export default function ProjectLayout({
   children,
@@ -26,8 +45,8 @@ export default function ProjectLayout({
       <div className='flex h-screen w-screen flex-row'>
         <SideBarContent className={'hidden w-56'} />
 
-        <div className='flex flex-grow flex-col overflow-hidden'>
-          <div className='h-15 flex w-full items-center justify-between  border-b border-gray-100  '>
+        <div className='flex flex-grow  flex-col-reverse overflow-hidden md:flex-col'>
+          <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 md:border-b md:border-t-0  '>
             <NextBreadcrumb
               homeElement={
                 <MenuDialog>
@@ -55,6 +74,27 @@ function SideBarContent({
   showLogo?: boolean;
 }) {
   const [search, openSearch] = useState(false);
+  const [userTeams, setUserTeams] = useState([]);
+  const userSession = useContext(UserSessionContext);
+
+  async function fetchTeams() {
+    const member = userSession?.user?.id;
+    const res = await fetch(
+      `/api/teams?q=${encodeURIComponent(JSON.stringify({ member: member }))}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const data = await res.json();
+    setUserTeams(data);
+  }
+
+  useEffect(() => {
+    fetchTeams();
+  }, []);
   return (
     <section
       id='sidebar '
@@ -102,15 +142,7 @@ function SideBarContent({
             </span>
           </Link>
 
-          <Link
-            href={'/teams'}
-            className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
-          >
-            <Users className='h-3 w-3 ' />
-            <span className='flex h-full items-center justify-between pl-2'>
-              Teams
-            </span>
-          </Link>
+          <TeamsSidebarSection teams={userTeams} />
         </section>
       </div>
       <div className='flex flex-col  gap-2 overflow-y-auto p-2'>
@@ -161,5 +193,54 @@ function MenuDialog({ children }: { children?: React.ReactNode }) {
       </DrawerTrigger>
       <DrawerContent>{children}</DrawerContent>
     </Drawer>
+  );
+}
+
+function TeamsSidebarSection({ teams }: { teams: any[] }) {
+  const [isOpen, setIsOpen] = React.useState(true);
+
+  return (
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      className='w-full p-0  '
+    >
+      <div className='flex items-center justify-between '>
+        <Link
+          href={'/teams'}
+          className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
+        >
+          <FolderClosed className='h-3 w-3 ' />
+          <span className='flex h-full items-center justify-between pl-2'>
+            Teams
+          </span>
+        </Link>
+
+        <CollapsibleTrigger asChild>
+          <Button variant='ghost' size='sm'>
+            {isOpen ? (
+              <ChevronDownIcon className='h-4 w-4 text-gray-600' />
+            ) : (
+              <ChevronRightIcon className='h-4 w-4 text-gray-600 ' />
+            )}
+          </Button>
+        </CollapsibleTrigger>
+      </div>
+
+      <CollapsibleContent className='space-y-2 px-2 '>
+        {teams.map((team, index) => (
+          <Link
+            href={`/teams/${team.id}`}
+            key={index}
+            className=' flex h-fit w-full items-center  px-2 pb-1 text-left text-xs text-gray-700'
+          >
+            <Users2Icon className='h-3 w-3 ' />
+            <span className='flex h-full items-center justify-between pl-2'>
+              {team.name}
+            </span>
+          </Link>
+        ))}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
