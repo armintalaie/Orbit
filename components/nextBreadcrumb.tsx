@@ -15,7 +15,6 @@ import {
 
 type TBreadCrumbProps = {
   homeElement: ReactNode;
-  separator: ReactNode;
   containerClasses?: string;
   listClasses?: string;
   activeClasses?: string;

@@ -19,21 +19,23 @@ import {
 } from '@/components/ui/popover';
 
 interface Profile {
-    id: string | undefined;
-    full_name: string;
-    avatar_url: string;
-    username: string;
+  id: string | undefined;
+  full_name: string;
+  avatar_url: string;
+  username: string;
 }
 
 const noAssignee: Profile = {
   id: '-1',
-    full_name: 'Unassigned',
-    avatar_url: '',
-    username: '',
+  full_name: 'Unassigned',
+  avatar_url: '',
+  username: '',
 };
 
 export function AssigneeUpdateField({ issueid, user, projectid }) {
-  const [memberOptions, setMemberOptions] = React.useState<{[key: string]: Profile}>({});
+  const [memberOptions, setMemberOptions] = React.useState<{
+    [key: string]: Profile;
+  }>({});
   const [open, setOpen] = React.useState(false);
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
     user ? user.id : null
@@ -45,16 +47,18 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
         next: { revalidate: 10 },
       });
       let members = await res.json();
-      members = members.map((member) => ({
-        ...member.profile,
-        id: member.memberid,
-      }));
+      members = members.map(
+        (member: { profile: Profile; memberid: string }) => ({
+          ...member.profile,
+          id: member.memberid,
+        })
+      );
 
       const options: { [key: string]: Profile } = {};
       options[noAssignee.id as string] = noAssignee;
       for (const member of members) {
         options[member.id] = {
-          ...member
+          ...member,
         };
       }
       setMemberOptions(options);
@@ -82,7 +86,6 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
 
   return (
     <div className='flex items-center space-x-4'>
-      {/* <p className="text-sm text-muted-foreground">Status</p> */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -93,11 +96,9 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
             {selectedStatus ? (
               <>
                 <CircleUser className=' h-4 w-4 shrink-0 ' />
-                {/* {selectedStatus} */}
-               
-                {memberOptions && memberOptions[selectedStatus] &&
+                {memberOptions &&
+                  memberOptions[selectedStatus] &&
                   memberOptions[selectedStatus].full_name}
-
               </>
             ) : (
               <>
@@ -120,7 +121,7 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
                 : 0;
             }}
           >
-            <CommandInput placeholder='Change status...' />
+            <CommandInput placeholder='Change Assignee...' />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>

@@ -24,9 +24,27 @@ export async function POST(
       projectid: Number(params.pid),
     });
 
-    const { data, error } = await supabase.from('issue').insert(issue);
+    const { data, error } = await supabase.from('issue').insert(issue).select();
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    if (newIssue.assignee) {
+      const { data: assignee, error: assigneeError } = await supabase
+        .from('issue_assignee')
+        .insert([
+          {
+            issue_id: data[0].id,
+            user_id: newIssue.assignee,
+          },
+        ]);
+      if (assigneeError) {
+        return NextResponse.json(
+          { error: assigneeError.message },
+          { status: 400 }
+        );
+      }
+      data[0].assignee = assignee;
     }
     return NextResponse.json(data);
   } catch (error) {
@@ -39,9 +57,18 @@ export async function GET(
   req: Request,
   { params }: { params: { pid: string } }
 ) {
-  const data = await supabase
+  const { data, error } = await supabase
     .from('issue')
-    .select()
+    .select(
+      `
+      id, title, statusid, deadline, datestarted, projectid, datecreated, dateupdated,
+      assignee: issue_assignee (
+        dateassigned,
+        profile: user_id ( * )
+      )
+    `
+    )
     .eq('projectid', Number(params.pid));
-  return NextResponse.json(data.data);
+  console.log(error);
+  return NextResponse.json(data);
 }

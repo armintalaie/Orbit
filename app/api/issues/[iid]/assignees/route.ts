@@ -26,13 +26,11 @@ export async function PUT(
       .delete()
       // .neq('user_id', user_id)
       .eq('issue_id', iid);
-    const data = await supabase
-      .from('issue_assignee')
-      .insert({
-        dateassigned: new Date().toISOString(),
-        user_id: user_id,
-        issue_id: Number(iid),
-      });
+    const data = await supabase.from('issue_assignee').insert({
+      dateassigned: new Date().toISOString(),
+      user_id: user_id,
+      issue_id: Number(iid),
+    });
 
     return Response.json(data.data);
   } catch (error) {
@@ -50,11 +48,6 @@ export async function POST(req: any) {
   return Response.json(data);
 }
 
-
-
-
 export async function GET(req: any) {
-   
-    return Response.json("data");
-  }
-  
+  return Response.json('data');
+}

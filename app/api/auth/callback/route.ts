@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
 
   if (code) {
     await supabase.auth.exchangeCodeForSession(code);
+    console.log('redirecting to /teams');
   }
 
   return NextResponse.redirect(new URL('/teams', req.url));

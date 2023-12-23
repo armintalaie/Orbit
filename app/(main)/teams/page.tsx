@@ -24,7 +24,7 @@ import TeamGrid from '@/components/teams/teamGrid';
 export default function TeamPage() {
   const [teams, setTeams] = useState([]);
   const viewTypes = ['board', 'table'];
-  const [viewType, setViewType] = useState(viewTypes[0]);
+  const [viewType, setViewType] = useState(viewTypes[1]);
 
   async function reload() {
     const res = await fetch(`/api/teams`);

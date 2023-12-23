@@ -1,8 +1,7 @@
 'use client';
 
-import * as React from 'react';
-import { UserIcon } from 'lucide-react';
-
+import { useEffect, useState } from 'react';
+import { CircleUser } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -19,72 +18,76 @@ import {
 } from '@/components/ui/popover';
 
 interface Profile {
-  memberid: string | undefined;
-  profile: {
-    full_name: string;
-    avatar_url: string;
-    username: string;
-  };
-  label: string;
+  id: string | undefined;
+  full_name: string;
+  avatar_url: string;
+  username: string;
 }
 
 const noAssignee: Profile = {
-  memberid: '-1',
-  profile: {
-    full_name: 'Unassigned',
-    avatar_url: '',
-    username: '',
-  },
-  label: 'Unassigned',
+  id: '-1',
+  full_name: 'Unassigned',
+  avatar_url: '',
+  username: '',
 };
 
-export function AssigneeField({ field, projectid }) {
-  const [memberOptions, setMemberOptions] = React.useState<{
+export function AssigneeField({
+  field,
+  projectid,
+}: {
+  field: any;
+  projectid: number;
+}) {
+  const [memberOptions, setMemberOptions] = useState<{
     [key: string]: Profile;
-  }>({}); // [key: string, value: Profile][
-  const [open, setOpen] = React.useState(false);
-  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
+  }>({});
+  const [open, setOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(
     field.value
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function fetchMembers() {
       const res = await fetch(`/api/projects/${projectid}/members`, {
         next: { revalidate: 10 },
       });
-      const members = await res.json();
+      let members = await res.json();
+      members = members.map(
+        (member: { profile: Profile; memberid: string }) => ({
+          ...member.profile,
+          id: member.memberid,
+        })
+      );
+
       const options: { [key: string]: Profile } = {};
-      options[noAssignee.memberid as string] = noAssignee;
+      options[noAssignee.id as string] = noAssignee;
       for (const member of members) {
-        options[member.memberid] = {
+        options[member.id] = {
           ...member,
-          label: member.profile.full_name,
         };
       }
       setMemberOptions(options);
     }
-
     fetchMembers();
   }, []);
-
   return (
     <div className='flex items-center space-x-4'>
-      {/* <p className="text-sm text-muted-foreground">Status</p> */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant='outline'
             size='sm'
-            className='w-[150px] justify-start'
+            className='line-clamp-1 flex w-[250px] justify-start overflow-hidden text-xs'
           >
-            {selectedStatus ? (
+            {selectedStatus && selectedStatus !== noAssignee.id ? (
               <>
-                <UserIcon className='mr-2 h-4 w-4 shrink-0' />
-                {/* <selectedStatus.icon className='mr-2 h-4 w-4 shrink-0' /> */}
-                {selectedStatus}
+                <CircleUser className='mr-2 h-4 w-4 shrink-0' />
+                {memberOptions &&
+                  memberOptions[selectedStatus] &&
+                  memberOptions[selectedStatus].full_name}
               </>
             ) : (
-              <>+ Set Assignee</>
+              <div className=' text-xs'>+ Set Assignee</div>
             )}
           </Button>
         </PopoverTrigger>
@@ -94,35 +97,44 @@ export function AssigneeField({ field, projectid }) {
               if (!value) {
                 return 0;
               }
-
-              return memberOptions[value].profile.full_name
+              return memberOptions[value].full_name
                 .toLowerCase()
                 .indexOf(search.toLowerCase()) !== -1
                 ? 1
                 : 0;
             }}
           >
-            <CommandInput placeholder='Change status...' />
+            <CommandInput placeholder='Change assignee...' />
             <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandEmpty>No member found.</CommandEmpty>
               <CommandGroup>
                 {Object.entries(memberOptions).map(([key, member]) => (
                   <CommandItem
-                    key={member.memberid}
-                    value={member.memberid}
+                    key={member.id}
+                    value={member.id}
                     onSelect={(value) => {
-                      setSelectedStatus(
-                        memberOptions.find(
-                          (m) => m.profile.memberid === value
-                        ) || null
-                      );
-                      field.onChange(value);
+                      const matchId =
+                        Object.keys(memberOptions).find((m) => m === value) ||
+                        null;
+                      if (
+                        !matchId ||
+                        !memberOptions[matchId as string] ||
+                        !memberOptions[matchId as string].id
+                      ) {
+                        setSelectedStatus(null);
+                        field.onChange(null);
+                      } else {
+                        const found = memberOptions[matchId as string];
+                        field.onChange(found.id);
+                        setSelectedStatus(found.id || null);
+                      }
+
                       setOpen(false);
                     }}
                   >
-                    <UserIcon className='mr-2 h-4 w-4 shrink-0' />
+                    <CircleUser className='mr-2 h-4 w-4 shrink-0' />
 
-                    <span>{member.profile.full_name}</span>
+                    <span>{member.full_name}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
