@@ -23,14 +23,14 @@ export function DeadlineField(
   });
 
   return (
-    <div className={cn('grid gap-2', className)}>
+    <div className={cn('grid items-center', className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id='date'
             variant={'outline'}
             className={cn(
-              'w-[300px] justify-start text-left text-xs font-normal',
+              ' h-8 w-full justify-start text-left text-2xs text-xs font-normal ',
               !date && 'text-muted-foreground'
             )}
           >

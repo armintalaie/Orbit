@@ -44,9 +44,9 @@ export default function TeamPage() {
   return (
     <PageWrapper>
       <PageWrapper.Header>
-        <div className='flex flex-row items-center gap-2'>
+        <div className='flex w-full flex-row items-center justify-between gap-2'>
           <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
-            Teams
+            Your Teams
           </h1>
           <NewTeam button={true} reload={reload} />
         </div>

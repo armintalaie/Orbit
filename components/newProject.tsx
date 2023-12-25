@@ -96,7 +96,6 @@ export function NewProject({
         description: 'something went wrong',
       });
     } else {
-      // const data = await res.json();
       reload();
       toast({
         title: 'Project created',
@@ -119,19 +118,22 @@ export function NewProject({
           </button>
         )}
       </DialogTrigger>
-      <DialogContent className='sm:max-w-3xl'>
+      <DialogContent className='w-md overflow-hidden'>
         <DialogHeader>
           <DialogTitle>New Project</DialogTitle>
           <DialogDescription>Create a new project</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className='w-full space-y-8 overflow-hidden px-2 '
+          >
             <FormField
               control={form.control}
               name='title'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='w-full'>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input placeholder='next big thing' {...field} />
@@ -152,7 +154,7 @@ export function NewProject({
                     <Textarea
                       placeholder='Type your message here.'
                       id='message-2'
-                      className='h-60'
+                      className='h-30 w-full resize-none'
                       {...field}
                     />
                   </FormControl>
@@ -162,13 +164,12 @@ export function NewProject({
               )}
             />
 
-            <div className='flex flex-row space-x-4'>
+            <div className='flex flex-row items-center space-x-4'>
               <FormField
                 control={form.control}
                 name='statusid'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
                     <FormControl>
                       <StatusField {...field} />
                     </FormControl>
@@ -183,7 +184,6 @@ export function NewProject({
                 name='deadline'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Deadline</FormLabel>
                     <FormControl>
                       <DeadlineField field={field} />
                     </FormControl>
@@ -193,7 +193,9 @@ export function NewProject({
               />
             </div>
 
-            <Button type='submit'>Create</Button>
+            <Button type='submit' className='w-full'>
+              Create
+            </Button>
           </form>
         </Form>
 

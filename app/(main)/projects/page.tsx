@@ -41,9 +41,9 @@ export default function ProjectPage() {
   return (
     <PageWrapper>
       <PageWrapper.Header>
-        <div className='flex flex-row items-center gap-2'>
+        <div className=' flex w-full flex-row items-center justify-between gap-2'>
           <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
-            Projects
+            Your Projects
           </h1>
           <NewProject button={true} reload={reload} />
         </div>
@@ -52,7 +52,7 @@ export default function ProjectPage() {
       <PageWrapper.SubHeader>
         <div className='flex flex-row items-center gap-2'>
           <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'>
-            Projects
+            These are all the projects you have access to
           </p>
         </div>
       </PageWrapper.SubHeader>
