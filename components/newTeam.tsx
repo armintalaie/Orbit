@@ -15,13 +15,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   FormField,
   FormItem,
   FormLabel,
   FormControl,
-  FormDescription,
   FormMessage,
   Form,
 } from './ui/form';
@@ -30,6 +29,7 @@ import * as z from 'zod';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
 
 export const teamSchema = z.object({
   name: z.string(),
@@ -47,6 +47,7 @@ export function NewTeam({
 }) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  const userSession = useContext(UserSessionContext);
   const form = useForm<z.infer<typeof teamSchema>>({
     resolver: zodResolver(teamSchema),
   });
@@ -61,6 +62,7 @@ export function NewTeam({
       body: JSON.stringify(team),
       headers: {
         'Content-Type': 'application/json',
+        Authorization: userSession?.access_token as string,
       },
       method: 'POST',
     });
@@ -74,7 +76,7 @@ export function NewTeam({
       reload();
       toast({
         title: 'Team created',
-        description: `Project successfully created`,
+        description: `Team successfully created`,
       });
       setOpen(false);
     }
@@ -104,8 +106,8 @@ export function NewTeam({
             <InfoCircledIcon className='h-4 w-4' />
             <AlertTitle>Heads up!</AlertTitle>
             <AlertDescription>
-              By creating a new team, you will not be the member of the team.
-              You can add more members later on the team page.
+              By creating a new team, you will be a member of the team. You can
+              add more members later on the team page.
             </AlertDescription>
           </Alert>
         </DialogHeader>

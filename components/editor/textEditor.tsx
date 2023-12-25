@@ -17,48 +17,23 @@ import TextAlign from '@tiptap/extension-text-align';
 import Highlight from '@tiptap/extension-highlight';
 import { Markdown } from 'tiptap-markdown';
 import Blockquote from '@tiptap/extension-blockquote';
-
 import {
   FontBoldIcon,
   FontItalicIcon,
   ListBulletIcon,
   UnderlineIcon,
 } from '@radix-ui/react-icons';
-
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   Code2Icon,
   CodeIcon,
-  CodesandboxIcon,
   HighlighterIcon,
   ListOrderedIcon,
-  Quote,
-  QuoteIcon,
   StrikethroughIcon,
   TextQuote,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 
-const cont = `## Issue Title: Website Backend API Redesign
-
-### Description
-We need to redesign our website's backend API to improve performance, security, and maintainability. The current API has several issues that are hindering our development speed and the overall performance of our website.
-
-### Tasks
-- Analyze the current API and identify areas for improvement
-- Design a new architecture for the API
-- Implement the new API design
-- Test the new API to ensure it meets performance and security standards
-- Update the website to use the new API
-- Document the new API
-
-### Acceptance Criteria
-- The new API should be faster and more secure than the current API
-- The new API should be easy to maintain and extend
-- The website should function correctly with the new API
-
-### Additional Information
-Please coordinate with the frontend team to ensure the new API meets their needs. Also, make sure to follow best practices for API design and implementation.`;
 const CustomTableCell = TableCell.extend({
   addAttributes() {
     return {

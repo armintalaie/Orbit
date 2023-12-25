@@ -34,7 +34,7 @@ const NextBreadcrumb = ({
   return (
     <div>
       <ul className={containerClasses}>
-        <li className={`${listClasses} flex md:hidden`}>{homeElement}</li>
+        <li className={`${listClasses} flex lg:hidden`}>{homeElement}</li>
         {pathNames.length > 0 && (
           <ChevronLeft className='h-4 w-4 text-gray-500' />
         )}
@@ -50,7 +50,9 @@ const NextBreadcrumb = ({
               <li
                 className={`${itemClasses} text-sm font-medium text-gray-600`}
               >
-                <Link href={href}>{itemLink}</Link>
+                <Link href={href} shallow={true}>
+                  {itemLink}
+                </Link>
               </li>
               {/* {index} */}
               {pathNames.length > index + 2 && (

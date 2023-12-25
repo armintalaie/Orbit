@@ -1,40 +1,39 @@
 'use client';
 
-import { NewProject } from '@/components/newProject';
-import { CardHeader, CardContent } from '@/components/ui/card';
-import { dateFormater, isOverdue } from '@/lib/util';
-import { TableIcon, BoxIcon, CaretDownIcon } from '@radix-ui/react-icons';
-import {
-  Badge,
-  Button,
-  Heading,
-  Box,
-  Text,
-  ContextMenu,
-  Table,
-  DropdownMenu,
-} from '@radix-ui/themes';
+import { TableIcon, BoxIcon } from '@radix-ui/react-icons';
+import { Table, DropdownMenu } from '@radix-ui/themes';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FilterIcon } from 'lucide-react';
 import Link from 'next/link';
 import { NewTeam } from '@/components/newTeam';
 import TeamGrid from '@/components/teams/teamGrid';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
+import PageWrapper from '@/components/layouts/pageWrapper';
 
 export default function TeamPage() {
   const [teams, setTeams] = useState([]);
   const viewTypes = ['board', 'table'];
   const [viewType, setViewType] = useState(viewTypes[1]);
+  const userSession = useContext(UserSessionContext);
 
   async function reload() {
-    const res = await fetch(`/api/teams`);
+    const res = await fetch(`/api/teams`, {
+      headers: {
+        Authorization: `Bearer ${userSession?.access_token}`,
+      },
+    });
     const team = await res.json();
     setTeams(team);
   }
 
   useEffect(() => {
     async function fetchProjects() {
-      const res = await fetch(`/api/teams`);
+      const res = await fetch(`/api/teams`, {
+        headers: {
+          Authorization: `${userSession?.access_token}`,
+        },
+      });
       const teams = await res.json();
       setTeams(teams);
     }
@@ -43,41 +42,38 @@ export default function TeamPage() {
   }, []);
 
   return (
-    <div className='flex min-h-screen w-full flex-col'>
-      <div className=' flex h-full w-full flex-1 flex-col '>
-        <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-          <h1 className='text-md h-full font-medium leading-tight text-gray-700'>
+    <PageWrapper>
+      <PageWrapper.Header>
+        <div className='flex flex-row items-center gap-2'>
+          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
             Teams
           </h1>
-          <div className='flex h-full items-center justify-center gap-2'>
-            <NewTeam button={true} reload={reload} />
-          </div>
+          <NewTeam button={true} reload={reload} />
         </div>
+      </PageWrapper.Header>
 
-        <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='h-15 flex flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
-            {/* <FilterGroup /> */}
-            <div></div>
+      <PageWrapper.SubHeader>
+        {/* <FilterGroup /> */}
+        <div></div>
 
-            <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
-          </div>
-          <div className=' flex h-full flex-grow flex-col'>
-            {viewType === 'board' ? (
-              <TeamGrid teams={teams} />
-            ) : (
-              <TableView teams={teams} />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+        <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
+      </PageWrapper.SubHeader>
+
+      <PageWrapper.Content>
+        {viewType === 'board' ? (
+          <TeamGrid teams={teams} />
+        ) : (
+          <TableView teams={teams} />
+        )}
+      </PageWrapper.Content>
+    </PageWrapper>
   );
 }
 
 function TableView({ teams }) {
   return (
     <div className='flex h-full w-full flex-col '>
-      <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
+      <Table.Root className='w-full  overflow-hidden border-gray-200 bg-white shadow-none dark:border-neutral-800 dark:bg-neutral-900'>
         <Table.Body>
           {teams.map((team) => (
             <Table.Row key={team.id}>
@@ -90,17 +86,6 @@ function TableView({ teams }) {
                   {team.name}
                 </Link>
               </Table.RowHeaderCell>
-              {/* <Table.Cell>{project.description}</Table.Cell>
-              <Table.Cell>{project.status}</Table.Cell>
-              <Table.Cell>
-                {isOverdue(project.deadline) ? (
-                  <Badge color='red'>{dateFormater(project.deadline)}</Badge>
-                ) : (
-                  <Badge color='gray'> {dateFormater(project.deadline)}</Badge>
-                )}
-              </Table.Cell>
-              <Table.Cell>{project.dateCreated}</Table.Cell>
-              <Table.Cell>{project.dateUpdated}</Table.Cell> */}
             </Table.Row>
           ))}
         </Table.Body>

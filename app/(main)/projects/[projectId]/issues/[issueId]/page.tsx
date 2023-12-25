@@ -3,12 +3,16 @@
 import { STATUS, dateFormater, isOverdue } from '@/lib/util';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Badge } from '@radix-ui/themes';
-// import * as ToggleGroup from '@radix-ui/react-toggle-group';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ConstructionIcon } from 'lucide-react';
+import {
+  ConstructionIcon,
+  FigmaIcon,
+  GithubIcon,
+  Link2,
+  YoutubeIcon,
+} from 'lucide-react';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -49,6 +53,7 @@ export default function IssuePage() {
   const router = useParams();
   const { projectId, issueId } = router;
   const [issue, setIssue] = useState(undefined);
+
   async function fetchIssue() {
     const res = await fetch(`/api/issues/${issueId}`);
     const resultIssue = await res.json();
@@ -80,22 +85,26 @@ export default function IssuePage() {
     fetchIssue();
   }, []);
 
-  if (!issue)
-    return (
-      <div className='flex items-center space-x-4'>
-        {/* <Skeleton className="h-12 w-12 rounded-full" />
-  <div className="space-y-2">
-    <Skeleton className="h-4 w-[250px]" />
-    <Skeleton className="h-4 w-[200px]" />
-  </div> */}
-      </div>
-    );
+  function PlatformIconMapper(platform: string) {
+    switch (platform) {
+      case 'github.com':
+        return <GithubIcon className='h-4 w-4' />;
+      case 'figma.com':
+        return <FigmaIcon className='h-4 w-4' />;
+      case 'youtube.com':
+        return <YoutubeIcon className='h-4 w-4' />;
+      default:
+        return <Link2 className='h-4 w-4' />;
+    }
+  }
+
+  if (!issue) return <div className='flex items-center space-x-4'></div>;
 
   return (
     <div className='flex h-full w-full flex-col'>
       {/* <div className='flex h-full w-full'> */}
       <ResizablePanelGroup direction='horizontal'>
-        <ResizablePanel>
+        <ResizablePanel minSize={30} collapsedSize={1} collapsible={true}>
           <div className=' flex h-full w-full flex-1 flex-col '>
             <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
               <div className='flex flex-row items-center gap-2'>
@@ -238,6 +247,34 @@ export default function IssuePage() {
                     )}
                   </p>
                 </div>
+              </div>
+
+              <div className='flex  flex-col  gap-3   p-4 py-3'>
+                <h3 className='text-md  py-2 font-medium leading-tight text-gray-700'>
+                  Links
+                </h3>
+                {issue.contents.links &&
+                  issue.contents.links.map((link) => (
+                    <Link
+                      href={link.link}
+                      className='flex h-10 flex-row items-center gap-2 rounded-lg border border-gray-200 py-0  '
+                    >
+                      <p className='flex h-full  w-fit items-center justify-center border-r border-gray-200 px-3  text-xs font-medium leading-tight text-gray-700'>
+                        {PlatformIconMapper(link.domain)}
+                      </p>
+                      <p className='items-center  p-2 text-2xs font-medium leading-tight text-gray-700'>
+                        {link.name}
+                      </p>
+                    </Link>
+                  ))}
+                <button className='flex h-10 flex-row items-center gap-2 rounded-lg border border-dashed border-gray-200  py-0  '>
+                  <p className='flex h-full  w-fit items-center justify-center border-r border-dashed border-gray-200  px-3 text-xs font-medium leading-tight text-gray-700'>
+                    {PlatformIconMapper('link')}
+                  </p>
+                  <p className='items-center  p-2 text-xs font-medium leading-tight text-gray-600'>
+                    Add Link
+                  </p>
+                </button>
               </div>
             </div>
           </div>

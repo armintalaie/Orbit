@@ -23,17 +23,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NewTeamMember } from '@/components/newTeamMember';
-import { NewProject } from '@/components/newProject';
-import { Toast } from '@/components/ui/toast';
+// import { NewProject } from '@/components/newProject';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  ChevronRightSquareIcon,
-  Dot,
-  GanttChartSquare,
-  MapIcon,
-} from 'lucide-react';
+import { Dot, GanttChartSquare } from 'lucide-react';
 import ProjectsTimelineView from '@/components/projects/projectsTimeline';
-import { ca } from 'date-fns/locale';
+import PageWrapper from '@/components/layouts/pageWrapper';
+import { NewProject } from '@/components/newProject';
 
 export default function ProjectPage() {
   const params = useParams();
@@ -44,20 +39,32 @@ export default function ProjectPage() {
   const [viewType, setViewType] = useState(viewTypes[0]);
 
   async function fetchProjects() {
-    const res = await fetch(`/api/teams/${params.teamid}/projects`);
+    const res = await fetch(`/api/teams/${params.teamid}/projects`, {
+      next: {
+        tags: ['projects'],
+      },
+    });
     const projects = await res.json();
     setProjects(projects);
   }
 
   async function fetchMembers() {
-    const res = await fetch(`/api/teams/${params.teamid}/members`);
+    const res = await fetch(`/api/teams/${params.teamid}/members`, {
+      next: {
+        tags: ['teams'],
+      },
+    });
     const members = await res.json();
     setMembers(members);
   }
 
   useEffect(() => {
     async function fetchTeam() {
-      const res = await fetch(`/api/teams/${params.teamid}`);
+      const res = await fetch(`/api/teams/${params.teamid}`, {
+        next: {
+          tags: ['teams'],
+        },
+      });
       const team = await res.json();
       setTeam(team);
     }
@@ -72,68 +79,64 @@ export default function ProjectPage() {
   }
 
   return (
-    <div className='flex min-h-screen w-full flex-col'>
-      <div className=' flex h-full w-full flex-1 flex-col '>
-        <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-          <div className='flex flex-row items-center'>
-            <h1 className='text-md h-full  font-medium leading-tight text-gray-700'>
-              {team.name}
-            </h1>
-            <p className='flex items-center text-xs  italic text-gray-600'>
-              <Dot className='h-4 w-4' size={30} />
-              {team.description}
-            </p>
-            <div className='flex items-center pl-2'>
-              <TeamOptions teamId={team.id} />
-            </div>
-          </div>
-          <div className='flex h-full items-center justify-center gap-2'>
-            <NewProject button={true} reload={reload} teamid={team.id} />
+    <PageWrapper>
+      <PageWrapper.Header>
+        <div className='flex flex-row items-center'>
+          <h1 className='text-md h-full  font-medium leading-tight text-gray-700'>
+            {team.name}
+          </h1>
+          <p className='flex items-center text-xs  italic text-gray-600'>
+            <Dot className='h-4 w-4' size={30} />
+            {team.description}
+          </p>
+          <div className='flex items-center pl-2'>
+            <TeamOptions teamId={team.id} />
           </div>
         </div>
-
-        <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='h-15 flex flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
-            <div></div>
-            <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
-          </div>
-          <div className=' flex h-full flex-grow flex-col'>
-            <div className=' flex w-full  flex-col overflow-hidden p-2  '>
-              {(() => {
-                switch (viewType) {
-                  case 'table':
-                    return <ProjectsTableView projects={projects} />;
-                  case 'timeline':
-                    return <ProjectsTimelineView projects={projects} />;
-                  case 'board':
-                  default:
-                    return <ProjectsTableView projects={projects} />;
-                }
-              })()}
-            </div>
-
-            <div className=' flex w-full  flex-col px-4'>
-              <div className='flex flex-row items-center justify-between  '>
-                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
-                  Members
-                </h2>
-                <NewTeamMember
-                  teamid={params.teamid}
-                  reload={fetchMembers}
-                  button={true}
-                />
-              </div>
-
-              <MembersList
-                members={members}
-                teamid={params.teamid}
-                reload={reload}
-              />
-            </div>
-          </div>
+        <div className='flex h-full items-center justify-center gap-2'>
+          <NewProject button={true} reload={reload} teamid={team.id} />
         </div>
-      </div>
-    </div>
+      </PageWrapper.Header>
+      <PageWrapper.SubHeader>
+        <div></div>
+        <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
+      </PageWrapper.SubHeader>
+
+      <PageWrapper.Content>
+        <div className=' flex w-full  flex-col overflow-hidden   '>
+          {(() => {
+            switch (viewType) {
+              case 'table':
+                return <ProjectsTableView projects={projects} />;
+              case 'timeline':
+                return <ProjectsTimelineView projects={projects} />;
+              case 'board':
+              default:
+                return <ProjectsTableView projects={projects} />;
+            }
+          })()}
+        </div>
+
+        <div className=' flex w-full  flex-col px-4'>
+          <div className='flex flex-row items-center justify-between  '>
+            <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
+              Members
+            </h2>
+            <NewTeamMember
+              teamid={params.teamid}
+              reload={fetchMembers}
+              button={true}
+            />
+          </div>
+
+          <MembersList
+            members={members}
+            teamid={params.teamid}
+            reload={reload}
+          />
+        </div>
+      </PageWrapper.Content>
+    </PageWrapper>
   );
 }
 
@@ -228,7 +231,7 @@ function TeamOptions({ teamId }: { teamId: string }) {
 
 function ProjectsTableView({ projects }) {
   return (
-    <div className='flex  w-full flex-col overflow-hidden rounded-lg'>
+    <div className='flex  w-full flex-col overflow-hidden '>
       <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
         <Table.Body>
           {projects.map((project) => (

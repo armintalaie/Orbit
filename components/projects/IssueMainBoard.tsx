@@ -1,6 +1,4 @@
 'use client';
-
-import { NewIssue } from '@/components/newIssue';
 import { TableIcon, BoxIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Button } from '@radix-ui/themes';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
@@ -55,10 +53,10 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
 
   return (
     <div className=' flex h-full w-full flex-1 flex-col bg-gray-50'>
-      <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
+      {/* <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
         <div></div>
         <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
-      </div>
+      </div> */}
       <div className=' flex h-full flex-grow flex-col'>
         {viewType === 'board' ? (
           <KanbanView issues={issues} reload={reload} projectId={projectId} />

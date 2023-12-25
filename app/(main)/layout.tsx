@@ -16,17 +16,11 @@ import {
   CircleDot,
   FolderClosed,
   MenuIcon,
-  Users,
   Users2Icon,
 } from 'lucide-react';
 import { Changelog } from '@/components/changelog';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
-import AuthContextProvider, {
-  UserSessionContext,
-} from '@/lib/context/AuthProvider';
-import { SettingsModalButton } from '@/components/settings/SettingsModal';
 import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-import { CaretSortIcon } from '@radix-ui/react-icons';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -34,6 +28,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { SettingsModalButton } from '@/components/settings/SettingsModal';
+import AuthContextProvider, {
+  UserSessionContext,
+} from '@/lib/context/AuthProvider';
 
 export default function ProjectLayout({
   children,
@@ -43,10 +41,9 @@ export default function ProjectLayout({
   return (
     <AuthContextProvider>
       <div className='flex h-screen w-screen flex-row'>
-        <SideBarContent className={'hidden w-56'} />
-
-        <div className='flex flex-grow  flex-col-reverse overflow-hidden md:flex-col'>
-          <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 md:border-b md:border-t-0  '>
+        <SideBarContent className={'min-w-56 hidden w-56'} />
+        <div className='flex w-full  flex-col-reverse overflow-hidden md:flex-col'>
+          <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
             <NextBreadcrumb
               homeElement={
                 <MenuDialog>
@@ -58,6 +55,10 @@ export default function ProjectLayout({
               listClasses='hover:underline px-2 '
               capitalizeLinks
             />
+            <div className='flex flex-row gap-2 overflow-y-auto pr-3 '>
+              <FeedbackButton />
+              <Changelog />
+            </div>
           </div>
           {children}
         </div>
@@ -78,12 +79,16 @@ function SideBarContent({
   const userSession = useContext(UserSessionContext);
 
   async function fetchTeams() {
-    const member = userSession?.user?.id;
+    const member = userSession!.user!.id;
     const res = await fetch(
       `/api/teams?q=${encodeURIComponent(JSON.stringify({ member: member }))}`,
       {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `${userSession?.access_token}`,
+        },
+        next: {
+          tags: ['teams'],
         },
       }
     );
@@ -98,25 +103,25 @@ function SideBarContent({
   return (
     <section
       id='sidebar '
-      className={` flex-col  border-r border-gray-100 md:flex ${className}`}
+      className={` flex h-full flex-col border-r border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 lg:flex ${className} justify-between `}
     >
       {showLogo && (
         <div className='flex flex-row items-center justify-between '>
-          <Text size='4' className='h-12 p-4 font-bold'>
+          <Text size='4' className='dar:text-white h-12 p-4 font-bold'>
             Orbit
           </Text>
         </div>
       )}
-      <div className='flex flex-grow flex-col gap-3 overflow-y-auto border-t border-gray-100 p-2'>
+      <div className='flex flex-grow flex-col gap-3 overflow-y-auto border-t border-gray-100 p-2 dark:border-gray-900'>
         <CommandMenu setOpen={openSearch} open={search} />
         <Box className='w-full p-1 pb-3'>
           <button
-            className='h-8 w-full rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-xs text-gray-500 shadow-sm'
+            className='h-8 w-full rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-xs text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'
             onClick={() => openSearch(true)}
           >
             <span className='flex items-center justify-between'>
               Search{' '}
-              <span className='rounded-sm border border-gray-200 bg-gray-100 px-1 text-[9px] shadow-sm'>
+              <span className='rounded-sm border border-gray-200 bg-gray-100 px-1 text-[9px] shadow-sm dark:border-neutral-800 dark:bg-neutral-700'>
                 cmd + k
               </span>
             </span>
@@ -125,7 +130,8 @@ function SideBarContent({
         <section className='flex flex-col border-gray-100 '>
           <Link
             href={'/issues/me'}
-            className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
+            className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
+            shallow={true}
           >
             <CircleDot className='h-3 w-3 ' />
             <span className='flex h-full items-center justify-between pl-2'>
@@ -134,7 +140,8 @@ function SideBarContent({
           </Link>
           <Link
             href={'/projects'}
-            className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
+            shallow={true}
+            className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
           >
             <BoxIcon className='h-3 w-3 ' />
             <span className='flex h-full items-center justify-between pl-2'>
@@ -147,10 +154,6 @@ function SideBarContent({
       </div>
       <div className='flex flex-col  gap-2 overflow-y-auto p-2'>
         <SettingsModalButton />
-        <div className='flex flex-row  gap-2 overflow-y-auto '>
-          <FeedbackButton />
-          <Changelog />
-        </div>
       </div>
     </section>
   );
@@ -191,7 +194,7 @@ function MenuDialog({ children }: { children?: React.ReactNode }) {
         {' '}
         <MenuIcon className='h-4 w-4' />
       </DrawerTrigger>
-      <DrawerContent>{children}</DrawerContent>
+      <DrawerContent className='h-[90%]'>{children}</DrawerContent>
     </Drawer>
   );
 }
@@ -208,20 +211,21 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
       <div className='flex items-center justify-between '>
         <Link
           href={'/teams'}
-          className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700'
+          shallow={true}
+          className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
         >
           <FolderClosed className='h-3 w-3 ' />
           <span className='flex h-full items-center justify-between pl-2'>
-            Teams
+            Your Teams
           </span>
         </Link>
 
         <CollapsibleTrigger asChild>
           <Button variant='ghost' size='sm'>
             {isOpen ? (
-              <ChevronDownIcon className='h-4 w-4 text-gray-600' />
+              <ChevronDownIcon className='h-3 w-3 text-gray-600 dark:text-neutral-400' />
             ) : (
-              <ChevronRightIcon className='h-4 w-4 text-gray-600 ' />
+              <ChevronRightIcon className='h-3 w-3 text-gray-600 dark:text-neutral-400 ' />
             )}
           </Button>
         </CollapsibleTrigger>
@@ -232,10 +236,11 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
           <Link
             href={`/teams/${team.id}`}
             key={index}
-            className=' flex h-fit w-full items-center  px-2 pb-1 text-left text-xs text-gray-700'
+            shallow={true}
+            className=' flex h-fit w-full items-center  px-2 pb-1 text-left text-2xs text-gray-700 dark:text-neutral-400'
           >
             <Users2Icon className='h-3 w-3 ' />
-            <span className='flex h-full items-center justify-between pl-2'>
+            <span className='flex h-full items-center justify-between pl-2 text-2xs'>
               {team.name}
             </span>
           </Link>

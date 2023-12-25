@@ -6,6 +6,7 @@ import { Badge, Table } from '@radix-ui/themes';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { statusIconMapper } from '@/components/statusIconMapper';
+import PageWrapper from '@/components/layouts/pageWrapper';
 
 interface IProject {
   id: number;
@@ -38,25 +39,28 @@ export default function ProjectPage() {
   }, []);
 
   return (
-    <div className='flex min-h-screen w-full flex-col'>
-      <div className=' flex h-full w-full flex-1 flex-col '>
-        <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-          <h1 className='text-md h-full font-medium leading-tight text-gray-700'>
+    <PageWrapper>
+      <PageWrapper.Header>
+        <div className='flex flex-row items-center gap-2'>
+          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
             Projects
           </h1>
-          <div className='flex h-full items-center justify-center gap-2'>
-            <NewProject button={true} reload={reload} />
-          </div>
+          <NewProject button={true} reload={reload} />
         </div>
+      </PageWrapper.Header>
 
-        <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-2 py-3'></div>
-          <div className=' flex h-full flex-grow flex-col'>
-            <TableView projects={projects} />
-          </div>
+      <PageWrapper.SubHeader>
+        <div className='flex flex-row items-center gap-2'>
+          <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'>
+            Projects
+          </p>
         </div>
-      </div>
-    </div>
+      </PageWrapper.SubHeader>
+
+      <PageWrapper.Content>
+        <TableView projects={projects} />
+      </PageWrapper.Content>
+    </PageWrapper>
   );
 }
 
