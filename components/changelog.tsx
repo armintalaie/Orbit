@@ -22,8 +22,7 @@ export function Changelog() {
     <Dialog>
       <DialogTrigger asChild>
         <button className='flex h-8 w-full items-center rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-xs text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'>
-          <QuestionMarkCircledIcon className='mr-2 h-3 w-3' />
-          <span>Changelog</span>
+          <QuestionMarkCircledIcon className=' h-3 w-3' />
         </button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-md'>

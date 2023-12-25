@@ -32,6 +32,7 @@
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.39.0",
     "@tiptap/extension-blockquote": "^2.1.13",
+    "@tiptap/extension-character-count": "^2.1.13",
     "@tiptap/extension-document": "^2.1.13",
     "@tiptap/extension-heading": "^2.1.13",
     "@tiptap/extension-highlight": "^2.1.13",
@@ -66,6 +67,7 @@
     "tailwind-merge": "^2.1.0",
     "tailwindcss-animate": "^1.0.7",
     "tiptap-markdown": "^0.8.8",
+    "usehooks-ts": "^2.9.1",
     "vaul": "^0.8.0",
     "zod": "^3.22.4"
   },

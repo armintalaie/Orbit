@@ -42,7 +42,7 @@ export default function ProjectLayout({
     <AuthContextProvider>
       <div className='flex h-screen w-screen flex-row'>
         <SideBarContent className={'min-w-56 hidden w-56'} />
-        <div className='flex w-full  flex-col-reverse overflow-hidden md:flex-col'>
+        <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
           <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
             <NextBreadcrumb
               homeElement={
