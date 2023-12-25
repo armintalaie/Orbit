@@ -467,7 +467,6 @@ function IssueInfo({
           className='p-0 hover:bg-inherit'
           variant='ghost'
           onClick={() => {
-            console.log(pathname);
             navigator.clipboard.writeText(`${pathname}`);
             toast({
               title: 'Copied',

@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { dateFormater, isOverdue } from '@/lib/util';
+import { STATUS, dateFormater, isOverdue } from '@/lib/util';
 import { TableIcon, BoxIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Table } from '@radix-ui/themes';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
@@ -23,12 +23,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NewTeamMember } from '@/components/newTeamMember';
-// import { NewProject } from '@/components/newProject';
 import { useToast } from '@/components/ui/use-toast';
-import { Dot, GanttChartSquare } from 'lucide-react';
+import { GanttChartSquare } from 'lucide-react';
 import ProjectsTimelineView from '@/components/projects/projectsTimeline';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { NewProject } from '@/components/newProject';
+import { statusIconMapper } from '@/components/statusIconMapper';
 
 export default function ProjectPage() {
   const params = useParams();
@@ -36,7 +36,7 @@ export default function ProjectPage() {
   const [members, setMembers] = useState([]);
   const [team, setTeam] = useState([]);
   const viewTypes = ['board', 'table', 'timeline'];
-  const [viewType, setViewType] = useState(viewTypes[0]);
+  const [viewType, setViewType] = useState('table');
 
   async function fetchProjects() {
     const res = await fetch(`/api/teams/${params.teamid}/projects`, {
@@ -85,8 +85,7 @@ export default function ProjectPage() {
           <h1 className='text-md h-full  font-medium leading-tight text-gray-700'>
             {team.name}
           </h1>
-          <p className='flex items-center text-xs  italic text-gray-600'>
-            <Dot className='h-4 w-4' size={30} />
+          <p className=' hidden flex-row items-center px-3 text-xs lg:flex'>
             {team.description}
           </p>
           <div className='flex items-center pl-2'>
@@ -98,8 +97,10 @@ export default function ProjectPage() {
         </div>
       </PageWrapper.Header>
       <PageWrapper.SubHeader>
-        <div></div>
-        <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
+        <div className='flex w-full flex-row items-center justify-between gap-2'>
+          <div className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'></div>
+          <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
+        </div>
       </PageWrapper.SubHeader>
 
       <PageWrapper.Content>
@@ -135,6 +136,7 @@ export default function ProjectPage() {
             reload={reload}
           />
         </div>
+        {/* <Analytics/> */}
       </PageWrapper.Content>
     </PageWrapper>
   );
@@ -159,6 +161,7 @@ const ToggleGroupDemo = ({ viewType, setViewType }) => {
         <TableIcon />
       </ToggleGroup.Item>
       <ToggleGroup.Item
+        disabled={true}
         className={`flex w-9 items-center justify-center p-2 ${
           viewType === 'board' ? 'bg-gray-100' : 'bg-inherit'
         }`}
@@ -170,6 +173,7 @@ const ToggleGroupDemo = ({ viewType, setViewType }) => {
       </ToggleGroup.Item>
 
       <ToggleGroup.Item
+        disabled={true}
         className={`flex w-9 items-center justify-center p-2 ${
           viewType === 'timeline' ? 'bg-gray-100' : 'bg-inherit'
         }`}
@@ -232,8 +236,19 @@ function TeamOptions({ teamId }: { teamId: string }) {
 function ProjectsTableView({ projects }) {
   return (
     <div className='flex  w-full flex-col overflow-hidden '>
-      <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
+      <Table.Root className='w-full  overflow-hidden  border-gray-200 bg-white shadow-none'>
         <Table.Body>
+          <Table.Row>
+            <Table.RowHeaderCell>Title</Table.RowHeaderCell>
+            <Table.RowHeaderCell className='hidden lg:table-cell'>
+              Description
+            </Table.RowHeaderCell>
+            <Table.RowHeaderCell>Status</Table.RowHeaderCell>
+            <Table.RowHeaderCell>Open</Table.RowHeaderCell>
+
+            <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
+            <Table.RowHeaderCell>Date Created</Table.RowHeaderCell>
+          </Table.Row>
           {projects.map((project) => (
             <Table.Row key={project.id}>
               <Table.RowHeaderCell>
@@ -245,8 +260,33 @@ function ProjectsTableView({ projects }) {
                   {project.title}
                 </Link>
               </Table.RowHeaderCell>
-              <Table.Cell>{project.description}</Table.Cell>
-              <Table.Cell>{project.status}</Table.Cell>
+
+              <Table.Cell className='hidden lg:table-cell'>
+                {project.description}
+              </Table.Cell>
+
+              <Table.Cell>
+                {STATUS && STATUS[project.statusid] ? (
+                  <div className='flex flex-row items-center gap-2 '>
+                    {statusIconMapper(
+                      STATUS[project.statusid].label,
+                      'h-3 w-3'
+                    )}
+                    {STATUS[project.statusid].label}
+                  </div>
+                ) : (
+                  <p className='text-xs'>No Status</p>
+                )}
+              </Table.Cell>
+
+              <Table.Cell className=' '>
+                {project.count > 10 ? (
+                  <Badge color='red'>{project.count}</Badge>
+                ) : (
+                  <Badge color='gray'> {project.count}</Badge>
+                )}
+              </Table.Cell>
+
               <Table.Cell>
                 {isOverdue(project.deadline) ? (
                   <Badge color='red'>{dateFormater(project.deadline)}</Badge>
@@ -254,8 +294,8 @@ function ProjectsTableView({ projects }) {
                   <Badge color='gray'> {dateFormater(project.deadline)}</Badge>
                 )}
               </Table.Cell>
-              <Table.Cell>{project.dateCreated}</Table.Cell>
-              <Table.Cell>{project.dateUpdated}</Table.Cell>
+
+              <Table.Cell>{dateFormater(project.datecreated)}</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>

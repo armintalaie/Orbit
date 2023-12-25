@@ -37,7 +37,6 @@ export async function PATCH(
     const { iid } = params;
     const newIssue = await req.json();
     const issue = newIssue;
-    console.log(issue);
     const data = await supabase
       .from('issue')
       .update({ ...issue, dateupdated: new Date().toISOString() })

@@ -24,13 +24,13 @@
   margin-top: 30px;
 }
 
-body > *:first-child {
+/* body > *:first-child {
   margin-top: 0 !important;
 }
 
 body > *:last-child {
   margin-bottom: 0 !important;
-}
+} */
 
 .tiptap {
   a {
@@ -156,6 +156,8 @@ body > *:last-child {
   }
 }
 
+/* 
+
 body > h2:first-child {
   margin-top: 0;
   padding-top: 0;
@@ -196,7 +198,7 @@ h4 p,
 h5 p,
 h6 p {
   margin-top: 0;
-}
+} */
 
 .tiptap li p.first {
   display: inline-block;
@@ -221,7 +223,7 @@ h6 p {
   margin-bottom: 0;
 }
 
-blockquote {
+/* blockquote {
   border-left: 2px solid theme(colors.neutral.400);
   padding: 2px 10px;
   color: theme(colors.neutral.600);
@@ -267,7 +269,7 @@ table tr td:first-child {
 table tr th:last-child,
 table tr td:last-child {
   margin-bottom: 0;
-}
+} */
 
 .tiptap em {
   padding: 0 5px 0 2px;
@@ -338,9 +340,9 @@ tt {
   background-color: #f8f8f8;
 }
 
-tt {
+/* tt {
   margin: 0 2px;
-}
+} */
 
 .tiptap mark {
   background-color: theme(colors.yellow.100);
