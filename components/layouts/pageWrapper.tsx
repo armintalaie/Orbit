@@ -31,9 +31,11 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
         </div>
 
         <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 dark:border-neutral-800 dark:bg-neutral-900 '>
-          <div className='h-15 flex flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3 dark:border-neutral-800 dark:bg-neutral-900'>
-            {subHeader}
-          </div>
+          {subHeader && (
+            <div className='h-15 flex flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3 dark:border-neutral-800 dark:bg-neutral-900'>
+              {subHeader}
+            </div>
+          )}
           <div className=' flex h-full flex-grow flex-col'>{content}</div>
         </div>
       </div>

@@ -152,7 +152,7 @@ export function NewProject({
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Type your message here.'
+                      placeholder='What is the end goal?'
                       id='message-2'
                       className='h-30 w-full resize-none'
                       {...field}

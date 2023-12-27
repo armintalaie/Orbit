@@ -15,13 +15,11 @@ import {
   ChevronRightIcon,
   CircleDot,
   FolderClosed,
-  MenuIcon,
+  PanelLeft,
   Users2Icon,
 } from 'lucide-react';
 import { Changelog } from '@/components/changelog';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer';
-
 import { Button } from '@/components/ui/button';
 import {
   Collapsible,
@@ -32,6 +30,7 @@ import { SettingsModalButton } from '@/components/settings/SettingsModal';
 import AuthContextProvider, {
   UserSessionContext,
 } from '@/lib/context/AuthProvider';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export default function ProjectLayout({
   children,
@@ -41,13 +40,13 @@ export default function ProjectLayout({
   return (
     <AuthContextProvider>
       <div className='flex h-screen w-screen flex-row'>
-        <SideBarContent className={'min-w-56 hidden w-56'} />
+        <SideBarContent className={'min-w-56 hidden w-72'} />
         <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
           <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
             <NextBreadcrumb
               homeElement={
                 <MenuDialog>
-                  <SideBarContent className='w-full' showLogo={false} />
+                  <SideBarContent className='w-full' showLogo={true} />
                 </MenuDialog>
               }
               activeClasses='hidden'
@@ -116,7 +115,7 @@ function SideBarContent({
         <CommandMenu setOpen={openSearch} open={search} />
         <Box className='w-full p-1 pb-3'>
           <button
-            className='h-8 w-full rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-xs text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'
+            className='h-8 w-full rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-sm text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'
             onClick={() => openSearch(true)}
           >
             <span className='flex items-center justify-between'>
@@ -130,7 +129,7 @@ function SideBarContent({
         <section className='flex flex-col border-gray-100 '>
           <Link
             href={'/issues/me'}
-            className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
+            className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700 dark:text-neutral-400'
             shallow={true}
           >
             <CircleDot className='h-3 w-3 ' />
@@ -141,7 +140,7 @@ function SideBarContent({
           <Link
             href={'/projects'}
             shallow={true}
-            className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
+            className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700 dark:text-neutral-400'
           >
             <BoxIcon className='h-3 w-3 ' />
             <span className='flex h-full items-center justify-between pl-2'>
@@ -189,13 +188,14 @@ export function CommandMenu({
 
 function MenuDialog({ children }: { children?: React.ReactNode }) {
   return (
-    <Drawer>
-      <DrawerTrigger>
-        {' '}
-        <MenuIcon className='h-4 w-4' />
-      </DrawerTrigger>
-      <DrawerContent className='h-[90%]'>{children}</DrawerContent>
-    </Drawer>
+    <Sheet>
+      <SheetTrigger>
+        <PanelLeft className='h-4 w-4' />
+      </SheetTrigger>
+      <SheetContent side={'left'} className='w-72 max-w-full p-0'>
+        {children}
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -212,7 +212,7 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
         <Link
           href={'/teams'}
           shallow={true}
-          className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
+          className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700 dark:text-neutral-400'
         >
           <FolderClosed className='h-3 w-3 ' />
           <span className='flex h-full items-center justify-between pl-2'>
@@ -237,10 +237,10 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
             href={`/teams/${team.id}`}
             key={index}
             shallow={true}
-            className=' flex h-fit w-full items-center  px-2 pb-1 text-left text-2xs text-gray-700 dark:text-neutral-400'
+            className=' flex h-fit w-full items-center  p-1 px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
           >
             <Users2Icon className='h-3 w-3 ' />
-            <span className='flex h-full items-center justify-between pl-2 text-2xs'>
+            <span className='flex h-full items-center justify-between pl-2 text-xs'>
               {team.name}
             </span>
           </Link>

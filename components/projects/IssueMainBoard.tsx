@@ -17,6 +17,7 @@ import TableView from '@/components/projects/tableView';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import IssuesTimelineView from '../issues/IssueTimelineView';
 import { GanttChartSquare } from 'lucide-react';
+import FilterGroup from '../issues/filterGroup';
 
 interface ProjectPageProps {
   pid?: number;
@@ -53,10 +54,10 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
 
   return (
     <div className=' flex h-full w-full flex-1 flex-col bg-gray-50'>
-      {/* <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
-        <div></div>
+      <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
+        <FilterGroup />
         <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
-      </div> */}
+      </div>
       <div className=' flex h-full flex-grow flex-col'>
         {viewType === 'board' ? (
           <KanbanView issues={issues} reload={reload} projectId={projectId} />

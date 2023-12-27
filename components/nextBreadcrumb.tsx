@@ -1,17 +1,9 @@
-// /components/NextBreadcrumb.tsx
 'use client';
 
 import React, { ReactNode } from 'react';
-
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { CaretLeftIcon } from '@radix-ui/react-icons';
-import {
-  ArrowRightFromLineIcon,
-  ChevronLeft,
-  ChevronRight,
-  MenuIcon,
-} from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 
 type TBreadCrumbProps = {
   homeElement: ReactNode;
@@ -35,9 +27,6 @@ const NextBreadcrumb = ({
     <div>
       <ul className={containerClasses}>
         <li className={`${listClasses} flex lg:hidden`}>{homeElement}</li>
-        {pathNames.length > 0 && (
-          <ChevronLeft className='h-4 w-4 text-gray-500' />
-        )}
         {pathNames.map((link, index) => {
           let href = `/${pathNames.slice(0, index + 1).join('/')}`;
           let itemClasses =

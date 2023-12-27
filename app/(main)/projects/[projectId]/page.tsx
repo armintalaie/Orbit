@@ -65,13 +65,13 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
         </div>
       </PageWrapper.Header>
 
-      <PageWrapper.SubHeader>
+      {/* <PageWrapper.SubHeader>
         <div className='flex flex-row items-center gap-2'>
           <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'>
             {project.description}
           </p>
         </div>
-      </PageWrapper.SubHeader>
+      </PageWrapper.SubHeader> */}
 
       <PageWrapper.Content>
         <IssueBoard pid={projectId} />
