@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu';
+import PageWrapper from '@/components/layouts/pageWrapper';
 
 interface ProjectPageProps {
   id: number;
@@ -51,26 +52,31 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
   }, []);
 
   return (
-    <div className='flex h-full w-full flex-col'>
-      <div className=' flex h-full w-full flex-1 flex-col '>
-        <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-          <div className='flex flex-row items-center gap-2'>
-            <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
-              {project.title}
-            </h1>
-            <ProjectOptions projectId={project.id} />
-          </div>
-          <div className='flex h-full items-center justify-center gap-2'>
-            {/* <NewIssue
-              button={true}
-              reload={fetchIssues}
-              projectid={projectId}
-            /> */}
-          </div>
+    <PageWrapper>
+      <PageWrapper.Header>
+        <div className='flex flex-row items-center gap-2'>
+          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
+            {project.title}
+          </h1>
+          <ProjectOptions projectId={project.id} />
         </div>
+        <div className='flex h-full items-center justify-center gap-2'>
+          <NewIssue button={true} reload={fetchProject} projectid={projectId} />
+        </div>
+      </PageWrapper.Header>
+
+      {/* <PageWrapper.SubHeader>
+        <div className='flex flex-row items-center gap-2'>
+          <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'>
+            {project.description}
+          </p>
+        </div>
+      </PageWrapper.SubHeader> */}
+
+      <PageWrapper.Content>
         <IssueBoard pid={projectId} />
-      </div>
-    </div>
+      </PageWrapper.Content>
+    </PageWrapper>
   );
 }
 

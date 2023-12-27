@@ -2,6 +2,7 @@ import {
   Archive,
   CheckCircle2,
   CheckCircleIcon,
+  ChevronRightCircleIcon,
   Circle,
   CircleDashed,
   Inbox,
@@ -17,7 +18,7 @@ export const statusIconMapper = (status: string, className: string) => {
     case 'Todo':
       return <Circle className={className} />;
     case 'In Progress':
-      return <InfoIcon className={className} />;
+      return <ChevronRightCircleIcon className={className} />;
     case 'Done':
       return <CheckCircle2 className={className} />;
     case 'Archive':

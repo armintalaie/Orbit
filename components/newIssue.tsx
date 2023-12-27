@@ -212,7 +212,10 @@ function NewIssueForm({
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder='Next big thing...' {...field} />
+                  <Input
+                    placeholder='Next big thing start with the little things...'
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -230,7 +233,7 @@ function NewIssueForm({
                   <Textarea
                     placeholder='Add some details about the issue or add them later...'
                     id='message-2'
-                    className='h-60'
+                    className='h-60 resize-none'
                     {...field}
                   />
                 </FormControl>
@@ -246,7 +249,6 @@ function NewIssueForm({
               name='statusid'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
                   <FormControl>
                     <StatusField {...field} />
                   </FormControl>
@@ -261,7 +263,6 @@ function NewIssueForm({
               name='deadline'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Deadline</FormLabel>
                   <FormControl>
                     <DeadlineField field={field} />
                   </FormControl>
@@ -269,24 +270,24 @@ function NewIssueForm({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name='assignee'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <AssigneeField field={field} projectid={projectid} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
-          <FormField
-            control={form.control}
-            name='assignee'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Assignee</FormLabel>
-                <FormControl>
-                  <AssigneeField field={field} projectid={projectid} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type='submit'>Create</Button>
+          <Button type='submit' className='w-full'>
+            Create
+          </Button>
         </form>
       </Form>
     </div>

@@ -69,6 +69,5 @@ export async function GET(
     `
     )
     .eq('projectid', Number(params.pid));
-  console.log(error);
   return NextResponse.json(data);
 }

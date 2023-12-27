@@ -1,17 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  ArrowUpCircle,
-  CheckCircle2,
-  Circle,
-  HelpCircle,
-  LucideIcon,
-  UserIcon,
-  XCircle,
-} from 'lucide-react';
-
-import { cn } from '@/lib/utils';
+import { UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -38,7 +28,7 @@ interface Profile {
 export function UserFinder({ val, setVal, teamid }) {
   const [memberOptions, setMemberOptions] = React.useState<{
     [key: string]: Profile;
-  }>({}); // [key: string, value: Profile][
+  }>({});
   const [open, setOpen] = React.useState(false);
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
     null
@@ -48,7 +38,7 @@ export function UserFinder({ val, setVal, teamid }) {
     async function fetchMembers() {
       const res = await fetch(`/api/profiles/`, {
         next: { revalidate: 10 },
-      }); //TODO
+      });
       const profiles = await res.json();
       const options: { [key: string]: Profile } = {};
 

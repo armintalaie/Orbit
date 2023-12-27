@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function TeamGrid({ teams }: { teams: any[] }) {
   return (
-    <div className='grid grid-cols-1 gap-4 p-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+    <div className='grid grid-cols-1 gap-4 p-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 '>
       {teams.map((team) => (
         <TeamCard key={team.id} team={team} />
       ))}
@@ -15,8 +15,8 @@ export default function TeamGrid({ teams }: { teams: any[] }) {
 
 function TeamCard({ team }: { team: any }) {
   return (
-    <Link href={`/teams/${team.id}`}>
-      <div className='relative flex  flex-col rounded border bg-white pb-0 shadow-sm hover:shadow-md'>
+    <Link href={`/teams/${team.id}`} shallow={true}>
+      <div className='relative flex  flex-col rounded border bg-white  pb-0 shadow-sm hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900'>
         <div className='z-10 flex items-center justify-between border-b px-4 py-2 '>
           <div className='flex items-center gap-2'>
             <Boxes size={15} className='text-gray-700' />

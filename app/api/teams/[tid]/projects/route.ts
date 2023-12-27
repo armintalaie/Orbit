@@ -1,3 +1,4 @@
+import { db } from '@/lib/db/handler';
 import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -37,9 +38,31 @@ export async function GET(
   req: Request,
   { params }: { params: { tid: string } }
 ) {
-  const data = await supabase
-    .from('project')
-    .select()
-    .eq('teamid', Number(params.tid));
-  return NextResponse.json(data.data);
+  const projectsWithOpenIssueCounts = await db
+    .selectFrom('project')
+    .leftJoin(
+      db
+        .selectFrom('issue')
+        .select(['projectid', 'id'])
+        .where('statusid', 'not in', [1, 5, 6, 8])
+        .as('issue'),
+      'issue.projectid',
+      'project.id'
+    )
+    .select(({ fn }) => [
+      'project.id',
+      'project.title',
+      'project.description',
+      'project.statusid',
+      'project.deadline',
+      'project.datecreated',
+      'project.teamid',
+
+      fn.count<number>('issue.id').as('count'),
+    ])
+    .where('project.teamid', '=', Number(params.tid))
+    .groupBy('project.id')
+    .execute();
+
+  return NextResponse.json(projectsWithOpenIssueCounts);
 }

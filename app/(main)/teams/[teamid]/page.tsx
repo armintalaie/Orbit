@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { dateFormater, isOverdue } from '@/lib/util';
+import { STATUS, dateFormater, isOverdue } from '@/lib/util';
 import { TableIcon, BoxIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Table } from '@radix-ui/themes';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
@@ -23,17 +23,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NewTeamMember } from '@/components/newTeamMember';
-import { NewProject } from '@/components/newProject';
-import { Toast } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  ChevronRightSquareIcon,
-  Dot,
-  GanttChartSquare,
-  MapIcon,
-} from 'lucide-react';
+import { GanttChartSquare } from 'lucide-react';
 import ProjectsTimelineView from '@/components/projects/projectsTimeline';
-import { ca } from 'date-fns/locale';
+import PageWrapper from '@/components/layouts/pageWrapper';
+import { NewProject } from '@/components/newProject';
+import { statusIconMapper } from '@/components/statusIconMapper';
 
 export default function ProjectPage() {
   const params = useParams();
@@ -41,23 +36,35 @@ export default function ProjectPage() {
   const [members, setMembers] = useState([]);
   const [team, setTeam] = useState([]);
   const viewTypes = ['board', 'table', 'timeline'];
-  const [viewType, setViewType] = useState(viewTypes[0]);
+  const [viewType, setViewType] = useState('table');
 
   async function fetchProjects() {
-    const res = await fetch(`/api/teams/${params.teamid}/projects`);
+    const res = await fetch(`/api/teams/${params.teamid}/projects`, {
+      next: {
+        tags: ['projects'],
+      },
+    });
     const projects = await res.json();
     setProjects(projects);
   }
 
   async function fetchMembers() {
-    const res = await fetch(`/api/teams/${params.teamid}/members`);
+    const res = await fetch(`/api/teams/${params.teamid}/members`, {
+      next: {
+        tags: ['teams'],
+      },
+    });
     const members = await res.json();
     setMembers(members);
   }
 
   useEffect(() => {
     async function fetchTeam() {
-      const res = await fetch(`/api/teams/${params.teamid}`);
+      const res = await fetch(`/api/teams/${params.teamid}`, {
+        next: {
+          tags: ['teams'],
+        },
+      });
       const team = await res.json();
       setTeam(team);
     }
@@ -72,68 +79,66 @@ export default function ProjectPage() {
   }
 
   return (
-    <div className='flex min-h-screen w-full flex-col'>
-      <div className=' flex h-full w-full flex-1 flex-col '>
-        <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-          <div className='flex flex-row items-center'>
-            <h1 className='text-md h-full  font-medium leading-tight text-gray-700'>
-              {team.name}
-            </h1>
-            <p className='flex items-center text-xs  italic text-gray-600'>
-              <Dot className='h-4 w-4' size={30} />
-              {team.description}
-            </p>
-            <div className='flex items-center pl-2'>
-              <TeamOptions teamId={team.id} />
-            </div>
-          </div>
-          <div className='flex h-full items-center justify-center gap-2'>
-            <NewProject button={true} reload={reload} teamid={team.id} />
+    <PageWrapper>
+      <PageWrapper.Header>
+        <div className='flex flex-row items-center'>
+          <h1 className='text-md h-full  font-medium leading-tight text-gray-700'>
+            {team.name}
+          </h1>
+          <p className=' hidden flex-row items-center px-3 text-xs lg:flex'>
+            {team.description}
+          </p>
+          <div className='flex items-center pl-2'>
+            <TeamOptions teamId={team.id} />
           </div>
         </div>
-
-        <div className=' flex h-full w-full flex-1 flex-col bg-gray-50 '>
-          <div className='h-15 flex flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
-            <div></div>
-            <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
-          </div>
-          <div className=' flex h-full flex-grow flex-col'>
-            <div className=' flex w-full  flex-col overflow-hidden p-2  '>
-              {(() => {
-                switch (viewType) {
-                  case 'table':
-                    return <ProjectsTableView projects={projects} />;
-                  case 'timeline':
-                    return <ProjectsTimelineView projects={projects} />;
-                  case 'board':
-                  default:
-                    return <ProjectsTableView projects={projects} />;
-                }
-              })()}
-            </div>
-
-            <div className=' flex w-full  flex-col px-4'>
-              <div className='flex flex-row items-center justify-between  '>
-                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
-                  Members
-                </h2>
-                <NewTeamMember
-                  teamid={params.teamid}
-                  reload={fetchMembers}
-                  button={true}
-                />
-              </div>
-
-              <MembersList
-                members={members}
-                teamid={params.teamid}
-                reload={reload}
-              />
-            </div>
-          </div>
+        <div className='flex h-full items-center justify-center gap-2'>
+          <NewProject button={true} reload={reload} teamid={team.id} />
         </div>
-      </div>
-    </div>
+      </PageWrapper.Header>
+      <PageWrapper.SubHeader>
+        <div className='flex w-full flex-row items-center justify-between gap-2'>
+          <div className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'></div>
+          <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
+        </div>
+      </PageWrapper.SubHeader>
+
+      <PageWrapper.Content>
+        <div className=' flex w-full  flex-col overflow-hidden   '>
+          {(() => {
+            switch (viewType) {
+              case 'table':
+                return <ProjectsTableView projects={projects} />;
+              case 'timeline':
+                return <ProjectsTimelineView projects={projects} />;
+              case 'board':
+              default:
+                return <ProjectsTableView projects={projects} />;
+            }
+          })()}
+        </div>
+
+        <div className=' flex w-full  flex-col px-4'>
+          <div className='flex flex-row items-center justify-between  '>
+            <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
+              Members
+            </h2>
+            <NewTeamMember
+              teamid={params.teamid}
+              reload={fetchMembers}
+              button={true}
+            />
+          </div>
+
+          <MembersList
+            members={members}
+            teamid={params.teamid}
+            reload={reload}
+          />
+        </div>
+        {/* <Analytics/> */}
+      </PageWrapper.Content>
+    </PageWrapper>
   );
 }
 
@@ -156,6 +161,7 @@ const ToggleGroupDemo = ({ viewType, setViewType }) => {
         <TableIcon />
       </ToggleGroup.Item>
       <ToggleGroup.Item
+        disabled={true}
         className={`flex w-9 items-center justify-center p-2 ${
           viewType === 'board' ? 'bg-gray-100' : 'bg-inherit'
         }`}
@@ -167,6 +173,7 @@ const ToggleGroupDemo = ({ viewType, setViewType }) => {
       </ToggleGroup.Item>
 
       <ToggleGroup.Item
+        disabled={true}
         className={`flex w-9 items-center justify-center p-2 ${
           viewType === 'timeline' ? 'bg-gray-100' : 'bg-inherit'
         }`}
@@ -228,9 +235,20 @@ function TeamOptions({ teamId }: { teamId: string }) {
 
 function ProjectsTableView({ projects }) {
   return (
-    <div className='flex  w-full flex-col overflow-hidden rounded-lg'>
-      <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
+    <div className='flex  w-full flex-col overflow-hidden '>
+      <Table.Root className='w-full  overflow-hidden  border-gray-200 bg-white shadow-none'>
         <Table.Body>
+          <Table.Row>
+            <Table.RowHeaderCell>Title</Table.RowHeaderCell>
+            <Table.RowHeaderCell className='hidden lg:table-cell'>
+              Description
+            </Table.RowHeaderCell>
+            <Table.RowHeaderCell>Status</Table.RowHeaderCell>
+            <Table.RowHeaderCell>Open</Table.RowHeaderCell>
+
+            <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
+            <Table.RowHeaderCell>Date Created</Table.RowHeaderCell>
+          </Table.Row>
           {projects.map((project) => (
             <Table.Row key={project.id}>
               <Table.RowHeaderCell>
@@ -242,8 +260,33 @@ function ProjectsTableView({ projects }) {
                   {project.title}
                 </Link>
               </Table.RowHeaderCell>
-              <Table.Cell>{project.description}</Table.Cell>
-              <Table.Cell>{project.status}</Table.Cell>
+
+              <Table.Cell className='hidden lg:table-cell'>
+                {project.description}
+              </Table.Cell>
+
+              <Table.Cell>
+                {STATUS && STATUS[project.statusid] ? (
+                  <div className='flex flex-row items-center gap-2 '>
+                    {statusIconMapper(
+                      STATUS[project.statusid].label,
+                      'h-3 w-3'
+                    )}
+                    {STATUS[project.statusid].label}
+                  </div>
+                ) : (
+                  <p className='text-xs'>No Status</p>
+                )}
+              </Table.Cell>
+
+              <Table.Cell className=' '>
+                {project.count > 10 ? (
+                  <Badge color='red'>{project.count}</Badge>
+                ) : (
+                  <Badge color='gray'> {project.count}</Badge>
+                )}
+              </Table.Cell>
+
               <Table.Cell>
                 {isOverdue(project.deadline) ? (
                   <Badge color='red'>{dateFormater(project.deadline)}</Badge>
@@ -251,8 +294,8 @@ function ProjectsTableView({ projects }) {
                   <Badge color='gray'> {dateFormater(project.deadline)}</Badge>
                 )}
               </Table.Cell>
-              <Table.Cell>{project.dateCreated}</Table.Cell>
-              <Table.Cell>{project.dateUpdated}</Table.Cell>
+
+              <Table.Cell>{dateFormater(project.datecreated)}</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>

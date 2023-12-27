@@ -26,13 +26,13 @@ export function StatusField(field: any) {
   );
 
   return (
-    <div className='flex items-center space-x-4'>
+    <div className='flex w-fit items-center space-x-4 '>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant='outline'
             size='sm'
-            className='flex w-[250px] items-center justify-start gap-2 text-xs '
+            className='flex h-8 w-[120px] items-center justify-start gap-2 text-2xs'
           >
             {selectedStatus ? (
               <>

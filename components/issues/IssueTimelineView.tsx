@@ -114,6 +114,7 @@ export default function IssuesTimelineView({
               <Link
                 className='sticky left-0 line-clamp-1 flex  h-12 w-[200px] items-center border-b border-gray-200 bg-white p-1 px-2 text-2xs hover:shadow-lg'
                 href={`/projects/${issue.projectid}/issues/${issue.id}`}
+                shallow={true}
               >
                 {issue.title}
               </Link>
@@ -172,6 +173,7 @@ export default function IssuesTimelineView({
                     <Link
                       className={className2}
                       href={`/projects/${issue.projectid}/issues/${issue.id}`}
+                      shallow={true}
                     />
                     {/* )} */}
                   </div>

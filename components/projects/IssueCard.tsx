@@ -31,6 +31,7 @@ export default function IssueCard({ issue }: IssueCardProps) {
   return (
     <Link
       href={`/projects/${issue.projectid}/issues/${issue.id}`}
+      shallow={true}
       aria-disabled={true}
     >
       <Box className='flex flex-col gap-2 rounded-sm border border-gray-100 bg-white  p-2 '>
