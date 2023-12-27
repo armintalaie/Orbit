@@ -29,8 +29,10 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
   const userSession = useContext(UserSessionContext);
   const projectId = pid;
   const [issues, setIssues] = useState([]);
+  const [transformedIssues, setTransformedIssues] = useState([]);
   const DEFAULT_VIEW_TYPE = 'board';
   const [viewType, setViewType] = useState<ViewType>(DEFAULT_VIEW_TYPE);
+  const [filters, setFilters] = useState([]);
 
   async function fetchIssues() {
     const userId = userSession?.user?.id;
@@ -45,6 +47,51 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
   }
 
   useEffect(() => {
+    const updatedIssues = [];
+    if (filters.length === 0) {
+      setTransformedIssues(issues);
+      return;
+    }
+
+    for (const issue of issues) {
+      let shouldAdd = true;
+      for (const filter of filters) {
+        if (filter.type === 'status') {
+          if (filter.key !== issue.statusid) {
+            shouldAdd = false;
+            break;
+          }
+        }
+        // else if (filter.type === 'assignee') {
+        //   if (filter.value !== issue.assignee) {
+        //     shouldAdd = false;
+        //     break;
+        //   }
+        // } else if (filter.type === 'priority') {
+        //   if (filter.value !== issue.priority) {
+        //     shouldAdd = false;
+        //     break;
+        //   }
+        // } else if (filter.type === 'deadline') {
+        //   if (filter.value !== issue.deadline) {
+        //     shouldAdd = false;
+        //     break;
+        //   }
+        // } else if (filter.type === 'labels') {
+        //   if (!issue.labels.includes(filter.value)) {
+        //     shouldAdd = false;
+        //     break;
+        //   }
+        // }
+      }
+      if (shouldAdd) {
+        updatedIssues.push(issue);
+      }
+    }
+    setTransformedIssues(updatedIssues);
+  }, [filters, issues]);
+
+  useEffect(() => {
     fetchIssues();
   }, []);
 
@@ -55,16 +102,27 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
   return (
     <div className=' flex h-full w-full flex-1 flex-col bg-gray-50'>
       <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
-        <FilterGroup />
+        <FilterGroup filters={filters} setFilters={setFilters} />
         <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
       </div>
       <div className=' flex h-full flex-grow flex-col'>
         {viewType === 'board' ? (
-          <KanbanView issues={issues} reload={reload} projectId={projectId} />
+          <KanbanView
+            issues={transformedIssues}
+            reload={reload}
+            projectId={projectId}
+          />
         ) : viewType === 'table' ? (
-          <TableView issues={issues} reload={reload} projectId={projectId} />
+          <TableView
+            issues={transformedIssues}
+            reload={reload}
+            projectId={projectId}
+          />
         ) : (
-          <IssuesTimelineView issues={issues} projectId={projectId} />
+          <IssuesTimelineView
+            issues={transformedIssues}
+            projectId={projectId}
+          />
         )}
       </div>
     </div>
