@@ -14,6 +14,7 @@ import {
   HistoryIcon,
   Link2,
   MessageCircleIcon,
+  TagsIcon,
   YoutubeIcon,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -58,6 +59,7 @@ import {
   DrawerClose,
 } from '@/components/ui/drawer';
 import { useWindowSize } from 'usehooks-ts';
+import IssueLabel from '@/components/issues/label';
 
 export default function IssuePage() {
   const { toast } = useToast();
@@ -527,6 +529,36 @@ function IssueInfo({
               />
             </p>
           </div>
+        </div>
+
+        <div className='flex  flex-col  gap-3   p-4 py-3'>
+          <h3 className='text-md  py-2 font-medium leading-tight text-gray-700'>
+            Labels
+          </h3>
+          <div className='flex flex-row flex-wrap gap-2'>
+            {issue.labels &&
+              issue.labels.map(
+                ({
+                  label,
+                  id,
+                  color,
+                }: {
+                  label: string;
+                  id: string;
+                  color: string;
+                }) => (
+                  <IssueLabel key={id} label={label} id={id} color={color} />
+                )
+              )}
+          </div>
+          <button className='flex h-10 flex-row items-center gap-2 rounded-lg border border-dashed border-gray-200  py-0  '>
+            <p className='flex h-full  w-fit items-center justify-center border-r border-dashed border-gray-200  px-3 text-xs font-medium leading-tight text-gray-700'>
+              <TagsIcon className='h-4 w-4' />
+            </p>
+            <p className='items-center  p-2 text-xs font-medium leading-tight text-gray-600'>
+              Add Label
+            </p>
+          </button>
         </div>
 
         <div className='flex  flex-col  gap-6   p-4 py-3'>

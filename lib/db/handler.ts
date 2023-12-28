@@ -39,11 +39,22 @@ interface IssueTable {
   datecreated: Date;
   dateupdated: Date;
 }
-
 interface IssueAssigneeTable {
   user_id: string;
   issue_id: number;
   dateassigned: Date | null;
+}
+
+interface LabelTable {
+  id: Generated<number>;
+  label: string;
+  color: string;
+  description: string | null;
+}
+
+interface IssueLabelTable {
+  issueid: number;
+  labelid: number;
 }
 
 interface ProjectTable {
@@ -58,9 +69,19 @@ interface ProjectTable {
   teamid: number | null;
 }
 
+interface Profiles {
+  id: Generated<string>;
+  full_name: string;
+  avatar_url: string | null;
+  email: string;
+}
+
 // Keys of this interface are table names.
 interface Database {
   issue: IssueTable;
   issue_assignee: IssueAssigneeTable;
   project: ProjectTable;
+  label: LabelTable;
+  issue_label: IssueLabelTable;
+  profiles: Profiles;
 }

@@ -1,6 +1,8 @@
+import { db } from '@/lib/db/handler';
 import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres';
 
 const issueSchema = z.object({
   title: z.string(),
@@ -57,17 +59,33 @@ export async function GET(
   req: Request,
   { params }: { params: { pid: string } }
 ) {
-  const { data, error } = await supabase
-    .from('issue')
-    .select(
-      `
-      id, title, statusid, deadline, datestarted, projectid, datecreated, dateupdated,
-      assignee: issue_assignee (
-        dateassigned,
-        profile: user_id ( * )
-      )
-    `
-    )
-    .eq('projectid', Number(params.pid));
-  return NextResponse.json(data);
+  const projectsWithOpenIssueCounts = await db
+    .selectFrom('issue')
+    .select(({ eb, fn }) => [
+      'issue.id',
+      'issue.title',
+      'issue.contents',
+      'issue.statusid',
+      'issue.deadline',
+      'issue.datestarted',
+      'issue.projectid',
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_label')
+          .innerJoin('label', 'issue_label.labelid', 'label.id')
+          .select(['labelid', 'label', 'color'])
+          .whereRef('issue_label.issueid', '=', 'issue.id')
+      ).as('labels'),
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_assignee')
+          .innerJoin('profiles', 'issue_assignee.user_id', 'profiles.id')
+          .selectAll()
+          .whereRef('issue_assignee.issue_id', '=', 'issue.id')
+      ).as('assignees'),
+    ])
+    .where('issue.projectid', '=', Number(params.pid))
+    .execute();
+
+  return NextResponse.json(projectsWithOpenIssueCounts);
 }

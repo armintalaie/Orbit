@@ -84,16 +84,19 @@ export function NewIssue({
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
+        <DialogTrigger asChild className='m-0 p-0'>
           {projectid &&
             (button ? (
               <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
                 New Issue
               </Button>
             ) : (
-              <button>
+              <Button
+                className='m-0 mt-0 flex h-fit w-fit items-center space-y-0 p-0'
+                variant='outline'
+              >
                 <PlusIcon className='h-4 w-4' />
-              </button>
+              </Button>
             ))}
         </DialogTrigger>
         <DialogContent className='sm:max-w-3xl'>
@@ -113,14 +116,14 @@ export function NewIssue({
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
+      <DrawerTrigger asChild className='m-0 p-0'>
         {projectid &&
           (button ? (
             <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
               New Issue
             </Button>
           ) : (
-            <button>
+            <button className='m-0 flex h-fit w-fit items-center p-0'>
               <PlusIcon className='h-4 w-4' />
             </button>
           ))}
@@ -228,12 +231,11 @@ function NewIssueForm({
             name='body'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Contents</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder='Add some details about the issue or add them later...'
                     id='message-2'
-                    className='h-60 resize-none'
+                    className='h-30 resize-none'
                     {...field}
                   />
                 </FormControl>

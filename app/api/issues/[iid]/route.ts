@@ -1,22 +1,43 @@
 import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/db/handler';
+import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres';
 
 export async function GET(
   req: Request,
   { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
-  const assignees = await supabase
-    .from('issue_assignee')
-    .select(
-      `user_id,
-  user:user_id ( id, full_name, email, avatar_url )
-  `
-    )
-    .eq('issue_id', Number(iid));
-  const data = await supabase.from('issue').select().eq('id', Number(iid));
-  const issue = data.data[0];
-  const user = assignees.data.map((assignee: any) => assignee.user);
-  issue.assignees = user;
+  let issue = await db
+    .selectFrom('issue')
+    .select(({ eb, fn }) => [
+      'issue.id',
+      'issue.title',
+      'issue.contents',
+      'issue.statusid',
+      'issue.deadline',
+      'issue.datestarted',
+      'issue.projectid',
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_assignee')
+          .innerJoin('profiles', 'issue_assignee.user_id', 'profiles.id')
+          .selectAll()
+          .whereRef('issue_assignee.issue_id', '=', 'issue.id')
+      ).as('assignees'),
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_label')
+          .innerJoin('label', 'issue_label.labelid', 'label.id')
+          .select(['labelid', 'label.label', 'color'])
+          .whereRef('issue_label.issueid', '=', 'issue.id')
+      ).as('labels'),
+    ])
+    .where('issue.id', '=', Number(iid))
+    .executeTakeFirst();
+
+  console.log(issue);
+
+  // issue?.contents = JSON.parse(issue?.contents as string);
   return Response.json(issue);
 }
 
