@@ -9,10 +9,11 @@ const issueSchema = z.object({
   contents: z.object({
     body: z.string(),
   }),
-  statusid: z.number(),
+  statusid: z.any(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  projectid: z.number(),
+  projectid: z.any(),
+  labels: z.array(z.any()),
 });
 
 export async function POST(
@@ -26,7 +27,12 @@ export async function POST(
       projectid: Number(params.pid),
     });
 
-    const { data, error } = await supabase.from('issue').insert(issue).select();
+    const { labels, ...issueWithoutLabels } = issue;
+
+    const { data, error } = await supabase
+      .from('issue')
+      .insert(issueWithoutLabels)
+      .select();
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
@@ -47,6 +53,25 @@ export async function POST(
         );
       }
       data[0].assignee = assignee;
+    }
+
+    if (newIssue.labels) {
+      const { data: labels, error: labelsError } = await supabase
+        .from('issue_label')
+        .insert(
+          newIssue.labels.map((label: string) => ({
+            issueid: data[0].id,
+            labelid: label,
+          }))
+        )
+        .select();
+      if (labelsError) {
+        return NextResponse.json(
+          { error: labelsError.message },
+          { status: 400 }
+        );
+      }
+      // data[0].labels = labels;
     }
     return NextResponse.json(data);
   } catch (error) {

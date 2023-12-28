@@ -43,6 +43,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
+import { LabelField } from './issues/form/labelField';
 export const issueSchema = z.object({
   title: z.string(),
   contents: z.object({
@@ -62,6 +63,7 @@ export const formSchema = z.object({
     from: z.date(),
     to: z.date(),
   }),
+  labels: z.array(z.string()),
   assignee: z.string().nullable(),
 });
 
@@ -155,6 +157,7 @@ function NewIssueForm({
   close: Function;
 }) {
   const { toast } = useToast();
+  const [labels, setLabels] = useState([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -166,6 +169,7 @@ function NewIssueForm({
         to: new Date(),
       },
       assignee: null,
+      labels: [],
     },
   });
   async function onSubmit(e) {
@@ -179,6 +183,7 @@ function NewIssueForm({
       deadline: formVals.deadline.to.toISOString().split('T')[0],
       datestarted: formVals.deadline.from.toISOString().split('T')[0],
       assignee: formVals.assignee || null,
+      labels: labels,
     };
     const URL = projectid ? `/api/projects/${projectid}/issues` : `/api/issues`;
     const res = await fetch(`${URL}`, {
@@ -286,6 +291,24 @@ function NewIssueForm({
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name='labels'
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <LabelField
+                    setFields={(val) => {
+                      setLabels(val);
+                    }}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <Button type='submit' className='w-full'>
             Create
