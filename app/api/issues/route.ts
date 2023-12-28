@@ -1,6 +1,8 @@
 import { supabase } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { jsonArrayFrom } from 'kysely/helpers/postgres';
+import { db } from '@/lib/db/handler';
 
 const issueSchema = z.object({
   title: z.string(),
@@ -37,27 +39,37 @@ export async function POST(
 
 export async function GET(req: NextRequest) {
   let searchParams = JSON.parse(req.nextUrl.searchParams.get('q') || '{}');
-  let query = supabase.from('issue_assignee').select(`issue_id`);
+  let query = db
+    .selectFrom('issue')
+    .innerJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
+    .select(({ eb, fn }) => [
+      'issue.id',
+      'issue.title',
+      'issue.contents',
+      'issue.statusid',
+      'issue.deadline',
+      'issue.datestarted',
+      'issue.projectid',
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_label')
+          .innerJoin('label', 'issue_label.labelid', 'label.id')
+          .select(['labelid', 'label', 'color'])
+          .whereRef('issue_label.issueid', '=', 'issue.id')
+      ).as('labels'),
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_assignee')
+          .innerJoin('profiles', 'issue_assignee.user_id', 'profiles.id')
+          .selectAll()
+          .whereRef('issue_assignee.issue_id', '=', 'issue.id')
+      ).as('assignees'),
+    ]);
 
-  if (searchParams.length > 0) {
-    if (searchParams.assignee) {
-      query = query.eq('user_id', searchParams.assignee);
-    }
+  if (searchParams.assignees.length > 0) {
+    query = query.where('issue_assignee.user_id', 'in', searchParams.assignees);
   }
-  let { data: issue_ids } = await query;
-  issue_ids = issue_ids || [];
-  issue_ids = issue_ids.map((issue: any) => issue.issue_id);
-  const { data } = await supabase
-    .from('issue')
-    .select(
-      `
-      id, title, statusid, deadline, datestarted, projectid, datecreated, dateupdated,
-      assignee: issue_assignee (
-        dateassigned,
-        profile: user_id ( * )
-      )
-    `
-    )
-    .in('id', issue_ids);
-  return NextResponse.json(data);
+
+  const issues = await query.execute();
+  return NextResponse.json(issues);
 }

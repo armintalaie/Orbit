@@ -40,7 +40,7 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
     const route = projectId
       ? `/api/projects/${projectId}/issues`
       : `/api/issues?q=${encodeURIComponent(
-          JSON.stringify({ assignee: userId })
+          JSON.stringify({ assignees: [userId] })
         )}`;
     const res = await fetch(`${route}`);
     const tasks = await res.json();

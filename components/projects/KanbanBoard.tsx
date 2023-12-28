@@ -6,8 +6,10 @@ import { STATUS } from '@/lib/util';
 import { Heading } from '@radix-ui/themes';
 import { statusIconMapper } from '@/components/statusIconMapper';
 import IssueCard from './IssueCard';
-import { BoxSelectIcon } from 'lucide-react';
-import { useEffect } from 'react';
+import { BoxSelectIcon, ReplaceIcon, Trash2Icon } from 'lucide-react';
+import { useContext, useEffect } from 'react';
+import { ShortcutKeyboardContext } from '@/lib/context/ShortcutKeyboardProvider';
+import { Button } from '../ui/button';
 
 export interface KanbanViewProps {
   issues: {
@@ -39,6 +41,7 @@ export default function KanbanView({
   const status: { id: number; label: string }[] = STATUS || [];
   const groupedTasks = groupByStatus(issues);
   let emptyStatus = getEmptyStatus();
+  const keyboardEvent = useContext(ShortcutKeyboardContext);
 
   function groupByStatus(issues: Issue[]) {
     return issues.reduce<{ [key: number]: { issues: Issue[] } }>(
@@ -97,7 +100,7 @@ export default function KanbanView({
                     {groupedTasks[status.id] &&
                       groupedTasks[status.id].issues.map((issue) => (
                         <div key={issue.id}>
-                          <IssueCard issue={issue} />
+                          <IssueCard issue={issue} reload={reload} />
                         </div>
                       ))}
                   </ul>
@@ -109,6 +112,26 @@ export default function KanbanView({
           )
         )}
       </div>
+
+      {keyboardEvent === 'k' && (
+        <div className='fixed bottom-0 left-1/2 z-30 flex flex-grow -translate-x-1/2 -translate-y-1/2 gap-4 rounded-md bg-neutral-700 text-white shadow-md '>
+          <Button
+            className='flex flex-row items-center gap-2  rounded-sm p-2 px-4'
+            variant='ghost'
+          >
+            <ReplaceIcon className='h-4 w-4' />
+            <p className=''>Move</p>
+          </Button>
+
+          <Button
+            className='flex flex-row items-center gap-2  rounded-sm p-2 px-4'
+            variant='ghost'
+          >
+            <Trash2Icon className='h-4 w-4' />
+            <p className=''>Delete</p>
+          </Button>
+        </div>
+      )}
 
       <div className='flex flex-col py-5'>
         <div className='h-full w-72 rounded-sm p-0 '>

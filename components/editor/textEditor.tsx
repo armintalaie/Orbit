@@ -18,6 +18,10 @@ import Highlight from '@tiptap/extension-highlight';
 import { Markdown } from 'tiptap-markdown';
 import Blockquote from '@tiptap/extension-blockquote';
 import CharacterCount from '@tiptap/extension-character-count';
+import Link from '@tiptap/extension-link';
+import Mention from '@tiptap/extension-mention';
+import suggestion from './suggestion';
+import Youtube from '@tiptap/extension-youtube';
 import {
   FontBoldIcon,
   FontItalicIcon,
@@ -37,6 +41,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useToast } from '../ui/use-toast';
+import { UserFinder } from '../userFinder';
 
 const LIMIT = 500 * 10;
 const CustomTableCell = TableCell.extend({
@@ -71,7 +76,7 @@ export default function TextEditor({
   const editor = useEditor({
     editorProps: {
       attributes: {
-        class: '  w-full focus:outline-none p-2 px-0 ',
+        class: '  w-full focus:outline-none p-2 ',
       },
     },
 
@@ -96,6 +101,16 @@ export default function TextEditor({
       Highlight,
       Document,
       Markdown,
+      Youtube,
+      Link.configure({
+        HTMLAttributes: {
+          // Change rel to different value
+          // Allow search engines to follow links(remove nofollow)
+          rel: 'noopener noreferrer',
+          // Remove target entirely so links open in current tab
+          target: null,
+        },
+      }),
 
       Paragraph,
       Text,
@@ -116,6 +131,13 @@ export default function TextEditor({
       }),
       CharacterCount.configure({
         limit: LIMIT,
+      }),
+      Mention.configure({
+        HTMLAttributes: {
+          class: 'mention',
+        },
+        suggestion: suggestion,
+        // <UserFinder teamid={1}/>
       }),
     ],
     content: content,
@@ -152,7 +174,7 @@ export default function TextEditor({
           <SaveIcon className='mr-2 h-4 w-4' />
           Save
         </Button>
-        <div className=' relative h-full w-full flex-1 overflow-scroll p-2 '>
+        <div className=' relative h-full w-full flex-1 justify-center overflow-scroll p-2 '>
           <EditorContent editor={editor} />
         </div>
       </div>
@@ -212,11 +234,11 @@ export function MenuBar({ editor }: { editor: any }) {
   }
 
   return (
-    <div className='h-15 min-h-15  flex w-full flex-row  items-center justify-between overflow-x-scroll border-y  border-gray-100 bg-white p-2 py-3'>
-      <div className='sticky  top-5 z-10 m-0 flex w-full min-w-fit flex-row items-center justify-center gap-2 p-0 text-xs'>
+    <div className='h-15 min-h-15  flex w-full flex-row  items-center justify-between overflow-x-scroll border-y  border-gray-100 bg-white '>
+      <div className='sticky  z-10 m-0 flex h-full w-full min-w-fit flex-row items-center justify-center gap-2 p-0  text-xs '>
         <ToggleGroup
           type='single'
-          className='h-6 min-w-fit overflow-hidden rounded-md border border-gray-200 bg-white'
+          className='h-full min-w-fit overflow-hidden  border-l border-r border-gray-100  bg-white'
           value={whichHeadingIsSelected()}
         >
           <ToggleGroupItem
@@ -252,7 +274,7 @@ export function MenuBar({ editor }: { editor: any }) {
         <ToggleGroup
           type='multiple'
           value={whichStylingsAreSelected()}
-          className='h-6   min-w-fit overflow-hidden rounded-md border border-gray-200 bg-white'
+          className='h-full min-w-fit overflow-hidden  border-r  border-gray-100 bg-white'
         >
           <ToggleGroupItem
             value='bold'
@@ -304,7 +326,7 @@ export function MenuBar({ editor }: { editor: any }) {
         <ToggleGroup
           value={whichContainerIsSelected()}
           type='single'
-          className='h-6   min-w-fit overflow-hidden rounded-md border border-gray-200 bg-white'
+          className='h-full min-w-fit overflow-hidden  border-r  border-gray-100 bg-white'
         >
           <ToggleGroupItem
             value='bulletList'

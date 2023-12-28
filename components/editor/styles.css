@@ -1,5 +1,5 @@
 .tiptap {
-  max-width: 800px;
+  max-width: 750px;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
   line-height: 1.2rem;
@@ -8,6 +8,7 @@
   overflow-x: hidden;
   font-size: 15px;
   overflow-y: scroll;
+  padding: 0px 1.5rem;
 }
 
 .tiptap p {

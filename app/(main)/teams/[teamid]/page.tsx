@@ -29,6 +29,7 @@ import ProjectsTimelineView from '@/components/projects/projectsTimeline';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { NewProject } from '@/components/newProject';
 import { statusIconMapper } from '@/components/statusIconMapper';
+import IssueTemplates from '@/components/teams/IssueTemplates';
 
 export default function ProjectPage() {
   const params = useParams();
@@ -93,7 +94,7 @@ export default function ProjectPage() {
           </div>
         </div>
         <div className='flex h-full items-center justify-center gap-2'>
-          <NewProject button={true} reload={reload} teamid={team.id} />
+          {/* <NewProject button={true} reload={reload} teamid={team.id} /> */}
         </div>
       </PageWrapper.Header>
       <PageWrapper.SubHeader>
@@ -104,7 +105,14 @@ export default function ProjectPage() {
       </PageWrapper.SubHeader>
 
       <PageWrapper.Content>
-        <div className=' flex w-full  flex-col overflow-hidden   '>
+        <div className=' flex w-full  flex-col overflow-hidden pb-4   '>
+          <div className='flex flex-row items-center justify-between px-4  '>
+            <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
+              Projects
+            </h2>
+            <NewProject button={true} reload={reload} teamid={team.id} />
+          </div>
+
           {(() => {
             switch (viewType) {
               case 'table':
@@ -118,6 +126,7 @@ export default function ProjectPage() {
           })()}
         </div>
 
+        <IssueTemplates teamid={params.teamid} />
         <div className=' flex w-full  flex-col px-4'>
           <div className='flex flex-row items-center justify-between  '>
             <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
