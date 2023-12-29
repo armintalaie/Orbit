@@ -8,9 +8,26 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Button } from '../ui/button';
+import { NewTemplate } from '../editor/popoverEditor';
+import { useEffect } from 'react';
+import { Alert, AlertDescription } from '../ui/alert';
+import { FileTextIcon } from 'lucide-react';
 
-export default function IssueTemplates() {
+export default function IssueTemplates({ teamid }: { teamid: string }) {
+  const [templates, setTemplates] = React.useState<any[]>([]);
+
+  async function fetchTemplates() {
+    const res = await fetch(`/api/teams/${teamid}/templates`, {
+      next: { revalidate: 10 },
+    });
+    const templates = await res.json();
+    setTemplates(templates);
+  }
+
+  useEffect(() => {
+    fetchTemplates();
+  }, []);
+
   return (
     <div className=' flex w-full  flex-col px-4'>
       <div className='flex w-full  flex-col '>
@@ -18,42 +35,60 @@ export default function IssueTemplates() {
           <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
             Issue Templates
           </h2>
-
-          <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
-            New Template
-          </Button>
+          <NewTemplate
+            button={true}
+            reload={() => fetchTemplates()}
+            teamid={teamid}
+          />
         </div>
 
-        <div className='flex max-w-4xl flex-row items-center gap-2 '>
-          <Carousel
-            opts={{
-              align: 'start',
-            }}
-            className='w-full '
-          >
-            <CarouselContent className=''>
-              {Array.from({ length: 5 }).map((_, index) => (
-                <CarouselItem key={index} className='md:basis-1/2 lg:basis-1/4'>
-                  <div className='p-1'>
-                    <Card>
-                      <CardContent className='flex aspect-square flex-col justify-between   p-6'>
-                        <h6>Design Issue</h6>
-                        <span className='text-md font-semibold'>
-                          Starter template for design issues
-                        </span>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+        {templates && templates.length > 0 ? (
+          <div className='flex max-w-4xl flex-row items-center gap-2 '>
+            <Carousel
+              opts={{
+                align: 'start',
+              }}
+              className='w-full '
+            >
+              <CarouselContent className=''>
+                {templates.map((template, index) => (
+                  <CarouselItem
+                    key={index}
+                    className='basis-1/4 md:basis-1/4 lg:basis-1/4'
+                  >
+                    <div className=''>
+                      <Card>
+                        <CardContent className='flex h-48 w-full  flex-col  gap-4 px-0 py-2'>
+                          <div className='flex  h-12 flex-row items-center gap-2 border-b border-gray-100 px-3 text-neutral-600'>
+                            <FileTextIcon className='h-5 w-5 ' />
+                            <h6 className='text-lg'>{template.title}</h6>
+                          </div>
 
-            <div className='relative  flex w-24 items-center  justify-between p-2'>
-              <CarouselPrevious className='relative left-0 top-0 translate-x-0 translate-y-0' />
-              <CarouselNext className='relative left-0 top-0 translate-x-0 translate-y-0' />
-            </div>
-          </Carousel>
-        </div>
+                          <span className='flex h-10 flex-grow flex-col justify-start px-3 text-xs'>
+                            {template.description}
+                          </span>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+
+              <div className='relative  flex w-24 items-center  justify-between p-2'>
+                <CarouselPrevious className='relative left-0 top-0 translate-x-0 translate-y-0' />
+                <CarouselNext className='relative left-0 top-0 translate-x-0 translate-y-0' />
+              </div>
+            </Carousel>
+          </div>
+        ) : (
+          <div className='flex flex-col items-center justify-center gap-2 py-5'>
+            <Alert className='bg-inherit'>
+              <AlertDescription>
+                You have no templates for this team. Create one now.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
       </div>
     </div>
   );

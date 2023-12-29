@@ -26,7 +26,7 @@ export default function ShortcutKeyboardProvider({
         }
         if (e.key === 'k') {
           //   e.preventDefault();
-          setShortcutKeyboard((prev) => 'k');
+          //   setShortcutKeyboard((prev) => 'k');
         }
       }}
       tabIndex={0}

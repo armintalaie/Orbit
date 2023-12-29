@@ -16,7 +16,12 @@ import KanbanView from '@/components/projects/KanbanBoard';
 import TableView from '@/components/projects/tableView';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import IssuesTimelineView from '../issues/IssueTimelineView';
-import { GanttChartSquare } from 'lucide-react';
+import {
+  GanttChartSquare,
+  KanbanIcon,
+  KanbanSquareIcon,
+  ListIcon,
+} from 'lucide-react';
 import FilterGroup from '../issues/filterGroup';
 
 interface ProjectPageProps {
@@ -184,7 +189,7 @@ const ToggleGroupDemo = ({
         aria-label='Left aligned'
         onClick={() => setViewType('table')}
       >
-        <TableIcon />
+        <ListIcon />
       </ToggleGroup.Item>
       <ToggleGroup.Item
         className={`flex w-9 items-center justify-center p-2 ${
@@ -194,7 +199,7 @@ const ToggleGroupDemo = ({
         aria-label='Center aligned'
         onClick={() => setViewType('board')}
       >
-        <BoxIcon />
+        <KanbanSquareIcon />
       </ToggleGroup.Item>
       <ToggleGroup.Item
         className={`flex w-9 items-center justify-center p-2 ${
@@ -204,7 +209,7 @@ const ToggleGroupDemo = ({
         aria-label='Center aligned'
         onClick={() => setViewType('timeline')}
       >
-        <GanttChartSquare className='stroke-1' />
+        <GanttChartSquare />
       </ToggleGroup.Item>
     </ToggleGroup.Root>
   );

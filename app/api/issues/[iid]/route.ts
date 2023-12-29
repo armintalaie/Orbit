@@ -35,8 +35,6 @@ export async function GET(
     .where('issue.id', '=', Number(iid))
     .executeTakeFirst();
 
-  console.log(issue);
-
   // issue?.contents = JSON.parse(issue?.contents as string);
   return Response.json(issue);
 }

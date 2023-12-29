@@ -1,12 +1,11 @@
 import { ReactRenderer } from '@tiptap/react';
 import tippy from 'tippy.js';
-import { MentionUserFinder, UserFinder } from '../userFinder';
+import { MentionUserFinder } from '../userFinder';
 
 const suggestion = {
   items: async ({ query }) => {
     const res = await fetch('/api/profiles');
     const profiles = await res.json();
-    console.log(profiles);
     return profiles.map((profile) => profile.ful_name);
   },
 

@@ -68,9 +68,13 @@ const CustomTableCell = TableCell.extend({
 export default function TextEditor({
   onSave,
   content,
+  className,
+  onUpdate,
 }: {
-  onSave: (content: string) => Promise<void>;
+  onSave?: (content: string) => Promise<void>;
   content: string;
+  className?: string;
+  onUpdate?: (content: string) => Promise<void>;
 }) {
   const { toast } = useToast();
   const editor = useEditor({
@@ -79,7 +83,13 @@ export default function TextEditor({
         class: '  w-full focus:outline-none p-2 ',
       },
     },
-
+    onUpdate: ({ editor }) => {
+      if (onUpdate) {
+        const html = editor.getHTML();
+        const content = editor.storage.markdown.getMarkdown();
+        onUpdate(content, html);
+      }
+    },
     extensions: [
       StarterKit,
       Table.configure({
@@ -144,7 +154,9 @@ export default function TextEditor({
   });
 
   return (
-    <div className=' relative flex flex-grow flex-col overflow-hidden'>
+    <div
+      className={` relative flex flex-grow flex-col overflow-hidden ${className}`}
+    >
       <MenuBar editor={editor} />
       <div className='relative flex flex-grow flex-col overflow-scroll'>
         {editor && editor.storage && (
@@ -159,21 +171,23 @@ export default function TextEditor({
           </div>
         )}
 
-        <Button
-          variant='outline'
-          className='absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center bg-neutral-700 p-2 text-xs text-neutral-50'
-          onClick={async () => {
-            const content = editor.storage.markdown.getMarkdown();
-            await onSave(content);
-            toast({
-              title: 'Saved',
-              description: 'Your changes have been saved.',
-            });
-          }}
-        >
-          <SaveIcon className='mr-2 h-4 w-4' />
-          Save
-        </Button>
+        {onSave && (
+          <Button
+            variant='outline'
+            className='absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center bg-neutral-700 p-2 text-xs text-neutral-50'
+            onClick={async () => {
+              const content = editor.storage.markdown.getMarkdown();
+              await onSave(content);
+              toast({
+                title: 'Saved',
+                description: 'Your changes have been saved.',
+              });
+            }}
+          >
+            <SaveIcon className='mr-2 h-4 w-4' />
+            Save
+          </Button>
+        )}
         <div className=' relative h-full w-full flex-1 justify-center overflow-scroll p-2 '>
           <EditorContent editor={editor} />
         </div>
