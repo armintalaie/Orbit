@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { jsonArrayFrom } from 'kysely/helpers/postgres';
+import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres';
 import { db } from '@/lib/db/handler';
 
 const issueSchema = z.object({
@@ -41,7 +41,8 @@ export async function GET(req: NextRequest) {
   let searchParams = JSON.parse(req.nextUrl.searchParams.get('q') || '{}');
   let query = db
     .selectFrom('issue')
-    .innerJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
+    .leftJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
+    .innerJoin('project', 'issue.projectid', 'project.id')
     .select(({ eb, fn }) => [
       'issue.id',
       'issue.title',
@@ -50,6 +51,12 @@ export async function GET(req: NextRequest) {
       'issue.deadline',
       'issue.datestarted',
       'issue.projectid',
+      'project.title as project_title',
+      // jsonObjectFrom(
+      //   'project.id',
+      // ).as('project'),
+      'project.teamid',
+      // 'team.title as team_title',
       jsonArrayFrom(
         eb
           .selectFrom('issue_label')
@@ -66,9 +73,38 @@ export async function GET(req: NextRequest) {
       ).as('assignees'),
     ]);
 
-  if (searchParams.assignees.length > 0) {
+  if (searchParams.assignees && searchParams.assignees.length > 0) {
     query = query.where('issue_assignee.user_id', 'in', searchParams.assignees);
   }
+
+  if (searchParams.teams && searchParams.teams.length > 0) {
+    query = query.where('project.teamid', 'in', searchParams.teams.map(Number));
+  }
+
+  // if (searchParams.labels && searchParams.labels.length > 0) {
+  //   query = query.where('issue_label.labelid', 'in', searchParams.labels);
+  // }
+
+  if (searchParams.statuses && searchParams.statuses.length > 0) {
+    query = query.where(
+      'issue.statusid',
+      'in',
+      searchParams.statuses.map(Number)
+    );
+  }
+
+  if (searchParams.projects && searchParams.projects.length > 0) {
+    query = query.where(
+      'issue.projectid',
+      'in',
+      searchParams.projects.map(Number)
+    );
+  }
+
+  // if (searchParams.deadline) {
+
+  //   query = query.where('issue.deadline', '>=', searchParams.deadline);
+  // }
 
   const issues = await query.execute();
   return NextResponse.json(issues);

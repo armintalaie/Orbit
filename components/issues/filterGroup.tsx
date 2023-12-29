@@ -3,11 +3,13 @@
 import * as React from 'react';
 import {
   ArrowLeftCircle,
+  BoxIcon,
   CalendarIcon,
   CircleSlashIcon,
   FolderIcon,
   ListFilterIcon,
   TagIcon,
+  TargetIcon,
   UserCircle,
   Users2Icon,
   XIcon,
@@ -25,14 +27,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { PlusCircleIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useState } from 'react';
 import { LABELS, STATUS } from '@/lib/util';
 import { statusIconMapper } from '../statusIconMapper';
 import { UserFilter } from '../userFilter';
 import IssueLabel from './label';
-import { SwitchIcon } from '@radix-ui/react-icons';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 
 type FilterType =
@@ -40,6 +40,7 @@ type FilterType =
   | 'assignee'
   | 'priority'
   | 'deadline'
+  | 'project'
   | 'labels'
   | 'more';
 
@@ -125,8 +126,15 @@ export default function FilterGroup({
     },
     project: {
       name: 'project',
-      icon: <FolderIcon className='h-4 w-4' />,
-      command: <div>project</div>,
+      icon: <TargetIcon className='h-4 w-4' />,
+      command: (
+        <ProjectFilter
+          backBtn={() => {
+            setFilterType(undefined);
+          }}
+          addFilter={addFilter}
+        />
+      ),
     },
     team: {
       name: 'team',
@@ -134,6 +142,27 @@ export default function FilterGroup({
       command: <div>team</div>,
     },
   };
+
+  function AppliedProjectFilter(pr) {
+    return (
+      <Button
+        variant='outline'
+        className='m-0 flex h-6 items-center gap-2 border-dashed p-2 pl-1 text-xs'
+        role='combobox'
+        style={{ borderColor: `${pr.content.color}` }}
+        aria-expanded={open}
+        onClick={() => {
+          setFilters(
+            filters.filter((f) => f.key !== pr.key && f.type !== 'project')
+          );
+        }}
+      >
+        <BoxIcon className='h-4 w-4' />
+        <span className='text-xs'>{pr.value}</span>
+        <XIcon className='h-3 w-3 text-gray-600' />
+      </Button>
+    );
+  }
 
   function AppliedLabelFilter(fl) {
     return (
@@ -160,7 +189,7 @@ export default function FilterGroup({
   }
 
   return (
-    <div className='flex flex-row items-center gap-2'>
+    <div className='flex flex-row flex-wrap items-center gap-2'>
       <Popover open={open} onOpenChange={setOpenChanged}>
         <PopoverTrigger asChild>
           <Button
@@ -338,6 +367,63 @@ function LabelFilter({ backBtn, addFilter }: { backBtn: () => void }) {
                 color={label.color}
                 compact={false}
               />
+            </div>
+          </CommandItem>
+        ))}
+
+        <Button
+          variant='ghost'
+          onClick={backBtn}
+          className='h-full w-full rounded-none rounded-b-lg border-t border-t-gray-100 p-2 '
+        >
+          <ArrowLeftCircle className='h-4 w-4' />
+        </Button>
+      </CommandGroup>
+    </Command>
+  );
+}
+
+function ProjectFilter({ backBtn, addFilter }: { backBtn: () => void }) {
+  const [value, setValue] = React.useState('');
+  const [projects, setProjects] = React.useState<any[]>([]);
+
+  async function fetchProjects() {
+    const res = await fetch(`/api/projects`, {
+      next: { revalidate: 500 },
+    });
+    const projects = await res.json();
+    setProjects(projects);
+  }
+
+  React.useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  return (
+    <Command>
+      <div className='flex h-full items-center gap-2'>
+        <CommandInput placeholder='Search...' className='w-full border-none' />
+      </div>
+
+      <CommandEmpty>No labels</CommandEmpty>
+      <CommandGroup>
+        {projects.map((project) => (
+          <CommandItem
+            className='flex w-full items-center gap-2'
+            key={project.id}
+            value={project.id}
+            onSelect={(currentValue) => {
+              addFilter({
+                key: project.id,
+                value: project.title,
+                type: 'project',
+                content: project,
+              });
+            }}
+          >
+            <div className='flex items-center gap-2 text-xs'>
+              <TargetIcon className='h-4 w-4 ' />
+              <span>{project.title}</span>
             </div>
           </CommandItem>
         ))}

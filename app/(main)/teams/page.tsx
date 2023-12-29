@@ -1,20 +1,16 @@
 'use client';
 
-import { TableIcon, BoxIcon } from '@radix-ui/react-icons';
-import { Table, DropdownMenu } from '@radix-ui/themes';
-import * as ToggleGroup from '@radix-ui/react-toggle-group';
+import { Table } from '@radix-ui/themes';
 import { useContext, useEffect, useState } from 'react';
-import { FilterIcon } from 'lucide-react';
 import Link from 'next/link';
 import { NewTeam } from '@/components/newTeam';
-import TeamGrid from '@/components/teams/teamGrid';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import PageWrapper from '@/components/layouts/pageWrapper';
 
 export default function TeamPage() {
   const [teams, setTeams] = useState([]);
   const viewTypes = ['board', 'table'];
-  const [viewType, setViewType] = useState(viewTypes[1]);
+  // const [viewType, setViewType] = useState(viewTypes[1]);
   const userSession = useContext(UserSessionContext);
 
   async function reload() {
@@ -53,18 +49,24 @@ export default function TeamPage() {
       </PageWrapper.Header>
 
       <PageWrapper.SubHeader>
-        {/* <FilterGroup /> */}
-        <div></div>
+        <PageWrapper.SubHeader>
+          <div className='flex flex-row items-center gap-2'>
+            <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'>
+              These are all the teams you have access to
+            </p>
+          </div>
+        </PageWrapper.SubHeader>
 
-        <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
+        {/* <ToggleGroupDemo viewType={viewType} setViewType={setViewType} /> */}
       </PageWrapper.SubHeader>
 
       <PageWrapper.Content>
-        {viewType === 'board' ? (
+        <TableView teams={teams} />
+        {/* {viewType === 'board' ? (
           <TeamGrid teams={teams} />
         ) : (
           <TableView teams={teams} />
-        )}
+        )} */}
       </PageWrapper.Content>
     </PageWrapper>
   );
@@ -94,34 +96,34 @@ function TableView({ teams }) {
   );
 }
 
-const ToggleGroupDemo = ({ viewType, setViewType }) => {
-  return (
-    <ToggleGroup.Root
-      className='flex h-8 w-fit   flex-row  items-center justify-between divide-x divide-gray-200 overflow-hidden  rounded-sm border border-gray-200 bg-white text-left text-xs text-gray-500  shadow-sm'
-      type='single'
-      defaultValue='center'
-      aria-label='Text alignment'
-    >
-      <ToggleGroup.Item
-        className={`flex w-9 items-center justify-center p-2 ${
-          viewType === 'table' ? 'bg-gray-100' : 'bg-inherit'
-        }`}
-        value='table'
-        aria-label='Left aligned'
-        onClick={() => setViewType('table')}
-      >
-        <TableIcon />
-      </ToggleGroup.Item>
-      <ToggleGroup.Item
-        className={`flex w-9 items-center justify-center p-2 ${
-          viewType === 'board' ? 'bg-gray-100' : 'bg-inherit'
-        }`}
-        value='board'
-        aria-label='Center aligned'
-        onClick={() => setViewType('board')}
-      >
-        <BoxIcon />
-      </ToggleGroup.Item>
-    </ToggleGroup.Root>
-  );
-};
+// const ToggleGroupDemo = ({ viewType, setViewType }) => {
+//   return (
+//     <ToggleGroup.Root
+//       className='flex h-8 w-fit   flex-row  items-center justify-between divide-x divide-gray-200 overflow-hidden  rounded-sm border border-gray-200 bg-white text-left text-xs text-gray-500  shadow-sm'
+//       type='single'
+//       defaultValue='center'
+//       aria-label='Text alignment'
+//     >
+//       <ToggleGroup.Item
+//         className={`flex w-9 items-center justify-center p-2 ${
+//           viewType === 'table' ? 'bg-gray-100' : 'bg-inherit'
+//         }`}
+//         value='table'
+//         aria-label='Left aligned'
+//         onClick={() => setViewType('table')}
+//       >
+//         <TableIcon />
+//       </ToggleGroup.Item>
+//       <ToggleGroup.Item
+//         className={`flex w-9 items-center justify-center p-2 ${
+//           viewType === 'board' ? 'bg-gray-100' : 'bg-inherit'
+//         }`}
+//         value='board'
+//         aria-label='Center aligned'
+//         onClick={() => setViewType('board')}
+//       >
+//         <BoxIcon />
+//       </ToggleGroup.Item>
+//     </ToggleGroup.Root>
+//   );
+// };

@@ -24,29 +24,34 @@ import {
 } from 'lucide-react';
 import FilterGroup from '../issues/filterGroup';
 
-interface ProjectPageProps {
-  pid?: number;
+interface IssueBoardProps {
+  query: {
+    pid?: number | string;
+    tid?: number | string;
+    q?: object;
+  };
+  showProject?: boolean;
+  defaultViewType?: ViewType;
 }
 
 type ViewType = 'board' | 'table' | 'timeline';
 
-export default function IssueBoard({ pid }: ProjectPageProps) {
-  const userSession = useContext(UserSessionContext);
-  const projectId = pid;
+export default function IssueBoard({
+  query,
+  defaultViewType,
+}: IssueBoardProps) {
+  const projectId = query?.pid;
   const [issues, setIssues] = useState([]);
   const [transformedIssues, setTransformedIssues] = useState([]);
-  const DEFAULT_VIEW_TYPE = 'board';
+  const DEFAULT_VIEW_TYPE = defaultViewType || 'board';
   const [viewType, setViewType] = useState<ViewType>(DEFAULT_VIEW_TYPE);
   const [filters, setFilters] = useState([]);
   const [filterMethod, setFilterMethod] = useState('ANY');
 
   async function fetchIssues() {
-    const userId = userSession?.user?.id;
-    const route = projectId
-      ? `/api/projects/${projectId}/issues`
-      : `/api/issues?q=${encodeURIComponent(
-          JSON.stringify({ assignees: [userId] })
-        )}`;
+    let route = `/api/issues?q=${encodeURIComponent(
+      JSON.stringify(query.q || {})
+    )}`;
     const res = await fetch(`${route}`);
     const tasks = await res.json();
     setIssues(tasks);
@@ -81,6 +86,11 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
             shouldAdd = false;
             break;
           }
+        } else if (filter.type === 'project') {
+          if (filter.key !== issue.projectid) {
+            shouldAdd = false;
+            break;
+          }
         }
       }
       if (shouldAdd) {
@@ -111,6 +121,11 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
             shouldAdd = true;
             break;
           }
+        } else if (filter.type === 'project') {
+          if (filter.key === issue.projectid) {
+            shouldAdd = true;
+            break;
+          }
         }
       }
       if (shouldAdd) {
@@ -134,7 +149,7 @@ export default function IssueBoard({ pid }: ProjectPageProps) {
 
   return (
     <div className=' flex h-full w-full flex-1 flex-col bg-gray-50'>
-      <div className='flex h-12 flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3'>
+      <div className='min-h-12 flex flex-row items-center justify-between gap-3 border-y border-gray-100 bg-white p-4 py-3'>
         <FilterGroup
           filters={filters}
           setFilters={setFilters}

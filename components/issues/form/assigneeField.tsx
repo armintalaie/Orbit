@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CircleUser } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
 
 interface Profile {
   id: string | undefined;
@@ -31,13 +32,8 @@ const noAssignee: Profile = {
   username: '',
 };
 
-export function AssigneeField({
-  field,
-  projectid,
-}: {
-  field: any;
-  projectid: number;
-}) {
+export function AssigneeField({ field }: { field: any }) {
+  const user = useContext(UserSessionContext);
   const [memberOptions, setMemberOptions] = useState<{
     [key: string]: Profile;
   }>({});
@@ -48,7 +44,10 @@ export function AssigneeField({
 
   useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/projects/${projectid}/members`, {
+      const res = await fetch(`/api/profiles`, {
+        headers: {
+          Authorization: `${user?.access_token}`,
+        },
         next: { revalidate: 10 },
       });
       let members = await res.json();

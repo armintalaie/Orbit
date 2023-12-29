@@ -16,20 +16,20 @@ export default function ShortcutKeyboardProvider({
 
   return (
     <div
-      ref={ref}
-      onKeyDown={(e) => {
-        if (window.innerWidth < 768 || window.innerHeight < 500) {
-          return;
-        }
-        if (e.key === 'Escape') {
-          setShortcutKeyboard((prev) => null);
-        }
-        if (e.key === 'k') {
-          //   e.preventDefault();
-          //   setShortcutKeyboard((prev) => 'k');
-        }
-      }}
-      tabIndex={0}
+    // ref={ref}
+    // onKeyDown={(e) => {
+    //   if (window.innerWidth < 768 || window.innerHeight < 500) {
+    //     return;
+    //   }
+    //   if (e.key === 'Escape') {
+    //     setShortcutKeyboard((prev) => null);
+    //   }
+    //   if (e.key === 'k') {
+    //     //   e.preventDefault();
+    //     //   setShortcutKeyboard((prev) => 'k');
+    //   }
+    // }}
+    // tabIndex={0}
     >
       <ShortcutKeyboardContext.Provider value={shortcutKeyboard}>
         {children}

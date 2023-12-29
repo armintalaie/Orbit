@@ -41,6 +41,14 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
     updated_at: '',
   });
 
+  const issueQuery = {
+    tid: params.teamid as string,
+    q: {
+      projects: [projectId],
+    },
+    showProject: false,
+  };
+
   async function fetchProject() {
     const res = await fetch(`/api/projects/${projectId}`);
     const project = await res.json();
@@ -64,17 +72,8 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
           <NewIssue button={true} reload={fetchProject} projectid={projectId} />
         </div>
       </PageWrapper.Header>
-
-      {/* <PageWrapper.SubHeader>
-        <div className='flex flex-row items-center gap-2'>
-          <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'>
-            {project.description}
-          </p>
-        </div>
-      </PageWrapper.SubHeader> */}
-
       <PageWrapper.Content>
-        <IssueBoard pid={projectId} />
+        <IssueBoard query={issueQuery} />
       </PageWrapper.Content>
     </PageWrapper>
   );

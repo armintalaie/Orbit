@@ -53,7 +53,7 @@ export default function IssueCard({ issue, reload }: IssueCardProps) {
           <Box className='flex flex-col gap-2 rounded-sm border border-gray-100 bg-white  p-2 '>
             <div className='flex w-full flex-row justify-between gap-2 py-0'>
               <Text size='1' className='text-gray-600'>
-                #{issue.id}
+                {issue.project_title}#{issue.id}
               </Text>
               {isOverdue(issue.deadline) ? (
                 <span className='text-xs text-red-500'>

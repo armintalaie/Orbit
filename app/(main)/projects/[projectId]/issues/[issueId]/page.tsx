@@ -447,13 +447,6 @@ function IssueInfo({
       <div className='flex h-12 w-full items-center justify-end gap-6  bg-white  p-4 px-4 '>
         <Button
           variant='ghost'
-          disabled={true}
-          className='p-0 hover:bg-inherit'
-        >
-          <HistoryIcon className='h-4 w-4' />
-        </Button>
-        <Button
-          variant='ghost'
           className='p-0 hover:bg-inherit'
           onClick={() => {
             navigator.clipboard.writeText(`P${projectId}-issue${issue.id}`);
@@ -547,7 +540,13 @@ function IssueInfo({
                   id: string;
                   color: string;
                 }) => (
-                  <IssueLabel key={id} label={label} id={id} color={color} />
+                  <IssueLabel
+                    key={id}
+                    label={label}
+                    id={id}
+                    color={color}
+                    className='py-2 text-sm'
+                  />
                 )
               )}
           </div>

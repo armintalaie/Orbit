@@ -5,18 +5,31 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
   CommandDialog,
   CommandEmpty,
+  CommandGroup,
   CommandInput,
+  CommandItem,
   CommandList,
+  CommandSeparator,
+  CommandShortcut,
 } from '@/components/ui/command';
 import Link from 'next/link';
 import {
   BoxIcon,
+  CalendarIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   CircleDot,
   FolderClosed,
+  InboxIcon,
+  LayoutGridIcon,
+  LogOutIcon,
   PanelLeft,
+  PlusCircleIcon,
+  SearchIcon,
+  SettingsIcon,
+  TargetIcon,
   Users2Icon,
+  UsersRoundIcon,
 } from 'lucide-react';
 import { Changelog } from '@/components/changelog';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
@@ -31,7 +44,11 @@ import AuthContextProvider, {
   UserSessionContext,
 } from '@/lib/context/AuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import ShortcutKeyboardProvider from '@/lib/context/ShortcutKeyboardProvider';
+import {
+  PersonIcon,
+  EnvelopeClosedIcon,
+  GearIcon,
+} from '@radix-ui/react-icons';
 
 export default function ProjectLayout({
   children,
@@ -40,31 +57,31 @@ export default function ProjectLayout({
 }) {
   return (
     <AuthContextProvider>
-      <ShortcutKeyboardProvider>
-        <div className='flex h-screen w-screen flex-row'>
-          <SideBarContent className={'min-w-56 hidden w-72'} />
-          <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
-            <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
-              <NextBreadcrumb
-                homeElement={
-                  <MenuDialog>
-                    <SideBarContent className='w-full' showLogo={true} />
-                  </MenuDialog>
-                }
-                activeClasses='hidden'
-                containerClasses='flex py-5 px-2  from-purple-600 to-blue-600 h-12 items-center '
-                listClasses='hover:underline px-2 '
-                capitalizeLinks
-              />
-              <div className='flex flex-row gap-2 overflow-y-auto pr-3 '>
-                <FeedbackButton />
-                <Changelog />
-              </div>
+      {/* <ShortcutKeyboardProvider> */}
+      <div className='flex h-screen w-screen flex-row'>
+        <SideBarContent className={'min-w-56 hidden w-72'} />
+        <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
+          <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
+            <NextBreadcrumb
+              homeElement={
+                <MenuDialog>
+                  <SideBarContent className='w-full' showLogo={true} />
+                </MenuDialog>
+              }
+              activeClasses='hidden'
+              containerClasses='flex py-5 px-2  from-purple-600 to-blue-600 h-12 items-center '
+              listClasses='hover:underline px-2 '
+              capitalizeLinks
+            />
+            <div className='flex flex-row gap-2 overflow-y-auto pr-3 '>
+              <FeedbackButton />
+              <Changelog />
             </div>
-            {children}
           </div>
+          {children}
         </div>
-      </ShortcutKeyboardProvider>
+      </div>
+      {/* </ShortcutKeyboardProvider> */}
     </AuthContextProvider>
   );
 }
@@ -135,7 +152,7 @@ function SideBarContent({
             className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700 dark:text-neutral-400'
             shallow={true}
           >
-            <CircleDot className='h-3 w-3 ' />
+            <InboxIcon className='h-3 w-3 ' />
             <span className='flex h-full items-center justify-between pl-2'>
               My Issues
             </span>
@@ -145,7 +162,7 @@ function SideBarContent({
             shallow={true}
             className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700 dark:text-neutral-400'
           >
-            <BoxIcon className='h-3 w-3 ' />
+            <LayoutGridIcon className='h-3 w-3 ' />
             <span className='flex h-full items-center justify-between pl-2'>
               Projects
             </span>
@@ -168,22 +185,54 @@ export function CommandMenu({
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  useEffect(() => {
+  React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        // setOpen((open) => !open);
+        setOpen((open) => !open);
       }
     };
+
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
   }, []);
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder='Under Development... stay tuned :)' />
+      <CommandInput placeholder='Type a command or search...' />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
+
+        <CommandGroup heading='Issues' className='text-xs'>
+          <CommandItem>
+            <SearchIcon className='mr-2 h-2 w-2 text-xs' />
+            <span>Search issues</span>
+          </CommandItem>
+          <CommandItem className=''>
+            <PlusCircleIcon className='mr-2 h-2 w-2 ' />
+            <span className=''>New issue</span>
+          </CommandItem>
+        </CommandGroup>
+        <CommandGroup heading='Projects' className='text-xs'>
+          <CommandItem>
+            <LayoutGridIcon className='mr-2 h-2 w-2 text-xs' />
+            <span>View projects</span>
+          </CommandItem>
+          <CommandItem className=''>
+            <PlusCircleIcon className='mr-2 h-2 w-2 ' />
+            <span className=''>New project</span>
+          </CommandItem>
+        </CommandGroup>
+        <CommandGroup heading='Profile' className='text-xs'>
+          <CommandItem>
+            <SettingsIcon className='mr-2 h-2 w-2 text-xs' />
+            <span>Settings</span>
+          </CommandItem>
+          <CommandItem className=''>
+            <LogOutIcon className='mr-2 h-2 w-2 ' />
+            <span className=''>Sign out</span>
+          </CommandItem>
+        </CommandGroup>
       </CommandList>
     </CommandDialog>
   );
@@ -219,7 +268,7 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
         >
           <FolderClosed className='h-3 w-3 ' />
           <span className='flex h-full items-center justify-between pl-2'>
-            Your Teams
+            Teams
           </span>
         </Link>
 
@@ -242,7 +291,6 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
             shallow={true}
             className=' flex h-fit w-full items-center  p-1 px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
           >
-            <Users2Icon className='h-3 w-3 ' />
             <span className='flex h-full items-center justify-between pl-2 text-xs'>
               {team.name}
             </span>

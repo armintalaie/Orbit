@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { STATUS, dateFormater, isOverdue } from '@/lib/util';
 import { TableIcon, BoxIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Table } from '@radix-ui/themes';
-import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -24,20 +23,28 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NewTeamMember } from '@/components/newTeamMember';
 import { useToast } from '@/components/ui/use-toast';
-import { GanttChartSquare } from 'lucide-react';
-import ProjectsTimelineView from '@/components/projects/projectsTimeline';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { NewProject } from '@/components/newProject';
 import { statusIconMapper } from '@/components/statusIconMapper';
 import IssueTemplates from '@/components/teams/IssueTemplates';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import IssueBoard from '@/components/projects/IssueMainBoard';
+
+type viewTypes = 'ISSUES' | 'PROJECTS';
 
 export default function ProjectPage() {
   const params = useParams();
   const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
   const [team, setTeam] = useState([]);
-  const viewTypes = ['board', 'table', 'timeline'];
-  const [viewType, setViewType] = useState('table');
+  const [viewType, setViewType] = useState<viewTypes>('ISSUES');
+  const issueQuery = {
+    tid: params.teamid as string,
+    q: {
+      teams: [params.teamid as string],
+    },
+    showProject: true,
+  };
 
   async function fetchProjects() {
     const res = await fetch(`/api/teams/${params.teamid}/projects`, {
@@ -93,106 +100,84 @@ export default function ProjectPage() {
             <TeamOptions teamId={team.id} />
           </div>
         </div>
-        <div className='flex h-full items-center justify-center gap-2'>
-          {/* <NewProject button={true} reload={reload} teamid={team.id} /> */}
-        </div>
+        <div className='flex h-full items-center justify-center gap-2'></div>
       </PageWrapper.Header>
       <PageWrapper.SubHeader>
         <div className='flex w-full flex-row items-center justify-between gap-2'>
           <div className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'></div>
-          <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
+
+          <ToggleTeamViewContents
+            viewType={viewType}
+            setViewType={setViewType}
+          />
         </div>
       </PageWrapper.SubHeader>
 
       <PageWrapper.Content>
-        <div className=' flex w-full  flex-col overflow-hidden pb-4   '>
-          <div className='flex flex-row items-center justify-between px-4  '>
-            <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
-              Projects
-            </h2>
-            <NewProject button={true} reload={reload} teamid={team.id} />
-          </div>
+        {viewType === 'ISSUES' ? (
+          <IssueBoard query={issueQuery} />
+        ) : (
+          <>
+            <div className=' flex w-full  flex-col overflow-hidden pb-4   '>
+              <div className='flex flex-row items-center justify-between px-4  '>
+                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
+                  Projects
+                </h2>
+                <NewProject button={true} reload={reload} teamid={team.id} />
+              </div>
 
-          {(() => {
-            switch (viewType) {
-              case 'table':
-                return <ProjectsTableView projects={projects} />;
-              case 'timeline':
-                return <ProjectsTimelineView projects={projects} />;
-              case 'board':
-              default:
-                return <ProjectsTableView projects={projects} />;
-            }
-          })()}
-        </div>
+              <ProjectsTableView projects={projects} />
+            </div>
 
-        <IssueTemplates teamid={params.teamid} />
-        <div className=' flex w-full  flex-col px-4'>
-          <div className='flex flex-row items-center justify-between  '>
-            <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
-              Members
-            </h2>
-            <NewTeamMember
-              teamid={params.teamid}
-              reload={fetchMembers}
-              button={true}
-            />
-          </div>
+            <IssueTemplates teamid={params.teamid} />
+            <div className=' flex w-full  flex-col px-4'>
+              <div className='flex flex-row items-center justify-between  '>
+                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
+                  Members
+                </h2>
+                <NewTeamMember
+                  teamid={params.teamid}
+                  reload={fetchMembers}
+                  button={true}
+                />
+              </div>
 
-          <MembersList
-            members={members}
-            teamid={params.teamid}
-            reload={reload}
-          />
-        </div>
+              <MembersList
+                members={members}
+                teamid={params.teamid}
+                reload={reload}
+              />
+            </div>
+          </>
+        )}
+
         {/* <Analytics/> */}
       </PageWrapper.Content>
     </PageWrapper>
   );
 }
 
-const ToggleGroupDemo = ({ viewType, setViewType }) => {
+const ToggleTeamViewContents = ({ viewType, setViewType }) => {
   return (
-    <ToggleGroup.Root
-      className='flex h-8 w-fit   flex-row  items-center justify-between divide-x divide-gray-200 overflow-hidden  rounded-sm border border-gray-200 bg-white text-left text-xs text-gray-500  shadow-sm'
+    <ToggleGroup
       type='single'
-      defaultValue='center'
-      aria-label='Text alignment'
+      value={viewType}
+      onValueChange={setViewType}
+      className='m-0 flex h-6 items-center rounded-sm  border border-gray-200 bg-gray-100 p-0 text-xs shadow-sm'
     >
-      <ToggleGroup.Item
-        className={`flex w-9 items-center justify-center p-2 ${
-          viewType === 'table' ? 'bg-gray-100' : 'bg-inherit'
-        }`}
-        value='table'
-        aria-label='Left aligned'
-        onClick={() => setViewType('table')}
+      <ToggleGroupItem
+        className='m-0 flex h-full items-center gap-2 rounded-sm border-dashed p-1 px-2 text-xs text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700   '
+        value='ISSUES'
       >
-        <TableIcon />
-      </ToggleGroup.Item>
-      <ToggleGroup.Item
-        disabled={true}
-        className={`flex w-9 items-center justify-center p-2 ${
-          viewType === 'board' ? 'bg-gray-100' : 'bg-inherit'
-        }`}
-        value='board'
-        aria-label='Center aligned'
-        onClick={() => setViewType('board')}
+        Issues
+      </ToggleGroupItem>
+      <ToggleGroupItem
+        className='m-0 flex h-full items-center gap-2  rounded-sm border-dashed p-1 px-2 text-xs  text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700'
+        value='PROJECTS'
       >
-        <BoxIcon />
-      </ToggleGroup.Item>
-
-      <ToggleGroup.Item
-        disabled={true}
-        className={`flex w-9 items-center justify-center p-2 ${
-          viewType === 'timeline' ? 'bg-gray-100' : 'bg-inherit'
-        }`}
-        value='timeline'
-        aria-label='Center aligned'
-        onClick={() => setViewType('timeline')}
-      >
-        <GanttChartSquare className='stroke-1' />
-      </ToggleGroup.Item>
-    </ToggleGroup.Root>
+        Projects
+      </ToggleGroupItem>
+    </ToggleGroup>
   );
 };
 

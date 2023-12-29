@@ -30,11 +30,16 @@ import {
 } from '@radix-ui/react-icons';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
+  AtSignIcon,
   Code2Icon,
   CodeIcon,
+  ExternalLinkIcon,
+  FileSymlinkIcon,
   HighlighterIcon,
+  ImagePlusIcon,
   ListOrderedIcon,
   ListTodoIcon,
+  PaperclipIcon,
   SaveIcon,
   StrikethroughIcon,
   TextQuote,
@@ -380,6 +385,27 @@ export function MenuBar({ editor }: { editor: any }) {
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           >
             <Code2Icon className='h-4 w-4' />
+          </ToggleGroupItem>
+        </ToggleGroup>
+
+        <ToggleGroup
+          type='single'
+          className='h-full min-w-fit overflow-hidden  border-r  border-gray-100 bg-white'
+        >
+          <ToggleGroupItem value='mention' aria-label='Toggle mention'>
+            <ImagePlusIcon className='h-4 w-4' />
+          </ToggleGroupItem>
+
+          <ToggleGroupItem value='mention' aria-label='Toggle mention'>
+            <FileSymlinkIcon className='h-4 w-4' />
+          </ToggleGroupItem>
+
+          <ToggleGroupItem value='mention' aria-label='Toggle mention'>
+            <PaperclipIcon className='h-4 w-4' />
+          </ToggleGroupItem>
+
+          <ToggleGroupItem value='mention' aria-label='Toggle mention'>
+            <AtSignIcon className='h-4 w-4' />
           </ToggleGroupItem>
         </ToggleGroup>
       </div>

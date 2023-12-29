@@ -4,7 +4,6 @@ import { PlusIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@uidotdev/usehooks';
-
 import {
   Dialog,
   DialogClose,
@@ -23,7 +22,6 @@ import {
   FormItem,
   FormLabel,
   FormControl,
-  FormDescription,
   FormMessage,
   Form,
 } from './ui/form';
@@ -68,11 +66,11 @@ export const formSchema = z.object({
 });
 
 export function NewIssue({
-  projectid,
+  defaultValues,
   button,
   reload,
 }: {
-  projectid?: number;
+  defaultValues?: z.infer<typeof formSchema>;
   button?: boolean;
   reload: Function;
 }) {
@@ -87,26 +85,29 @@ export function NewIssue({
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild className='m-0 p-0'>
-          {projectid &&
-            (button ? (
-              <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
-                New Issue
-              </Button>
-            ) : (
-              <Button
-                className='m-0 mt-0 flex h-fit w-fit items-center space-y-0 p-0'
-                variant='outline'
-              >
-                <PlusIcon className='h-4 w-4' />
-              </Button>
-            ))}
+          {button ? (
+            <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
+              New Issue
+            </Button>
+          ) : (
+            <Button
+              className='m-0 mt-0 flex h-fit w-fit items-center space-y-0 p-0'
+              variant='outline'
+            >
+              <PlusIcon className='h-4 w-4' />
+            </Button>
+          )}
         </DialogTrigger>
         <DialogContent className='sm:max-w-3xl'>
           <DialogHeader>
             <DialogTitle>New Issue</DialogTitle>
             <DialogDescription>Create a new Issue.</DialogDescription>
           </DialogHeader>
-          <NewIssueForm projectid={projectid} reload={reload} close={close} />
+          <NewIssueForm
+            defaultValues={defaultValues}
+            reload={reload}
+            close={close}
+          />
 
           <DialogFooter className='sm:justify-start'>
             <DialogClose asChild></DialogClose>
@@ -119,24 +120,26 @@ export function NewIssue({
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild className='m-0 p-0'>
-        {projectid &&
-          (button ? (
-            <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
-              New Issue
-            </Button>
-          ) : (
-            <button className='m-0 flex h-fit w-fit items-center p-0'>
-              <PlusIcon className='h-4 w-4' />
-            </button>
-          ))}
+        {button ? (
+          <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
+            New Issue
+          </Button>
+        ) : (
+          <button className='m-0 flex h-fit w-fit items-center p-0'>
+            <PlusIcon className='h-4 w-4' />
+          </button>
+        )}
       </DrawerTrigger>
       <DrawerContent className='max-h-[90%] px-3 '>
         <DrawerHeader className='text-left'>
           <DrawerTitle>New Issue</DrawerTitle>
           <DrawerDescription>Create a new Issue.</DrawerDescription>
         </DrawerHeader>
-        <NewIssueForm projectid={projectid} reload={reload} close={close} />
-
+        <NewIssueForm
+          defaultValues={defaultValues}
+          reload={reload}
+          close={close}
+        />
         <DrawerFooter className='pt-2'>
           <DrawerClose asChild>
             <Button variant='outline'>Cancel</Button>
@@ -148,11 +151,11 @@ export function NewIssue({
 }
 
 function NewIssueForm({
-  projectid,
+  defaultValues,
   reload,
   close,
 }: {
-  projectid?: number;
+  defaultValues?: z.infer<typeof formSchema>;
   reload: Function;
   close: Function;
 }) {
@@ -170,6 +173,7 @@ function NewIssueForm({
       },
       assignee: null,
       labels: [],
+      ...defaultValues,
     },
   });
   async function onSubmit(e) {
@@ -185,7 +189,7 @@ function NewIssueForm({
       assignee: formVals.assignee || null,
       labels: labels,
     };
-    const URL = projectid ? `/api/projects/${projectid}/issues` : `/api/issues`;
+    const URL = `/api/issues`;
     const res = await fetch(`${URL}`, {
       body: JSON.stringify(issue),
       headers: {
@@ -205,7 +209,7 @@ function NewIssueForm({
         title: 'Issue created',
         description: `Issue successfully created`,
       });
-      // setOpen(false);
+      close();
     }
   }
 
@@ -283,7 +287,7 @@ function NewIssueForm({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <AssigneeField field={field} projectid={projectid} />
+                    <AssigneeField field={field} />
                   </FormControl>
 
                   <FormMessage />

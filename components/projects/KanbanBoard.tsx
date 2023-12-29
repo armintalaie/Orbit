@@ -6,9 +6,8 @@ import { STATUS } from '@/lib/util';
 import { Heading } from '@radix-ui/themes';
 import { statusIconMapper } from '@/components/statusIconMapper';
 import IssueCard from './IssueCard';
-import { BoxSelectIcon, ReplaceIcon, Trash2Icon } from 'lucide-react';
+import { ReplaceIcon, Trash2Icon } from 'lucide-react';
 import { useContext, useEffect } from 'react';
-import { ShortcutKeyboardContext } from '@/lib/context/ShortcutKeyboardProvider';
 import { Button } from '../ui/button';
 
 export interface KanbanViewProps {
@@ -41,7 +40,6 @@ export default function KanbanView({
   const status: { id: number; label: string }[] = STATUS || [];
   const groupedTasks = groupByStatus(issues);
   let emptyStatus = getEmptyStatus();
-  const keyboardEvent = useContext(ShortcutKeyboardContext);
 
   function groupByStatus(issues: Issue[]) {
     return issues.reduce<{ [key: number]: { issues: Issue[] } }>(
@@ -89,11 +87,7 @@ export default function KanbanView({
                     </Heading>
                   </div>
 
-                  <NewIssue
-                    button={false}
-                    projectid={projectId}
-                    reload={reload}
-                  />
+                  <NewIssue button={false} reload={reload} />
                 </CardHeader>
                 <CardContent className='flex-1 overflow-y-auto p-0'>
                   <ul className='space-y-3'>
@@ -113,7 +107,7 @@ export default function KanbanView({
         )}
       </div>
 
-      {keyboardEvent === 'k' && (
+      {/*       
         <div className='fixed bottom-0 left-1/2 z-30 flex flex-grow -translate-x-1/2 -translate-y-1/2 gap-4 rounded-md bg-neutral-700 text-white shadow-md '>
           <Button
             className='flex flex-row items-center gap-2  rounded-sm p-2 px-4'
@@ -131,7 +125,7 @@ export default function KanbanView({
             <p className=''>Delete</p>
           </Button>
         </div>
-      )}
+       */}
 
       <div className='flex flex-col py-5'>
         <div className='h-full w-72 rounded-sm p-0 '>
@@ -147,11 +141,7 @@ export default function KanbanView({
                       </Heading>
                     </div>
 
-                    <NewIssue
-                      button={false}
-                      projectid={projectId}
-                      reload={reload}
-                    />
+                    <NewIssue button={false} reload={reload} />
                   </div>
                 </div>
               </div>
