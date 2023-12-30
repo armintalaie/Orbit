@@ -68,7 +68,6 @@ export default function IssuePage() {
   const { projectId, issueId } = params;
   const [issue, setIssue] = useState(undefined);
   const { width } = useWindowSize();
-
   async function fetchIssue() {
     const res = await fetch(`/api/issues/${issueId}`);
     const resultIssue = await res.json();
@@ -121,6 +120,7 @@ export default function IssuePage() {
               <TextEditor
                 onSave={saveContentChanges}
                 content={issue.contents.body as string}
+                issue={issue}
               />
             </div>
           </div>
@@ -164,6 +164,7 @@ export default function IssuePage() {
                     <TextEditor
                       onSave={saveContentChanges}
                       content={issue.contents.body as string}
+                      issue={issue}
                     />
                   </div>
                 </ResizablePanel>

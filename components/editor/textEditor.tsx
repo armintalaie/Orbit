@@ -33,7 +33,7 @@ import {
   AtSignIcon,
   Code2Icon,
   CodeIcon,
-  ExternalLinkIcon,
+  FilePlus,
   FileSymlinkIcon,
   HighlighterIcon,
   ImagePlusIcon,
@@ -46,7 +46,19 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useToast } from '../ui/use-toast';
-import { UserFinder } from '../userFinder';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import IssueTemplates from '../teams/IssueTemplates';
 
 const LIMIT = 500 * 10;
 const CustomTableCell = TableCell.extend({
@@ -75,11 +87,13 @@ export default function TextEditor({
   content,
   className,
   onUpdate,
+  issue,
 }: {
   onSave?: (content: string) => Promise<void>;
   content: string;
   className?: string;
   onUpdate?: (content: string) => Promise<void>;
+  issue: any;
 }) {
   const { toast } = useToast();
   const editor = useEditor({
@@ -162,7 +176,7 @@ export default function TextEditor({
     <div
       className={` relative flex flex-grow flex-col overflow-hidden ${className}`}
     >
-      <MenuBar editor={editor} />
+      <MenuBar editor={editor} issue={issue} />
       <div className='relative flex flex-grow flex-col overflow-scroll'>
         {editor && editor.storage && (
           <div
@@ -201,7 +215,7 @@ export default function TextEditor({
   );
 }
 
-export function MenuBar({ editor }: { editor: any }) {
+export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
   if (!editor) {
     return null;
   }
@@ -388,27 +402,54 @@ export function MenuBar({ editor }: { editor: any }) {
           </ToggleGroupItem>
         </ToggleGroup>
 
-        <ToggleGroup
-          type='single'
-          className='h-full min-w-fit overflow-hidden  border-r  border-gray-100 bg-white'
-        >
-          <ToggleGroupItem value='mention' aria-label='Toggle mention'>
+        <div className=' flex  h-full min-w-fit  items-center gap-4 overflow-hidden border-r  border-gray-100  bg-white px-2'>
+          {/* <div  aria-label='Toggle mention'>
             <ImagePlusIcon className='h-4 w-4' />
-          </ToggleGroupItem>
+          </div> */}
+          {issue && issue.teamid && (
+            <div aria-label='Toggle template'>
+              <TemplatePopover editor={editor} issue={issue} />
+            </div>
+          )}
 
-          <ToggleGroupItem value='mention' aria-label='Toggle mention'>
+          {/* <div  aria-label='Toggle mention'>
             <FileSymlinkIcon className='h-4 w-4' />
-          </ToggleGroupItem>
+          </div> */}
 
-          <ToggleGroupItem value='mention' aria-label='Toggle mention'>
+          {/* <div value='mention' aria-label='Toggle mention'>
             <PaperclipIcon className='h-4 w-4' />
-          </ToggleGroupItem>
+          </div>
 
-          <ToggleGroupItem value='mention' aria-label='Toggle mention'>
+          <div value='mention' aria-label='Toggle mention'>
             <AtSignIcon className='h-4 w-4' />
-          </ToggleGroupItem>
-        </ToggleGroup>
+          </div> */}
+        </div>
       </div>
     </div>
+  );
+}
+
+function TemplatePopover({ editor, issue }: { editor: any; issue: any }) {
+  function sendTemplate(template: string) {
+    editor.chain().focus().insertContent(template).run();
+  }
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className='e flex h-8 w-full items-center rounded-sm p-1 px-2 text-left text-xs  dark:border-neutral-800 dark:bg-neutral-800'>
+          <FilePlus className='h-4 w-4' />
+        </button>
+      </DialogTrigger>
+      <DialogContent className='max-w-full sm:max-w-6xl'>
+        <div className='flex items-center space-x-2'>
+          {issue && issue.teamid && (
+            <IssueTemplates teamid={issue.teamid} sendTemplate={sendTemplate} />
+          )}
+        </div>
+        <DialogFooter className='sm:justify-start'>
+          <DialogClose asChild></DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

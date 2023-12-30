@@ -13,7 +13,13 @@ import { useEffect } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { FileTextIcon } from 'lucide-react';
 
-export default function IssueTemplates({ teamid }: { teamid: string }) {
+export default function IssueTemplates({
+  teamid,
+  sendTemplate,
+}: {
+  teamid: string;
+  sendTemplate: Function;
+}) {
   const [templates, setTemplates] = React.useState<any[]>([]);
 
   async function fetchTemplates() {
@@ -54,17 +60,18 @@ export default function IssueTemplates({ teamid }: { teamid: string }) {
                 {templates.map((template, index) => (
                   <CarouselItem
                     key={index}
-                    className='basis-1/4 md:basis-1/4 lg:basis-1/4'
+                    onClick={() => sendTemplate(template.contents)}
+                    className=' xs:basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-1/3'
                   >
-                    <div className=''>
-                      <Card>
-                        <CardContent className='flex h-48 w-full  flex-col  gap-4 px-0 py-2'>
+                    <div className='rounded-lg'>
+                      <Card className='rounded-lg border-gray-200 shadow-md'>
+                        <CardContent className='flex h-32 w-full  flex-col  gap-4 rounded-lg px-0 py-2'>
                           <div className='flex  h-12 flex-row items-center gap-2 border-b border-gray-100 px-3 text-neutral-600'>
                             <FileTextIcon className='h-5 w-5 ' />
                             <h6 className='text-lg'>{template.title}</h6>
                           </div>
 
-                          <span className='flex h-10 flex-grow flex-col justify-start px-3 text-xs'>
+                          <span className='line-clamp-2 flex h-10 flex-grow flex-col justify-start px-3 text-xs'>
                             {template.description}
                           </span>
                         </CardContent>

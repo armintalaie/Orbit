@@ -7,8 +7,11 @@ export async function GET(
   { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
+
   let issue = await db
     .selectFrom('issue')
+    .leftJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
+    .innerJoin('project', 'issue.projectid', 'project.id')
     .select(({ eb, fn }) => [
       'issue.id',
       'issue.title',
@@ -17,6 +20,15 @@ export async function GET(
       'issue.deadline',
       'issue.datestarted',
       'issue.projectid',
+      'project.title as project_title',
+      'project.teamid',
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_label')
+          .innerJoin('label', 'issue_label.labelid', 'label.id')
+          .select(['labelid', 'label', 'color'])
+          .whereRef('issue_label.issueid', '=', 'issue.id')
+      ).as('labels'),
       jsonArrayFrom(
         eb
           .selectFrom('issue_assignee')
@@ -24,18 +36,10 @@ export async function GET(
           .selectAll()
           .whereRef('issue_assignee.issue_id', '=', 'issue.id')
       ).as('assignees'),
-      jsonArrayFrom(
-        eb
-          .selectFrom('issue_label')
-          .innerJoin('label', 'issue_label.labelid', 'label.id')
-          .select(['labelid', 'label.label', 'color'])
-          .whereRef('issue_label.issueid', '=', 'issue.id')
-      ).as('labels'),
     ])
     .where('issue.id', '=', Number(iid))
     .executeTakeFirst();
 
-  // issue?.contents = JSON.parse(issue?.contents as string);
   return Response.json(issue);
 }
 
