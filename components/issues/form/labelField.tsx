@@ -21,8 +21,16 @@ import { TagsIcon } from 'lucide-react';
 
 export function LabelField({ setFields }: { setFields: any }) {
   const [open, setOpen] = useState(false);
-  const labels = LABELS || [];
+  const labels = groupLabelsAsIdObject(LABELS || []);
   const [selectedLabels, setSelectedLabels] = useState<any[]>([]);
+
+  function groupLabelsAsIdObject(labels: any[]) {
+    const labelsAsIdObject: any = {};
+    labels.forEach((label) => {
+      labelsAsIdObject[label.id] = label;
+    });
+    return labelsAsIdObject;
+  }
 
   useEffect(() => {
     setFields(selectedLabels.map((label) => label.id));
@@ -56,21 +64,32 @@ export function LabelField({ setFields }: { setFields: any }) {
           </div>
         </div>
         <PopoverContent className='p-0' side='right' align='start'>
-          <Command>
-            <CommandInput placeholder='Add Label...' />
-            <CommandList>
+          <Command
+            filter={(value, search) => {
+              if (!value || !labels[value]) {
+                return 0;
+              }
+              if (labels[value].label.toLowerCase() === search.toLowerCase()) {
+                return 1;
+              }
+              return labels[value].label
+                .toLowerCase()
+                .indexOf(search.toLowerCase()) !== -1
+                ? 0.5
+                : 0;
+            }}
+          >
+            <CommandInput placeholder='Filte Labels...' />
+            <CommandList className=''>
               <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup>
-                {labels.map((label) => (
+              <CommandGroup className='flex max-h-40 flex-col gap-2 '>
+                {Object.entries(labels).map(([key, label]) => (
                   <CommandItem
                     key={label.id}
                     value={label.id.toString()}
                     onSelect={(value) => {
                       setSelectedLabels((prev) => {
-                        const labelToAdd = labels.find(
-                          (priority) =>
-                            priority.id.toString() === value.toString()
-                        );
+                        const labelToAdd = labels[value];
 
                         if (prev.some((label) => label.id === labelToAdd.id)) {
                           return prev;

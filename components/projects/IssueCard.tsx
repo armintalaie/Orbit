@@ -1,6 +1,6 @@
 'use client';
 
-import { dateFormater, isOverdue } from '@/lib/util';
+import { STATUS, dateFormater, isOverdue } from '@/lib/util';
 import { Box, Text } from '@radix-ui/themes';
 import Link from 'next/link';
 import AssigneeAvatar from './AssigneeAvatar';
@@ -12,6 +12,7 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import {
+  ArrowLeftCircle,
   CalendarIcon,
   CircleDashedIcon,
   CircleSlashIcon,
@@ -22,6 +23,16 @@ import {
   Trash2Icon,
   UserIcon,
 } from 'lucide-react';
+import { useState } from 'react';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '../ui/command';
+import { Button } from '../ui/button';
+import { statusIconMapper } from '../statusIconMapper';
 
 export interface IssueCardProps {
   issue: {
@@ -90,51 +101,169 @@ export default function IssueCard({ issue, reload }: IssueCardProps) {
           </Box>
         </Link>
       </ContextMenuTrigger>
-      <ContextMenuContent className='w-48  rounded-md border border-gray-200 bg-gray-50  shadow-sm'>
-        <ContextMenuItem className='flex flex-row items-center gap-3 text-sm'>
-          <Link
-            href={`/projects/${issue.projectid}/issues/${issue.id}`}
-            shallow={true}
-            aria-disabled={true}
-            target='_blank'
-            referrerPolicy='no-referrer'
-            className='flex flex-row items-center gap-3 text-sm'
-          >
-            <ExternalLinkIcon className='h-4 w-4' />
-            Open in new tab
-          </Link>
-        </ContextMenuItem>
+      <IssueMenuContext issue={issue} reload={reload} />
+    </ContextMenu>
+  );
+}
 
-        <ContextMenuItem className='flex flex-row items-center gap-3 text-sm'>
-          <UserIcon className='h-4 w-4' />
-          Assign to...
-        </ContextMenuItem>
-        <ContextMenuItem className='flex flex-row items-center gap-3 text-sm'>
+let contextMenuOptions = [
+  {
+    id: 'open-in-new-tab',
+    triggerComponent: (updateView, href) => (
+      <ContextMenuItem
+        onClick={() => {
+          updateView();
+        }}
+      >
+        <Link
+          href={href}
+          shallow={true}
+          aria-disabled={true}
+          target='_blank'
+          referrerPolicy='no-referrer'
+          className='flex flex-row items-center gap-3 text-sm'
+        >
+          <ExternalLinkIcon className='h-4 w-4' />
+          Open in new tab
+        </Link>
+      </ContextMenuItem>
+    ),
+    openComponent: null,
+  },
+  // {
+  //   id: 'assign-to',
+  //   triggerComponent: () => (<div className='flex flex-row items-center gap-3 text-sm'>
+  //   <UserIcon className='h-4 w-4' />
+  //   Assign to...
+  // </div>),
+  // },
+  {
+    id: 'set-status',
+
+    triggerComponent: (updateView, href) => (
+      <ContextMenuItem
+        onClick={() => {
+          updateView('set-status');
+        }}
+      >
+        <div className='flex flex-row items-center gap-3 text-sm'>
           <CircleSlashIcon className='h-4 w-4' />
           Set Status...
-        </ContextMenuItem>
-        <ContextMenuItem className='flex flex-row items-center gap-3 text-sm'>
-          <TagsIcon className='h-4 w-4' />
-          Add Label...
-        </ContextMenuItem>
-        <ContextMenuItem className='flex flex-row items-center gap-3 text-sm'>
-          <Replace className='h-4 w-4' />
-          Move to...
-        </ContextMenuItem>
+        </div>
+      </ContextMenuItem>
+    ),
+  },
+  // {
+  //   id: 'add-label',
+  //   triggerComponent: () => (<div className='flex flex-row items-center gap-3 text-sm'>
+  //   <TagsIcon className='h-4 w-4' />
+  //   Add Label...
+  // </div>),
+
+  //   },
+  //   {
+  //     id: 'move-to',
+  //     triggerComponent: () => (<div className='flex flex-row items-center gap-3 text-sm'>
+  //     <Replace className='h-4 w-4' />
+  //     Move to...
+  //   </div>),
+
+  //     },
+  //     {
+  //       id: 'delete',
+  //       triggerComponent: () => (<div className='flex flex-row items-center gap-3 text-sm'>
+  //       <Trash2Icon className='h-4 w-4' />
+  //       Delete
+  //     </div>),
+  //     }
+];
+
+function SetStatusMenuComponent({
+  issue,
+}: {
+  issue: any;
+  backBtn: () => void;
+}) {
+  const status = STATUS || [];
+  return (
+    <Command className='rounded-md border-gray-200  bg-inherit '>
+      <div className='flex h-full items-center gap-2'>
+        <CommandInput placeholder='Search...' className='w-full border-none' />
+      </div>
+
+      <CommandEmpty>No status</CommandEmpty>
+      <CommandGroup>
+        {status.map((st) => (
+          <CommandItem
+            key={st.id}
+            value={st.label}
+            onSelect={(currentValue) => {
+              // addFilter({ key: st.id, value: st.label, type: 'status' });
+              // setOpen(false)
+            }}
+          >
+            <div className='flex items-center gap-2'>
+              {statusIconMapper(st.label, 'h-4 w-4')}
+              <span>{st.label}</span>
+            </div>
+          </CommandItem>
+        ))}
+      </CommandGroup>
+    </Command>
+  );
+}
+
+function IssueMenuContext({
+  issue,
+  reload,
+}: {
+  issue: any;
+  reload: () => void;
+}) {
+  const [optionGroup, setOptionGroup] = useState('main');
+
+  return (
+    <ContextMenuContent className='w-62  rounded-md border border-gray-200 bg-gray-50  shadow-sm'>
+      {optionGroup === 'main' &&
+        contextMenuOptions.map((option) => {
+          return option.triggerComponent(setOptionGroup, '');
+        })}
+
+      {optionGroup !== 'main' && (
         <ContextMenuItem
           className='flex flex-row items-center gap-3 text-sm'
           onClick={() => {
-            fetch(`/api/projects/${issue.projectid}/issues/${issue.id}`, {
-              method: 'DELETE',
-            }).then(() => {
-              reload && reload();
-            });
+            setOptionGroup('main');
           }}
         >
-          <Trash2Icon className='h-4 w-4' />
-          Delete
+          <ArrowLeftCircle className='h-4 w-4' />
+          Back
         </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+      )}
+
+      {/* {optionGroup === 'open-in-new-tab' && (}
+
+   {optionGroup === 'assign-to' && (
+    }
+     */}
+
+      {optionGroup === 'set-status' && (
+        <SetStatusMenuComponent issue={issue} backBtn={() => {}} />
+      )}
+
+      <ContextMenuItem
+        className='flex flex-row items-center gap-3 text-sm'
+        onClick={() => {
+          fetch(`/api/projects/${issue.projectid}/issues/${issue.id}`, {
+            method: 'DELETE',
+          }).then(() => {
+            reload && reload();
+          });
+        }}
+      >
+        <Trash2Icon className='h-4 w-4' />
+        Delete
+      </ContextMenuItem>
+    </ContextMenuContent>
   );
 }

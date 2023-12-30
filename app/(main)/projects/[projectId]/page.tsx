@@ -43,6 +43,7 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
 
   const issueQuery = {
     tid: params.teamid as string,
+    pid: projectId,
     q: {
       projects: [projectId],
     },

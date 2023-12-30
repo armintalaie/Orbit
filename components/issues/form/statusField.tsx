@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/popover';
 import { STATUS } from '@/lib/util';
 import { statusIconMapper } from '@/components/statusIconMapper';
+import { CircleSlashIcon } from 'lucide-react';
 
 export function StatusField(field: any) {
   const [open, setOpen] = useState(false);
@@ -32,7 +33,7 @@ export function StatusField(field: any) {
           <Button
             variant='outline'
             size='sm'
-            className='flex h-8 w-[120px] items-center justify-start gap-2 text-2xs'
+            className='flex h-8 w-fit items-center justify-start gap-1 text-2xs'
           >
             {selectedStatus ? (
               <>
@@ -40,7 +41,10 @@ export function StatusField(field: any) {
                 {selectedStatus.label}
               </>
             ) : (
-              <>+ Set status</>
+              <div className='flex text-xs'>
+                <CircleSlashIcon className='h-4 w-4' />
+                status
+              </div>
             )}
           </Button>
         </PopoverTrigger>

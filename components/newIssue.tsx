@@ -42,6 +42,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { LabelField } from './issues/form/labelField';
+import { ProjectField } from './issues/form/projectField';
 export const issueSchema = z.object({
   title: z.string(),
   contents: z.object({
@@ -58,11 +59,12 @@ export const formSchema = z.object({
   body: z.string(),
   statusid: z.number(),
   deadline: z.object({
-    from: z.date(),
-    to: z.date(),
+    from: z.date().nullable(),
+    to: z.date().nullable(),
   }),
   labels: z.array(z.string()),
   assignee: z.string().nullable(),
+  projectid: z.number(),
 });
 
 export function NewIssue({
@@ -70,13 +72,12 @@ export function NewIssue({
   button,
   reload,
 }: {
-  defaultValues?: z.infer<typeof formSchema>;
+  defaultValues?: object;
   button?: boolean;
   reload: Function;
 }) {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
-
   function close() {
     setOpen(false);
   }
@@ -87,7 +88,7 @@ export function NewIssue({
         <DialogTrigger asChild className='m-0 p-0'>
           {button ? (
             <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
-              New Issue
+              New Issue {defaultValues?.projectId}--
             </Button>
           ) : (
             <Button
@@ -104,7 +105,7 @@ export function NewIssue({
             <DialogDescription>Create a new Issue.</DialogDescription>
           </DialogHeader>
           <NewIssueForm
-            defaultValues={defaultValues}
+            defaultValues={defaultValues || {}}
             reload={reload}
             close={close}
           />
@@ -155,7 +156,7 @@ function NewIssueForm({
   reload,
   close,
 }: {
-  defaultValues?: z.infer<typeof formSchema>;
+  defaultValues?: object;
   reload: Function;
   close: Function;
 }) {
@@ -168,8 +169,8 @@ function NewIssueForm({
       statusid: 1,
       body: '',
       deadline: {
-        from: new Date(),
-        to: new Date(),
+        from: null,
+        to: null,
       },
       assignee: null,
       labels: [],
@@ -184,10 +185,15 @@ function NewIssueForm({
         body: formVals.body,
       },
       statusid: formVals.statusid,
-      deadline: formVals.deadline.to.toISOString().split('T')[0],
-      datestarted: formVals.deadline.from.toISOString().split('T')[0],
+      deadline: formVals.deadline.to
+        ? formVals.deadline.to.toISOString().split('T')[0]
+        : undefined,
+      datestarted: formVals.deadline.from
+        ? formVals.deadline.from.toISOString().split('T')[0]
+        : undefined,
       assignee: formVals.assignee || null,
       labels: labels,
+      projectid: formVals.projectid || undefined,
     };
     const URL = `/api/issues`;
     const res = await fetch(`${URL}`, {
@@ -254,14 +260,40 @@ function NewIssueForm({
             )}
           />
 
-          <div className='flex flex-row flex-wrap gap-6'>
+          <div className='flex flex-row flex-wrap gap-1'>
             <FormField
               control={form.control}
               name='statusid'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='p-0'>
                   <FormControl>
                     <StatusField {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='projectid'
+              render={({ field }) => (
+                <FormItem className='p-0'>
+                  <FormControl>
+                    <ProjectField field={field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='assignee'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <AssigneeField field={field} />
                   </FormControl>
 
                   <FormMessage />
@@ -281,13 +313,19 @@ function NewIssueForm({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
-              name='assignee'
+              name='labels'
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <AssigneeField field={field} />
+                    <LabelField
+                      {...field}
+                      setFields={(val) => {
+                        setLabels(val);
+                      }}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -295,24 +333,6 @@ function NewIssueForm({
               )}
             />
           </div>
-
-          <FormField
-            control={form.control}
-            name='labels'
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <LabelField
-                    setFields={(val) => {
-                      setLabels(val);
-                    }}
-                  />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <Button type='submit' className='w-full'>
             Create

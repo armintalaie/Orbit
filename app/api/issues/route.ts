@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres';
+import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { db } from '@/lib/db/handler';
 
 const issueSchema = z.object({
@@ -10,9 +10,15 @@ const issueSchema = z.object({
     body: z.string(),
   }),
   statusid: z.number(),
-  deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  projectid: z.number(),
+  deadline: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  datestarted: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  projectid: z.number() || z.string(),
 });
 
 export async function POST(
@@ -23,12 +29,30 @@ export async function POST(
     const newIssue = await req.json();
     const issue = issueSchema.parse({
       ...newIssue,
-      projectid: Number(params.pid),
     });
 
-    const { data, error } = await supabase.from('issue').insert(issue);
+    console.log(issue);
+    const { data, error } = await supabase.from('issue').insert(issue).select();
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    if (newIssue.labels) {
+      const { data: labels, error: labelsError } = await supabase
+        .from('issue_label')
+        .insert(
+          newIssue.labels.map((label: string) => ({
+            issueid: data[0].id,
+            labelid: label,
+          }))
+        )
+        .select();
+      if (labelsError) {
+        return NextResponse.json(
+          { error: labelsError.message },
+          { status: 400 }
+        );
+      }
     }
     return NextResponse.json(data);
   } catch (error) {

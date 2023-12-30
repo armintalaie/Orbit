@@ -69,13 +69,19 @@ export default function KanbanView({
   }, [issues]);
 
   return (
-    <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-scroll  p-2 py-0'>
-      <div className='flex flex-grow gap-4 '>
+    <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-hidden  p-2 py-0'>
+      <div className='flex h-full flex-grow  gap-4 '>
         {status.map((status) =>
           groupedTasks[status.id] &&
           groupedTasks[status.id].issues.length > 0 ? (
-            <div key={status.id} className='flex flex-col'>
-              <div key={status.id} className='h-full w-72 rounded-sm p-0 '>
+            <div
+              key={status.id}
+              className='flex h-full   flex-col  overflow-hidden'
+            >
+              <div
+                key={status.id}
+                className='flex h-full  w-72 flex-col rounded-sm  p-0 '
+              >
                 <CardHeader className='m-0 flex flex-row items-center justify-between space-y-0 px-1'>
                   <div className='m-0 flex flex-row items-center gap-2'>
                     {statusIconMapper(status.label, 'h-4 w-4')}
@@ -87,10 +93,14 @@ export default function KanbanView({
                     </Heading>
                   </div>
 
-                  <NewIssue button={false} reload={reload} />
+                  <NewIssue
+                    button={false}
+                    reload={reload}
+                    defaultValues={{ projectId: projectId }}
+                  />
                 </CardHeader>
-                <CardContent className='flex-1 overflow-y-auto p-0'>
-                  <ul className='space-y-3'>
+                <CardContent className='flex flex-grow  flex-col overflow-y-scroll p-0   '>
+                  <ul className='flex flex-grow flex-col space-y-3  pb-3'>
                     {groupedTasks[status.id] &&
                       groupedTasks[status.id].issues.map((issue) => (
                         <div key={issue.id}>
@@ -107,26 +117,6 @@ export default function KanbanView({
         )}
       </div>
 
-      {/*       
-        <div className='fixed bottom-0 left-1/2 z-30 flex flex-grow -translate-x-1/2 -translate-y-1/2 gap-4 rounded-md bg-neutral-700 text-white shadow-md '>
-          <Button
-            className='flex flex-row items-center gap-2  rounded-sm p-2 px-4'
-            variant='ghost'
-          >
-            <ReplaceIcon className='h-4 w-4' />
-            <p className=''>Move</p>
-          </Button>
-
-          <Button
-            className='flex flex-row items-center gap-2  rounded-sm p-2 px-4'
-            variant='ghost'
-          >
-            <Trash2Icon className='h-4 w-4' />
-            <p className=''>Delete</p>
-          </Button>
-        </div>
-       */}
-
       <div className='flex flex-col py-5'>
         <div className='h-full w-72 rounded-sm p-0 '>
           <div className='flex h-full flex-col items-center gap-3'>
@@ -141,7 +131,11 @@ export default function KanbanView({
                       </Heading>
                     </div>
 
-                    <NewIssue button={false} reload={reload} />
+                    <NewIssue
+                      button={false}
+                      reload={reload}
+                      defaultValues={{ projectId: projectId }}
+                    />
                   </div>
                 </div>
               </div>

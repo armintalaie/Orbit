@@ -49,6 +49,7 @@ import {
   EnvelopeClosedIcon,
   GearIcon,
 } from '@radix-ui/react-icons';
+import { CommandMenu } from '@/components/globalCommand';
 
 export default function ProjectLayout({
   children,
@@ -57,8 +58,7 @@ export default function ProjectLayout({
 }) {
   return (
     <AuthContextProvider>
-      {/* <ShortcutKeyboardProvider> */}
-      <div className='flex h-screen w-screen flex-row'>
+      <div className='flex h-[100svh] w-[100svw] flex-row'>
         <SideBarContent className={'min-w-56 hidden w-72'} />
         <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
           <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
@@ -81,7 +81,6 @@ export default function ProjectLayout({
           {children}
         </div>
       </div>
-      {/* </ShortcutKeyboardProvider> */}
     </AuthContextProvider>
   );
 }
@@ -175,66 +174,6 @@ function SideBarContent({
         <SettingsModalButton />
       </div>
     </section>
-  );
-}
-
-export function CommandMenu({
-  open,
-  setOpen,
-}: {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
-    };
-
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
-  }, []);
-
-  return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder='Type a command or search...' />
-      <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-
-        <CommandGroup heading='Issues' className='text-xs'>
-          <CommandItem>
-            <SearchIcon className='mr-2 h-2 w-2 text-xs' />
-            <span>Search issues</span>
-          </CommandItem>
-          <CommandItem className=''>
-            <PlusCircleIcon className='mr-2 h-2 w-2 ' />
-            <span className=''>New issue</span>
-          </CommandItem>
-        </CommandGroup>
-        <CommandGroup heading='Projects' className='text-xs'>
-          <CommandItem>
-            <LayoutGridIcon className='mr-2 h-2 w-2 text-xs' />
-            <span>View projects</span>
-          </CommandItem>
-          <CommandItem className=''>
-            <PlusCircleIcon className='mr-2 h-2 w-2 ' />
-            <span className=''>New project</span>
-          </CommandItem>
-        </CommandGroup>
-        <CommandGroup heading='Profile' className='text-xs'>
-          <CommandItem>
-            <SettingsIcon className='mr-2 h-2 w-2 text-xs' />
-            <span>Settings</span>
-          </CommandItem>
-          <CommandItem className=''>
-            <LogOutIcon className='mr-2 h-2 w-2 ' />
-            <span className=''>Sign out</span>
-          </CommandItem>
-        </CommandGroup>
-      </CommandList>
-    </CommandDialog>
   );
 }
 

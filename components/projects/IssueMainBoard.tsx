@@ -148,7 +148,7 @@ export default function IssueBoard({
   }
 
   return (
-    <div className=' flex h-full w-full flex-1 flex-col bg-gray-50'>
+    <div className=' flex w-full flex-grow flex-col overflow-hidden bg-gray-50'>
       <div className='min-h-12 flex flex-row items-center justify-between gap-3 border-y border-gray-100 bg-white p-4 py-3'>
         <FilterGroup
           filters={filters}
@@ -158,7 +158,7 @@ export default function IssueBoard({
         />
         <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
       </div>
-      <div className=' flex h-full flex-grow flex-col'>
+      <div className=' flex   flex-grow flex-col overflow-hidden'>
         {viewType === 'board' ? (
           <KanbanView
             issues={transformedIssues}

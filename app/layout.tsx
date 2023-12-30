@@ -6,7 +6,6 @@ import { Theme } from '@radix-ui/themes';
 import { Toaster } from '@/components/ui/toaster';
 import React from 'react';
 import { WebVitals } from '@/components/web-vitals';
-// import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({ subsets: ['latin'] });
 

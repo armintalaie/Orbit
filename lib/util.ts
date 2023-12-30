@@ -8,6 +8,10 @@ export function dateFormater(date: string) {
   // if no date, return "no date"
   // if overdue, return "overdue by x days" (e.g. overdue by 2 days)
 
+  if (!date || date === 'null') {
+    return '';
+  }
+
   const today = new Date();
   const dueDate = new Date(date);
   const diffTime = dueDate.getTime() - today.getTime();

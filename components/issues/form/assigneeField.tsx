@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext, useEffect, useState } from 'react';
-import { CircleUser } from 'lucide-react';
+import { CircleUser, UserCircleIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -76,7 +76,7 @@ export function AssigneeField({ field }: { field: any }) {
           <Button
             variant='outline'
             size='sm'
-            className='line-clamp-1 flex h-8 w-[250px] justify-start overflow-hidden text-2xs text-gray-800'
+            className='line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-2xs text-gray-800'
           >
             {selectedStatus && selectedStatus !== noAssignee.id ? (
               <>
@@ -86,7 +86,10 @@ export function AssigneeField({ field }: { field: any }) {
                   memberOptions[selectedStatus].full_name}
               </>
             ) : (
-              <div className=' text-xs'>+ Set Assignee</div>
+              <div className=' flex text-xs'>
+                <UserCircleIcon className='mr-2 h-4 w-4 shrink-0' />
+                Assignee
+              </div>
             )}
           </Button>
         </PopoverTrigger>
