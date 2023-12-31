@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useState } from 'react';
 import {
   FormField,
@@ -160,7 +160,6 @@ function NewIssueForm({
   reload: Function;
   close: Function;
 }) {
-  const { toast } = useToast();
   const [labels, setLabels] = useState([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -205,14 +204,12 @@ function NewIssueForm({
     });
 
     if (!res.ok) {
-      toast({
-        title: 'Issue not created',
+      toast('Issue not created', {
         description: 'something went wrong',
       });
     } else {
       reload();
-      toast({
-        title: 'Issue created',
+      toast('Issue created', {
         description: `Issue successfully created`,
       });
       close();

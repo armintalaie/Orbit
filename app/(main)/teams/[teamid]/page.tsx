@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { STATUS, dateFormater, isOverdue } from '@/lib/util';
-import { TableIcon, BoxIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Table } from '@radix-ui/themes';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -22,13 +22,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NewTeamMember } from '@/components/newTeamMember';
-import { useToast } from '@/components/ui/use-toast';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { NewProject } from '@/components/newProject';
 import { statusIconMapper } from '@/components/statusIconMapper';
 import IssueTemplates from '@/components/teams/IssueTemplates';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import IssueBoard from '@/components/projects/IssueMainBoard';
+import { toast } from 'sonner';
 
 type viewTypes = 'ISSUES' | 'PROJECTS';
 
@@ -313,32 +313,38 @@ function MembersList({ members, teamid, reload }) {
 }
 
 function MemberAvatar({ member, teamid, reload }) {
-  const { toast } = useToast();
-
-  function getInitials(name) {
+  function getInitials(name: string) {
     return name
       .split(' ')
       .map((word) => word[0])
       .join('');
   }
 
-  function getFirstNameAndLastInitial(name) {
+  function getFirstNameAndLastInitial(name: string) {
     const [first, last] = name.split(' ');
     return `${first} ${last[0]}.`;
   }
 
-  async function deleteMember() {
-    const res = await fetch(`/api/teams/${teamid}/members/${member.memberid}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  function deleteMember() {
+    const operation = setTimeout(async () => {
+      const res = await fetch(
+        `/api/teams/${teamid}/members/${member.memberid}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }, 4000);
 
-    if (!res.ok) throw new Error(res.statusText);
-    toast({
-      title: 'User Removed',
-      description: `${member.profile.full_name} has been removed from the team`,
+    toast('User Removed from team', {
+      duration: 3000,
+      action: {
+        label: 'Undo',
+        onClick: () => clearTimeout(operation),
+      },
+      description: `${member.full_name} has been removed from the team`,
     });
     reload();
   }

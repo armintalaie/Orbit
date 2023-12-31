@@ -66,7 +66,10 @@ export default function IssueTitleField({
             <Button
               variant='outline'
               className='m-0 p-2'
-              onClick={() => setEditMode(false)}
+              onClick={() => {
+                setEditMode(false);
+                setIssueTitle(issueTitle);
+              }}
             >
               <XIcon className='h-4 w-4 ' />
             </Button>

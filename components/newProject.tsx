@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useState } from 'react';
 import {
   FormField,
@@ -58,7 +58,6 @@ export function NewProject({
   reload: Function;
   teamid?: string;
 }) {
-  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -91,14 +90,12 @@ export function NewProject({
     });
 
     if (!res.ok) {
-      toast({
-        title: 'Project not created',
+      toast('Project not created', {
         description: 'something went wrong',
       });
     } else {
       reload();
-      toast({
-        title: 'Project created',
+      toast('Project created', {
         description: `Project successfully created`,
       });
       setOpen(false);

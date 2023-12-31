@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useContext, useState } from 'react';
 import {
   FormField,
@@ -45,7 +45,6 @@ export function NewTeam({
   reload: Function;
   teamid?: string;
 }) {
-  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const userSession = useContext(UserSessionContext);
   const form = useForm<z.infer<typeof teamSchema>>({
@@ -68,16 +67,10 @@ export function NewTeam({
     });
 
     if (!res.ok) {
-      toast({
-        title: 'Team not created',
-        description: 'something went wrong',
-      });
+      toast('Team not created');
     } else {
       reload();
-      toast({
-        title: 'Team created',
-        description: `Team successfully created`,
-      });
+      toast('Team created');
       setOpen(false);
     }
   }

@@ -13,7 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -28,6 +27,7 @@ import {
 } from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
+import { toast } from 'sonner';
 
 export const issueSchema = z.object({
   title: z.string(),
@@ -55,7 +55,6 @@ export function NewTemplate({
   button?: boolean;
   reload: Function;
 }) {
-  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,8 +76,7 @@ export function NewTemplate({
     });
 
     if (res.ok) {
-      toast({
-        title: 'Template created',
+      toast('Template created', {
         description: 'Template created successfully',
       });
     }
