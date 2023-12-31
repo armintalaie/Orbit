@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
         eb
           .selectFrom('issue_label')
           .innerJoin('label', 'issue_label.labelid', 'label.id')
-          .select(['labelid', 'label', 'color'])
+          .select(['labelid as id', 'label', 'color'])
           .whereRef('issue_label.issueid', '=', 'issue.id')
       ).as('labels'),
       jsonArrayFrom(

@@ -106,24 +106,21 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <div className='flex flex-grow items-center gap-2 space-x-4'>
         <PopoverTrigger className='flex w-fit items-center gap-4'>
-          
           {selectedId && selectedTitle && (
             <Link
               href={`/projects/${selectedId}`}
               target='_blank'
-                rel='noopener noreferrer'
+              rel='noopener noreferrer'
               className='flex w-fit items-center p-0'
             >
-             {selectedId ? (
-              <>
-                {selectedTitle}
-              </>
-            ) : (
-              <>
-                <TargetIcon className=' h-4 w-4 shrink-0' />
-                <span>No Project</span>
-              </>
-            )}
+              {selectedId ? (
+                <>{selectedTitle}</>
+              ) : (
+                <>
+                  <TargetIcon className=' h-4 w-4 shrink-0' />
+                  <span>No Project</span>
+                </>
+              )}
             </Link>
           )}
           <Button
@@ -131,10 +128,8 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
             size='sm'
             className='w-fit items-center justify-start gap-2 p-0 text-xs '
           >
-              <PencilLine className='h-4 w-4 shrink-0 text-gray-500' />
-           
+            <PencilLine className='h-4 w-4 shrink-0 text-gray-500' />
           </Button>
-          
         </PopoverTrigger>
       </div>
       <PopoverContent className='p-0' side='right' align='start'>

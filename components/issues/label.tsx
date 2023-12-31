@@ -20,21 +20,25 @@ export default function IssueLabel({
   color,
   compact = false,
   className = '',
+  style,
 }: {
   label: string;
-  id: string;
+  id: number;
   color: string;
   compact?: boolean;
   className?: string;
+  style?: object;
 }) {
   const textColor = getTextColor(color);
 
   if (compact)
     return (
       <div
-        id={id}
+        id={id.toString()}
         className={`flex w-fit flex-row items-center gap-2 rounded-full  p-1 ${className} `}
-        style={{ backgroundColor: `${color}`, color: `${textColor}` }}
+        style={
+          style ? style : { backgroundColor: `${color}`, color: `${textColor}` }
+        }
       >
         <TagIcon className='h-3 w-3' />
       </div>
@@ -42,9 +46,11 @@ export default function IssueLabel({
 
   return (
     <div
-      id={id}
+      id={id.toString()}
       className={`flex w-fit flex-row items-center gap-2 rounded-md  p-1 px-2 ${className} `}
-      style={{ backgroundColor: `${color}`, color: `${textColor}` }}
+      style={
+        style ? style : { backgroundColor: `${color}`, color: `${textColor}` }
+      }
     >
       <TagIcon className='h-3 w-3' />
       <p className='items-center  text-2xs font-medium leading-tight'>

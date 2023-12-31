@@ -127,7 +127,11 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='p-0 overflow-hidden' side='right' align='start'>
+        <PopoverContent
+          className='overflow-hidden p-0'
+          side='right'
+          align='start'
+        >
           <Command filter={filter}>
             <CommandInput placeholder='Change Assignee...' />
             <CommandList>
@@ -146,9 +150,9 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
               </CommandGroup>
             </CommandList>
           </Command>
-       
-           <div className='text-xs rounded-none p-1 border-t border-gray-200 font-normal w-full flex justify-center'>
-          {team.title}
+
+          <div className='flex w-full justify-center rounded-none border-t border-gray-200 p-1 text-xs font-normal'>
+            {team.title}
           </div>
         </PopoverContent>
       </Popover>

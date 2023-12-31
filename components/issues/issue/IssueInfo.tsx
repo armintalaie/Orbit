@@ -9,8 +9,16 @@ import { IssueAssigneeField } from './fields/issueAssigneeField';
 import { IssueProjectField } from './fields/issueProjectField';
 import { IssueTextField } from './fields/issueTextField';
 import Link from 'next/link';
+import { IssueLabelField } from './fields/issueLabelField';
+import { dateFormater } from '@/lib/util';
 
-export function IssueInfo({ issueId }: { issueId: number }) {
+export function IssueInfo({
+  issueId,
+  refIssue,
+}: {
+  issueId: number;
+  refIssue?: IIssue;
+}) {
   const [issue, setIssue] = useState<IIssue | null>(null);
 
   const fetchIssue = async () => {
@@ -23,7 +31,11 @@ export function IssueInfo({ issueId }: { issueId: number }) {
   };
 
   useEffect(() => {
-    fetchIssue();
+    if (refIssue) {
+      setIssue(refIssue);
+    } else {
+      fetchIssue();
+    }
   }, []);
 
   if (!issue || issue === null) {
@@ -66,7 +78,12 @@ export function IssueInfo({ issueId }: { issueId: number }) {
     {
       title: 'Team',
       value: (
-        <Link href={`/teams/${issue.teamid}`} target='_blank' referrerPolicy='no-referrer' className='border-b-2 border-b-gray-400 '>
+        <Link
+          href={`/teams/${issue.teamid}`}
+          target='_blank'
+          referrerPolicy='no-referrer'
+          className='border-b-2 border-b-gray-400 '
+        >
           <p className='text-xs font-medium   leading-tight text-gray-700 '>
             {issue.team_title}
           </p>
@@ -78,19 +95,11 @@ export function IssueInfo({ issueId }: { issueId: number }) {
   const isseuMetaInfo = [
     {
       title: 'Created',
-      value: (
-        <IssueTextField
-          text={new Date(issue.datecreated).toLocaleDateString()}
-        />
-      ),
+      value: <IssueTextField text={dateFormater(issue.datecreated)} />,
     },
     {
       title: 'Updated',
-      value: (
-        <IssueTextField
-          text={new Date(issue.dateupdated).toLocaleDateString()}
-        />
-      ),
+      value: <IssueTextField text={dateFormater(issue.dateupdated)} />,
     },
   ];
 
@@ -109,15 +118,6 @@ export function IssueInfo({ issueId }: { issueId: number }) {
         >
           <GitBranchIcon className='h-4 w-4' />
         </Button>
-        {/* <Button
-              className='p-0 hover:bg-inherit'
-              variant='ghost'
-              onClick={() => {
-                navigator.clipboard.writeText(`${pathname}`);
-              }}
-            >
-              <Clipboard className='h-4 w-4' />
-            </Button> */}
       </div>
       <div className='flex flex-grow flex-col justify-between gap-3 divide-y divide-gray-100 border-t border-gray-100 bg-white  py-3'>
         <div className='flex  flex-col  gap-6   p-4 py-3'>
@@ -133,20 +133,12 @@ export function IssueInfo({ issueId }: { issueId: number }) {
           ))}
         </div>
 
-        <div className='flex  flex-col  gap-6   p-4 py-3'>
-          {/* {isseuMetaInfo.map(({ title, value }) => (
-            <div key={title} className='flex h-6 flex-row items-center  gap-2'>
-              <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
-                {title}
-              </p>
-              <div className='items-center flex-grow  pr-2 text-xs font-medium leading-tight text-gray-700'>
-                {value}
-              </div>
-            </div>
-          ))} */}
+        <div className='flex  flex-col  gap-4   p-4 py-3'>
+          <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+            Labels
+          </p>
+          <IssueLabelField issueId={issue.id} labels={issue.labels} />
         </div>
-        <div className='flex  flex-col  gap-6   p-4 py-3'></div>
-
         <div className='flex  flex-col  gap-6   p-4 py-3'>
           {isseuMetaInfo.map(({ title, value }) => (
             <div key={title} className='flex h-6 flex-row items-center  gap-2'>

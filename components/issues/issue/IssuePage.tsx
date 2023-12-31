@@ -23,6 +23,15 @@ import { toast } from 'sonner';
 import { IIssue } from '@/lib/types/issue';
 import { IssueComments } from './IssueComments';
 import { IssueInfo } from './IssueInfo';
+import router from 'next/router';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function IssuePage({ issueId }: { issueId: number }) {
   const [issue, setIssue] = useState<IIssue | null>(null);
@@ -62,46 +71,38 @@ export default function IssuePage({ issueId }: { issueId: number }) {
   if (issue === null)
     return <div className='flex items-center space-x-4'></div>;
 
-  // if (width < 820) {
-  //   return (
-  //     <div className='flex h-full w-full flex-col'>
-  //       <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
-  //         <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-  //           <div className='flex flex-row items-center gap-2'>
-  //             <h1 className='text-md pr-2 font-medium leading-tight text-gray-700'>
-  //               {issue.title}
-  //             </h1>
-  //             {/* <ProjectOptions projectId={issue.id} /> */}
-  //           </div>
-  //           <div className='flex h-full items-center justify-center gap-2'></div>
-  //         </div>
+  if (width < 820) {
+    return (
+      <div className='flex h-full w-full flex-col'>
+        <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
+          <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
+            <div className='flex flex-row items-center gap-2'>
+              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700'>
+                {issue.title}
+              </h1>
+              <IssueOptions issueId={issue.id} projectId={issue.projectid} />
+            </div>
+            <div className='flex h-full items-center justify-center gap-2'></div>
+          </div>
 
-  //         <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
-  //           <div className=' flex  w-full flex-1 flex-grow flex-col justify-start overflow-hidden bg-gray-50'>
-  //             <TextEditor
-  //               onSave={saveContentChanges}
-  //               content={issue.contents.body as string}
-  //               issue={issue}
-  //             />
-  //           </div>
-  //         </div>
-  //       </div>
+          <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
+            <div className=' flex  w-full flex-1 flex-grow flex-col justify-start overflow-hidden bg-gray-50'>
+              <TextEditor
+                onSave={saveContentChanges}
+                content={issue.contents.body as string}
+                issue={issue}
+              />
+            </div>
+          </div>
+        </div>
 
-  //       <div className='fixed bottom-1 flex w-full items-center justify-end gap-4  p-4 px-4'>
-  //         <CommentsMobilePopver
-  //           issue={issue}
-  //           pathname={pathname}
-  //           projectId={projectId}
-  //         />
-  //         <IssueInfoMobilePopver
-  //           issue={issue}
-  //           pathname={pathname}
-  //           projectId={projectId}
-  //         />
-  //       </div>
-  //     </div>
-  //   );
-  // }
+        <div className='fixed bottom-1 flex w-full items-center justify-end gap-4  p-4 px-4'>
+          <CommentsMobilePopver issueId={issueId} />
+          <IssueInfoMobilePopver issue={issue} issueId={issueId} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='flex h-full w-full flex-col'>
@@ -113,7 +114,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
                 <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
                   {issue.title}
                 </h1>
-                {/* <ProjectOptions projectId={issue.id} /> */}
+                <IssueOptions issueId={issue.id} projectId={issue.projectid} />
               </div>
               <div className='flex h-full items-center justify-center gap-2'></div>
             </div>
@@ -149,70 +150,71 @@ export default function IssuePage({ issueId }: { issueId: number }) {
           defaultSize={25}
           minSize={20}
         >
-          <IssueInfo issueId={issue.id} />
+          <IssueInfo issueId={issue.id} refIssue={issue} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );
 }
 
-// function ProjectOptions({ projectId }: { projectId: string }) {
-//   const router = useRouter();
+function IssueOptions({
+  issueId,
+  projectId,
+}: {
+  issueId: number;
+  projectId: number;
+}) {
+  async function deleteIssue() {
+    const res = await fetch(`/api/issue/${issueId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-//   async function deleteIssue() {
-//     const res = await fetch(`/api/projects/${projectId}`, {
-//       method: 'DELETE',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     });
+    if (!res.ok) throw new Error(res.statusText);
+    router.push(`/projects/${projectId}`);
+  }
 
-//     if (!res.ok) throw new Error(res.statusText);
-//     router.push(`/projects/${projectId}`);
-//   }
+  async function archiveProject() {
+    const res = await fetch(`/api/projects/${projectId}/archive`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-//   async function archiveProject() {
-//     const res = await fetch(`/api/projects/${projectId}/archive`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     });
+    if (!res.ok) throw new Error(res.statusText);
+    router.push('/projects');
+  }
 
-//     if (!res.ok) throw new Error(res.statusText);
-//     router.push('/projects');
-//   }
-
-//   return (
-//     <DropdownMenu>
-//       <DropdownMenuTrigger asChild>
-//         <Button variant='ghost'>
-//           <DotsHorizontalIcon className='h-4 w-4' />
-//         </Button>
-//       </DropdownMenuTrigger>
-//       <DropdownMenuContent className='w-56'>
-//         <DropdownMenuLabel>Issue Settings</DropdownMenuLabel>
-//         <DropdownMenuSeparator />
-//         <DropdownMenuItem>
-//           <Button variant='ghost' onClick={() => deleteIssue()}>
-//             Delete Issue
-//           </Button>
-//         </DropdownMenuItem>
-//       </DropdownMenuContent>
-//     </DropdownMenu>
-//   );
-// }
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant='ghost'>
+          <DotsHorizontalIcon className='h-4 w-4' />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className='w-56'>
+        <DropdownMenuLabel>Settings</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Button variant='ghost' onClick={() => deleteIssue()}>
+            Delete Issue
+          </Button>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 function IssueInfoMobilePopver({
+  issueId,
   issue,
-  projectId,
-  pathname,
 }: {
+  issueId: number;
   issue: any;
-  projectId: string;
-  pathname: string;
 }) {
-  // open={open} onOpenChange={setOpen}
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -225,7 +227,7 @@ function IssueInfoMobilePopver({
       </DrawerTrigger>
       <DrawerContent className='max-h-[90%] p-0 '>
         <div className='flex h-full w-full overflow-scroll'>
-          <IssueInfo issue={issue} projectId={projectId} pathname={pathname} />
+          <IssueInfo refIssue={issue} issueId={issueId} />
         </div>
         <DrawerFooter className='pt-2'>
           <DrawerClose asChild>
@@ -237,16 +239,7 @@ function IssueInfoMobilePopver({
   );
 }
 
-function CommentsMobilePopver({
-  issue,
-  projectId,
-  pathname,
-}: {
-  issue: any;
-  projectId: string;
-  pathname: string;
-}) {
-  // open={open} onOpenChange={setOpen}
+function CommentsMobilePopver({ issueId }: { issueId: number }) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -260,7 +253,7 @@ function CommentsMobilePopver({
       </DrawerTrigger>
       <DrawerContent className='max-h-[90%] p-0 '>
         <div className='flex h-full w-full overflow-scroll'>
-          <IssueInfo issue={issue} projectId={projectId} pathname={pathname} />
+          <IssueComments issueId={issueId} />
         </div>
         <DrawerFooter className='pt-2'>
           <DrawerClose asChild>
