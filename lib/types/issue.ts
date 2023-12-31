@@ -10,6 +10,7 @@ export interface IIssue {
   datecreated: string;
   dateupdated: string;
   teamid: number;
+  team_title: string;
   labels: ILabel[];
   assignees: IProfile[];
 }

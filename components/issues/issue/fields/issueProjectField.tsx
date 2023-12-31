@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowUpRightFromCircleIcon, TargetIcon } from 'lucide-react';
+import { PencilLine, TargetIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -106,14 +106,16 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <div className='flex flex-grow items-center gap-2 space-x-4'>
         <PopoverTrigger className='flex w-fit items-center gap-4'>
-          <Button
-            variant='ghost'
-            size='sm'
-            className='w-fit items-center justify-start gap-2 p-0 text-xs '
-          >
-            {selectedId ? (
+          
+          {selectedId && selectedTitle && (
+            <Link
+              href={`/projects/${selectedId}`}
+              target='_blank'
+                rel='noopener noreferrer'
+              className='flex w-fit items-center p-0'
+            >
+             {selectedId ? (
               <>
-                <TargetIcon className=' h-4 w-4 shrink-0 ' />
                 {selectedTitle}
               </>
             ) : (
@@ -122,15 +124,17 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
                 <span>No Project</span>
               </>
             )}
-          </Button>
-          {selectedId && selectedTitle && (
-            <Link
-              href={`/projects/${selectedId}`}
-              className='flex w-fit items-center p-0'
-            >
-              <ArrowUpRightFromCircleIcon className='h-4 w-4 shrink-0' />
             </Link>
           )}
+          <Button
+            variant='ghost'
+            size='sm'
+            className='w-fit items-center justify-start gap-2 p-0 text-xs '
+          >
+              <PencilLine className='h-4 w-4 shrink-0 text-gray-500' />
+           
+          </Button>
+          
         </PopoverTrigger>
       </div>
       <PopoverContent className='p-0' side='right' align='start'>

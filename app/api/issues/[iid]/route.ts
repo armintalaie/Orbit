@@ -12,6 +12,7 @@ export async function GET(
     .selectFrom('issue')
     .leftJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
     .innerJoin('project', 'issue.projectid', 'project.id')
+    .innerJoin('team', 'project.teamid', 'team.id')
     .select(({ eb, fn }) => [
       'issue.id',
       'issue.title',
@@ -22,6 +23,7 @@ export async function GET(
       'issue.projectid',
       'project.title as project_title',
       'project.teamid',
+      'team.name as team_title',
       jsonArrayFrom(
         eb
           .selectFrom('issue_label')

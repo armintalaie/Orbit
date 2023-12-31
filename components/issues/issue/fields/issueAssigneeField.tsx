@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CircleUser } from 'lucide-react';
+import { CircleUser, UserSquare2Icon, UsersRoundIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -16,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
 
 interface Profile {
   id: string;
@@ -126,7 +127,7 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='p-0' side='right' align='start'>
+        <PopoverContent className='p-0 overflow-hidden' side='right' align='start'>
           <Command filter={filter}>
             <CommandInput placeholder='Change Assignee...' />
             <CommandList>
@@ -145,6 +146,10 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
               </CommandGroup>
             </CommandList>
           </Command>
+       
+           <div className='text-xs rounded-none p-1 border-t border-gray-200 font-normal w-full flex justify-center'>
+          {team.title}
+          </div>
         </PopoverContent>
       </Popover>
     </div>

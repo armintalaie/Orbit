@@ -88,7 +88,7 @@ export function NewIssue({
         <DialogTrigger asChild className='m-0 p-0'>
           {button ? (
             <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
-              New Issue {defaultValues?.projectId}--
+              New Issue
             </Button>
           ) : (
             <Button

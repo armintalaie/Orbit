@@ -2,13 +2,13 @@ import { IIssue } from '@/lib/types/issue';
 import { GitBranchIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import IssueLabel from '../label';
 import { Button } from '@/components/ui/button';
 import IssueStatusField from './fields/IssueStatusField';
 import { IssueDateField } from './fields/IssueDeadlineField';
 import { IssueAssigneeField } from './fields/issueAssigneeField';
 import { IssueProjectField } from './fields/issueProjectField';
 import { IssueTextField } from './fields/issueTextField';
+import Link from 'next/link';
 
 export function IssueInfo({ issueId }: { issueId: number }) {
   const [issue, setIssue] = useState<IIssue | null>(null);
@@ -49,7 +49,7 @@ export function IssueInfo({ issueId }: { issueId: number }) {
         <IssueAssigneeField
           issueId={issue.id}
           user={issue.assignees ? issue.assignees[0] : null}
-          team={{ id: issue.teamid, title: '' }}
+          team={{ id: issue.teamid, title: issue.team_title }}
         />
       ),
     },
@@ -60,6 +60,17 @@ export function IssueInfo({ issueId }: { issueId: number }) {
           issueId={issue.id}
           project={{ id: issue.projectid, title: issue.project_title }}
         />
+      ),
+    },
+
+    {
+      title: 'Team',
+      value: (
+        <Link href={`/teams/${issue.teamid}`} target='_blank' referrerPolicy='no-referrer' className='border-b-2 border-b-gray-400 '>
+          <p className='text-xs font-medium   leading-tight text-gray-700 '>
+            {issue.team_title}
+          </p>
+        </Link>
       ),
     },
   ];
