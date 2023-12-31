@@ -1,0 +1,158 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { ArrowUpRightFromCircleIcon, TargetIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import Link from 'next/link';
+
+type IssueProjectFieldProps = {
+  issueId: number;
+  project: Project | null;
+};
+
+type Project = {
+  id: number;
+  title: string;
+};
+
+export function IssueProjectField(props: IssueProjectFieldProps) {
+  const { issueId, project } = props;
+  const [options, setOptions] = useState<{ [key: string]: Project }>({});
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(
+    project ? project.id : null
+  );
+  const [selectedTitle, setSelectedTitle] = useState<string | null>(
+    project ? project.title : null
+  );
+
+  const fetchProjects = async () => {
+    const res = await fetch(`/api/projects`, {
+      next: { revalidate: 30 },
+    });
+    let results = await res.json();
+    const options: { [key: string]: Project } = {};
+    for (const proj of results) {
+      options[proj.id] = {
+        ...proj,
+      };
+    }
+    setOptions(options);
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    setSelectedId(project ? project.id : null);
+    setSelectedTitle(project ? project.title : null);
+  }, [options]);
+
+  const filter = (value: string, search: string) => {
+    if (!value) {
+      return 0;
+    }
+    if (value == null || !options[value]) {
+      return 0;
+    }
+    return options[value].title.toLowerCase().indexOf(search.toLowerCase()) !==
+      -1
+      ? 1
+      : 0;
+  };
+
+  const onSelectionChange = (value: string) => {
+    const foundId = Object.keys(options).find((m) => m === value);
+    if (!foundId) {
+      return;
+    }
+    setSelectedId(Number(foundId));
+    updateProject(Number(foundId));
+  };
+
+  async function updateProject(pId: number) {
+    if (!pId || pId === null) {
+      fetch(`/api/issues/${issueId}/assignees`, {
+        method: 'DELETE',
+      }).then(() => {
+        setSelectedId(null);
+      });
+    } else {
+      await fetch(`/api/issues/${issueId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ projectid: pId }),
+      });
+    }
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <div className='flex flex-grow items-center gap-2 space-x-4'>
+        <PopoverTrigger className='flex w-fit items-center gap-4'>
+          <Button
+            variant='ghost'
+            size='sm'
+            className='w-fit items-center justify-start gap-2 p-0 text-xs '
+          >
+            {selectedId ? (
+              <>
+                <TargetIcon className=' h-4 w-4 shrink-0 ' />
+                {selectedTitle}
+              </>
+            ) : (
+              <>
+                <TargetIcon className=' h-4 w-4 shrink-0' />
+                <span>No Project</span>
+              </>
+            )}
+          </Button>
+          {selectedId && selectedTitle && (
+            <Link
+              href={`/projects/${selectedId}`}
+              className='flex w-fit items-center p-0'
+            >
+              <ArrowUpRightFromCircleIcon className='h-4 w-4 shrink-0' />
+            </Link>
+          )}
+        </PopoverTrigger>
+      </div>
+      <PopoverContent className='p-0' side='right' align='start'>
+        <Command filter={filter}>
+          <CommandInput placeholder='Move to another project...' />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup>
+              {Object.entries(options).map(([, option]) => (
+                <CommandItem
+                  key={option.id}
+                  value={option.id.toString()}
+                  onSelect={onSelectionChange}
+                >
+                  <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
+                  <span>{option.title}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}

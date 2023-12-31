@@ -1,3 +1,4 @@
+import { db } from '@/lib/db/handler';
 import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -39,21 +40,12 @@ export async function GET(
   req: Request,
   { params }: { params: { tid: string } }
 ) {
-  let { data, error } = await supabase
-    .from('team_member')
-    .select(
-      `
-    memberid,
-    profile: profiles (full_name, username, avatar_url)
-  `
-    )
-    .eq('teamid', Number(params.tid));
+  const teamMembers = await db
+    .selectFrom('profiles')
+    .innerJoin('team_member', 'profiles.id', 'team_member.memberid')
+    .selectAll()
+    .where('teamid', '=', Number(params.tid))
+    .execute();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
-  }
-
-  return NextResponse.json(data, {
-    headers: { 'Cache-Control': 's-maxage=3, stale-while-revalidate' },
-  });
+  return NextResponse.json(teamMembers);
 }

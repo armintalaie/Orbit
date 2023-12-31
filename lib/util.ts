@@ -9,7 +9,7 @@ export function dateFormater(date: string) {
   // if overdue, return "overdue by x days" (e.g. overdue by 2 days)
 
   if (!date || date === 'null') {
-    return '';
+    return 'No date';
   }
 
   const today = new Date();
