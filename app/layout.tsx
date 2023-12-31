@@ -3,10 +3,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
-import { Toaster } from '@/components/ui/toaster';
 import React from 'react';
-import { WebVitals } from '@/components/web-vitals';
-
+import { Toaster } from '@/components/ui/sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -28,7 +26,6 @@ export default function RootLayout({
         <meta name='apple-mobile-web-app-capable' content='yes' />
       </head>
       <body className={inter.className}>
-        <WebVitals />
         <Theme
           appearance='light'
           accentColor='cyan'
@@ -36,8 +33,8 @@ export default function RootLayout({
           radius='large'
           scaling='95%'
         >
-          <Toaster />
           {children}
+          <Toaster />
         </Theme>
         {/* <ThemeProvider
             attribute="class"

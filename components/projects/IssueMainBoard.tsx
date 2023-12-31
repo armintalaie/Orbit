@@ -204,7 +204,7 @@ const ToggleGroupDemo = ({
         aria-label='Left aligned'
         onClick={() => setViewType('table')}
       >
-        <ListIcon />
+        <ListIcon className='h-4 w-4' />
       </ToggleGroup.Item>
       <ToggleGroup.Item
         className={`flex w-9 items-center justify-center p-2 ${
@@ -214,9 +214,9 @@ const ToggleGroupDemo = ({
         aria-label='Center aligned'
         onClick={() => setViewType('board')}
       >
-        <KanbanSquareIcon />
+        <KanbanSquareIcon className='h-4 w-4' />
       </ToggleGroup.Item>
-      <ToggleGroup.Item
+      {/* <ToggleGroup.Item
         className={`flex w-9 items-center justify-center p-2 ${
           viewType === 'timeline' ? 'bg-gray-100' : 'bg-inherit'
         }`}
@@ -225,7 +225,7 @@ const ToggleGroupDemo = ({
         onClick={() => setViewType('timeline')}
       >
         <GanttChartSquare />
-      </ToggleGroup.Item>
+      </ToggleGroup.Item> */}
     </ToggleGroup.Root>
   );
 };

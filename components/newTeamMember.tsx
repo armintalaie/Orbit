@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useState } from 'react';
 import { Form } from './ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -51,7 +51,6 @@ export function NewTeamMember({
   button?: boolean;
   reload: Function;
 }) {
-  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,14 +76,12 @@ export function NewTeamMember({
     });
 
     if (!res.ok) {
-      toast({
-        title: 'Member not added',
+      toast('Member not added', {
         description: 'something went wrong',
       });
     } else {
       reload();
-      toast({
-        title: 'Member added',
+      toast('Member added', {
         description: ``,
       });
       setOpen(false);

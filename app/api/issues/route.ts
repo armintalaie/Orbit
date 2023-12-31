@@ -67,6 +67,7 @@ export async function GET(req: NextRequest) {
     .selectFrom('issue')
     .leftJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
     .innerJoin('project', 'issue.projectid', 'project.id')
+    .innerJoin('team', 'project.teamid', 'team.id')
     .select(({ eb, fn }) => [
       'issue.id',
       'issue.title',
@@ -76,16 +77,13 @@ export async function GET(req: NextRequest) {
       'issue.datestarted',
       'issue.projectid',
       'project.title as project_title',
-      // jsonObjectFrom(
-      //   'project.id',
-      // ).as('project'),
       'project.teamid',
-      // 'team.title as team_title',
+      'team.name as team_title',
       jsonArrayFrom(
         eb
           .selectFrom('issue_label')
           .innerJoin('label', 'issue_label.labelid', 'label.id')
-          .select(['labelid', 'label', 'color'])
+          .select(['labelid as id', 'label', 'color'])
           .whereRef('issue_label.issueid', '=', 'issue.id')
       ).as('labels'),
       jsonArrayFrom(
@@ -104,11 +102,6 @@ export async function GET(req: NextRequest) {
   if (searchParams.teams && searchParams.teams.length > 0) {
     query = query.where('project.teamid', 'in', searchParams.teams.map(Number));
   }
-
-  // if (searchParams.labels && searchParams.labels.length > 0) {
-  //   query = query.where('issue_label.labelid', 'in', searchParams.labels);
-  // }
-
   if (searchParams.statuses && searchParams.statuses.length > 0) {
     query = query.where(
       'issue.statusid',
