@@ -354,13 +354,11 @@ function MemberAvatar({ member, teamid, reload }) {
       <ContextMenuTrigger>
         <div key={member.memberid} className='flex flex-col items-center gap-4'>
           <Avatar>
-            <AvatarImage src={member.profile.avatar_url} />
-            <AvatarFallback>
-              {getInitials(member.profile.full_name)}
-            </AvatarFallback>
+            <AvatarImage src={member.avatar_url} />
+            <AvatarFallback>{getInitials(member.full_name)}</AvatarFallback>
           </Avatar>
           <p className='text-[10px]'>
-            {getFirstNameAndLastInitial(member.profile.full_name)}
+            {getFirstNameAndLastInitial(member.full_name)}
           </p>
         </div>
       </ContextMenuTrigger>
