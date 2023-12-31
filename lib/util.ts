@@ -60,6 +60,10 @@ export function dateFormater(date: string) {
 }
 
 export function isOverdue(date: string) {
+  if (!date || date === 'null') {
+    return false;
+  }
+
   const today = new Date();
   const dueDate = new Date(date);
   const diffTime = Number(dueDate) - Number(today);

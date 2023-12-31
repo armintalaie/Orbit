@@ -35,11 +35,11 @@ export default function IssueTemplates({
   }, []);
 
   return (
-    <div className=' flex w-full  flex-col px-4'>
-      <div className='flex w-full  flex-col '>
-        <div className='flex flex-row items-center justify-between  '>
+    <div className=' flex w-full flex-grow  flex-col px-4 '>
+      <div className='flex w-full  flex-col   '>
+        <div className='flex flex-row items-center gap-2 '>
           <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
-            Issue Templates
+            Templates
           </h2>
           <NewTemplate
             button={true}
@@ -48,25 +48,39 @@ export default function IssueTemplates({
           />
         </div>
 
+        <div className='flex flex-col items-center justify-center gap-2 py-5'>
+          <Alert className='bg-inherit'>
+            <AlertDescription>
+              Choose a template to insert into the editor.
+            </AlertDescription>
+          </Alert>
+        </div>
+
         {templates && templates.length > 0 ? (
-          <div className='flex max-w-4xl flex-row items-center gap-2 '>
+          <div className='flex max-w-4xl flex-col items-center gap-2 overflow-hidden '>
             <Carousel
               opts={{
                 align: 'start',
               }}
+              orientation='vertical'
               className='w-full '
             >
-              <CarouselContent className=''>
+              <div className='relative  flex w-24 items-center  justify-between p-2 pb-4'>
+                <CarouselPrevious className='relative left-0 top-0 translate-x-0 translate-y-0' />
+                <CarouselNext className='relative left-0 top-0 translate-x-0 translate-y-0' />
+              </div>
+
+              <CarouselContent className=' flex flex-col '>
                 {templates.map((template, index) => (
                   <CarouselItem
                     key={index}
                     onClick={() => sendTemplate(template.contents)}
-                    className=' xs:basis-1/1 sm:basis-1/2 md:basis-1/2 lg:basis-1/3'
+                    className=' flex w-full  flex-col'
                   >
                     <div className='rounded-lg'>
-                      <Card className='rounded-lg border-gray-200 shadow-md'>
-                        <CardContent className='flex h-32 w-full  flex-col  gap-4 rounded-lg px-0 py-2'>
-                          <div className='flex  h-12 flex-row items-center gap-2 border-b border-gray-100 px-3 text-neutral-600'>
+                      <Card className='rounded-lg border-gray-200 shadow-sm'>
+                        <CardContent className='flex h-[100px] w-full  flex-col  gap-4 rounded-lg px-0 py-2'>
+                          <div className='flex   flex-row items-center gap-2 border-b border-gray-100 px-3 text-neutral-600'>
                             <FileTextIcon className='h-5 w-5 ' />
                             <h6 className='text-lg'>{template.title}</h6>
                           </div>
@@ -80,11 +94,6 @@ export default function IssueTemplates({
                   </CarouselItem>
                 ))}
               </CarouselContent>
-
-              <div className='relative  flex w-24 items-center  justify-between p-2'>
-                <CarouselPrevious className='relative left-0 top-0 translate-x-0 translate-y-0' />
-                <CarouselNext className='relative left-0 top-0 translate-x-0 translate-y-0' />
-              </div>
             </Carousel>
           </div>
         ) : (

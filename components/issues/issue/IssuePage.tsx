@@ -1,8 +1,8 @@
 'use client';
 
-import { DotsHorizontalIcon, InfoCircledIcon } from '@radix-ui/react-icons';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from 'react';
-import { MessageCircleIcon } from 'lucide-react';
+import { MessageCircleIcon, PencilLine } from 'lucide-react';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -23,15 +23,7 @@ import { toast } from 'sonner';
 import { IIssue } from '@/lib/types/issue';
 import { IssueComments } from './IssueComments';
 import { IssueInfo } from './IssueInfo';
-import router from 'next/router';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import IssueTitleField from './fields/issueTitleField';
 
 export default function IssuePage({ issueId }: { issueId: number }) {
   const [issue, setIssue] = useState<IIssue | null>(null);
@@ -75,14 +67,12 @@ export default function IssuePage({ issueId }: { issueId: number }) {
     return (
       <div className='flex h-full w-full flex-col'>
         <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
-          <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-            <div className='flex flex-row items-center gap-2'>
-              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700'>
-                {issue.title}
-              </h1>
-              <IssueOptions issueId={issue.id} projectId={issue.projectid} />
-            </div>
-            <div className='flex h-full items-center justify-center gap-2'></div>
+          <div className='flex h-12 w-full items-center justify-between p-1  px-4 '>
+            <IssueTitleField
+              issueId={issueId}
+              issueTitle={issue.title}
+              projectId={issue.projectid}
+            />
           </div>
 
           <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
@@ -109,13 +99,13 @@ export default function IssuePage({ issueId }: { issueId: number }) {
       <ResizablePanelGroup direction='horizontal'>
         <ResizablePanel minSize={30} collapsedSize={1} collapsible={true}>
           <div className=' flex h-full w-full flex-1 flex-col '>
-            <div className='flex h-12 w-full items-center justify-between p-4  px-4 '>
-              <div className='flex flex-row items-center gap-2'>
-                <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
-                  {issue.title}
-                </h1>
-                <IssueOptions issueId={issue.id} projectId={issue.projectid} />
-              </div>
+            <div className='flex h-12 w-full items-center justify-between p-1  px-4 '>
+              <IssueTitleField
+                issueId={issueId}
+                issueTitle={issue.title}
+                projectId={issue.projectid}
+              />
+
               <div className='flex h-full items-center justify-center gap-2'></div>
             </div>
 
@@ -154,57 +144,6 @@ export default function IssuePage({ issueId }: { issueId: number }) {
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
-  );
-}
-
-function IssueOptions({
-  issueId,
-  projectId,
-}: {
-  issueId: number;
-  projectId: number;
-}) {
-  async function deleteIssue() {
-    const res = await fetch(`/api/issue/${issueId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-    router.push(`/projects/${projectId}`);
-  }
-
-  async function archiveProject() {
-    const res = await fetch(`/api/projects/${projectId}/archive`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost'>
-          <DotsHorizontalIcon className='h-4 w-4' />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-56'>
-        <DropdownMenuLabel>Settings</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Button variant='ghost' onClick={() => deleteIssue()}>
-            Delete Issue
-          </Button>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }
 

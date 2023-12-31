@@ -129,7 +129,6 @@ export default function ProjectPage() {
               <ProjectsTableView projects={projects} />
             </div>
 
-            <IssueTemplates teamid={params.teamid} />
             <div className=' flex w-full  flex-col px-4'>
               <div className='flex flex-row items-center justify-between  '>
                 <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>

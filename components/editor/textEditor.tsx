@@ -30,35 +30,20 @@ import {
 } from '@radix-ui/react-icons';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
-  AtSignIcon,
   Code2Icon,
   CodeIcon,
   FilePlus,
-  FileSymlinkIcon,
   HighlighterIcon,
-  ImagePlusIcon,
   ListOrderedIcon,
   ListTodoIcon,
-  PaperclipIcon,
   SaveIcon,
   StrikethroughIcon,
   TextQuote,
 } from 'lucide-react';
 import { Button } from '../ui/button';
-import { useToast } from '../ui/use-toast';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
 import IssueTemplates from '../teams/IssueTemplates';
+import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { toast } from 'sonner';
 
 const LIMIT = 500 * 10;
 const CustomTableCell = TableCell.extend({
@@ -95,7 +80,6 @@ export default function TextEditor({
   onUpdate?: (content: string) => Promise<void>;
   issue: any;
 }) {
-  const { toast } = useToast();
   const editor = useEditor({
     editorProps: {
       attributes: {
@@ -197,10 +181,7 @@ export default function TextEditor({
             onClick={async () => {
               const content = editor.storage.markdown.getMarkdown();
               await onSave(content);
-              toast({
-                title: 'Saved',
-                description: 'Your changes have been saved.',
-              });
+              toast('Your changes have been saved');
             }}
           >
             <SaveIcon className='mr-2 h-4 w-4' />
@@ -430,26 +411,24 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
 }
 
 function TemplatePopover({ editor, issue }: { editor: any; issue: any }) {
+  const [open, setOpen] = React.useState(false);
   function sendTemplate(template: string) {
     editor.chain().focus().insertContent(template).run();
+    toast('Template inserted');
+    setOpen(false);
   }
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <button className='e flex h-8 w-full items-center rounded-sm p-1 px-2 text-left text-xs  dark:border-neutral-800 dark:bg-neutral-800'>
           <FilePlus className='h-4 w-4' />
         </button>
-      </DialogTrigger>
-      <DialogContent className='max-w-full sm:max-w-6xl'>
-        <div className='flex items-center space-x-2'>
-          {issue && issue.teamid && (
-            <IssueTemplates teamid={issue.teamid} sendTemplate={sendTemplate} />
-          )}
-        </div>
-        <DialogFooter className='sm:justify-start'>
-          <DialogClose asChild></DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </SheetTrigger>
+      <SheetContent className='flex max-w-full flex-col sm:max-w-2xl'>
+        {issue && issue.teamid && (
+          <IssueTemplates teamid={issue.teamid} sendTemplate={sendTemplate} />
+        )}
+      </SheetContent>
+    </Sheet>
   );
 }
