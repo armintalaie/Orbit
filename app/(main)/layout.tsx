@@ -2,34 +2,14 @@
 import { FeedbackButton } from '@/components/feedback';
 import { Box, Text } from '@radix-ui/themes';
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from '@/components/ui/command';
 import Link from 'next/link';
 import {
-  BoxIcon,
-  CalendarIcon,
   ChevronDownIcon,
   ChevronRightIcon,
-  CircleDot,
   FolderClosed,
   InboxIcon,
   LayoutGridIcon,
-  LogOutIcon,
   PanelLeft,
-  PlusCircleIcon,
-  SearchIcon,
-  SettingsIcon,
-  TargetIcon,
-  Users2Icon,
-  UsersRoundIcon,
 } from 'lucide-react';
 import { Changelog } from '@/components/changelog';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
@@ -44,11 +24,6 @@ import AuthContextProvider, {
   UserSessionContext,
 } from '@/lib/context/AuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import {
-  PersonIcon,
-  EnvelopeClosedIcon,
-  GearIcon,
-} from '@radix-ui/react-icons';
 import { CommandMenu } from '@/components/globalCommand';
 
 export default function ProjectLayout({

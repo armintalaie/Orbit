@@ -27,7 +27,6 @@ export default function IssueTitleField({
   const [title, setIssueTitle] = useState(issueTitle);
 
   function saveTitleChanges() {
-    console.log(title);
     if (title === issueTitle) {
       toast('No changes made');
       return;

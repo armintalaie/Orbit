@@ -31,7 +31,6 @@ export async function POST(
       ...newIssue,
     });
 
-    console.log(issue);
     const { data, error } = await supabase.from('issue').insert(issue).select();
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });

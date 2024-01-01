@@ -1,19 +1,28 @@
 'use client';
 
 import { NewIssue } from '@/components/newIssue';
-import { isOverdue, dateFormater, STATUS } from '@/lib/util';
-import { Badge, Heading, Table } from '@radix-ui/themes';
-import { statusIconMapper } from '../statusIconMapper';
+import { isOverdue, dateFormater } from '@/lib/util';
+import { Badge, Heading, Text } from '@radix-ui/themes';
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import AssigneeAvatar from './AssigneeAvatar';
+import { LabelList } from '../issues/label';
+import IssueMenuContext from '../issues/boards/issueMenuContext';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuTrigger,
+} from '../ui/context-menu';
+import { Button } from '../ui/button';
 
 export interface TableViewProps {
-  issues: {
-    id: number;
-    title: string;
-    deadline: string;
-    priority: number;
-    projectid?: number;
-    statusid: number;
-  }[];
+  groupedIssues: any[];
   reload: () => void;
   projectId?: number;
 }
@@ -28,76 +37,87 @@ type Issue = {
 };
 
 export default function TableView({
-  issues,
+  groupedIssues,
   reload,
   projectId,
 }: TableViewProps) {
-  const status: { id: number; label: string }[] = STATUS || [];
-  function groupByStatus(issues: Issue[]) {
-    return issues.reduce<{ [key: number]: { issues: Issue[] } }>(
-      (acc, task) => {
-        if (!acc[task.statusid]) {
-          acc[task.statusid] = { issues: [] };
-        }
-        acc[task.statusid].issues.push(task);
-        return acc;
-      },
-      {}
-    );
-  }
-
-  const groupedTasks = groupByStatus(issues);
-
   return (
     <div className='flex h-full w-full flex-col '>
-      <Table.Root className='w-full  divide-y-0 overflow-hidden rounded-sm border-gray-100 bg-white shadow-none'>
-        <Table.Body>
-          {status.map((status) => (
-            <>
-              <Table.Row className='border-b-gray-100 bg-gray-50 '>
-                <Table.Cell colSpan={5}>
-                  <Heading size='3' className='flex items-center gap-3'>
-                    {statusIconMapper(status.label, 'h-4 w-4')}
-                    <Heading size='1' className='text-gray-700'>
-                      {status.label}
-                    </Heading>
+      <Table className='w-full  divide-y-0 overflow-hidden rounded-sm border-gray-100 bg-white shadow-none'>
+        {groupedIssues.map((grouping) => (
+          <>
+            <TableHeader className='flex w-full border-b-gray-100 bg-gray-50 '>
+              <TableRow className='flex w-full items-center justify-between gap-3 px-3 py-2'>
+                <Heading size='3' className='flex items-center gap-3'>
+                  {/* {statusIconMapper(grouping.label, 'h-4 w-4')} */}
+                  <Heading size='1' className='text-gray-700'>
+                    {grouping.label}
                   </Heading>
-                </Table.Cell>
-              </Table.Row>
-              {groupedTasks[status.id] &&
-                groupedTasks[status.id].issues.map((issue) => (
-                  <Table.Row
+                </Heading>
+                <NewIssue
+                  button={false}
+                  reload={reload}
+                  projectid={projectId}
+                />
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {grouping.issues &&
+                grouping.issues.map((issue) => (
+                  <TableRow
                     key={issue.id}
                     className='border-none border-b-gray-100'
                   >
-                    <Table.RowHeaderCell>{issue.title}</Table.RowHeaderCell>
-                    <Table.Cell>
-                      {isOverdue(issue.deadline) ? (
-                        <Badge color='red'>
-                          {dateFormater(issue.deadline)}
-                        </Badge>
-                      ) : (
-                        <Badge color='gray'>
-                          {' '}
-                          {dateFormater(issue.deadline)}
-                        </Badge>
-                      )}
-                    </Table.Cell>
-                  </Table.Row>
+                    <TableCell className='flex w-full items-center justify-between gap-3 '>
+                      <ContextMenu>
+                        <ContextMenuTrigger className='flex w-full w-full items-center justify-between gap-3'>
+                          <p className='line-clamp-1 flex w-fit text-gray-700'>
+                            {issue.title}
+                          </p>
+
+                          <div className='flex flex-grow  flex-row justify-between gap-2'>
+                            <LabelList labels={issue.labels} />
+                            <Text size='1' className=' text-2xs text-gray-500'>
+                              {issue.assignees.length > 0 ? (
+                                issue.assignees.map((assignee) => {
+                                  return (
+                                    <AssigneeAvatar
+                                      key={assignee.id}
+                                      assignee={assignee}
+                                    />
+                                  );
+                                })
+                              ) : (
+                                <AssigneeAvatar />
+                              )}
+                            </Text>
+                          </div>
+
+                          <div className='flex w-fit flex-row items-center justify-end gap-2'>
+                            {isOverdue(issue.deadline) ? (
+                              <Badge color='red'>
+                                {dateFormater(issue.deadline)}
+                              </Badge>
+                            ) : (
+                              <Badge color='gray'>
+                                {' '}
+                                {dateFormater(issue.deadline)}
+                              </Badge>
+                            )}
+                          </div>
+                        </ContextMenuTrigger>
+                        <ContextMenuContent>
+                          <IssueMenuContext issue={issue} reload={reload} />
+                        </ContextMenuContent>
+                      </ContextMenu>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              <Table.Row className='bg-gray-100  '>
-                <Table.Cell colSpan={5} className=' '>
-                  <NewIssue
-                    button={false}
-                    reload={reload}
-                    projectid={projectId}
-                  />
-                </Table.Cell>
-              </Table.Row>
-            </>
-          ))}
-        </Table.Body>
-      </Table.Root>
+            </TableBody>
+          </>
+        ))}
+      </Table>
     </div>
   );
 }

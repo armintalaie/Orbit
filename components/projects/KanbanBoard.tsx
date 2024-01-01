@@ -33,63 +33,35 @@ type Issue = {
 };
 
 export default function KanbanView({
-  issues,
+  groupedIssues,
   reload,
   projectId,
 }: KanbanViewProps) {
   const status: { id: number; label: string }[] = STATUS || [];
-  const groupedTasks = groupByStatus(issues);
-  let emptyStatus = getEmptyStatus();
-
-  function groupByStatus(issues: Issue[]) {
-    return issues.reduce<{ [key: number]: { issues: Issue[] } }>(
-      (acc, task) => {
-        if (!acc[task.statusid]) {
-          acc[task.statusid] = { issues: [] };
-        }
-        acc[task.statusid].issues.push(task);
-        return acc;
-      },
-      {}
-    );
-  }
-
-  function getEmptyStatus() {
-    const emptyStatus = [];
-    for (const status of STATUS) {
-      if (!groupedTasks[status.id]) {
-        emptyStatus.push(status);
-      }
-    }
-    return emptyStatus;
-  }
-
-  useEffect(() => {
-    emptyStatus = getEmptyStatus();
-  }, [issues]);
+  // const groupedTasks = groupByStatus(issues);
+  // let emptyStatus = getEmptyStatus();
 
   return (
     <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-hidden  p-2 py-0'>
       <div className='flex h-full flex-grow  gap-4 '>
-        {status.map((status) =>
-          groupedTasks[status.id] &&
-          groupedTasks[status.id].issues.length > 0 ? (
+        {groupedIssues &&
+          groupedIssues.map((grouping) => (
             <div
-              key={status.id}
+              key={grouping.key}
               className='flex h-full   flex-col  overflow-hidden'
             >
               <div
-                key={status.id}
+                key={grouping.label}
                 className='flex h-full  w-72 flex-col rounded-sm  p-0 '
               >
                 <CardHeader className='m-0 flex flex-row items-center justify-between space-y-0 px-1'>
                   <div className='m-0 flex flex-row items-center gap-2'>
-                    {statusIconMapper(status.label, 'h-4 w-4')}
+                    {/* {statusIconMapper(status.label, 'h-4 w-4')} */}
                     <Heading
                       size='1'
                       className='flex items-center text-gray-700'
                     >
-                      {status.label}
+                      {grouping.label}
                     </Heading>
                   </div>
 
@@ -101,8 +73,8 @@ export default function KanbanView({
                 </CardHeader>
                 <CardContent className='flex flex-grow  flex-col overflow-y-scroll p-0   '>
                   <ul className='flex flex-grow flex-col space-y-3  pb-3'>
-                    {groupedTasks[status.id] &&
-                      groupedTasks[status.id].issues.map((issue) => (
+                    {grouping.issues &&
+                      grouping.issues.map((issue) => (
                         <div key={issue.id}>
                           <IssueCard issue={issue} reload={reload} />
                         </div>
@@ -111,12 +83,9 @@ export default function KanbanView({
                 </CardContent>
               </div>
             </div>
-          ) : (
-            <></>
-          )
-        )}
+          ))}
       </div>
-
+      {/* 
       <div className='flex flex-col py-5'>
         <div className='h-full w-72 rounded-sm p-0 '>
           <div className='flex h-full flex-col items-center gap-3'>
@@ -142,7 +111,7 @@ export default function KanbanView({
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

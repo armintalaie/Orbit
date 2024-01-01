@@ -1,9 +1,9 @@
 'use client';
-import { TableIcon, BoxIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
+
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Button } from '@radix-ui/themes';
-import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,15 +14,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import KanbanView from '@/components/projects/KanbanBoard';
 import TableView from '@/components/projects/tableView';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
 import IssuesTimelineView from '../issues/IssueTimelineView';
-import {
-  GanttChartSquare,
-  KanbanIcon,
-  KanbanSquareIcon,
-  ListIcon,
-} from 'lucide-react';
 import FilterGroup from '../issues/filterGroup';
+import { IssueViewOptions } from '../issues/boards/IssueViewOptions';
+import { IssueGrouping } from '../issues/boards/issueGrouping';
+import { IIssue } from '@/lib/types/issue';
 
 interface IssueBoardProps {
   query: {
@@ -36,6 +32,12 @@ interface IssueBoardProps {
 
 type ViewType = 'board' | 'table' | 'timeline';
 
+type GroupedIssues = {
+  issues: IIssue[];
+  key: string;
+  label: string;
+}[];
+
 export default function IssueBoard({
   query,
   defaultViewType,
@@ -43,6 +45,7 @@ export default function IssueBoard({
   const projectId = query?.pid;
   const [issues, setIssues] = useState([]);
   const [transformedIssues, setTransformedIssues] = useState([]);
+  const [groupedIssues, setGroupedIssues] = useState<GroupedIssues>([]);
   const DEFAULT_VIEW_TYPE = defaultViewType || 'board';
   const [viewType, setViewType] = useState<ViewType>(DEFAULT_VIEW_TYPE);
   const [filters, setFilters] = useState([]);
@@ -156,24 +159,25 @@ export default function IssueBoard({
           filterMethod={filterMethod}
           setFilterMethod={setFilterMethod}
         />
-        <ToggleGroupDemo viewType={viewType} setViewType={setViewType} />
+        <div className='flex flex-row items-center gap-3'>
+          <IssueGrouping
+            issues={transformedIssues}
+            setIssues={setGroupedIssues}
+          />
+          <IssueViewOptions viewType={viewType} setViewType={setViewType} />
+        </div>
       </div>
       <div className=' flex   flex-grow flex-col overflow-hidden'>
         {viewType === 'board' ? (
           <KanbanView
-            issues={transformedIssues}
-            reload={reload}
-            projectId={projectId}
-          />
-        ) : viewType === 'table' ? (
-          <TableView
-            issues={transformedIssues}
+            groupedIssues={groupedIssues}
             reload={reload}
             projectId={projectId}
           />
         ) : (
-          <IssuesTimelineView
-            issues={transformedIssues}
+          <TableView
+            groupedIssues={groupedIssues}
+            reload={reload}
             projectId={projectId}
           />
         )}
@@ -181,54 +185,6 @@ export default function IssueBoard({
     </div>
   );
 }
-
-const ToggleGroupDemo = ({
-  viewType,
-  setViewType,
-}: {
-  viewType: ViewType;
-  setViewType: (viewType: ViewType) => void;
-}) => {
-  return (
-    <ToggleGroup.Root
-      className='flex h-8 w-fit   flex-row  items-center justify-between divide-x divide-gray-200 overflow-hidden  rounded-sm border border-gray-200 bg-white text-left text-xs text-gray-500  shadow-sm'
-      type='single'
-      defaultValue='center'
-      aria-label='Text alignment'
-    >
-      <ToggleGroup.Item
-        className={`flex w-9 items-center justify-center p-2 ${
-          viewType === 'table' ? 'bg-gray-100' : 'bg-inherit'
-        }`}
-        value='table'
-        aria-label='Left aligned'
-        onClick={() => setViewType('table')}
-      >
-        <ListIcon className='h-4 w-4' />
-      </ToggleGroup.Item>
-      <ToggleGroup.Item
-        className={`flex w-9 items-center justify-center p-2 ${
-          viewType === 'board' ? 'bg-gray-100' : 'bg-inherit'
-        }`}
-        value='board'
-        aria-label='Center aligned'
-        onClick={() => setViewType('board')}
-      >
-        <KanbanSquareIcon className='h-4 w-4' />
-      </ToggleGroup.Item>
-      {/* <ToggleGroup.Item
-        className={`flex w-9 items-center justify-center p-2 ${
-          viewType === 'timeline' ? 'bg-gray-100' : 'bg-inherit'
-        }`}
-        value='timeline'
-        aria-label='Center aligned'
-        onClick={() => setViewType('timeline')}
-      >
-        <GanttChartSquare />
-      </ToggleGroup.Item> */}
-    </ToggleGroup.Root>
-  );
-};
 
 function ProjectOptions({ projectId }: { projectId: number }) {
   const router = useRouter();
