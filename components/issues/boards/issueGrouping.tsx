@@ -6,10 +6,11 @@ import {
   SelectLabel,
   SelectTrigger,
 } from '@/components/ui/select';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { IIssue } from '@/lib/types/issue';
 import { LABELS, STATUS } from '@/lib/util';
 import { Settings2Icon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 type AttributeOptions = {
   id: string;
@@ -80,6 +81,7 @@ export function IssueGrouping({
 }) {
   const defaultGrouping = issueAttributes['statusid'].id;
   const [selectedGrouping, setSelectedGrouping] = useState(defaultGrouping);
+  const userSession = useContext(UserSessionContext);
 
   async function updateGrouping() {
     if (selectedGrouping === 'statusid') {
@@ -111,6 +113,7 @@ export function IssueGrouping({
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: userSession?.access_token || '',
         },
         next: {
           revalidate: 600,

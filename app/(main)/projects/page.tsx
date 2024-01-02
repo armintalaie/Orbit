@@ -26,7 +26,11 @@ export default function ProjectPage() {
   const userSession = useContext(UserSessionContext);
 
   async function reload() {
-    const res = await fetch(`/api/projects`);
+    const res = await fetch(`/api/projects/`, {
+      headers: {
+        Authorization: userSession?.access_token || '',
+      },
+    });
     const project = await res.json();
     setProjects(project);
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { TargetIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,12 +16,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
 
 export function ProjectField({ field }: { field: any }) {
   const [projects, setprojects] = useState<{
     [key: string]: any;
   }>({});
   const [open, setOpen] = useState(false);
+  const userSession = useContext(UserSessionContext);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(
     field ? field.value : null
   );
@@ -30,6 +32,10 @@ export function ProjectField({ field }: { field: any }) {
     async function fetchProjects() {
       const res = await fetch(`/api/projects`, {
         next: { revalidate: 10 },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: userSession?.access_token || '',
+        },
       });
       let proj = await res.json();
 

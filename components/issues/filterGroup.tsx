@@ -34,6 +34,7 @@ import { statusIconMapper } from '../statusIconMapper';
 import { UserFilter } from '../userFilter';
 import IssueLabel from './label';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
 
 type FilterType =
   | 'status'
@@ -384,12 +385,15 @@ function LabelFilter({ backBtn, addFilter }: { backBtn: () => void }) {
 }
 
 function ProjectFilter({ backBtn, addFilter }: { backBtn: () => void }) {
+  const userSession = React.useContext(UserSessionContext);
   const [value, setValue] = React.useState('');
   const [projects, setProjects] = React.useState<any[]>([]);
 
   async function fetchProjects() {
-    const res = await fetch(`/api/projects`, {
-      next: { revalidate: 500 },
+    const res = await fetch(`/api/projects/`, {
+      headers: {
+        Authorization: userSession?.access_token || '',
+      },
     });
     const projects = await res.json();
     setProjects(projects);
