@@ -2,10 +2,11 @@
 
 import { NewIssue } from '@/components/newIssue';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import ProjectTitleField from '@/components/projects/project/projectTitleField';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
 
 interface ProjectPageProps {
   id: number;
@@ -22,6 +23,7 @@ interface IProject {
 }
 
 export default function ProjectPage({ id, title }: ProjectPageProps) {
+  const userSession = useContext(UserSessionContext);
   const params = useParams();
   const projectId = id ? id : Number(params.projectId);
   const [project, setProject] = useState<IProject | null>(null);
@@ -36,7 +38,11 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
   };
 
   async function fetchProject() {
-    const res = await fetch(`/api/projects/${projectId}`);
+    const res = await fetch(`/api/projects/${projectId}`, {
+      headers: {
+        Authorization: userSession?.access_token || '',
+      },
+    });
     const project = await res.json();
     setProject(project);
   }

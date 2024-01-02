@@ -50,7 +50,6 @@ export async function GET(
     ])
     .execute();
 
-  console.log(projects);
   return NextResponse.json(projects);
 }
 

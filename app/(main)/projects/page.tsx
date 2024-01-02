@@ -1,11 +1,10 @@
 'use client';
 
 import { NewProject } from '@/components/newProject';
-import { STATUS, dateFormater, isOverdue } from '@/lib/util';
+import { dateFormater, isOverdue } from '@/lib/util';
 import { Badge, Table } from '@radix-ui/themes';
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { statusIconMapper } from '@/components/statusIconMapper';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 
@@ -18,6 +17,8 @@ interface IProject {
   datestarted: string;
   deadline: string;
   statusid: number;
+  teamid: number;
+  team_title: string;
 }
 
 export default function ProjectPage() {

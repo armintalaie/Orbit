@@ -30,6 +30,7 @@ import * as z from 'zod';
 import { DeadlineField } from './issues/form/deadlineField';
 import { StatusField } from './issues/form/statusField';
 import { Textarea } from '@/components/ui/textarea';
+import { TeamField } from './projects/form/teamField';
 
 export const projectSchema = z.object({
   title: z.string(),
@@ -43,13 +44,17 @@ export const formSchema = z.object({
   title: z.string(),
   description: z.string(),
   statusid: z.number(),
-  deadline: z.object({
-    from: z.date(),
-    to: z.date(),
-  }),
+  deadline: z
+    .object({
+      from: z.date().optional(),
+      to: z.date().optional(),
+    })
+    .optional(),
+  teamid: z.number(),
 });
 
 export function NewProject({
+  defaultValues,
   button,
   reload,
   teamid,
@@ -57,6 +62,7 @@ export function NewProject({
   button?: boolean;
   reload: Function;
   teamid?: string;
+  defaultValues?: Partial<z.infer<typeof formSchema>>;
 }) {
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -65,10 +71,8 @@ export function NewProject({
       title: '',
       statusid: 1,
       description: '',
-      deadline: {
-        from: new Date(),
-        to: new Date(),
-      },
+      deadline: {},
+      ...defaultValues,
     },
   });
   async function onSubmit(e) {
@@ -77,8 +81,13 @@ export function NewProject({
       title: formVals.title,
       description: formVals.description,
       statusid: formVals.statusid,
-      deadline: formVals.deadline.to.toISOString().split('T')[0],
-      datestarted: formVals.deadline.from.toISOString().split('T')[0],
+      deadline:
+        formVals.deadline?.to &&
+        formVals.deadline.to.toISOString().split('T')[0],
+      datestarted:
+        formVals.deadline?.from &&
+        formVals.deadline.from.toISOString().split('T')[0],
+      teamid: Number(formVals.teamid),
     };
     const URL = teamid ? `/api/teams/${teamid}/projects` : '/api/projects';
     const res = await fetch(URL, {
@@ -162,6 +171,19 @@ export function NewProject({
             />
 
             <div className='flex flex-row items-center space-x-4'>
+              <FormField
+                control={form.control}
+                name='teamid'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <TeamField field={field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name='statusid'
