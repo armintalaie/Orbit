@@ -138,7 +138,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
           collapsedSize={1}
           collapsible={true}
           defaultSize={25}
-          minSize={20}
+          minSize={25}
         >
           <IssueInfo issueId={issue.id} refIssue={issue} />
         </ResizablePanel>

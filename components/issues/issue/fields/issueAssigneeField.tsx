@@ -26,6 +26,7 @@ interface Profile {
 }
 
 type AssigneeUpdateFieldProps = {
+  contentOnly?: boolean;
   issueId: number;
   user: Profile | null;
   team: {
@@ -35,7 +36,7 @@ type AssigneeUpdateFieldProps = {
 };
 
 export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
-  const { issueId, user, team } = props;
+  const { issueId, user, team, contentOnly = false } = props;
   const [memberOptions, setMemberOptions] = useState<{
     [key: string]: Profile;
   }>({});
@@ -103,6 +104,31 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
     }
   }
 
+  const issueAssigneeSection = (
+    <Command filter={filter}>
+      <CommandInput placeholder='Change Assignee...' />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup>
+          {Object.entries(memberOptions).map(([, member]) => (
+            <CommandItem
+              key={member.id}
+              value={member.id}
+              onSelect={onSelectedUserChange}
+            >
+              <CircleUser className='mr-2 h-4 w-4 shrink-0' />
+              <span>{member.full_name}</span>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  );
+
+  if (contentOnly) {
+    return issueAssigneeSection;
+  }
+
   return (
     <div className='flex items-center space-x-4'>
       <Popover open={open} onOpenChange={setOpen}>
@@ -132,28 +158,7 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
           side='right'
           align='start'
         >
-          <Command filter={filter}>
-            <CommandInput placeholder='Change Assignee...' />
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup>
-                {Object.entries(memberOptions).map(([, member]) => (
-                  <CommandItem
-                    key={member.id}
-                    value={member.id}
-                    onSelect={onSelectedUserChange}
-                  >
-                    <CircleUser className='mr-2 h-4 w-4 shrink-0' />
-                    <span>{member.full_name}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-
-          <div className='flex w-full justify-center rounded-none border-t border-gray-200 p-1 text-xs font-normal'>
-            {team.title}
-          </div>
+          {issueAssigneeSection}
         </PopoverContent>
       </Popover>
     </div>

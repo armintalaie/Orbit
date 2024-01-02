@@ -7,7 +7,7 @@ import {
   SelectTrigger,
 } from '@/components/ui/select';
 import { IIssue } from '@/lib/types/issue';
-import { STATUS } from '@/lib/util';
+import { LABELS, STATUS } from '@/lib/util';
 import { Settings2Icon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -21,47 +21,62 @@ const issueAttributes: {
     id: string;
     label: string;
     options: { [key: number | string]: AttributeOptions };
+    configuration?: {
+      hideEmpty?: boolean;
+    };
   };
 } = {
   statusid: {
     id: 'statusid',
     label: 'Status',
     options: {},
+    configuration: {
+      hideEmpty: false,
+    },
   },
   projectid: {
     id: 'projectid',
     label: 'Project',
     options: {},
+    configuration: {
+      hideEmpty: false,
+    },
   },
-  //   labels: {
-  //     id: 'labelid',
-  //     label: 'Label',
-  //     options: {},
-  //   },
-  //   assignees: {
-  //     id: 'assignees',
-  //     label: 'Assignee',
-  //     options: {},
-  //   },
-  //   team: {
-  //     id: 'team',
-  //     label: 'Team',
-  //     options: {},
-  //   },
+  labelid: {
+    id: 'labelid',
+    label: 'Label',
+    options: {},
+    configuration: {
+      hideEmpty: false,
+    },
+  },
+  team: {
+    id: 'team',
+    label: 'Team',
+    options: {},
+    configuration: {
+      hideEmpty: false,
+    },
+  },
 };
 
 type GroupedIssues = {
   issues: IIssue[];
   key: string;
   label: string;
+  configuration?: {
+    hideEmpty?: boolean;
+  };
 }[];
 
 export function IssueGrouping({
   issues,
+  teamid,
   setIssues,
 }: {
   issues: IIssue[];
   setIssues: (issues: GroupedIssues) => void;
+  teamid?: number;
 }) {
   const defaultGrouping = issueAttributes['statusid'].id;
   const [selectedGrouping, setSelectedGrouping] = useState(defaultGrouping);
@@ -77,8 +92,22 @@ export function IssueGrouping({
       );
     }
 
+    if (selectedGrouping === 'labelid') {
+      (issueAttributes['labelid'] as any).options = {
+        ...LABELS.reduce((acc, curr) => {
+          acc[curr.id] = { id: curr.id, label: curr.label };
+          return acc;
+        }, {}),
+        ...{ 0: { id: 0, label: 'No Label' } },
+      };
+    }
+
     if (selectedGrouping === 'projectid') {
-      const fetchProjects = await fetch(`/api/projects`, {
+      const query = encodeURIComponent(
+        JSON.stringify({ teams: [teamid] } || {})
+      );
+      const fetchURI = `/api/projects?q=${query}`;
+      const fetchProjects = await fetch(`${fetchURI}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +119,7 @@ export function IssueGrouping({
       const projects = await fetchProjects.json();
       (issueAttributes['projectid'] as any).options = projects.reduce(
         (acc, project) => {
-          acc[project.id] = { key: project.id, label: project.title };
+          acc[project.id] = { id: project.id, label: project.title };
           return acc;
         },
         {}
@@ -117,7 +146,11 @@ export function IssueGrouping({
       <SelectContent className=''>
         <SelectGroup className=''>
           {Object.keys(issueAttributes).map((key) => (
-            <SelectItem key={key} value={issueAttributes[key].id}>
+            <SelectItem
+              key={key}
+              value={issueAttributes[key].id}
+              className='text-xs'
+            >
               {issueAttributes[key].label}
             </SelectItem>
           ))}
@@ -133,14 +166,35 @@ function groupBykey(issues: IIssue[], key: string): GroupedIssues {
     : issueAttributes['statusid'].id;
 
   const groupedIssues: GroupedIssues = [];
+
+  for (const option of Object.values(issueAttributes[key].options)) {
+    groupedIssues.push({
+      issues: [],
+      key: option.id,
+      label: option.label,
+    });
+  }
   for (const issue of issues) {
     let shouldAdd = false;
     for (const groupedIssue of groupedIssues) {
-      const issueKey = issue[groupingKey as keyof IIssue];
-      if (groupedIssue.key === issueKey) {
-        groupedIssue.issues.push(issue);
-        shouldAdd = true;
-        break;
+      if (key === 'labelid') {
+        if (issue.labels.length === 0 && groupedIssue.key === 0) {
+          groupedIssue.issues.push(issue);
+          shouldAdd = true;
+          break;
+        }
+        if (issue.labels.map((label) => label.id).includes(groupedIssue.key)) {
+          groupedIssue.issues.push(issue);
+          shouldAdd = true;
+          break;
+        }
+      } else {
+        const issueKey = issue[groupingKey as keyof IIssue];
+        if (groupedIssue.key === issueKey) {
+          groupedIssue.issues.push(issue);
+          shouldAdd = true;
+          break;
+        }
       }
     }
     if (!shouldAdd) {

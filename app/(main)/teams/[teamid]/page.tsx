@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { STATUS, dateFormater, isOverdue } from '@/lib/util';
+import { dateFormater, isOverdue } from '@/lib/util';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Table } from '@radix-ui/themes';
 import { useParams, useRouter } from 'next/navigation';
@@ -24,11 +24,11 @@ import {
 import { NewTeamMember } from '@/components/newTeamMember';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { NewProject } from '@/components/newProject';
-import { statusIconMapper } from '@/components/statusIconMapper';
-import IssueTemplates from '@/components/teams/IssueTemplates';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { toast } from 'sonner';
+import ProjectTitleField from '@/components/projects/project/projectTitleField';
+import { Maximize2 } from 'lucide-react';
 
 type viewTypes = 'ISSUES' | 'PROJECTS';
 
@@ -39,7 +39,7 @@ export default function ProjectPage() {
   const [team, setTeam] = useState([]);
   const [viewType, setViewType] = useState<viewTypes>('ISSUES');
   const issueQuery = {
-    tid: params.teamid as string,
+    tid: params.teamid,
     q: {
       teams: [params.teamid as string],
     },
@@ -194,18 +194,6 @@ function TeamOptions({ teamId }: { teamId: string }) {
     router.push('/teams');
   }
 
-  async function archiveProject() {
-    const res = await fetch(`/api/projects/${teamId}/archive`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -236,7 +224,6 @@ function ProjectsTableView({ projects }) {
             <Table.RowHeaderCell className='hidden lg:table-cell'>
               Description
             </Table.RowHeaderCell>
-            <Table.RowHeaderCell>Status</Table.RowHeaderCell>
             <Table.RowHeaderCell>Open</Table.RowHeaderCell>
 
             <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
@@ -244,32 +231,23 @@ function ProjectsTableView({ projects }) {
           </Table.Row>
           {projects.map((project) => (
             <Table.Row key={project.id}>
-              <Table.RowHeaderCell>
+              <Table.RowHeaderCell className='flex flex-row items-center gap-4'>
                 <Link
                   href={`/projects/${project.id}`}
                   shallow={true}
                   className='underline'
                 >
-                  {project.title}
+                  <Maximize2 className='h-3 w-3' />
                 </Link>
+                <ProjectTitleField
+                  projectTitle={project.title}
+                  projectId={project.id}
+                  teamid={project.teamid}
+                />
               </Table.RowHeaderCell>
 
               <Table.Cell className='hidden lg:table-cell'>
                 {project.description}
-              </Table.Cell>
-
-              <Table.Cell>
-                {STATUS && STATUS[project.statusid] ? (
-                  <div className='flex flex-row items-center gap-2 '>
-                    {statusIconMapper(
-                      STATUS[project.statusid].label,
-                      'h-3 w-3'
-                    )}
-                    {STATUS[project.statusid].label}
-                  </div>
-                ) : (
-                  <p className='text-xs'>No Status</p>
-                )}
               </Table.Cell>
 
               <Table.Cell className=' '>

@@ -4,6 +4,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
+import { ILabel } from '@/lib/types/issue';
 
 function getTextColor(color: string) {
   const hex = color.replace('#', '');
@@ -60,11 +61,7 @@ export default function IssueLabel({
   );
 }
 
-export function LabelList({
-  labels,
-}: {
-  labels: { id: string; label: string; color: string }[];
-}) {
+export function LabelList({ labels }: { labels: ILabel[] }) {
   return (
     <HoverCard>
       <HoverCardTrigger>

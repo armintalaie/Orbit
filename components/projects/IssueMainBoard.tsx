@@ -13,12 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import KanbanView from '@/components/projects/KanbanBoard';
-import TableView from '@/components/projects/tableView';
-import IssuesTimelineView from '../issues/IssueTimelineView';
+import IssueListView from '@/components/projects/IssueListView';
 import FilterGroup from '../issues/filterGroup';
 import { IssueViewOptions } from '../issues/boards/IssueViewOptions';
 import { IssueGrouping } from '../issues/boards/issueGrouping';
 import { IIssue } from '@/lib/types/issue';
+import { useWindowSize } from 'usehooks-ts';
 
 interface IssueBoardProps {
   query: {
@@ -30,7 +30,7 @@ interface IssueBoardProps {
   defaultViewType?: ViewType;
 }
 
-type ViewType = 'board' | 'table' | 'timeline';
+type ViewType = 'board' | 'table';
 
 type GroupedIssues = {
   issues: IIssue[];
@@ -42,12 +42,12 @@ export default function IssueBoard({
   query,
   defaultViewType,
 }: IssueBoardProps) {
+  const { width } = useWindowSize();
   const projectId = query?.pid;
   const [issues, setIssues] = useState([]);
   const [transformedIssues, setTransformedIssues] = useState([]);
   const [groupedIssues, setGroupedIssues] = useState<GroupedIssues>([]);
-  const DEFAULT_VIEW_TYPE = defaultViewType || 'board';
-  const [viewType, setViewType] = useState<ViewType>(DEFAULT_VIEW_TYPE);
+  const [viewType, setViewType] = useState<ViewType>('board');
   const [filters, setFilters] = useState([]);
   const [filterMethod, setFilterMethod] = useState('ANY');
 
@@ -163,6 +163,7 @@ export default function IssueBoard({
           <IssueGrouping
             issues={transformedIssues}
             setIssues={setGroupedIssues}
+            teamid={query.tid}
           />
           <IssueViewOptions viewType={viewType} setViewType={setViewType} />
         </div>
@@ -172,10 +173,10 @@ export default function IssueBoard({
           <KanbanView
             groupedIssues={groupedIssues}
             reload={reload}
-            projectId={projectId}
+            projectId={query.pid}
           />
         ) : (
-          <TableView
+          <IssueListView
             groupedIssues={groupedIssues}
             reload={reload}
             projectId={projectId}

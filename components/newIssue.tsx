@@ -105,7 +105,7 @@ export function NewIssue({
             <DialogDescription>Create a new Issue.</DialogDescription>
           </DialogHeader>
           <NewIssueForm
-            defaultValues={defaultValues || {}}
+            defaultValues={defaultValues}
             reload={reload}
             close={close}
           />

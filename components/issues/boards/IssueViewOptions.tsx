@@ -1,7 +1,7 @@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ListIcon, KanbanSquareIcon } from 'lucide-react';
 
-type ViewType = 'board' | 'table' | 'timeline';
+type ViewType = 'board' | 'table';
 
 export const IssueViewOptions = ({
   viewType,
@@ -14,7 +14,7 @@ export const IssueViewOptions = ({
     <ToggleGroup
       className='flex h-6 w-fit   flex-row  items-center justify-between gap-0 divide-x divide-gray-200 overflow-hidden  rounded-sm border border-gray-200  bg-gray-100 text-left text-xs  text-gray-500 shadow-sm '
       type='single'
-      defaultValue='center'
+      defaultValue={viewType}
       aria-label='Text alignment'
     >
       <ToggleGroupItem

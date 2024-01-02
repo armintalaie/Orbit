@@ -2,15 +2,7 @@
 
 import { NewIssue } from '@/components/newIssue';
 import { isOverdue, dateFormater } from '@/lib/util';
-import { Badge, Heading, Text } from '@radix-ui/themes';
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Badge, Text } from '@radix-ui/themes';
 import AssigneeAvatar from './AssigneeAvatar';
 import { LabelList } from '../issues/label';
 import IssueMenuContext from '../issues/boards/issueMenuContext';
@@ -19,7 +11,8 @@ import {
   ContextMenuContent,
   ContextMenuTrigger,
 } from '../ui/context-menu';
-import { Button } from '../ui/button';
+import Link from 'next/link';
+import { IIssue, IProfile } from '@/lib/types/issue';
 
 export interface TableViewProps {
   groupedIssues: any[];
@@ -27,60 +20,46 @@ export interface TableViewProps {
   projectId?: number;
 }
 
-type Issue = {
-  id: number;
-  title: string;
-  deadline: string;
-  priority: number;
-  projectid?: number;
-  statusid: number;
-};
-
-export default function TableView({
+export default function IssueListView({
   groupedIssues,
   reload,
   projectId,
 }: TableViewProps) {
   return (
     <div className='flex h-full w-full flex-col '>
-      <Table className='w-full  divide-y-0 overflow-hidden rounded-sm border-gray-100 bg-white shadow-none'>
+      <div className='flex w-full flex-grow flex-col divide-y-0  overflow-y-scroll  rounded-sm border-gray-100 bg-white shadow-none'>
         {groupedIssues.map((grouping) => (
           <>
-            <TableHeader className='flex w-full border-b-gray-100 bg-gray-50 '>
-              <TableRow className='flex w-full items-center justify-between gap-3 px-3 py-2'>
-                <Heading size='3' className='flex items-center gap-3'>
-                  {/* {statusIconMapper(grouping.label, 'h-4 w-4')} */}
-                  <Heading size='1' className='text-gray-700'>
+            <div className='flex w-full border-b border-t border-gray-200 bg-gray-100 '>
+              <div className='flex w-full items-center justify-between gap-3 px-3 py-2'>
+                <div className='flex items-center gap-3'>
+                  <div className='text-xs font-semibold text-gray-700'>
                     {grouping.label}
-                  </Heading>
-                </Heading>
-                <NewIssue
-                  button={false}
-                  reload={reload}
-                  projectid={projectId}
-                />
-              </TableRow>
-            </TableHeader>
+                  </div>
+                </div>
+                <NewIssue button={false} reload={reload} />
+              </div>
+            </div>
 
-            <TableBody>
+            <ul className='flex flex-col divide-y divide-gray-200 '>
               {grouping.issues &&
-                grouping.issues.map((issue) => (
-                  <TableRow
-                    key={issue.id}
-                    className='border-none border-b-gray-100'
-                  >
-                    <TableCell className='flex w-full items-center justify-between gap-3 '>
+                grouping.issues.map((issue: IIssue) => (
+                  <li key={issue.id} className=' border-b-gray-100 p-2 py-3'>
+                    <div className='flex w-full items-center justify-between gap-3 '>
                       <ContextMenu>
-                        <ContextMenuTrigger className='flex w-full w-full items-center justify-between gap-3'>
-                          <p className='line-clamp-1 flex w-fit text-gray-700'>
+                        <ContextMenuTrigger className='flex w-full items-center justify-between gap-3'>
+                          <Link
+                            className='line-clamp-1 flex w-fit border-b  border-gray-200 text-xs text-gray-700'
+                            href={`/projects/${issue.projectid}/issues/${issue.id}`}
+                          >
                             {issue.title}
-                          </p>
+                          </Link>
 
-                          <div className='flex flex-grow  flex-row justify-between gap-2'>
+                          <div className='flex flex-grow flex-row justify-between gap-2'>
                             <LabelList labels={issue.labels} />
                             <Text size='1' className=' text-2xs text-gray-500'>
                               {issue.assignees.length > 0 ? (
-                                issue.assignees.map((assignee) => {
+                                issue.assignees.map((assignee: IProfile) => {
                                   return (
                                     <AssigneeAvatar
                                       key={assignee.id}
@@ -111,13 +90,13 @@ export default function TableView({
                           <IssueMenuContext issue={issue} reload={reload} />
                         </ContextMenuContent>
                       </ContextMenu>
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                  </li>
                 ))}
-            </TableBody>
+            </ul>
           </>
         ))}
-      </Table>
+      </div>
     </div>
   );
 }

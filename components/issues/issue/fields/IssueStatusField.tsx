@@ -20,11 +20,13 @@ import { toast } from 'sonner';
 type IssueStatusFieldProps = {
   statusId: number;
   issueId: number;
+  contentOnly?: boolean;
 };
 
 export default function IssueStatusField({
   statusId,
   issueId,
+  contentOnly = false,
 }: IssueStatusFieldProps) {
   const statusOptions = STATUS || [];
   const [selectedStatusId, setSelectedStatusId] = useState<number>(statusId);
@@ -63,7 +65,6 @@ export default function IssueStatusField({
   }
 
   const onSelectedStatusChange = (value: string) => {
-    const selectedIdChanged = Number(value);
     const foundId = Object.keys(statusOptions).find((m) => m === value);
     if (!foundId) {
       return;
@@ -71,6 +72,35 @@ export default function IssueStatusField({
     setSelectedStatusId(Number(foundId));
     updateStatus(Number(foundId));
   };
+
+  const IssueStatusSection = () => {
+    return (
+      <Command filter={filter}>
+        <CommandInput placeholder='Change status...' />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup>
+            {Object.keys(statusOptions).map((id) => (
+              <CommandItem
+                key={id}
+                value={id}
+                onSelect={onSelectedStatusChange}
+              >
+                <div className='flex items-center space-x-2'>
+                  {statusIconMapper(statusOptions[Number(id)].label, 'h-4 w-4')}
+                  <span>{statusOptions[Number(id)].label}</span>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    );
+  };
+
+  if (contentOnly) {
+    return IssueStatusSection();
+  }
 
   return (
     <div className='flex items-center space-x-4'>
@@ -87,29 +117,7 @@ export default function IssueStatusField({
           </Button>
         </PopoverTrigger>
         <PopoverContent className='p-0' side='right' align='start'>
-          <Command filter={filter}>
-            <CommandInput placeholder='Change status...' />
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup>
-                {Object.keys(statusOptions).map((id) => (
-                  <CommandItem
-                    key={id}
-                    value={id}
-                    onSelect={onSelectedStatusChange}
-                  >
-                    <div className='flex items-center space-x-2'>
-                      {statusIconMapper(
-                        statusOptions[Number(id)].label,
-                        'h-4 w-4'
-                      )}
-                      <span>{statusOptions[Number(id)].label}</span>
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
+          {IssueStatusSection()}
         </PopoverContent>
       </Popover>
     </div>
