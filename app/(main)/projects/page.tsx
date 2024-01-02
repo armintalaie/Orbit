@@ -83,8 +83,9 @@ function TableView({ projects }: { projects: IProject[] }) {
           <Table.Body className='text-xs  '>
             <Table.Row className='border-b-gray-100 bg-white text-xs '>
               <Table.RowHeaderCell>Title</Table.RowHeaderCell>
+              <Table.RowHeaderCell>Team</Table.RowHeaderCell>
+
               <Table.RowHeaderCell>Description</Table.RowHeaderCell>
-              <Table.RowHeaderCell>Status</Table.RowHeaderCell>
               <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
             </Table.Row>
             {projects.map((project) => (
@@ -101,8 +102,21 @@ function TableView({ projects }: { projects: IProject[] }) {
                     {project.title}
                   </Link>
                 </Table.RowHeaderCell>
-                <Table.Cell>{project.description}</Table.Cell>
                 <Table.Cell>
+                  <Link
+                    href={{
+                      pathname: `/teams/${project.teamid}`,
+                      query: { id: project.teamid },
+                    }}
+                    shallow={true}
+                    className='underline'
+                  >
+                    {project.team_title}
+                  </Link>
+                </Table.Cell>
+
+                <Table.Cell>{project.description}</Table.Cell>
+                {/* <Table.Cell>
                   {STATUS && STATUS[project.statusid] ? (
                     <div className='flex flex-row items-center gap-2 '>
                       {statusIconMapper(
@@ -114,7 +128,7 @@ function TableView({ projects }: { projects: IProject[] }) {
                   ) : (
                     ''
                   )}
-                </Table.Cell>
+                </Table.Cell> */}
                 <Table.Cell>
                   {isOverdue(project.deadline) ? (
                     <Badge color='red'>{dateFormater(project.deadline)}</Badge>
