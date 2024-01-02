@@ -29,6 +29,8 @@ import IssueTemplates from '@/components/teams/IssueTemplates';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { toast } from 'sonner';
+import ProjectTitleField from '@/components/projects/project/projectTitleField';
+import { Maximize2 } from 'lucide-react';
 
 type viewTypes = 'ISSUES' | 'PROJECTS';
 
@@ -194,18 +196,6 @@ function TeamOptions({ teamId }: { teamId: string }) {
     router.push('/teams');
   }
 
-  async function archiveProject() {
-    const res = await fetch(`/api/projects/${teamId}/archive`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -243,14 +233,19 @@ function ProjectsTableView({ projects }) {
           </Table.Row>
           {projects.map((project) => (
             <Table.Row key={project.id}>
-              <Table.RowHeaderCell>
+              <Table.RowHeaderCell className='flex flex-row items-center gap-4'>
                 <Link
                   href={`/projects/${project.id}`}
                   shallow={true}
                   className='underline'
                 >
-                  {project.title}
+                  <Maximize2 className='h-3 w-3' />
                 </Link>
+                <ProjectTitleField
+                  projectTitle={project.title}
+                  projectId={project.id}
+                  teamid={project.teamid}
+                />
               </Table.RowHeaderCell>
 
               <Table.Cell className='hidden lg:table-cell'>
