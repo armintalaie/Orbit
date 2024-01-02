@@ -3,10 +3,11 @@
 import { NewProject } from '@/components/newProject';
 import { STATUS, dateFormater, isOverdue } from '@/lib/util';
 import { Badge, Table } from '@radix-ui/themes';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { statusIconMapper } from '@/components/statusIconMapper';
 import PageWrapper from '@/components/layouts/pageWrapper';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
 
 interface IProject {
   id: number;
@@ -21,6 +22,7 @@ interface IProject {
 
 export default function ProjectPage() {
   const [projects, setProjects] = useState<IProject[]>([]);
+  const userSession = useContext(UserSessionContext);
 
   async function reload() {
     const res = await fetch(`/api/projects`);
@@ -30,7 +32,16 @@ export default function ProjectPage() {
 
   useEffect(() => {
     async function fetchProjects() {
-      const res = await fetch(`/api/projects`);
+      const res = await fetch(`/api/projects`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: userSession?.access_token || '',
+        },
+        next: {
+          revalidate: 600,
+        },
+      });
       const project = await res.json();
       setProjects(project);
     }

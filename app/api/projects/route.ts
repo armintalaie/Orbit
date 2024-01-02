@@ -1,5 +1,6 @@
 import { db } from '@/lib/db/handler';
 import { supabase } from '@/lib/supabase';
+import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -27,14 +28,39 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { pid: string } }
+) {
+  const authorization = headers().get('authorization');
+
+  if (!authorization) {
+    return NextResponse.redirect(new URL('/', req.nextUrl).toString());
+  }
+
+  const { data: userData } = await supabase.auth.getUser(authorization);
+
+  if (userData.user === null) {
+    return NextResponse.redirect(new URL('/', req.nextUrl).toString());
+  }
+
   let searchParams = JSON.parse(req.nextUrl.searchParams.get('q') || '{}');
   let query = db
     .selectFrom('project')
+    .innerJoin(
+      db
+        .selectFrom('team_member')
+        .select(['teamid'])
+        .where('memberid', '=', userData.user.id)
+        .as('teams'),
+      'teams.teamid',
+      'project.teamid'
+    )
     .innerJoin('team', 'project.teamid', 'team.id')
     .select(({ eb, fn }) => [
       'project.id',
       'project.title',
+      'project.description',
       'project.statusid',
       'project.deadline',
       'project.title as project_title',

@@ -1,4 +1,7 @@
+import { db } from '@/lib/db/handler';
 import { supabase } from '@/lib/supabase';
+import { headers } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
 
 // import { z } from 'zod';
 
@@ -10,12 +13,45 @@ import { supabase } from '@/lib/supabase';
 // });
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { pid: string } }
 ) {
-  const { pid } = params;
-  const data = await supabase.from('project').select().eq('id', Number(pid));
-  return Response.json(data.data[0]);
+  const authorization = headers().get('authorization');
+
+  if (!authorization) {
+    return NextResponse.redirect(new URL('/', req.nextUrl).toString());
+  }
+
+  const { data: userData } = await supabase.auth.getUser(authorization);
+
+  if (userData.user === null) {
+    return NextResponse.redirect(new URL('/', req.nextUrl).toString());
+  }
+
+  const projects = await db
+    .selectFrom('project')
+    .innerJoin(
+      db
+        .selectFrom('team_member')
+        .select(['teamid'])
+        .where('memberid', '=', userData.user.id)
+        .as('teams'),
+      'teams.teamid',
+      'project.teamid'
+    )
+    .select(({ fn }) => [
+      'project.id',
+      'project.title',
+      'project.description',
+      'project.statusid',
+      'project.deadline',
+      'project.datecreated',
+      'project.teamid',
+    ])
+    .execute();
+
+  console.log(projects);
+  return NextResponse.json(projects);
 }
 
 export async function DELETE(
