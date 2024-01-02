@@ -1,5 +1,6 @@
+import { db } from '@/lib/db/handler';
 import { supabase } from '@/lib/supabase';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const projectSchema = z.object({
@@ -26,7 +27,25 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
-  const data = await supabase.from('project').select();
-  return NextResponse.json(data.data);
+export async function GET(req: NextRequest) {
+  let searchParams = JSON.parse(req.nextUrl.searchParams.get('q') || '{}');
+  let query = db
+    .selectFrom('project')
+    .innerJoin('team', 'project.teamid', 'team.id')
+    .select(({ eb, fn }) => [
+      'project.id',
+      'project.title',
+      'project.statusid',
+      'project.deadline',
+      'project.title as project_title',
+      'project.teamid',
+      'team.name as team_title',
+    ]);
+
+  if (searchParams.teams && searchParams.teams.length > 0) {
+    query = query.where('project.teamid', 'in', searchParams.teams.map(Number));
+  }
+
+  const result = await query.execute();
+  return NextResponse.json(result);
 }

@@ -163,6 +163,7 @@ export default function IssueBoard({
           <IssueGrouping
             issues={transformedIssues}
             setIssues={setGroupedIssues}
+            teamid={query.tid}
           />
           <IssueViewOptions viewType={viewType} setViewType={setViewType} />
         </div>
@@ -172,7 +173,7 @@ export default function IssueBoard({
           <KanbanView
             groupedIssues={groupedIssues}
             reload={reload}
-            projectId={projectId}
+            projectId={query.pid}
           />
         ) : (
           <IssueListView

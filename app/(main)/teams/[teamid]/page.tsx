@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { STATUS, dateFormater, isOverdue } from '@/lib/util';
+import { dateFormater, isOverdue } from '@/lib/util';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Table } from '@radix-ui/themes';
 import { useParams, useRouter } from 'next/navigation';
@@ -24,8 +24,6 @@ import {
 import { NewTeamMember } from '@/components/newTeamMember';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { NewProject } from '@/components/newProject';
-import { statusIconMapper } from '@/components/statusIconMapper';
-import IssueTemplates from '@/components/teams/IssueTemplates';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { toast } from 'sonner';
@@ -41,7 +39,7 @@ export default function ProjectPage() {
   const [team, setTeam] = useState([]);
   const [viewType, setViewType] = useState<viewTypes>('ISSUES');
   const issueQuery = {
-    tid: params.teamid as string,
+    tid: params.teamid,
     q: {
       teams: [params.teamid as string],
     },
