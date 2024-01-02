@@ -117,7 +117,11 @@ export function IssueGrouping({
       <SelectContent className=''>
         <SelectGroup className=''>
           {Object.keys(issueAttributes).map((key) => (
-            <SelectItem key={key} value={issueAttributes[key].id}>
+            <SelectItem
+              key={key}
+              value={issueAttributes[key].id}
+              className='text-xs'
+            >
               {issueAttributes[key].label}
             </SelectItem>
           ))}

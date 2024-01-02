@@ -27,7 +27,7 @@ export async function DELETE(
   return Response.json({ message: 'success' });
 }
 
-export async function PUT(
+export async function PATCH(
   req: Request,
   { params }: { params: { pid: string } }
 ) {

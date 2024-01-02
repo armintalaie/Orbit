@@ -2,14 +2,8 @@
 
 import { NewIssue } from '@/components/newIssue';
 import { CardHeader, CardContent } from '@/components/ui/card';
-import { STATUS } from '@/lib/util';
 import { Heading } from '@radix-ui/themes';
-import { statusIconMapper } from '@/components/statusIconMapper';
 import IssueCard from './IssueCard';
-import { ReplaceIcon, Trash2Icon } from 'lucide-react';
-import { useContext, useEffect } from 'react';
-import { Button } from '../ui/button';
-
 export interface KanbanViewProps {
   issues: {
     id: number;
@@ -37,12 +31,8 @@ export default function KanbanView({
   reload,
   projectId,
 }: KanbanViewProps) {
-  const status: { id: number; label: string }[] = STATUS || [];
-  // const groupedTasks = groupByStatus(issues);
-  // let emptyStatus = getEmptyStatus();
-
   return (
-    <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-hidden  p-2 py-0'>
+    <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-hidden  overflow-x-scroll p-2 py-0'>
       <div className='flex h-full flex-grow  gap-4 '>
         {groupedIssues &&
           groupedIssues.map((grouping) => (

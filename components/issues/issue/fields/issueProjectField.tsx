@@ -19,6 +19,7 @@ import {
 import Link from 'next/link';
 
 type IssueProjectFieldProps = {
+  contentOnly?: boolean;
   issueId: number;
   project: Project | null;
 };
@@ -29,7 +30,7 @@ type Project = {
 };
 
 export function IssueProjectField(props: IssueProjectFieldProps) {
-  const { issueId, project } = props;
+  const { issueId, project, contentOnly = false } = props;
   const [options, setOptions] = useState<{ [key: string]: Project }>({});
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(
@@ -102,6 +103,31 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
     }
   }
 
+  const issueProjectSection = (
+    <Command filter={filter}>
+      <CommandInput placeholder='Move to another project...' />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup>
+          {Object.entries(options).map(([, option]) => (
+            <CommandItem
+              key={option.id}
+              value={option.id.toString()}
+              onSelect={onSelectionChange}
+            >
+              <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
+              <span>{option.title}</span>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  );
+
+  if (contentOnly) {
+    return issueProjectSection;
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <div className='flex flex-grow items-center gap-2 space-x-4'>
@@ -133,24 +159,7 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
         </PopoverTrigger>
       </div>
       <PopoverContent className='p-0' side='right' align='start'>
-        <Command filter={filter}>
-          <CommandInput placeholder='Move to another project...' />
-          <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup>
-              {Object.entries(options).map(([, option]) => (
-                <CommandItem
-                  key={option.id}
-                  value={option.id.toString()}
-                  onSelect={onSelectionChange}
-                >
-                  <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
-                  <span>{option.title}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+        {issueProjectSection}
       </PopoverContent>
     </Popover>
   );

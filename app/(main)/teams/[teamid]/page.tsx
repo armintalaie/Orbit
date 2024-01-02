@@ -236,7 +236,6 @@ function ProjectsTableView({ projects }) {
             <Table.RowHeaderCell className='hidden lg:table-cell'>
               Description
             </Table.RowHeaderCell>
-            <Table.RowHeaderCell>Status</Table.RowHeaderCell>
             <Table.RowHeaderCell>Open</Table.RowHeaderCell>
 
             <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
@@ -256,20 +255,6 @@ function ProjectsTableView({ projects }) {
 
               <Table.Cell className='hidden lg:table-cell'>
                 {project.description}
-              </Table.Cell>
-
-              <Table.Cell>
-                {STATUS && STATUS[project.statusid] ? (
-                  <div className='flex flex-row items-center gap-2 '>
-                    {statusIconMapper(
-                      STATUS[project.statusid].label,
-                      'h-3 w-3'
-                    )}
-                    {STATUS[project.statusid].label}
-                  </div>
-                ) : (
-                  <p className='text-xs'>No Status</p>
-                )}
               </Table.Cell>
 
               <Table.Cell className=' '>

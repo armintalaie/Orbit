@@ -21,9 +21,14 @@ import { toast } from 'sonner';
 type IssueLabelFieldProps = {
   labels: ILabel[];
   issueId: number;
+  contentOnly?: boolean;
 };
 
-export function IssueLabelField({ labels, issueId }: IssueLabelFieldProps) {
+export function IssueLabelField({
+  labels,
+  issueId,
+  contentOnly = false,
+}: IssueLabelFieldProps) {
   const [open, setOpen] = useState(false);
   const labelOptions: { [key: string]: ILabel } = groupLabelsAsIdObject(LABELS);
   const [selectedLabelIds, setSelectedLabelIds] = useState<number[]>(
@@ -109,6 +114,40 @@ export function IssueLabelField({ labels, issueId }: IssueLabelFieldProps) {
     return <></>;
   }
 
+  const IssueLabelSection = (
+    <Command filter={filter} className='overflow-y-scroll'>
+      <CommandInput placeholder='Search Labels...' className='sticky top-0' />
+
+      <CommandList className=''>
+        <CommandEmpty>No results found.</CommandEmpty>
+        {Object.entries(labelOptions).map(([, label]) => (
+          <CommandItem
+            key={label.id}
+            value={label.id.toString()}
+            onSelect={onLabelSelect}
+          >
+            <div className='flex items-center gap-2'>
+              {selectedLabelIds.some((id) => id === label.id) ? (
+                <CheckCircle2Icon className='h-4 w-4' />
+              ) : (
+                <CircleIcon className='h-4 w-4' />
+              )}
+              <IssueLabel
+                label={label.label}
+                color={label.color}
+                id={label.id}
+              />
+            </div>
+          </CommandItem>
+        ))}
+      </CommandList>
+    </Command>
+  );
+
+  if (contentOnly) {
+    return IssueLabelSection;
+  }
+
   return (
     <div className='flex flex-col gap-3  '>
       <div className='flex flex-wrap items-center gap-1'>
@@ -116,7 +155,6 @@ export function IssueLabelField({ labels, issueId }: IssueLabelFieldProps) {
           <div
             key={id}
             className='flex  w-fit items-center  justify-start gap-2 rounded-xl border bg-opacity-10  pr-2 text-2xs font-medium '
-            style={{ borderColor: `${labelOptions[id].color}` }}
           >
             <IssueLabel
               className=' hasChanged flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 text-2xs font-medium '
@@ -145,36 +183,7 @@ export function IssueLabelField({ labels, issueId }: IssueLabelFieldProps) {
           </PopoverTrigger>
         </div>
         <PopoverContent className='p-0' side='right' align='start'>
-          <Command filter={filter} className='overflow-y-scroll'>
-            <CommandInput
-              placeholder='Search Labels...'
-              className='sticky top-0'
-            />
-
-            <CommandList className=''>
-              <CommandEmpty>No results found.</CommandEmpty>
-              {Object.entries(labelOptions).map(([, label]) => (
-                <CommandItem
-                  key={label.id}
-                  value={label.id.toString()}
-                  onSelect={onLabelSelect}
-                >
-                  <div className='flex items-center gap-2'>
-                    {selectedLabelIds.some((id) => id === label.id) ? (
-                      <CheckCircle2Icon className='h-4 w-4' />
-                    ) : (
-                      <CircleIcon className='h-4 w-4' />
-                    )}
-                    <IssueLabel
-                      label={label.label}
-                      color={label.color}
-                      id={label.id}
-                    />
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandList>
-          </Command>
+          {IssueLabelSection}
         </PopoverContent>
       </Popover>
     </div>
