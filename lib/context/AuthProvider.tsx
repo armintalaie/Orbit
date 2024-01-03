@@ -1,7 +1,6 @@
 import { Session } from '@supabase/supabase-js';
 import React, { useEffect, useState, Suspense } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import './styles.css';
 
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
@@ -22,6 +21,7 @@ export default function AuthContextProvider({
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: session2 } }) => {
       setSession(session2);
+      // console.log(session2);
     });
 
     const {

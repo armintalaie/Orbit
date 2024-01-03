@@ -6,7 +6,6 @@ import {
   BoxIcon,
   CalendarIcon,
   CircleSlashIcon,
-  FolderIcon,
   ListFilterIcon,
   TagIcon,
   TargetIcon,
@@ -28,13 +27,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '../ui/button';
-import { useState } from 'react';
-import { LABELS, STATUS } from '@/lib/util';
 import { statusIconMapper } from '../statusIconMapper';
 import { UserFilter } from '../userFilter';
 import IssueLabel from './label';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 type FilterType =
   | 'status'
@@ -211,13 +209,13 @@ export default function FilterGroup({
             className='m-0 flex h-6 items-center rounded-md border border-dashed border-gray-200 p-[1px] text-xs'
           >
             <ToggleGroupItem
-              className='m-0 flex h-full w-8 items-center gap-2 border-dashed p-1 text-2xs  data-[state=on]:bg-neutral-700 '
+              className='text-2xs m-0 flex h-full w-8 items-center gap-2 border-dashed p-1  data-[state=on]:bg-neutral-700 '
               value='ALL'
             >
               All
             </ToggleGroupItem>
             <ToggleGroupItem
-              className='m-0 flex   h-full w-8 items-center gap-2 border-dashed p-1 text-2xs  data-[state=on]:bg-neutral-700'
+              className='text-2xs m-0   flex h-full w-8 items-center gap-2 border-dashed p-1  data-[state=on]:bg-neutral-700'
               value='ANY'
             >
               Any
@@ -295,8 +293,7 @@ export default function FilterGroup({
 }
 
 function StatusFilter({ backBtn, addFilter }: { backBtn: () => void }) {
-  const [value, setValue] = React.useState('');
-  const status = STATUS || [];
+  const { status } = React.useContext(OrbitContext);
 
   return (
     <Command>
@@ -335,8 +332,7 @@ function StatusFilter({ backBtn, addFilter }: { backBtn: () => void }) {
 }
 
 function LabelFilter({ backBtn, addFilter }: { backBtn: () => void }) {
-  const [value, setValue] = React.useState('');
-  const labels = LABELS || [];
+  const { labels } = React.useContext(OrbitContext);
 
   return (
     <Command>
@@ -386,7 +382,6 @@ function LabelFilter({ backBtn, addFilter }: { backBtn: () => void }) {
 
 function ProjectFilter({ backBtn, addFilter }: { backBtn: () => void }) {
   const userSession = React.useContext(UserSessionContext);
-  const [value, setValue] = React.useState('');
   const [projects, setProjects] = React.useState<any[]>([]);
 
   async function fetchProjects() {

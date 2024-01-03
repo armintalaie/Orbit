@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -15,13 +15,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { STATUS } from '@/lib/util';
 import { statusIconMapper } from '@/components/statusIconMapper';
 import { CircleSlashIcon } from 'lucide-react';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export function StatusField(field: any) {
   const [open, setOpen] = useState(false);
-  const statuses = STATUS || [];
+  const { status: statuses } = useContext(OrbitContext);
   const [selectedStatus, setSelectedStatus] = useState<any>(
     statuses.find((status) => status.id === field.value)
   );
@@ -33,7 +33,7 @@ export function StatusField(field: any) {
           <Button
             variant='outline'
             size='sm'
-            className='flex h-8 w-fit items-center justify-start gap-1 text-2xs'
+            className='text-2xs flex h-8 w-fit items-center justify-start gap-1'
           >
             {selectedStatus ? (
               <>
@@ -41,7 +41,7 @@ export function StatusField(field: any) {
                 {selectedStatus.label}
               </>
             ) : (
-              <div className='flex text-xs'>
+              <div className='flex items-center  gap-2 text-xs'>
                 <CircleSlashIcon className='h-4 w-4' />
                 status
               </div>

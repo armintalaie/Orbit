@@ -1,7 +1,7 @@
 'use client';
 import { FeedbackButton } from '@/components/feedback';
 import { Box, Text } from '@radix-ui/themes';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Link from 'next/link';
 import {
   ChevronDownIcon,
@@ -20,11 +20,10 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { SettingsModalButton } from '@/components/settings/SettingsModal';
-import AuthContextProvider, {
-  UserSessionContext,
-} from '@/lib/context/AuthProvider';
+import AuthContextProvider from '@/lib/context/AuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CommandMenu } from '@/components/globalCommand';
+import OrbitContextProvider, { OrbitContext } from '@/lib/context/OrbitContext';
 
 export default function ProjectLayout({
   children,
@@ -33,29 +32,31 @@ export default function ProjectLayout({
 }) {
   return (
     <AuthContextProvider>
-      <div className='flex h-[100svh] w-[100svw] flex-row'>
-        <SideBarContent className={'min-w-56 hidden w-72'} />
-        <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
-          <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
-            <NextBreadcrumb
-              homeElement={
-                <MenuDialog>
-                  <SideBarContent className='w-full' showLogo={true} />
-                </MenuDialog>
-              }
-              activeClasses='hidden'
-              containerClasses='flex py-5 px-2  from-purple-600 to-blue-600 h-12 items-center '
-              listClasses='hover:underline px-2 '
-              capitalizeLinks
-            />
-            <div className='flex flex-row gap-2 overflow-y-auto pr-3 '>
-              <FeedbackButton />
-              <Changelog />
+      <OrbitContextProvider>
+        <div className='flex h-[100svh] w-[100svw] flex-row'>
+          <SideBarContent className={'min-w-56 hidden w-72'} />
+          <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
+            <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
+              <NextBreadcrumb
+                homeElement={
+                  <MenuDialog>
+                    <SideBarContent className='w-full' showLogo={true} />
+                  </MenuDialog>
+                }
+                activeClasses='hidden'
+                containerClasses='flex py-5 px-2  from-purple-600 to-blue-600 h-12 items-center '
+                listClasses='hover:underline px-2 '
+                capitalizeLinks
+              />
+              <div className='flex flex-row gap-2 overflow-y-auto pr-3 '>
+                <FeedbackButton />
+                <Changelog />
+              </div>
             </div>
+            {children}
           </div>
-          {children}
         </div>
-      </div>
+      </OrbitContextProvider>
     </AuthContextProvider>
   );
 }
@@ -68,31 +69,7 @@ function SideBarContent({
   showLogo?: boolean;
 }) {
   const [search, openSearch] = useState(false);
-  const [userTeams, setUserTeams] = useState([]);
-  const userSession = useContext(UserSessionContext);
-
-  async function fetchTeams() {
-    const member = userSession!.user!.id;
-    const res = await fetch(
-      `/api/teams?q=${encodeURIComponent(JSON.stringify({ member: member }))}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${userSession?.access_token}`,
-        },
-        next: {
-          tags: ['teams'],
-        },
-      }
-    );
-
-    const data = await res.json();
-    setUserTeams(data);
-  }
-
-  useEffect(() => {
-    fetchTeams();
-  }, []);
+  const { teams } = useContext(OrbitContext);
   return (
     <section
       id='sidebar '
@@ -142,7 +119,7 @@ function SideBarContent({
             </span>
           </Link>
 
-          <TeamsSidebarSection teams={userTeams} />
+          <TeamsSidebarSection teams={teams} />
         </section>
       </div>
       <div className='flex flex-col  gap-2 overflow-y-auto p-2'>

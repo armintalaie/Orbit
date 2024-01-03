@@ -1,6 +1,3 @@
-import { GET } from '@/app/api/status/route';
-import { GET as GET_LABELS } from '@/app/api/issues/labels/route';
-
 export function dateFormater(date: string) {
   // if within a week, return day of week (e.g. Monday)
   // if within a year, return month and day (e.g. Jan 1)
@@ -73,42 +70,6 @@ export function isOverdue(date: string) {
   }
   return false;
 }
-
-export async function getStatus() {
-  const res = await GET({});
-  const data = await res.json();
-
-  return data;
-}
-
-export async function getLabels() {
-  const res = await GET_LABELS();
-  const data = await res.json();
-
-  return data;
-}
-
-export let STATUS: {
-  id: number;
-  label: string;
-}[] = [];
-
-export let LABELS: {
-  id: number;
-  label: string;
-  color: string;
-}[] = [];
-
-const setStatus = async () => {
-  STATUS = await getStatus();
-};
-
-const setLabels = async () => {
-  LABELS = await getLabels();
-};
-
-setStatus();
-setLabels();
 
 export function getInitials(name: string) {
   return name

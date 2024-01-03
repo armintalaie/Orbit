@@ -3,7 +3,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Button } from '@radix-ui/themes';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +18,7 @@ import FilterGroup from '../issues/filterGroup';
 import { IssueViewOptions } from '../issues/boards/IssueViewOptions';
 import { IssueGrouping } from '../issues/boards/issueGrouping';
 import { IIssue } from '@/lib/types/issue';
-import { useWindowSize } from 'usehooks-ts';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 interface IssueBoardProps {
   query: {
@@ -38,15 +38,19 @@ type GroupedIssues = {
   label: string;
 }[];
 
-export default function IssueBoard({
-  query,
-  defaultViewType,
-}: IssueBoardProps) {
-  const { width } = useWindowSize();
+type Grouping = {
+  issues: GroupedIssues;
+  key: string;
+};
+export default function IssueBoard({ query }: IssueBoardProps) {
+  const { fetcher } = useContext(OrbitContext);
   const projectId = query?.pid;
   const [issues, setIssues] = useState([]);
   const [transformedIssues, setTransformedIssues] = useState([]);
-  const [groupedIssues, setGroupedIssues] = useState<GroupedIssues>([]);
+  const [groupedIssues, setGroupedIssues] = useState<Grouping>({
+    issues: [],
+    key: '',
+  });
   const [viewType, setViewType] = useState<ViewType>('board');
   const [filters, setFilters] = useState([]);
   const [filterMethod, setFilterMethod] = useState('ANY');
@@ -55,7 +59,7 @@ export default function IssueBoard({
     let route = `/api/issues?q=${encodeURIComponent(
       JSON.stringify(query.q || {})
     )}`;
-    const res = await fetch(`${route}`);
+    const res = await fetcher(`${route}`);
     const tasks = await res.json();
     setIssues(tasks);
   }

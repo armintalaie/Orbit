@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/popover';
 import Link from 'next/link';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 type IssueProjectFieldProps = {
   contentOnly?: boolean;
@@ -32,7 +33,7 @@ type Project = {
 
 export function IssueProjectField(props: IssueProjectFieldProps) {
   const { issueId, project, contentOnly = false } = props;
-  const userSession = useContext(UserSessionContext);
+  const { fetcher } = useContext(OrbitContext);
   const [options, setOptions] = useState<{ [key: string]: Project }>({});
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(
@@ -43,13 +44,7 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
   );
 
   const fetchProjects = async () => {
-    const res = await fetch(`/api/projects`, {
-      next: { revalidate: 30 },
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: userSession?.access_token || '',
-      },
-    });
+    const res = await fetcher(`/api/projects`);
     let results = await res.json();
     const options: { [key: string]: Project } = {};
     for (const proj of results) {

@@ -76,7 +76,7 @@ export function AssigneeField({ field }: { field: any }) {
           <Button
             variant='outline'
             size='sm'
-            className='line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-2xs text-gray-800'
+            className='text-2xs line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-gray-800'
           >
             {selectedStatus && selectedStatus !== noAssignee.id ? (
               <>

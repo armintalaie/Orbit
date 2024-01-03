@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -12,11 +12,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { LABELS } from '@/lib/util';
 import { CheckCircle2Icon, CircleIcon, TagsIcon } from 'lucide-react';
 import IssueLabel from '../../label';
 import { ILabel } from '@/lib/types/issue';
 import { toast } from 'sonner';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 type IssueLabelFieldProps = {
   labels: ILabel[];
@@ -30,7 +30,9 @@ export function IssueLabelField({
   contentOnly = false,
 }: IssueLabelFieldProps) {
   const [open, setOpen] = useState(false);
-  const labelOptions: { [key: string]: ILabel } = groupLabelsAsIdObject(LABELS);
+  const { labels: labelArray } = useContext(OrbitContext);
+  const labelOptions: { [key: string]: ILabel } =
+    groupLabelsAsIdObject(labelArray);
   const [selectedLabelIds, setSelectedLabelIds] = useState<number[]>(
     labels.map((label) => label.id)
   );
@@ -154,10 +156,10 @@ export function IssueLabelField({
         {selectedLabelIds.map((id) => (
           <div
             key={id}
-            className='flex  w-fit items-center  justify-start gap-2 rounded-xl border bg-opacity-10  pr-2 text-2xs font-medium '
+            className='text-2xs  flex w-fit  items-center justify-start gap-2 rounded-xl border  bg-opacity-10 pr-2 font-medium '
           >
             <IssueLabel
-              className=' hasChanged flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 text-2xs font-medium '
+              className=' hasChanged text-2xs flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 font-medium '
               key={id}
               label={labelOptions[id].label}
               color={labelOptions[id].color}
@@ -175,7 +177,7 @@ export function IssueLabelField({
             <Button
               variant='ghost'
               size='sm'
-              className='border-right flex h-6 w-full justify-start gap-2 border-gray-200  px-2 text-2xs '
+              className='border-right text-2xs flex h-6 w-full justify-start gap-2  border-gray-200 px-2 '
             >
               <TagsIcon className='h-4 w-4' />
               Edit Labels

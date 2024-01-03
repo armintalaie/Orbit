@@ -4,15 +4,9 @@ import { NewIssue } from '@/components/newIssue';
 import { CardHeader, CardContent } from '@/components/ui/card';
 import { Heading } from '@radix-ui/themes';
 import IssueCard from './IssueCard';
+import { IIssue } from '@/lib/types/issue';
 export interface KanbanViewProps {
-  issues: {
-    id: number;
-    title: string;
-    deadline: string;
-    priority: number;
-    projectid?: number;
-    statusid: number;
-  }[];
+  groupedIssues: any;
   reload: () => void;
   projectId?: number;
 }
@@ -32,12 +26,16 @@ export default function KanbanView({
   projectId,
 }: KanbanViewProps) {
   if (!groupedIssues) return <></>;
-  const nonEmptyGroups = groupedIssues.filter((gp) => gp.issues.length > 0);
-  const emptyGroups = groupedIssues.filter((gp) => gp.issues.length === 0);
+  const nonEmptyGroups = groupedIssues.issues.filter(
+    (gp: any) => gp.issues.length > 0
+  );
+  const emptyGroups = groupedIssues.issues.filter(
+    (gp: any) => gp.issues.length === 0
+  );
   return (
     <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-hidden  overflow-x-scroll p-2 py-0'>
       <div className='flex h-full flex-grow  gap-4 '>
-        {nonEmptyGroups.map((grouping) => (
+        {nonEmptyGroups.map((grouping: any) => (
           <div
             key={grouping.key}
             className='flex h-full   flex-col  overflow-hidden'
@@ -48,7 +46,6 @@ export default function KanbanView({
             >
               <CardHeader className='m-0 flex flex-row items-center justify-between space-y-0 px-1'>
                 <div className='m-0 flex flex-row items-center gap-2'>
-                  {/* {statusIconMapper(status.label, 'h-4 w-4')} */}
                   <Heading size='1' className='flex items-center text-gray-700'>
                     {grouping.label}
                     <span className='ml-2 text-xs text-gray-400'>
@@ -60,13 +57,16 @@ export default function KanbanView({
                 <NewIssue
                   button={false}
                   reload={reload}
-                  defaultValues={{ projectid: projectId }}
+                  defaultValues={{
+                    projectid: projectId,
+                    [groupedIssues.key]: grouping.key,
+                  }}
                 />
               </CardHeader>
               <CardContent className='flex flex-grow  flex-col overflow-y-scroll p-0   '>
                 <ul className='flex flex-grow flex-col space-y-3  pb-3'>
                   {grouping.issues &&
-                    grouping.issues.map((issue) => (
+                    grouping.issues.map((issue: IIssue) => (
                       <div key={issue.id}>
                         <IssueCard issue={issue} reload={reload} />
                       </div>
@@ -81,7 +81,7 @@ export default function KanbanView({
       <div className='flex flex-col py-5'>
         <div className='h-full w-72 rounded-sm p-0 '>
           <div className='flex h-full flex-col items-center gap-3'>
-            {emptyGroups.map((grouping) => (
+            {emptyGroups.map((grouping: any) => (
               <div key={grouping.key}>
                 <div className=' w-72 rounded-sm p-0 '>
                   <div className='flex flex-row items-center justify-between rounded-sm bg-zinc-100 px-2 py-3'>
@@ -97,7 +97,10 @@ export default function KanbanView({
                     <NewIssue
                       button={false}
                       reload={reload}
-                      defaultValues={{ projectid: projectId }}
+                      defaultValues={{
+                        projectid: projectId,
+                        [groupedIssues.key]: grouping.key,
+                      }}
                     />
                   </div>
                 </div>

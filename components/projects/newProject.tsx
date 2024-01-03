@@ -1,4 +1,4 @@
-'use client'; // top to the file
+'use client';
 
 import { PlusIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -15,22 +15,22 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   FormField,
   FormItem,
   FormLabel,
   FormControl,
-  FormDescription,
   FormMessage,
   Form,
-} from './ui/form';
+} from '../ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { DeadlineField } from './issues/form/deadlineField';
-import { StatusField } from './issues/form/statusField';
+import { DeadlineField } from '../issues/form/deadlineField';
+import { StatusField } from '../issues/form/statusField';
 import { Textarea } from '@/components/ui/textarea';
-import { TeamField } from './projects/form/teamField';
+import { TeamField } from './form/teamField';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export const projectSchema = z.object({
   title: z.string(),
@@ -56,15 +56,12 @@ export const formSchema = z.object({
 export function NewProject({
   defaultValues,
   button,
-  reload,
-  teamid,
 }: {
   button?: boolean;
-  reload: Function;
-  teamid?: string;
   defaultValues?: Partial<z.infer<typeof formSchema>>;
 }) {
   const [open, setOpen] = useState(false);
+  const { fetcher, reload } = useContext(OrbitContext);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -75,7 +72,7 @@ export function NewProject({
       ...defaultValues,
     },
   });
-  async function onSubmit(e) {
+  async function onSubmit() {
     const formVals = form.getValues();
     const project = {
       title: formVals.title,
@@ -89,8 +86,8 @@ export function NewProject({
         formVals.deadline.from.toISOString().split('T')[0],
       teamid: Number(formVals.teamid),
     };
-    const URL = teamid ? `/api/teams/${teamid}/projects` : '/api/projects';
-    const res = await fetch(URL, {
+
+    const res = await fetcher('/api/projects', {
       body: JSON.stringify(project),
       headers: {
         'Content-Type': 'application/json',
@@ -103,7 +100,7 @@ export function NewProject({
         description: 'something went wrong',
       });
     } else {
-      reload();
+      reload(['projects']);
       toast('Project created', {
         description: `Project successfully created`,
       });

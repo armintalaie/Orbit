@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext, useEffect, useState } from 'react';
-import { TargetIcon, Users2Icon } from 'lucide-react';
+import { Users2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -17,8 +17,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export function TeamField({ field }: { field: any }) {
+  const { teams: teamArray } = useContext(OrbitContext);
   const userSession = useContext(UserSessionContext);
   const [teams, setTeams] = useState<{
     [key: string]: any;
@@ -30,17 +32,8 @@ export function TeamField({ field }: { field: any }) {
 
   useEffect(() => {
     async function fetchTeams() {
-      const res = await fetch(`/api/teams`, {
-        next: { revalidate: 10 },
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: userSession?.access_token || '',
-        },
-      });
-      let proj = await res.json();
-
       const options: { [key: string]: any } = {};
-      for (const p of proj) {
+      for (const p of teamArray) {
         options[p.id] = {
           ...p,
         };
@@ -48,7 +41,7 @@ export function TeamField({ field }: { field: any }) {
       setTeams(options);
     }
     fetchTeams();
-  }, []);
+  }, [teamArray]);
   return (
     <div className='flex items-center space-x-4'>
       <Popover open={open} onOpenChange={setOpen}>
@@ -56,7 +49,7 @@ export function TeamField({ field }: { field: any }) {
           <Button
             variant='outline'
             size='sm'
-            className='line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-2xs text-gray-800'
+            className='text-2xs line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-gray-800'
           >
             {selectedStatus && selectedStatus !== null ? (
               <>

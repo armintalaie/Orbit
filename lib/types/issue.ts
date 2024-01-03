@@ -21,6 +21,24 @@ export interface ILabel {
   color: string;
 }
 
+export interface IStatus {
+  id: number;
+  label: string;
+}
+
+export interface IProject {
+  id: number;
+  title: string;
+  teamid: number;
+  team_title: string;
+  description: string;
+  statusid: number;
+  datecreated: string;
+  dateupdated: string;
+  datestarted: string;
+  deadline: string;
+}
+
 export interface IProfile {
   id: string;
   username: string;
@@ -29,4 +47,12 @@ export interface IProfile {
   full_name: string;
   teamid: number;
   team_title: string;
+}
+
+export interface ITeam {
+  id: number;
+  name: string;
+  description: string;
+  datecreated: string;
+  dateupdated: string;
 }

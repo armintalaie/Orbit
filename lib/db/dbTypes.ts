@@ -14,7 +14,7 @@ interface IssueTable {
 interface IssueAssigneeTable {
   user_id: string;
   issue_id: number;
-  dateassigned: Date | null;
+  dateassigned: Date | null | string;
 }
 
 interface LabelTable {
@@ -27,6 +27,11 @@ interface LabelTable {
 interface IssueLabelTable {
   issueid: number;
   labelid: number;
+}
+
+interface StatusTable {
+  id: Generated<number>;
+  label: string;
 }
 
 interface ProjectTable {
@@ -72,4 +77,5 @@ export interface Database {
   profiles: Profiles;
   team: teamTable;
   team_member: teamMemberTable;
+  status: StatusTable;
 }

@@ -36,15 +36,6 @@ export default function RootLayout({
           {children}
           <Toaster />
         </Theme>
-        {/* <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-                <Toaster />
-            {children}
-          </ThemeProvider>  */}
       </body>
     </html>
   );

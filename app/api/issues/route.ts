@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { db } from '@/lib/db/handler';
+import { getContext } from '@/context';
 
 const issueSchema = z.object({
   title: z.string(),

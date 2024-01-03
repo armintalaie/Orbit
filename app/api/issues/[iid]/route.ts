@@ -1,6 +1,5 @@
-import { supabase } from '@/lib/supabase';
 import { db } from '@/lib/db/handler';
-import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres';
+import { jsonArrayFrom } from 'kysely/helpers/postgres';
 
 export async function GET(
   req: Request,
@@ -50,7 +49,7 @@ export async function DELETE(
   { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
-  await supabase.from('issue').delete().eq('id', iid);
+  await db.deleteFrom('issue').where('id', '=', Number(iid)).execute();
   return Response.json({ message: 'success' });
 }
 
@@ -62,11 +61,13 @@ export async function PATCH(
     const { iid } = params;
     const newIssue = await req.json();
     const issue = newIssue;
-    const data = await supabase
-      .from('issue')
-      .update({ ...issue, dateupdated: new Date().toISOString() })
-      .eq('id', Number(iid));
-    return Response.json(data.data);
+    const query = await db
+      .updateTable('issue')
+      .set({ ...issue, dateupdated: new Date().toISOString() })
+      .where('id', '=', Number(iid))
+      .executeTakeFirst();
+
+    return Response.json('success');
   } catch (error) {
     console.log(error);
     return Response.json({ error: '' }, { status: 405 });
