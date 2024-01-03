@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Orbit',
-  description: 'Project management app built for Launch Pad',
+  description: 'Project management app for teams',
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang='en'>
       <head>
         <link rel='icon' href='favicon.png' sizes='any' />
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' />
         <meta charSet='utf-8' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
       </head>
