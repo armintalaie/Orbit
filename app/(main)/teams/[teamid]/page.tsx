@@ -78,7 +78,7 @@ export default function ProjectPage() {
 
   useEffect(() => {
     async function fetchTeam() {
-      const res = await fetch(`/api/teams/${params.teamid}`, {
+      const res = await fetcher(`/api/teams/${params.teamid}`, {
         next: {
           tags: ['teams'],
         },
@@ -191,16 +191,19 @@ const ToggleTeamViewContents = ({ viewType, setViewType }) => {
 };
 
 function TeamOptions({ teamId }: { teamId: string }) {
+  const { reload, fetcher } = useContext(OrbitContext);
   const router = useRouter();
   async function deleteProject() {
-    const res = await fetch(`/api/teams/${teamId}`, {
+    const res = await fetcher(`/api/teams/${teamId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
+    reload(['teams']);
     if (!res.ok) throw new Error(res.statusText);
+
     router.push('/teams');
   }
 

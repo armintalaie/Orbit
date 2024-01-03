@@ -209,13 +209,13 @@ export default function FilterGroup({
             className='m-0 flex h-6 items-center rounded-md border border-dashed border-gray-200 p-[1px] text-xs'
           >
             <ToggleGroupItem
-              className='text-2xs m-0 flex h-full w-8 items-center gap-2 border-dashed p-1  data-[state=on]:bg-neutral-700 '
+              className='m-0 flex h-full w-8 items-center gap-2 border-dashed p-1 text-2xs  data-[state=on]:bg-neutral-700 '
               value='ALL'
             >
               All
             </ToggleGroupItem>
             <ToggleGroupItem
-              className='text-2xs m-0   flex h-full w-8 items-center gap-2 border-dashed p-1  data-[state=on]:bg-neutral-700'
+              className='m-0 flex   h-full w-8 items-center gap-2 border-dashed p-1 text-2xs  data-[state=on]:bg-neutral-700'
               value='ANY'
             >
               Any
@@ -381,22 +381,11 @@ function LabelFilter({ backBtn, addFilter }: { backBtn: () => void }) {
 }
 
 function ProjectFilter({ backBtn, addFilter }: { backBtn: () => void }) {
-  const userSession = React.useContext(UserSessionContext);
-  const [projects, setProjects] = React.useState<any[]>([]);
+  const { projects } = React.useContext(OrbitContext);
 
-  async function fetchProjects() {
-    const res = await fetch(`/api/projects/`, {
-      headers: {
-        Authorization: userSession?.access_token || '',
-      },
-    });
-    const projects = await res.json();
-    setProjects(projects);
+  if (!projects) {
+    return <div>loading</div>;
   }
-
-  React.useEffect(() => {
-    fetchProjects();
-  }, []);
 
   return (
     <Command>

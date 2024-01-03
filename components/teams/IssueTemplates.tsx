@@ -9,9 +9,10 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { NewTemplate } from '../editor/popoverEditor';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { FileTextIcon } from 'lucide-react';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export default function IssueTemplates({
   teamid,
@@ -21,9 +22,10 @@ export default function IssueTemplates({
   sendTemplate: Function;
 }) {
   const [templates, setTemplates] = React.useState<any[]>([]);
+  const { fetcher } = useContext(OrbitContext);
 
   async function fetchTemplates() {
-    const res = await fetch(`/api/teams/${teamid}/templates`, {
+    const res = await fetcher(`/api/teams/${teamid}/templates`, {
       next: { revalidate: 10 },
     });
     const templates = await res.json();

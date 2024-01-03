@@ -33,7 +33,7 @@ type Project = {
 
 export function IssueProjectField(props: IssueProjectFieldProps) {
   const { issueId, project, contentOnly = false } = props;
-  const { fetcher } = useContext(OrbitContext);
+  const { fetcher, projects } = useContext(OrbitContext);
   const [options, setOptions] = useState<{ [key: string]: Project }>({});
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(
@@ -44,10 +44,8 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
   );
 
   const fetchProjects = async () => {
-    const res = await fetcher(`/api/projects`);
-    let results = await res.json();
     const options: { [key: string]: Project } = {};
-    for (const proj of results) {
+    for (const proj of projects) {
       options[proj.id] = {
         ...proj,
       };
@@ -88,13 +86,13 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
 
   async function updateProject(pId: number) {
     if (!pId || pId === null) {
-      fetch(`/api/issues/${issueId}/assignees`, {
+      fetcher(`/api/issues/${issueId}/assignees`, {
         method: 'DELETE',
       }).then(() => {
         setSelectedId(null);
       });
     } else {
-      await fetch(`/api/issues/${issueId}`, {
+      await fetcher(`/api/issues/${issueId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

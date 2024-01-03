@@ -89,13 +89,13 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
 
   async function updateAssignee(userId: string) {
     if (!userId || userId === null) {
-      fetch(`/api/issues/${issueId}/assignees`, {
+      fetcher(`/api/issues/${issueId}/assignees`, {
         method: 'DELETE',
       }).then(() => {
         setSelectedStatusId(null);
       });
     } else {
-      await fetch(`/api/issues/${issueId}/assignees`, {
+      await fetcher(`/api/issues/${issueId}/assignees`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

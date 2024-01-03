@@ -1,6 +1,6 @@
 import { IIssue } from '@/lib/types/issue';
 import { GitBranchIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import IssueStatusField from './fields/IssueStatusField';
@@ -11,6 +11,7 @@ import { IssueTextField } from './fields/issueTextField';
 import Link from 'next/link';
 import { IssueLabelField } from './fields/issueLabelField';
 import { dateFormater } from '@/lib/util';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export function IssueInfo({
   issueId,
@@ -20,9 +21,10 @@ export function IssueInfo({
   refIssue?: IIssue;
 }) {
   const [issue, setIssue] = useState<IIssue | null>(null);
+  const { fetcher } = useContext(OrbitContext);
 
   const fetchIssue = async () => {
-    const res = await fetch(`/api/issues/${issueId}`);
+    const res = await fetcher(`/api/issues/${issueId}`);
     const resultIssue = await res.json();
     if (!resultIssue) {
       return;

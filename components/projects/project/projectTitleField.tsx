@@ -11,9 +11,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { CheckIcon, PencilLine, XIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export default function ProjectTitleField({
   projectTitle,
@@ -26,6 +27,7 @@ export default function ProjectTitleField({
 }) {
   const [editMode, setEditMode] = useState(false);
   const [title, setProjectTitle] = useState(projectTitle);
+  const { fetcher } = useContext(OrbitContext);
 
   function saveTitleChanges() {
     if (title === projectTitle) {
@@ -33,7 +35,7 @@ export default function ProjectTitleField({
       return;
     }
     const operation = setTimeout(async () => {
-      await fetch(`/api/projects/${projectId}`, {
+      await fetcher(`/api/projects/${projectId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -118,26 +120,17 @@ function ProjectOptions({
   teamid?: number;
 }) {
   const router = useRouter();
+  const { fetcher, reload } = useContext(OrbitContext);
 
   async function deleteProject() {
-    const res = await fetch(`/api/projects/${projectId}`, {
+    const res = await fetcher(`/api/projects/${projectId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
-  }
-
-  async function archiveProject() {
-    const res = await fetch(`/api/projects/${projectId}/archive`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    reload(['projects']);
 
     if (!res.ok) throw new Error(res.statusText);
     router.push('/projects');

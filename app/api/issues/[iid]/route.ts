@@ -15,7 +15,6 @@ export async function GET(
     .select(({ eb, fn }) => [
       'issue.id',
       'issue.title',
-      'issue.contents',
       'issue.statusid',
       'issue.deadline',
       'issue.datestarted',
@@ -41,6 +40,10 @@ export async function GET(
     .where('issue.id', '=', Number(iid))
     .executeTakeFirst();
 
+  if (!issue) {
+    return Response.json({ error: 'Issue not found' }, { status: 404 });
+  }
+
   return Response.json(issue);
 }
 
@@ -65,9 +68,10 @@ export async function PATCH(
       .updateTable('issue')
       .set({ ...issue, dateupdated: new Date().toISOString() })
       .where('id', '=', Number(iid))
+      .returning(['id'])
       .executeTakeFirst();
 
-    return Response.json('success');
+    return Response.json(query);
   } catch (error) {
     console.log(error);
     return Response.json({ error: '' }, { status: 405 });

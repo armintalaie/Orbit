@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
+  ConstructionIcon,
   FolderClosed,
   InboxIcon,
   LayoutGridIcon,
@@ -89,7 +90,8 @@ function SideBarContent({
             className='h-8 w-full rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-sm text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'
             onClick={() => openSearch(true)}
           >
-            <span className='flex items-center justify-between'>
+            <span className='flex items-center justify-between text-sm'>
+              <ConstructionIcon className='h-4 w-4' />
               Search{' '}
               <span className='rounded-sm border border-gray-200 bg-gray-100 px-1 text-[9px] shadow-sm dark:border-neutral-800 dark:bg-neutral-700'>
                 cmd + k

@@ -1,18 +1,5 @@
 import { supabase } from '@/lib/supabase';
 
-// import { z } from 'zod';
-
-// const issueSchema = z.object({
-//   title: z.string(),
-//   contents: z.object({
-//     body: z.string(),
-//   }),
-//   statusid: z.number(),
-//   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-//   datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-//   projectid: z.number(),
-// });
-
 export async function GET(
   req: Request,
   { params }: { params: { tid: string; uid: string } }

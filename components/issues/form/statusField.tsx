@@ -33,7 +33,7 @@ export function StatusField(field: any) {
           <Button
             variant='outline'
             size='sm'
-            className='text-2xs flex h-8 w-fit items-center justify-start gap-1'
+            className='flex h-8 w-fit items-center justify-start gap-1 text-2xs'
           >
             {selectedStatus ? (
               <>

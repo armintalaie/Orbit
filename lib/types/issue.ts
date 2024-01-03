@@ -1,7 +1,7 @@
 export interface IIssue {
   id: number;
   title: string;
-  contents: { body: string };
+  contents: string;
   statusid: number;
   deadline: string;
   datestarted: string;

@@ -38,6 +38,7 @@ export default function OrbitContextProvider({
   children: React.ReactNode;
 }) {
   const user = useContext(UserSessionContext);
+  const [loading, setLoading] = useState(true);
   const [orbit, setOrbit] = useState<OrbitType>({
     labels: [],
     status: [],
@@ -114,6 +115,7 @@ export default function OrbitContextProvider({
       getTeams(),
     ]);
     await p;
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -128,7 +130,7 @@ export default function OrbitContextProvider({
     reload,
   };
 
-  if (!user) {
+  if (!user || loading) {
     return <div></div>;
   }
   return (

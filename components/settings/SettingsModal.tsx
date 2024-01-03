@@ -9,6 +9,8 @@ import {
 } from '@/components/ui/dialog';
 import { GearIcon } from '@radix-ui/react-icons';
 import SettingsLayout from './SettingsLayout';
+import { OrbitContext } from '@/lib/context/OrbitContext';
+import { useContext } from 'react';
 
 export function SettingsModalButton() {
   return (
@@ -32,8 +34,10 @@ export function SettingsModalButton() {
 }
 
 function SettingsProfilePage() {
+  const { fetcher } = useContext(OrbitContext);
+
   async function signout() {
-    const res = await fetch('/api/auth/signout', {
+    const res = await fetcher('/api/auth/signout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

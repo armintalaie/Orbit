@@ -4,7 +4,6 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
-  ContextMenuShortcut,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
@@ -17,12 +16,13 @@ import {
   Trash2Icon,
   UserCircle2Icon,
 } from 'lucide-react';
-import { useState } from 'react';
 import IssueStatusField from '../issue/fields/IssueStatusField';
 import { IssueAssigneeField } from '../issue/fields/issueAssigneeField';
 import { IssueLabelField } from '../issue/fields/issueLabelField';
 import Link from 'next/link';
 import { IssueProjectField } from '../issue/fields/issueProjectField';
+import { useContext } from 'react';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export default function IssueMenuContext({
   issue,
@@ -31,15 +31,14 @@ export default function IssueMenuContext({
   issue: any;
   reload: () => void;
 }) {
-  const [optionGroup, setOptionGroup] = useState('main');
+  const { fetcher } = useContext(OrbitContext);
 
-  // delete, move to, lables, assign to, set status
   return (
     <ContextMenuContent className='w-62  rounded-md border border-gray-200 bg-white  shadow-sm'>
       <ContextMenuItem
         className='flex flex-row items-center gap-3 text-sm'
         onClick={() => {
-          fetch(`/api/projects/${issue.projectid}/issues/${issue.id}`, {
+          fetcher(`/api/issues/${issue.id}`, {
             method: 'DELETE',
           }).then(() => {
             reload && reload();
@@ -130,7 +129,7 @@ export default function IssueMenuContext({
       <ContextMenuItem
         className='flex flex-row items-center gap-3 text-sm'
         onClick={() => {
-          fetch(`/api/projects/${issue.projectid}/issues/${issue.id}`, {
+          fetcher(`/api/issues/${issue.id}`, {
             method: 'DELETE',
           }).then(() => {
             reload && reload();

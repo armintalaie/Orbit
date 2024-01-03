@@ -2,32 +2,28 @@
 
 import { NewIssue } from '@/components/newIssue';
 import { useParams } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import ProjectTitleField from '@/components/projects/project/projectTitleField';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
+import { IProject } from '@/lib/types/issue';
+import { TextSelectIcon } from 'lucide-react';
 
 interface ProjectPageProps {
   id: number;
   title: string;
 }
 
-interface IProject {
-  id: number;
-  title: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
-  teamid?: number;
-}
-
 export default function ProjectPage({ id, title }: ProjectPageProps) {
-  const userSession = useContext(UserSessionContext);
   const params = useParams();
   const projectId = id ? id : Number(params.projectId);
-  const [project, setProject] = useState<IProject | null>(null);
+  const { projects } = useContext(OrbitContext);
+  const initialProject = projects && projects.find((p) => p.id === projectId);
 
+  const project: IProject | undefined | null = initialProject
+    ? initialProject
+    : null;
   const issueQuery = {
     tid: params.teamid as string,
     pid: projectId,
@@ -37,22 +33,12 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
     showProject: false,
   };
 
-  async function fetchProject() {
-    const res = await fetch(`/api/projects/${projectId}`, {
-      headers: {
-        Authorization: userSession?.access_token || '',
-      },
-    });
-    const project = await res.json();
-    setProject(project);
+  if (project === undefined) {
+    return <></>;
   }
 
-  useEffect(() => {
-    fetchProject();
-  }, []);
-
-  if (!project) {
-    return <></>;
+  if (project === null) {
+    return <ProjectNotFound />;
   }
 
   return (
@@ -66,12 +52,21 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
           />
         </div>
         <div className='flex h-full items-center justify-center gap-2'>
-          <NewIssue button={true} reload={fetchProject} projectid={projectId} />
+          <NewIssue button={true} defaultValues={{ projectid: project.id }} />
         </div>
       </PageWrapper.Header>
       <PageWrapper.Content>
         <IssueBoard query={issueQuery} />
       </PageWrapper.Content>
     </PageWrapper>
+  );
+}
+
+function ProjectNotFound() {
+  return (
+    <div className='flex w-full flex-grow flex-col items-center justify-center gap-4 space-x-4'>
+      <TextSelectIcon className='h-24 w-24 text-gray-500' />
+      <h1 className='text-4xl font-medium text-gray-500'>Project not found</h1>
+    </div>
   );
 }

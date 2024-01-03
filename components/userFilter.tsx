@@ -11,6 +11,8 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { OrbitContext } from '@/lib/context/OrbitContext';
+import { useContext } from 'react';
 
 interface Profile {
   id: string | undefined;
@@ -29,9 +31,11 @@ export function UserFilter({ val, setVal, teamid, backBtn }) {
     null
   );
 
+  const { fetcher } = useContext(OrbitContext);
+
   React.useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/profiles/`, {
+      const res = await fetcher(`/api/profiles/`, {
         next: { revalidate: 10 },
       });
       const profiles = await res.json();

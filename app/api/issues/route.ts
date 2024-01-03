@@ -3,13 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { db } from '@/lib/db/handler';
-import { getContext } from '@/context';
 
 const issueSchema = z.object({
   title: z.string(),
-  contents: z.object({
-    body: z.string(),
-  }),
+  contents: z.string(),
   statusid: z.number(),
   deadline: z
     .string()
@@ -32,17 +29,19 @@ export async function POST(
       ...newIssue,
     });
 
-    const { data, error } = await supabase.from('issue').insert(issue).select();
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
+    const { id } = await db
+      .insertInto('issue')
+      .values(issue)
+      .returning(['id'])
+      .executeTakeFirst();
+    console.log(id);
 
     if (newIssue.labels) {
       const { data: labels, error: labelsError } = await supabase
         .from('issue_label')
         .insert(
           newIssue.labels.map((label: string) => ({
-            issueid: data[0].id,
+            issueid: id,
             labelid: label,
           }))
         )
@@ -54,7 +53,41 @@ export async function POST(
         );
       }
     }
-    return NextResponse.json(data);
+
+    let query = db
+      .selectFrom('issue')
+      .leftJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
+      .innerJoin('project', 'issue.projectid', 'project.id')
+      .innerJoin('team', 'project.teamid', 'team.id')
+      .select(({ eb, fn }) => [
+        'issue.id',
+        'issue.title',
+        'issue.statusid',
+        'issue.deadline',
+        'issue.datestarted',
+        'issue.projectid',
+        'project.title as project_title',
+        'project.teamid',
+        'team.name as team_title',
+        jsonArrayFrom(
+          eb
+            .selectFrom('issue_label')
+            .innerJoin('label', 'issue_label.labelid', 'label.id')
+            .select(['labelid as id', 'label', 'color'])
+            .whereRef('issue_label.issueid', '=', 'issue.id')
+        ).as('labels'),
+        jsonArrayFrom(
+          eb
+            .selectFrom('issue_assignee')
+            .innerJoin('profiles', 'issue_assignee.user_id', 'profiles.id')
+            .selectAll()
+            .whereRef('issue_assignee.issue_id', '=', 'issue.id')
+        ).as('assignees'),
+      ])
+      .where('issue.id', '=', id);
+
+    const newissue = await query.executeTakeFirst();
+    return NextResponse.json(newissue);
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: '' }, { status: 405 });
@@ -117,12 +150,6 @@ export async function GET(req: NextRequest) {
       searchParams.projects.map(Number)
     );
   }
-
-  // if (searchParams.deadline) {
-
-  //   query = query.where('issue.deadline', '>=', searchParams.deadline);
-  // }
-
   const issues = await query.execute();
   return NextResponse.json(issues);
 }

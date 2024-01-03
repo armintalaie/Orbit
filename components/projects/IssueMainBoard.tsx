@@ -45,8 +45,8 @@ type Grouping = {
 export default function IssueBoard({ query }: IssueBoardProps) {
   const { fetcher } = useContext(OrbitContext);
   const projectId = query?.pid;
-  const [issues, setIssues] = useState([]);
-  const [transformedIssues, setTransformedIssues] = useState([]);
+  const [issues, setIssues] = useState<IIssue[]>([]);
+  const [transformedIssues, setTransformedIssues] = useState<IIssue[]>([]);
   const [groupedIssues, setGroupedIssues] = useState<Grouping>({
     issues: [],
     key: '',
@@ -55,11 +55,24 @@ export default function IssueBoard({ query }: IssueBoardProps) {
   const [filters, setFilters] = useState([]);
   const [filterMethod, setFilterMethod] = useState('ANY');
 
+  function updateIssueSet(issue: IIssue) {
+    const issueExists = issues.some((i) => i.id === issue.id);
+    let newIssues = issues;
+    if (issueExists) {
+      newIssues = issues.map((i) => (i.id === issue.id ? issue : i));
+    } else {
+      newIssues = [...issues, issue];
+    }
+    setIssues(newIssues);
+  }
+
   async function fetchIssues() {
     let route = `/api/issues?q=${encodeURIComponent(
       JSON.stringify(query.q || {})
     )}`;
-    const res = await fetcher(`${route}`);
+    const res = await fetcher(`${route}`, {
+      next: { revalidate: 600 },
+    });
     const tasks = await res.json();
     setIssues(tasks);
   }
@@ -178,11 +191,13 @@ export default function IssueBoard({ query }: IssueBoardProps) {
             groupedIssues={groupedIssues}
             reload={reload}
             projectId={query.pid}
+            onIssueUpdate={updateIssueSet}
           />
         ) : (
           <IssueListView
             groupedIssues={groupedIssues}
             reload={reload}
+            onIssueUpdate={updateIssueSet}
             projectId={projectId}
           />
         )}
@@ -193,22 +208,11 @@ export default function IssueBoard({ query }: IssueBoardProps) {
 
 function ProjectOptions({ projectId }: { projectId: number }) {
   const router = useRouter();
+  const { fetcher } = useContext(OrbitContext);
 
   async function deleteProject() {
-    const res = await fetch(`/api/projects/${projectId}`, {
+    const res = await fetcher(`/api/projects/${projectId}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
-  }
-
-  async function archiveProject() {
-    const res = await fetch(`/api/projects/${projectId}/archive`, {
-      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },

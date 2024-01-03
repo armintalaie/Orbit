@@ -36,6 +36,7 @@ export function IssueLabelField({
   const [selectedLabelIds, setSelectedLabelIds] = useState<number[]>(
     labels.map((label) => label.id)
   );
+  const { fetcher } = useContext(OrbitContext);
 
   function hasChanged() {
     return (
@@ -51,7 +52,7 @@ export function IssueLabelField({
     if (!open) {
       if (hasChanged()) {
         const operation = setTimeout(async () => {
-          const res = await fetch(`/api/issues/${issueId}/labels`, {
+          const res = await fetcher(`/api/issues/${issueId}/labels`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -112,7 +113,7 @@ export function IssueLabelField({
     });
   };
 
-  if (!labelOptions) {
+  if (!labelOptions || !labelArray) {
     return <></>;
   }
 
@@ -156,10 +157,10 @@ export function IssueLabelField({
         {selectedLabelIds.map((id) => (
           <div
             key={id}
-            className='text-2xs  flex w-fit  items-center justify-start gap-2 rounded-xl border  bg-opacity-10 pr-2 font-medium '
+            className='flex  w-fit items-center  justify-start gap-2 rounded-xl border bg-opacity-10  pr-2 text-2xs font-medium '
           >
             <IssueLabel
-              className=' hasChanged text-2xs flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 font-medium '
+              className=' hasChanged flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 text-2xs font-medium '
               key={id}
               label={labelOptions[id].label}
               color={labelOptions[id].color}
@@ -177,7 +178,7 @@ export function IssueLabelField({
             <Button
               variant='ghost'
               size='sm'
-              className='border-right text-2xs flex h-6 w-full justify-start gap-2  border-gray-200 px-2 '
+              className='border-right flex h-6 w-full justify-start gap-2 border-gray-200  px-2 text-2xs '
             >
               <TagsIcon className='h-4 w-4' />
               Edit Labels

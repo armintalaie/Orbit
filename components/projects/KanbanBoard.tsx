@@ -9,21 +9,14 @@ export interface KanbanViewProps {
   groupedIssues: any;
   reload: () => void;
   projectId?: number;
+  onIssueUpdate: (issue: IIssue) => void;
 }
-
-type Issue = {
-  id: number;
-  title: string;
-  deadline: string;
-  priority: number;
-  projectid: number | null;
-  statusid: number;
-};
 
 export default function KanbanView({
   groupedIssues,
   reload,
   projectId,
+  onIssueUpdate,
 }: KanbanViewProps) {
   if (!groupedIssues) return <></>;
   const nonEmptyGroups = groupedIssues.issues.filter(
@@ -57,6 +50,7 @@ export default function KanbanView({
                 <NewIssue
                   button={false}
                   reload={reload}
+                  onIssueUpdate={onIssueUpdate}
                   defaultValues={{
                     projectid: projectId,
                     [groupedIssues.key]: grouping.key,
@@ -97,6 +91,7 @@ export default function KanbanView({
                     <NewIssue
                       button={false}
                       reload={reload}
+                      onIssueUpdate={onIssueUpdate}
                       defaultValues={{
                         projectid: projectId,
                         [groupedIssues.key]: grouping.key,

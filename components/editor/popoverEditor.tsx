@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import TextEditor from './textEditor';
@@ -28,12 +28,11 @@ import {
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export const issueSchema = z.object({
   title: z.string(),
-  contents: z.object({
-    body: z.string(),
-  }),
+  contents: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -64,13 +63,14 @@ export function NewTemplate({
       contents: '',
     },
   });
+  const { fetcher } = useContext(OrbitContext);
 
   async function save(contents: string) {
     form.setValue('contents', contents);
   }
 
   async function submit(data: any) {
-    const res = await fetch(`/api/teams/${teamid}/templates/`, {
+    const res = await fetcher(`/api/teams/${teamid}/templates/`, {
       method: 'POST',
       body: JSON.stringify(data),
     });

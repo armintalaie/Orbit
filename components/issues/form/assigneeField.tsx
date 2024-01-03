@@ -17,6 +17,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 interface Profile {
   id: string | undefined;
@@ -33,7 +34,8 @@ const noAssignee: Profile = {
 };
 
 export function AssigneeField({ field }: { field: any }) {
-  const user = useContext(UserSessionContext);
+  const { fetcher } = useContext(OrbitContext);
+
   const [memberOptions, setMemberOptions] = useState<{
     [key: string]: Profile;
   }>({});
@@ -44,11 +46,8 @@ export function AssigneeField({ field }: { field: any }) {
 
   useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/profiles`, {
-        headers: {
-          Authorization: `${user?.access_token}`,
-        },
-        next: { revalidate: 10 },
+      const res = await fetcher(`/api/profiles`, {
+        next: { revalidate: 30 },
       });
       let members = await res.json();
       members = members.map(
@@ -76,7 +75,7 @@ export function AssigneeField({ field }: { field: any }) {
           <Button
             variant='outline'
             size='sm'
-            className='text-2xs line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-gray-800'
+            className='line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-2xs text-gray-800'
           >
             {selectedStatus && selectedStatus !== noAssignee.id ? (
               <>
