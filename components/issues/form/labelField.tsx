@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -15,13 +15,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { LABELS } from '@/lib/util';
 import IssueLabel from '../label';
 import { TagsIcon } from 'lucide-react';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export function LabelField({ setFields }: { setFields: any }) {
   const [open, setOpen] = useState(false);
-  const labels = groupLabelsAsIdObject(LABELS || []);
+  const { labels: labelArray } = useContext(OrbitContext);
+  const labels = groupLabelsAsIdObject(labelArray);
   const [selectedLabels, setSelectedLabels] = useState<any[]>([]);
 
   function groupLabelsAsIdObject(labels: any[]) {

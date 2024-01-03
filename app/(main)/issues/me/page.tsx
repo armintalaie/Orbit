@@ -1,4 +1,5 @@
 'use client';
+import { NewIssue } from '@/components/newIssue';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { useContext, useEffect } from 'react';
@@ -21,14 +22,9 @@ export default function MyIssuePage() {
             <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
               My Issues
             </h1>
-            {/* <ProjectOptions projectId={project.id} /> */}
           </div>
           <div className='flex h-full items-center justify-center gap-2'>
-            {/* <NewIssue
-              button={true}
-              reload={fetchIssues}
-              projectid={projectId}
-            /> */}
+            <NewIssue button={true} />
           </div>
         </div>
         {issueQuery.q.assignees.length > 0 && <IssueBoard query={issueQuery} />}

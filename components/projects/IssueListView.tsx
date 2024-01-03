@@ -13,9 +13,10 @@ import {
 } from '../ui/context-menu';
 import Link from 'next/link';
 import { IIssue, IProfile } from '@/lib/types/issue';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
 export interface TableViewProps {
-  groupedIssues: any[];
+  groupedIssues: any;
   reload: () => void;
   projectId?: number;
 }
@@ -23,12 +24,21 @@ export interface TableViewProps {
 export default function IssueListView({
   groupedIssues,
   reload,
-  projectId,
 }: TableViewProps) {
   return (
     <div className='flex h-full w-full flex-col '>
+      <div className='flex w-full items-center justify-between gap-3 bg-gray-50 px-3 py-2'>
+        <Alert className=''>
+          <AlertTitle className='text-xs font-semibold text-gray-700'>
+            Deprecated
+          </AlertTitle>
+          <AlertDescription>
+            This view is deprecated. Please use the Kanban view instead.
+          </AlertDescription>
+        </Alert>
+      </div>
       <div className='flex w-full flex-grow flex-col divide-y-0  overflow-y-scroll  rounded-sm border-gray-100 bg-white shadow-none'>
-        {groupedIssues.map((grouping) => (
+        {groupedIssues.issues.map((grouping: any) => (
           <>
             <div className='flex w-full border-b border-t border-gray-200 bg-gray-100 '>
               <div className='flex w-full items-center justify-between gap-3 px-3 py-2'>

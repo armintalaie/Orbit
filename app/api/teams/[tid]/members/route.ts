@@ -5,9 +5,7 @@ import { z } from 'zod';
 
 const issueSchema = z.object({
   title: z.string(),
-  contents: z.object({
-    body: z.string(),
-  }),
+  contents: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),

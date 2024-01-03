@@ -16,6 +16,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useContext } from 'react';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 interface Profile {
   id: string | undefined;
@@ -33,10 +35,11 @@ export function UserFinder({ val, setVal, teamid }) {
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
     null
   );
+  const { fetcher } = useContext(OrbitContext);
 
   React.useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/profiles/`, {
+      const res = await fetcher(`/api/profiles/`, {
         next: { revalidate: 10 },
       });
       const profiles = await res.json();
@@ -126,10 +129,11 @@ export function MentionUserFinder({ val, setVal, teamid }) {
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
     null
   );
+  const { fetcher } = useContext(OrbitContext);
 
   React.useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/profiles/`, {
+      const res = await fetcher(`/api/profiles/`, {
         next: { revalidate: 10 },
       });
       const profiles = await res.json();

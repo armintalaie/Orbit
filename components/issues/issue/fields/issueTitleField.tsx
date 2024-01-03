@@ -1,4 +1,4 @@
-import router from 'next/router';
+import { router } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,8 +10,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { CheckIcon, PencilLine, XIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { toast } from 'sonner';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export default function IssueTitleField({
   issueId,
@@ -23,6 +24,7 @@ export default function IssueTitleField({
   projectId: number;
 }) {
   const [showEditButton, setShowEditButton] = useState(false);
+  const { fetcher } = useContext(OrbitContext);
   const [editMode, setEditMode] = useState(false);
   const [title, setIssueTitle] = useState(issueTitle);
 
@@ -32,7 +34,7 @@ export default function IssueTitleField({
       return;
     }
     const operation = setTimeout(async () => {
-      await fetch(`/api/issues/${issueId}`, {
+      await fetcher(`/api/issues/${issueId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -123,8 +125,9 @@ function IssueOptions({
   issueId: number;
   projectId: number;
 }) {
+  const { fetcher } = useContext(OrbitContext);
   async function deleteIssue() {
-    const res = await fetch(`/api/issue/${issueId}`, {
+    const res = await fetcher(`/api/issues/${issueId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -133,18 +136,6 @@ function IssueOptions({
 
     if (!res.ok) throw new Error(res.statusText);
     router.push(`/projects/${projectId}`);
-  }
-
-  async function archiveProject() {
-    const res = await fetch(`/api/projects/${projectId}/archive`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
   }
 
   return (

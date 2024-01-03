@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -12,11 +12,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { LABELS } from '@/lib/util';
 import { CheckCircle2Icon, CircleIcon, TagsIcon } from 'lucide-react';
 import IssueLabel from '../../label';
 import { ILabel } from '@/lib/types/issue';
 import { toast } from 'sonner';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 type IssueLabelFieldProps = {
   labels: ILabel[];
@@ -30,10 +30,13 @@ export function IssueLabelField({
   contentOnly = false,
 }: IssueLabelFieldProps) {
   const [open, setOpen] = useState(false);
-  const labelOptions: { [key: string]: ILabel } = groupLabelsAsIdObject(LABELS);
+  const { labels: labelArray } = useContext(OrbitContext);
+  const labelOptions: { [key: string]: ILabel } =
+    groupLabelsAsIdObject(labelArray);
   const [selectedLabelIds, setSelectedLabelIds] = useState<number[]>(
     labels.map((label) => label.id)
   );
+  const { fetcher } = useContext(OrbitContext);
 
   function hasChanged() {
     return (
@@ -49,7 +52,7 @@ export function IssueLabelField({
     if (!open) {
       if (hasChanged()) {
         const operation = setTimeout(async () => {
-          const res = await fetch(`/api/issues/${issueId}/labels`, {
+          const res = await fetcher(`/api/issues/${issueId}/labels`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -110,7 +113,7 @@ export function IssueLabelField({
     });
   };
 
-  if (!labelOptions) {
+  if (!labelOptions || !labelArray) {
     return <></>;
   }
 

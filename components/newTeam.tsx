@@ -30,6 +30,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export const teamSchema = z.object({
   name: z.string(),
@@ -46,7 +47,7 @@ export function NewTeam({
   teamid?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const userSession = useContext(UserSessionContext);
+  const { fetcher } = useContext(OrbitContext);
   const form = useForm<z.infer<typeof teamSchema>>({
     resolver: zodResolver(teamSchema),
   });
@@ -57,12 +58,8 @@ export function NewTeam({
       description: formVals.description,
     };
     const URL = '/api/teams/';
-    const res = await fetch(URL, {
+    const res = await fetcher(URL, {
       body: JSON.stringify(team),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: userSession?.access_token as string,
-      },
       method: 'POST',
     });
 

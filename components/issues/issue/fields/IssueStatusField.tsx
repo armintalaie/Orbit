@@ -13,8 +13,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { STATUS } from '@/lib/util';
-import { useState } from 'react';
+import { OrbitContext } from '@/lib/context/OrbitContext';
+import { useContext, useState } from 'react';
 import { toast } from 'sonner';
 
 type IssueStatusFieldProps = {
@@ -28,12 +28,12 @@ export default function IssueStatusField({
   issueId,
   contentOnly = false,
 }: IssueStatusFieldProps) {
-  const statusOptions = STATUS || [];
+  const { status: statusOptions, fetcher } = useContext(OrbitContext);
   const [selectedStatusId, setSelectedStatusId] = useState<number>(statusId);
   const [open, setOpen] = useState(false);
 
   async function updateStatus(id: number) {
-    const res = await fetch(`/api/issues/${issueId}`, {
+    const res = await fetcher(`/api/issues/${issueId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

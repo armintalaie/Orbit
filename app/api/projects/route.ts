@@ -1,6 +1,6 @@
+import { getContext } from '@/context';
 import { db } from '@/lib/db/handler';
 import { supabase } from '@/lib/supabase';
-import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -38,26 +38,15 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { pid: string } }
 ) {
-  const authorization = headers().get('authorization');
-
-  if (!authorization) {
-    return NextResponse.redirect(new URL('/', req.nextUrl).toString());
-  }
-
-  const { data: userData } = await supabase.auth.getUser(authorization);
-
-  if (userData.user === null) {
-    return NextResponse.redirect(new URL('/', req.nextUrl).toString());
-  }
-
-  let searchParams = JSON.parse(req.nextUrl.searchParams.get('q') || '{}');
+  const user = JSON.parse(getContext(req, 'user'));
+  const reqQuery = JSON.parse(getContext(req, 'query'));
   let query = db
     .selectFrom('project')
     .innerJoin(
       db
         .selectFrom('team_member')
         .select(['teamid'])
-        .where('memberid', '=', userData.user.id)
+        .where('memberid', '=', user.id)
         .as('teams'),
       'teams.teamid',
       'project.teamid'
@@ -74,8 +63,8 @@ export async function GET(
       'team.name as team_title',
     ]);
 
-  if (searchParams.teams && searchParams.teams.length > 0) {
-    query = query.where('project.teamid', 'in', searchParams.teams.map(Number));
+  if (reqQuery.teams && reqQuery.teams.length > 0) {
+    query = query.where('project.teamid', 'in', reqQuery.teams.map(Number));
   }
 
   const result = await query.execute();

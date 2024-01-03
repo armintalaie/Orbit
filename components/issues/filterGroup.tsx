@@ -6,7 +6,6 @@ import {
   BoxIcon,
   CalendarIcon,
   CircleSlashIcon,
-  FolderIcon,
   ListFilterIcon,
   TagIcon,
   TargetIcon,
@@ -28,13 +27,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '../ui/button';
-import { useState } from 'react';
-import { LABELS, STATUS } from '@/lib/util';
 import { statusIconMapper } from '../statusIconMapper';
 import { UserFilter } from '../userFilter';
 import IssueLabel from './label';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 type FilterType =
   | 'status'
@@ -295,8 +293,7 @@ export default function FilterGroup({
 }
 
 function StatusFilter({ backBtn, addFilter }: { backBtn: () => void }) {
-  const [value, setValue] = React.useState('');
-  const status = STATUS || [];
+  const { status } = React.useContext(OrbitContext);
 
   return (
     <Command>
@@ -335,8 +332,7 @@ function StatusFilter({ backBtn, addFilter }: { backBtn: () => void }) {
 }
 
 function LabelFilter({ backBtn, addFilter }: { backBtn: () => void }) {
-  const [value, setValue] = React.useState('');
-  const labels = LABELS || [];
+  const { labels } = React.useContext(OrbitContext);
 
   return (
     <Command>
@@ -385,23 +381,11 @@ function LabelFilter({ backBtn, addFilter }: { backBtn: () => void }) {
 }
 
 function ProjectFilter({ backBtn, addFilter }: { backBtn: () => void }) {
-  const userSession = React.useContext(UserSessionContext);
-  const [value, setValue] = React.useState('');
-  const [projects, setProjects] = React.useState<any[]>([]);
+  const { projects } = React.useContext(OrbitContext);
 
-  async function fetchProjects() {
-    const res = await fetch(`/api/projects/`, {
-      headers: {
-        Authorization: userSession?.access_token || '',
-      },
-    });
-    const projects = await res.json();
-    setProjects(projects);
+  if (!projects) {
+    return <div>loading</div>;
   }
-
-  React.useEffect(() => {
-    fetchProjects();
-  }, []);
 
   return (
     <Command>

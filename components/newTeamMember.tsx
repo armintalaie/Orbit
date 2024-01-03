@@ -14,17 +14,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Form } from './ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { UserFinder } from './userFinder';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export const issueSchema = z.object({
   title: z.string(),
-  contents: z.object({
-    body: z.string(),
-  }),
+  contents: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -33,7 +32,7 @@ export const issueSchema = z.object({
 
 export const formSchema = z.object({
   title: z.string(),
-  body: z.string(),
+  contents: z.string(),
   statusid: z.number(),
   deadline: z.object({
     from: z.date(),
@@ -58,17 +57,18 @@ export function NewTeamMember({
       title: '',
       statusid: 1,
       assignee: '-1',
-      body: '',
+      contents: '',
       deadline: {
         from: new Date(),
         to: new Date(),
       },
     },
   });
+  const { fetcher } = useContext(OrbitContext);
 
   const [userInput, setUserInput] = useState(undefined);
   async function onSubmit() {
-    const res = await fetch(`/api/teams/${teamid}/members/${userInput}`, {
+    const res = await fetcher(`/api/teams/${teamid}/members/${userInput}`, {
       headers: {
         'Content-Type': 'application/json',
       },

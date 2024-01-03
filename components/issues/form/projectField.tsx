@@ -17,8 +17,11 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export function ProjectField({ field }: { field: any }) {
+  const { projects: projectsArray } = useContext(OrbitContext);
+
   const [projects, setprojects] = useState<{
     [key: string]: any;
   }>({});
@@ -30,17 +33,8 @@ export function ProjectField({ field }: { field: any }) {
 
   useEffect(() => {
     async function fetchProjects() {
-      const res = await fetch(`/api/projects`, {
-        next: { revalidate: 10 },
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: userSession?.access_token || '',
-        },
-      });
-      let proj = await res.json();
-
       const options: { [key: string]: any } = {};
-      for (const p of proj) {
+      for (const p of projectsArray) {
         options[p.id] = {
           ...p,
         };

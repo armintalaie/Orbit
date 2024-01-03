@@ -1,6 +1,5 @@
-import { supabase } from '@/lib/supabase';
 import { db } from '@/lib/db/handler';
-import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres';
+import { jsonArrayFrom } from 'kysely/helpers/postgres';
 
 export async function GET(
   req: Request,
@@ -16,7 +15,6 @@ export async function GET(
     .select(({ eb, fn }) => [
       'issue.id',
       'issue.title',
-      'issue.contents',
       'issue.statusid',
       'issue.deadline',
       'issue.datestarted',
@@ -42,6 +40,10 @@ export async function GET(
     .where('issue.id', '=', Number(iid))
     .executeTakeFirst();
 
+  if (!issue) {
+    return Response.json({ error: 'Issue not found' }, { status: 404 });
+  }
+
   return Response.json(issue);
 }
 
@@ -50,7 +52,7 @@ export async function DELETE(
   { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
-  await supabase.from('issue').delete().eq('id', iid);
+  await db.deleteFrom('issue').where('id', '=', Number(iid)).execute();
   return Response.json({ message: 'success' });
 }
 
@@ -62,11 +64,14 @@ export async function PATCH(
     const { iid } = params;
     const newIssue = await req.json();
     const issue = newIssue;
-    const data = await supabase
-      .from('issue')
-      .update({ ...issue, dateupdated: new Date().toISOString() })
-      .eq('id', Number(iid));
-    return Response.json(data.data);
+    const query = await db
+      .updateTable('issue')
+      .set({ ...issue, dateupdated: new Date().toISOString() })
+      .where('id', '=', Number(iid))
+      .returning(['id'])
+      .executeTakeFirst();
+
+    return Response.json(query);
   } catch (error) {
     console.log(error);
     return Response.json({ error: '' }, { status: 405 });

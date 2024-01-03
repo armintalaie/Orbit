@@ -17,6 +17,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { OrbitContext } from '@/lib/context/OrbitContext';
+import { useContext } from 'react';
 
 interface Profile {
   id: string | undefined;
@@ -40,10 +42,11 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
   const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
     user ? user.id : null
   );
+  const { fetcher } = useContext(OrbitContext);
 
   React.useEffect(() => {
     async function fetchMembers() {
-      const res = await fetch(`/api/projects/${projectid}/members`, {
+      const res = await fetcher(`/api/projects/${projectid}/members`, {
         next: { revalidate: 10 },
       });
       let members = await res.json();
@@ -68,13 +71,13 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
 
   async function updateAssignee(id) {
     if (!id) {
-      fetch(`/api/issues/${issueid}/assignees`, {
+      fetcher(`/api/issues/${issueid}/assignees`, {
         method: 'DELETE',
       }).then(() => {
         setSelectedStatus(null);
       });
     } else {
-      await fetch(`/api/issues/${issueid}/assignees`, {
+      await fetcher(`/api/issues/${issueid}/assignees`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -1,12 +1,12 @@
 'use client';
 
-import { NewProject } from '@/components/newProject';
+import { NewProject } from '@/components/projects/newProject';
 import { dateFormater, isOverdue } from '@/lib/util';
 import { Badge, Table } from '@radix-ui/themes';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import Link from 'next/link';
 import PageWrapper from '@/components/layouts/pageWrapper';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 interface IProject {
   id: number;
@@ -22,37 +22,7 @@ interface IProject {
 }
 
 export default function ProjectPage() {
-  const [projects, setProjects] = useState<IProject[]>([]);
-  const userSession = useContext(UserSessionContext);
-
-  async function reload() {
-    const res = await fetch(`/api/projects/`, {
-      headers: {
-        Authorization: userSession?.access_token || '',
-      },
-    });
-    const project = await res.json();
-    setProjects(project);
-  }
-
-  useEffect(() => {
-    async function fetchProjects() {
-      const res = await fetch(`/api/projects`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: userSession?.access_token || '',
-        },
-        next: {
-          revalidate: 600,
-        },
-      });
-      const project = await res.json();
-      setProjects(project);
-    }
-
-    fetchProjects();
-  }, []);
+  const { projects, reload } = useContext(OrbitContext);
 
   return (
     <PageWrapper>
@@ -61,7 +31,7 @@ export default function ProjectPage() {
           <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
             Your Projects
           </h1>
-          <NewProject button={true} reload={reload} />
+          <NewProject button={true} reload={() => reload(['projects'])} />
         </div>
       </PageWrapper.Header>
 
@@ -121,19 +91,6 @@ function TableView({ projects }: { projects: IProject[] }) {
                 </Table.Cell>
 
                 <Table.Cell>{project.description}</Table.Cell>
-                {/* <Table.Cell>
-                  {STATUS && STATUS[project.statusid] ? (
-                    <div className='flex flex-row items-center gap-2 '>
-                      {statusIconMapper(
-                        STATUS[project.statusid].label,
-                        'h-3 w-3'
-                      )}
-                      {STATUS[project.statusid].label}
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </Table.Cell> */}
                 <Table.Cell>
                   {isOverdue(project.deadline) ? (
                     <Badge color='red'>{dateFormater(project.deadline)}</Badge>

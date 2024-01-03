@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   FormField,
   FormItem,
@@ -43,11 +43,11 @@ import {
 } from '@/components/ui/drawer';
 import { LabelField } from './issues/form/labelField';
 import { ProjectField } from './issues/form/projectField';
+import { IIssue } from '@/lib/types/issue';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 export const issueSchema = z.object({
   title: z.string(),
-  contents: z.object({
-    body: z.string(),
-  }),
+  contents: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -56,7 +56,7 @@ export const issueSchema = z.object({
 
 export const formSchema = z.object({
   title: z.string(),
-  body: z.string(),
+  contents: z.string(),
   statusid: z.number(),
   deadline: z.object({
     from: z.date().nullable(),
@@ -68,13 +68,13 @@ export const formSchema = z.object({
 });
 
 export function NewIssue({
+  onIssueUpdate,
   defaultValues,
   button,
-  reload,
 }: {
   defaultValues?: object;
   button?: boolean;
-  reload: Function;
+  onIssueUpdate?: (issue: IIssue) => void;
 }) {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -106,7 +106,7 @@ export function NewIssue({
           </DialogHeader>
           <NewIssueForm
             defaultValues={defaultValues}
-            reload={reload}
+            onIssueUpdate={onIssueUpdate}
             close={close}
           />
 
@@ -138,7 +138,7 @@ export function NewIssue({
         </DrawerHeader>
         <NewIssueForm
           defaultValues={defaultValues}
-          reload={reload}
+          onIssueUpdate={onIssueUpdate}
           close={close}
         />
         <DrawerFooter className='pt-2'>
@@ -153,20 +153,20 @@ export function NewIssue({
 
 function NewIssueForm({
   defaultValues,
-  reload,
-  close,
+  onIssueUpdate,
 }: {
   defaultValues?: object;
-  reload: Function;
   close: Function;
+  onIssueUpdate?: (issue: IIssue) => void;
 }) {
   const [labels, setLabels] = useState([]);
+  const { fetcher } = useContext(OrbitContext);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
       statusid: 1,
-      body: '',
+      contents: '',
       deadline: {
         from: null,
         to: null,
@@ -176,13 +176,11 @@ function NewIssueForm({
       ...defaultValues,
     },
   });
-  async function onSubmit(e) {
+  async function onSubmit() {
     const formVals = form.getValues();
     const issue = {
       title: formVals.title,
-      contents: {
-        body: formVals.body,
-      },
+      contents: formVals.contents,
       statusid: formVals.statusid,
       deadline: formVals.deadline.to
         ? formVals.deadline.to.toISOString().split('T')[0]
@@ -195,7 +193,7 @@ function NewIssueForm({
       projectid: formVals.projectid || undefined,
     };
     const URL = `/api/issues`;
-    const res = await fetch(`${URL}`, {
+    const res = await fetcher(`${URL}`, {
       body: JSON.stringify(issue),
       headers: {
         'Content-Type': 'application/json',
@@ -208,7 +206,8 @@ function NewIssueForm({
         description: 'something went wrong',
       });
     } else {
-      reload();
+      const issue = (await res.json()) as IIssue;
+      onIssueUpdate && onIssueUpdate(issue);
       toast('Issue created', {
         description: `Issue successfully created`,
       });
@@ -240,7 +239,7 @@ function NewIssueForm({
 
           <FormField
             control={form.control}
-            name='body'
+            name='contents'
             render={({ field }) => (
               <FormItem>
                 <FormControl>
@@ -319,7 +318,7 @@ function NewIssueForm({
                   <FormControl>
                     <LabelField
                       {...field}
-                      setFields={(val) => {
+                      setFields={(val: any) => {
                         setLabels(val);
                       }}
                     />

@@ -3,12 +3,11 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
 } from '@/components/ui/select';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue } from '@/lib/types/issue';
-import { LABELS, STATUS } from '@/lib/util';
+
 import { Settings2Icon } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 
@@ -43,16 +42,16 @@ const issueAttributes: {
       hideEmpty: false,
     },
   },
-  labelid: {
-    id: 'labelid',
-    label: 'Label',
-    options: {},
-    configuration: {
-      hideEmpty: false,
-    },
-  },
-  team: {
-    id: 'team',
+  // labelid: {
+  //   id: 'labelid',
+  //   label: 'Label',
+  //   options: {},
+  //   configuration: {
+  //     hideEmpty: false,
+  //   },
+  // },
+  teamid: {
+    id: 'teamid',
     label: 'Team',
     options: {},
     configuration: {
@@ -70,22 +69,27 @@ type GroupedIssues = {
   };
 }[];
 
+type Grouping = {
+  issues: GroupedIssues;
+  key: string;
+};
+
 export function IssueGrouping({
   issues,
   teamid,
   setIssues,
 }: {
   issues: IIssue[];
-  setIssues: (issues: GroupedIssues) => void;
+  setIssues: (grouping: Grouping) => void;
   teamid?: number;
 }) {
   const defaultGrouping = issueAttributes['statusid'].id;
   const [selectedGrouping, setSelectedGrouping] = useState(defaultGrouping);
-  const userSession = useContext(UserSessionContext);
+  const { status, labels, projects, teams } = useContext(OrbitContext);
 
   async function updateGrouping() {
     if (selectedGrouping === 'statusid') {
-      (issueAttributes['statusid'] as any).options = STATUS.reduce(
+      (issueAttributes['statusid'] as any).options = status.reduce(
         (acc, curr) => {
           acc[curr.id] = { id: curr.id, label: curr.label };
           return acc;
@@ -96,7 +100,7 @@ export function IssueGrouping({
 
     if (selectedGrouping === 'labelid') {
       (issueAttributes['labelid'] as any).options = {
-        ...LABELS.reduce((acc, curr) => {
+        ...labels.reduce((acc, curr) => {
           acc[curr.id] = { id: curr.id, label: curr.label };
           return acc;
         }, {}),
@@ -105,21 +109,6 @@ export function IssueGrouping({
     }
 
     if (selectedGrouping === 'projectid') {
-      const query = encodeURIComponent(
-        JSON.stringify({ teams: [teamid] } || {})
-      );
-      const fetchURI = `/api/projects?q=${query}`;
-      const fetchProjects = await fetch(`${fetchURI}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: userSession?.access_token || '',
-        },
-        next: {
-          revalidate: 600,
-        },
-      });
-      const projects = await fetchProjects.json();
       (issueAttributes['projectid'] as any).options = projects.reduce(
         (acc, project) => {
           acc[project.id] = { id: project.id, label: project.title };
@@ -127,6 +116,13 @@ export function IssueGrouping({
         },
         {}
       );
+    }
+
+    if (selectedGrouping === 'teamid') {
+      (issueAttributes['teamid'] as any).options = teams.reduce((acc, team) => {
+        acc[team.id] = { id: team.id, label: team.name };
+        return acc;
+      }, {});
     }
 
     setIssues(groupBykey(issues, selectedGrouping));
@@ -163,7 +159,7 @@ export function IssueGrouping({
   );
 }
 
-function groupBykey(issues: IIssue[], key: string): GroupedIssues {
+function groupBykey(issues: IIssue[], key: string): Grouping {
   const groupingKey = issueAttributes[key]
     ? issueAttributes[key].id
     : issueAttributes['statusid'].id;
@@ -212,5 +208,8 @@ function groupBykey(issues: IIssue[], key: string): GroupedIssues {
     }
   }
 
-  return groupedIssues;
+  return {
+    issues: groupedIssues,
+    key: groupingKey,
+  };
 }

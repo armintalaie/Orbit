@@ -3,7 +3,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Button } from '@radix-ui/themes';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +18,7 @@ import FilterGroup from '../issues/filterGroup';
 import { IssueViewOptions } from '../issues/boards/IssueViewOptions';
 import { IssueGrouping } from '../issues/boards/issueGrouping';
 import { IIssue } from '@/lib/types/issue';
-import { useWindowSize } from 'usehooks-ts';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 interface IssueBoardProps {
   query: {
@@ -38,24 +38,41 @@ type GroupedIssues = {
   label: string;
 }[];
 
-export default function IssueBoard({
-  query,
-  defaultViewType,
-}: IssueBoardProps) {
-  const { width } = useWindowSize();
+type Grouping = {
+  issues: GroupedIssues;
+  key: string;
+};
+export default function IssueBoard({ query }: IssueBoardProps) {
+  const { fetcher } = useContext(OrbitContext);
   const projectId = query?.pid;
-  const [issues, setIssues] = useState([]);
-  const [transformedIssues, setTransformedIssues] = useState([]);
-  const [groupedIssues, setGroupedIssues] = useState<GroupedIssues>([]);
+  const [issues, setIssues] = useState<IIssue[]>([]);
+  const [transformedIssues, setTransformedIssues] = useState<IIssue[]>([]);
+  const [groupedIssues, setGroupedIssues] = useState<Grouping>({
+    issues: [],
+    key: '',
+  });
   const [viewType, setViewType] = useState<ViewType>('board');
   const [filters, setFilters] = useState([]);
   const [filterMethod, setFilterMethod] = useState('ANY');
+
+  function updateIssueSet(issue: IIssue) {
+    const issueExists = issues.some((i) => i.id === issue.id);
+    let newIssues = issues;
+    if (issueExists) {
+      newIssues = issues.map((i) => (i.id === issue.id ? issue : i));
+    } else {
+      newIssues = [...issues, issue];
+    }
+    setIssues(newIssues);
+  }
 
   async function fetchIssues() {
     let route = `/api/issues?q=${encodeURIComponent(
       JSON.stringify(query.q || {})
     )}`;
-    const res = await fetch(`${route}`);
+    const res = await fetcher(`${route}`, {
+      next: { revalidate: 600 },
+    });
     const tasks = await res.json();
     setIssues(tasks);
   }
@@ -174,11 +191,13 @@ export default function IssueBoard({
             groupedIssues={groupedIssues}
             reload={reload}
             projectId={query.pid}
+            onIssueUpdate={updateIssueSet}
           />
         ) : (
           <IssueListView
             groupedIssues={groupedIssues}
             reload={reload}
+            onIssueUpdate={updateIssueSet}
             projectId={projectId}
           />
         )}
@@ -189,22 +208,11 @@ export default function IssueBoard({
 
 function ProjectOptions({ projectId }: { projectId: number }) {
   const router = useRouter();
+  const { fetcher } = useContext(OrbitContext);
 
   async function deleteProject() {
-    const res = await fetch(`/api/projects/${projectId}`, {
+    const res = await fetcher(`/api/projects/${projectId}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
-  }
-
-  async function archiveProject() {
-    const res = await fetch(`/api/projects/${projectId}/archive`, {
-      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },

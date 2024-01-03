@@ -1,8 +1,8 @@
 'use client';
 
 import { InfoCircledIcon } from '@radix-ui/react-icons';
-import { useEffect, useState } from 'react';
-import { MessageCircleIcon, PencilLine } from 'lucide-react';
+import { useContext, useEffect, useState } from 'react';
+import { MessageCircleIcon, TextSelectIcon } from 'lucide-react';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -24,13 +24,21 @@ import { IIssue } from '@/lib/types/issue';
 import { IssueComments } from './IssueComments';
 import { IssueInfo } from './IssueInfo';
 import IssueTitleField from './fields/issueTitleField';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export default function IssuePage({ issueId }: { issueId: number }) {
-  const [issue, setIssue] = useState<IIssue | null>(null);
+  const [issue, setIssue] = useState<IIssue | null | undefined>(null);
   const { width } = useWindowSize();
+  const { fetcher } = useContext(OrbitContext);
+  const [issueContents, setIssueContents] = useState<string>('');
 
   const fetchIssue = async () => {
-    const res = await fetch(`/api/issues/${issueId}`);
+    const res = await fetcher(`/api/issues/${issueId}`);
+
+    if (res.status === 404) {
+      setIssue(null);
+      return;
+    }
     const resultIssue = await res.json();
     if (!resultIssue) {
       return;
@@ -38,30 +46,44 @@ export default function IssuePage({ issueId }: { issueId: number }) {
     setIssue(resultIssue);
   };
 
+  const fetchIssueContents = async () => {
+    const res = await fetcher(`/api/issues/${issueId}/contents`);
+    if (res.status === 404) {
+      return;
+    }
+    const resultIssue = await res.json();
+    if (!resultIssue) {
+      return;
+    }
+    setIssueContents(resultIssue.contents);
+  };
+
   async function saveContentChanges(content: string) {
-    const res = await fetch(`/api/issues/${issueId}`, {
+    const res = await fetcher(`/api/issues/${issueId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: {
-          body: content,
-        },
+        contents: content,
       }),
     });
 
     if (!res.ok) throw new Error(res.statusText);
-
     toast('Content saved');
   }
 
   useEffect(() => {
     fetchIssue();
+    fetchIssueContents();
   }, []);
 
-  if (issue === null)
+  if (issue === undefined)
     return <div className='flex items-center space-x-4'></div>;
+
+  if (issue === null) {
+    return <IssueNotFound />;
+  }
 
   if (width < 820) {
     return (
@@ -79,7 +101,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
             <div className=' flex  w-full flex-1 flex-grow flex-col justify-start overflow-hidden bg-gray-50'>
               <TextEditor
                 onSave={saveContentChanges}
-                content={issue.contents.body as string}
+                content={issueContents}
                 issue={issue}
               />
             </div>
@@ -115,7 +137,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
                   <div className=' flex h-full w-full flex-grow flex-col overflow-x-hidden overflow-y-scroll bg-gray-50'>
                     <TextEditor
                       onSave={saveContentChanges}
-                      content={issue.contents.body as string}
+                      content={issueContents}
                       issue={issue}
                     />
                   </div>
@@ -201,5 +223,14 @@ function CommentsMobilePopver({ issueId }: { issueId: number }) {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
+  );
+}
+
+function IssueNotFound() {
+  return (
+    <div className='flex w-full flex-grow flex-col items-center justify-center gap-4 space-x-4'>
+      <TextSelectIcon className='h-24 w-24 text-gray-500' />
+      <h1 className='text-4xl font-medium text-gray-500'>Issue not found</h1>
+    </div>
   );
 }

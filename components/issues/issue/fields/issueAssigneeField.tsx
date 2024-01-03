@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { CircleUser, UserSquare2Icon, UsersRoundIcon } from 'lucide-react';
+import { useState, useEffect, useContext } from 'react';
+import { CircleUser } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Badge } from '@/components/ui/badge';
+import { OrbitContext } from '@/lib/context/OrbitContext';
 
 interface Profile {
   id: string;
@@ -37,6 +37,7 @@ type AssigneeUpdateFieldProps = {
 
 export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
   const { issueId, user, team, contentOnly = false } = props;
+  const { fetcher } = useContext(OrbitContext);
   const [memberOptions, setMemberOptions] = useState<{
     [key: string]: Profile;
   }>({});
@@ -46,7 +47,7 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
   );
 
   const fetchMembers = async () => {
-    const res = await fetch(`/api/teams/${team.id}/members`, {
+    const res = await fetcher(`/api/teams/${team.id}/members`, {
       next: { revalidate: 30 },
     });
     let members = await res.json();
@@ -88,13 +89,13 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
 
   async function updateAssignee(userId: string) {
     if (!userId || userId === null) {
-      fetch(`/api/issues/${issueId}/assignees`, {
+      fetcher(`/api/issues/${issueId}/assignees`, {
         method: 'DELETE',
       }).then(() => {
         setSelectedStatusId(null);
       });
     } else {
-      await fetch(`/api/issues/${issueId}/assignees`, {
+      await fetcher(`/api/issues/${issueId}/assignees`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
