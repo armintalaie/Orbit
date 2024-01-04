@@ -16,28 +16,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-
-interface Profile {
-  id: string | undefined;
-  full_name: string;
-  avatar_url: string;
-  username: string;
-}
-
-const noAssignee: Profile = {
-  id: '-1',
-  full_name: 'Unassigned',
-  avatar_url: '',
-  username: '',
-};
+import { IProfile } from '@/lib/types/issue';
+import AssigneeAvatar from '@/components/projects/AssigneeAvatar';
 
 export function AssigneeField({ field }: { field: any }) {
   const { fetcher } = useContext(OrbitContext);
 
   const [memberOptions, setMemberOptions] = useState<{
-    [key: string]: Profile;
+    [key: string]: IProfile;
   }>({});
   const [open, setOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(
@@ -50,15 +37,8 @@ export function AssigneeField({ field }: { field: any }) {
         next: { revalidate: 30 },
       });
       let members = await res.json();
-      members = members.map(
-        (member: { profile: Profile; memberid: string }) => ({
-          ...member.profile,
-          id: member.memberid,
-        })
-      );
+      const options: { [key: string]: IProfile } = {};
 
-      const options: { [key: string]: Profile } = {};
-      options[noAssignee.id as string] = noAssignee;
       for (const member of members) {
         options[member.id] = {
           ...member,
@@ -68,6 +48,7 @@ export function AssigneeField({ field }: { field: any }) {
     }
     fetchMembers();
   }, []);
+
   return (
     <div className='flex items-center space-x-4'>
       <Popover open={open} onOpenChange={setOpen}>
@@ -77,7 +58,7 @@ export function AssigneeField({ field }: { field: any }) {
             size='sm'
             className='line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-2xs text-gray-800'
           >
-            {selectedStatus && selectedStatus !== noAssignee.id ? (
+            {selectedStatus ? (
               <>
                 <CircleUser className='mr-2 h-4 w-4 shrink-0' />
                 {memberOptions &&
@@ -133,9 +114,14 @@ export function AssigneeField({ field }: { field: any }) {
                       setOpen(false);
                     }}
                   >
-                    <CircleUser className='mr-2 h-4 w-4 shrink-0' />
-
-                    <span>{member.full_name}</span>
+                    <AssigneeAvatar
+                      assignee={member}
+                      formatting={{
+                        showFullName: true,
+                        showEmail: true,
+                        leftAlign: false,
+                      }}
+                    />
                   </CommandItem>
                 ))}
               </CommandGroup>

@@ -37,19 +37,13 @@ export const projectSchema = z.object({
   description: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
 export const formSchema = z.object({
   title: z.string(),
   description: z.string(),
   statusid: z.number(),
-  deadline: z
-    .object({
-      from: z.date().optional(),
-      to: z.date().optional(),
-    })
-    .optional(),
+  deadline: z.date().optional(),
   teamid: z.number(),
 });
 
@@ -68,7 +62,6 @@ export function NewProject({
       title: '',
       statusid: 1,
       description: '',
-      deadline: {},
       ...defaultValues,
     },
   });
@@ -78,12 +71,9 @@ export function NewProject({
       title: formVals.title,
       description: formVals.description,
       statusid: formVals.statusid,
-      deadline:
-        formVals.deadline?.to &&
-        formVals.deadline.to.toISOString().split('T')[0],
-      datestarted:
-        formVals.deadline?.from &&
-        formVals.deadline.from.toISOString().split('T')[0],
+      deadline: formVals.deadline
+        ? formVals.deadline.toISOString().split('T')[0]
+        : null,
       teamid: Number(formVals.teamid),
     };
 

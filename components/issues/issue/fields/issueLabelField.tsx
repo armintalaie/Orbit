@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { CheckCircle2Icon, CircleIcon } from 'lucide-react';
+import { CheckCircle2Icon, CircleIcon, TagsIcon } from 'lucide-react';
 import IssueLabel from '../../label';
 import { ILabel } from '@/lib/types/issue';
 import { toast } from 'sonner';
@@ -154,9 +154,14 @@ export function IssueLabelField({
 
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
-      <div className='m-0 flex flex-col  flex-wrap items-start gap-2  overflow-hidden  rounded-md  p-0 '>
-        <PopoverTrigger asChild>
-          <button className='flex flex-wrap items-center gap-1'>
+      <div className='m-0 flex w-full  flex-col flex-wrap items-start  gap-2  overflow-hidden  rounded-md p-0 '>
+        <PopoverTrigger asChild className='w-full p-0 '>
+          <button className='flex flex-wrap items-center justify-start gap-1 p-0 '>
+            <div className='flex  w-fit items-center justify-start  gap-2 rounded-xl border bg-opacity-10 p-1  pr-2 text-2xs font-medium '>
+              <TagsIcon className='h-4 w-4' />
+              Add labels
+            </div>
+
             {selectedLabelIds.map((id) => (
               <div
                 key={id}

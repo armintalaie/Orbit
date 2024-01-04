@@ -51,10 +51,11 @@ export function IssueInfo({
       title: 'Deadline',
       value: (
         <IssueDeadlineField
-          date={{
-            from: new Date(issue.deadline),
-            to: new Date(issue.datestarted),
-          }}
+          date={
+            issue.deadline !== null || issue.deadline
+              ? new Date(issue.deadline)
+              : undefined
+          }
           issueId={issue.id}
         />
       ),
@@ -132,10 +133,7 @@ export function IssueInfo({
 
         <div className='flex  flex-col  gap-6   p-4 py-3'>
           <div className='flex  flex-row   gap-2'>
-            <p className='w-16 items-center  pr-2 text-2xs font-medium leading-tight text-gray-700'>
-              Labels
-            </p>
-            <div className='flex-grow items-center  pl-4 pr-2 text-xs font-medium leading-tight text-gray-700'>
+            <div className='flex-grow items-center justify-start  pr-2 text-xs font-medium leading-tight text-gray-700'>
               <IssueLabelField issueId={issue.id} labels={issue.labels} />
             </div>
           </div>

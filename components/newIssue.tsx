@@ -50,7 +50,6 @@ export const issueSchema = z.object({
   contents: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   assignee: z.array(z.string()),
 });
 
@@ -58,10 +57,7 @@ export const formSchema = z.object({
   title: z.string(),
   contents: z.string(),
   statusid: z.number(),
-  deadline: z.object({
-    from: z.date().nullable(),
-    to: z.date().nullable(),
-  }),
+  deadline: z.date().nullable(),
   labels: z.array(z.string()),
   assignee: z.string().nullable(),
   projectid: z.number(),
@@ -167,10 +163,7 @@ function NewIssueForm({
       title: '',
       statusid: 1,
       contents: '',
-      deadline: {
-        from: null,
-        to: null,
-      },
+      deadline: new Date(),
       assignee: null,
       labels: [],
       ...defaultValues,
@@ -182,13 +175,10 @@ function NewIssueForm({
       title: formVals.title,
       contents: formVals.contents,
       statusid: formVals.statusid,
-      deadline: formVals.deadline.to
-        ? formVals.deadline.to.toISOString().split('T')[0]
+      deadline: formVals.deadline
+        ? formVals.deadline.toISOString().split('T')[0]
         : undefined,
-      datestarted: formVals.deadline.from
-        ? formVals.deadline.from.toISOString().split('T')[0]
-        : undefined,
-      assignee: formVals.assignee || null,
+      assignees: [formVals.assignee] || null,
       labels: labels,
       projectid: formVals.projectid || undefined,
     };

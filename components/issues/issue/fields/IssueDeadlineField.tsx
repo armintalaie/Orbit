@@ -10,13 +10,12 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useContext, useState } from 'react';
-import { DateRange } from 'react-day-picker';
 import { toast } from 'sonner';
 
 type IssueDeadlineFieldProps = {
   issueId: number;
   contentOnly?: boolean;
-  date?: DateRange;
+  date?: Date;
 };
 
 export default function IssueDeadlineField({
@@ -27,10 +26,7 @@ export default function IssueDeadlineField({
   const { fetcher } = useContext(OrbitContext);
   const [open, setOpen] = useState(false);
 
-  const [date, setDate] = useState<DateRange>({
-    from: initialDate?.from || undefined,
-    to: initialDate?.to || undefined,
-  });
+  const [date, setDate] = useState<Date | undefined>(initialDate);
 
   async function updateDate() {
     const res = await fetcher(`/api/issues/${issueId}`, {
@@ -39,24 +35,20 @@ export default function IssueDeadlineField({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        deadline: date.from,
-        datestarted: date.to,
+        deadline: date ? date.toISOString().split('T')[0] : null,
       }),
     });
 
     if (!res.ok) throw new Error(res.statusText);
-    toast('Deadlines updated');
+    toast('Deadline updated');
   }
 
   const hasChanged = () => {
-    return (
-      date?.from?.toString() !== initialDate?.from?.toString() ||
-      date?.to?.toString() !== initialDate?.to?.toString()
-    );
+    return date?.toString() !== initialDate?.toString();
   };
   const onOpenChange = (open: boolean) => {
     if (!open) {
-      if (date && hasChanged()) {
+      if (hasChanged()) {
         updateDate();
       } else {
         toast('No changes made');
@@ -65,19 +57,36 @@ export default function IssueDeadlineField({
     setOpen(open);
   };
 
+  const footer = (
+    <div className='flex items-center justify-between'>
+      <Button
+        variant='ghost'
+        onClick={() => {
+          setDate(undefined);
+        }}
+      >
+        Clear
+      </Button>
+      <Button
+        variant='ghost'
+        onClick={() => {
+          setDate(new Date());
+        }}
+      >
+        Today
+      </Button>
+    </div>
+  );
+
   const IssueDeadlineSection = (
     <Calendar
       initialFocus
-      mode='range'
-      defaultMonth={date?.from}
-      selected={date}
-      onSelect={(date) => {
-        setDate((prev) => ({
-          ...prev,
-          ...date,
-        }));
-      }}
+      defaultMonth={date}
+      mode='single'
+      selected={date ? date : undefined}
+      onSelect={setDate}
       numberOfMonths={1}
+      footer={footer}
     />
   );
 
@@ -98,18 +107,7 @@ export default function IssueDeadlineField({
             )}
           >
             <CalendarIcon className='mr-2 h-4 w-4' />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, 'LLL dd, y')} -{' '}
-                  {format(date.to, 'LLL dd, y')}
-                </>
-              ) : (
-                format(date.from, 'LLL dd, y')
-              )
-            ) : (
-              <span>Pick a date</span>
-            )}
+            {date ? <>{format(date, 'LLL dd, y')}</> : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className='p-0' side='right' align='start'>

@@ -17,6 +17,7 @@ const issueSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
   projectid: z.number() || z.string(),
+  assignees: z.array(z.string()).optional(),
 });
 
 export async function POST(
@@ -25,7 +26,7 @@ export async function POST(
 ) {
   try {
     const newIssue = await req.json();
-    const issue = issueSchema.parse({
+    const { assignees, ...issue } = issueSchema.parse({
       ...newIssue,
     });
 
@@ -86,6 +87,17 @@ export async function POST(
       .where('issue.id', '=', id);
 
     const newissue = await query.executeTakeFirst();
+
+    if (assignees)
+      await db
+        .insertInto('issue_assignee')
+        .values(
+          assignees.map((assignee: string) => ({
+            issue_id: id,
+            user_id: assignee,
+          }))
+        )
+        .execute();
     return NextResponse.json(newissue);
   } catch (error) {
     console.log(error);

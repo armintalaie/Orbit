@@ -7,7 +7,6 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default function AuthForm() {
-  console.log(NEXT_PUBLIC_BASE_URL);
   const supabase = createClientComponentClient<any>();
 
   return (
