@@ -29,7 +29,7 @@ import IssueBoard from '@/components/projects/IssueMainBoard';
 import { toast } from 'sonner';
 import { Maximize2 } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-import { IProject } from '@/lib/types/issue';
+import { IProject, ITeam } from '@/lib/types/issue';
 
 type viewTypes = 'ISSUES' | 'PROJECTS';
 
@@ -38,7 +38,11 @@ export default function ProjectPage() {
   const params = useParams();
   const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
-  const [team, setTeam] = useState([]);
+  const { teams: cachedTeams } = useContext(OrbitContext);
+  const initialteam =
+    cachedTeams &&
+    cachedTeams.find((t) => t.id.toString() === params.teamid.toString());
+  const [team, setTeam] = useState<ITeam | undefined>(initialteam);
   const [viewType, setViewType] = useState<viewTypes>('ISSUES');
   const issueQuery = {
     tid: params.teamid,
@@ -95,6 +99,8 @@ export default function ProjectPage() {
     fetchProjects();
     fetchMembers();
   }
+
+  if (!team) return <></>;
 
   const issueView = <IssueBoard query={issueQuery} />;
 
@@ -161,8 +167,6 @@ export default function ProjectPage() {
             </div>
           </>
         )}
-
-        {/* <Analytics/> */}
       </PageWrapper.Content>
     </PageWrapper>
   );
