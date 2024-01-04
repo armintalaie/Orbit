@@ -5,7 +5,7 @@ import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Document from '@tiptap/extension-document';
 import Heading from '@tiptap/extension-heading';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -72,7 +72,7 @@ export default function TextEditor({
   issue,
 }: {
   onSave?: (content: string) => Promise<void>;
-  content: string;
+  content?: string;
   className?: string;
   onUpdate?: (content: string) => Promise<void>;
   issue: any;
@@ -152,6 +152,14 @@ export default function TextEditor({
     ],
     content: content,
   });
+
+  console.log('editor', content);
+
+  useEffect(() => {
+    if (content && editor) {
+      editor.commands.setContent(content);
+    }
+  }, [content]);
 
   return (
     <div

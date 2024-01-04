@@ -32,7 +32,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
   const [issue, setIssue] = useState<IIssue | null | undefined>(undefined);
   const { width } = useWindowSize();
   const { fetcher } = useContext(OrbitContext);
-  const [issueContents, setIssueContents] = useState<string>('');
+  const [issueContents, setIssueContents] = useState<string | undefined>();
 
   const fetchIssue = async () => {
     const res = await fetcher(`/api/issues/${issueId}`);
@@ -77,8 +77,11 @@ export default function IssuePage({ issueId }: { issueId: number }) {
   }
 
   useEffect(() => {
-    fetchIssue();
     fetchIssueContents();
+  });
+
+  useEffect(() => {
+    fetchIssue();
   }, []);
 
   if (issue === undefined)
