@@ -1,5 +1,4 @@
 'use client';
-import { FeedbackButton } from '@/components/feedback';
 import { Box, Text } from '@radix-ui/themes';
 import React, { useContext, useState } from 'react';
 import Link from 'next/link';
@@ -12,7 +11,6 @@ import {
   LayoutGridIcon,
   PanelLeft,
 } from 'lucide-react';
-import { Changelog } from '@/components/changelog';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,11 +18,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { SettingsModalButton } from '@/components/settings/SettingsModal';
 import AuthContextProvider from '@/lib/context/AuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CommandMenu } from '@/components/globalCommand';
 import OrbitContextProvider, { OrbitContext } from '@/lib/context/OrbitContext';
+import { GearIcon } from '@radix-ui/react-icons';
 
 export default function ProjectLayout({
   children,
@@ -49,10 +47,6 @@ export default function ProjectLayout({
                 listClasses='hover:underline px-2 '
                 capitalizeLinks
               />
-              <div className='flex flex-row gap-2 overflow-y-auto pr-3 '>
-                <FeedbackButton />
-                <Changelog />
-              </div>
             </div>
             {children}
           </div>
@@ -125,7 +119,14 @@ function SideBarContent({
         </section>
       </div>
       <div className='flex flex-col  gap-2 overflow-y-auto p-2'>
-        <SettingsModalButton />
+        <Link
+          href={'/settings'}
+          shallow={true}
+          className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700 dark:text-neutral-400'
+        >
+          <GearIcon className='mr-2 h-3 w-3' />
+          <span>Settings</span>
+        </Link>
       </div>
     </section>
   );

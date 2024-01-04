@@ -153,8 +153,6 @@ export default function TextEditor({
     content: content,
   });
 
-  console.log('editor', content);
-
   useEffect(() => {
     if (content && editor) {
       editor.commands.setContent(content);

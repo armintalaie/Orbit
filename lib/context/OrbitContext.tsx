@@ -9,9 +9,10 @@ type OrbitType = {
   status: IStatus[];
   projects: IProject[];
   teams: ITeam[];
+  profile: any;
 };
 
-type ReloadTypes = 'labels' | 'status' | 'projects' | 'teams';
+type ReloadTypes = 'labels' | 'status' | 'projects' | 'teams' | 'profile';
 
 type OrbitContextType = {
   fetcher: (
@@ -22,6 +23,7 @@ type OrbitContextType = {
 } & OrbitType;
 
 export const OrbitContext = React.createContext<OrbitContextType>({
+  profile: {},
   labels: [],
   status: [],
   projects: [],
@@ -44,6 +46,7 @@ export default function OrbitContextProvider({
     status: [],
     projects: [],
     teams: [],
+    profile: {},
   });
 
   const reload = async (items: ReloadTypes[] = []) => {
@@ -59,6 +62,8 @@ export default function OrbitContextProvider({
               return getStatus();
             case 'projects':
               return getProjects();
+            case 'profile':
+              return getProfile();
             case 'teams':
               return getTeams();
           }
@@ -107,12 +112,19 @@ export default function OrbitContextProvider({
     setOrbit((prev) => ({ ...prev, teams: data }));
   };
 
+  const getProfile = async () => {
+    const res = await fetcher('/api/profiles/me');
+    const data = await res.json();
+    setOrbit((prev) => ({ ...prev, profile: data }));
+  };
+
   const setupOrbit = async () => {
     const p = Promise.all([
       getLabels(),
       getStatus(),
       getProjects(),
       getTeams(),
+      getProfile(),
     ]);
     await p;
     setLoading(false);

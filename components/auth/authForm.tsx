@@ -3,13 +3,11 @@
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useEffect, useState } from 'react';
+
+const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default function AuthForm() {
-  const [path, setPath] = useState('');
-  useEffect(() => {
-    setPath(window.location.origin);
-  }, []);
+  console.log(NEXT_PUBLIC_BASE_URL);
   const supabase = createClientComponentClient<any>();
 
   return (
@@ -21,7 +19,7 @@ export default function AuthForm() {
       onlyThirdPartyProviders={true}
       showLinks={true}
       providers={['google']}
-      redirectTo={`${path}/api/auth/callback`}
+      redirectTo={`${NEXT_PUBLIC_BASE_URL}/api/auth/callback`}
     />
   );
 }

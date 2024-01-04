@@ -34,7 +34,6 @@ export async function POST(
       .values(issue)
       .returning(['id'])
       .executeTakeFirst();
-    console.log(id);
 
     if (newIssue.labels) {
       const { data: labels, error: labelsError } = await supabase

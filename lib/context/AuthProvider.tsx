@@ -21,7 +21,6 @@ export default function AuthContextProvider({
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: session2 } }) => {
       setSession(session2);
-      // console.log(session2);
     });
 
     const {

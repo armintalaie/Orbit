@@ -1,11 +1,12 @@
+import { db } from '@/lib/db/handler';
+import { supabase } from '@/lib/supabase';
 import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '../supabase';
 
-export default async function Authentication(
-  setContext: (key: string, value: string) => void,
-  req: NextRequest
-): Promise<NextResponse> {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { pid: string } }
+) {
   const authorization = headers().get('authorization');
 
   if (!authorization) {
@@ -14,6 +15,7 @@ export default async function Authentication(
       { status: 401 }
     );
   }
+
   const { data: userData } = await supabase.auth.getUser(authorization);
 
   if (userData.user === null) {
@@ -23,16 +25,10 @@ export default async function Authentication(
     );
   }
 
-  const res = NextResponse.next();
-  try {
-    setContext('user', JSON.stringify(userData.user));
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: 'Could not authenticate' },
-      { status: 401 }
-    );
-  }
-
-  return res;
+  const profile = await db
+    .selectFrom('profiles')
+    .selectAll()
+    .where('id', '=', userData.user.id)
+    .executeTakeFirst();
+  return Response.json(profile);
 }

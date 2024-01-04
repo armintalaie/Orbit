@@ -188,7 +188,6 @@ export default function IssueBoard({ query }: IssueBoardProps) {
     });
 
     const qString = createQueryString('filters', queriftyFilters.join(','));
-    console.log(qString);
     router.push(pathname + '?' + qString);
   }, [filters]);
 
