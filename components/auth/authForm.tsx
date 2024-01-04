@@ -18,7 +18,7 @@ export default function AuthForm() {
       view='sign_in'
       appearance={{ theme: ThemeSupa }}
       theme='light'
-      onlyThirdPartyProviders={false}
+      onlyThirdPartyProviders={true}
       showLinks={true}
       providers={['google']}
       redirectTo={`${path}/api/auth/callback`}

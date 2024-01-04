@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -12,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { CheckCircle2Icon, CircleIcon, TagsIcon } from 'lucide-react';
+import { CheckCircle2Icon, CircleIcon } from 'lucide-react';
 import IssueLabel from '../../label';
 import { ILabel } from '@/lib/types/issue';
 import { toast } from 'sonner';
@@ -130,7 +129,9 @@ export function IssueLabelField({
             onSelect={onLabelSelect}
           >
             <div className='flex items-center gap-2'>
-              {selectedLabelIds.some((id) => id === label.id) ? (
+              {selectedLabelIds.some(
+                (id) => id === label.id || id.toString() === label.id.toString()
+              ) ? (
                 <CheckCircle2Icon className='h-4 w-4' />
               ) : (
                 <CircleIcon className='h-4 w-4' />
@@ -152,43 +153,32 @@ export function IssueLabelField({
   }
 
   return (
-    <div className='flex flex-col gap-3  '>
-      <div className='flex flex-wrap items-center gap-1'>
-        {selectedLabelIds.map((id) => (
-          <div
-            key={id}
-            className='flex  w-fit items-center  justify-start gap-2 rounded-xl border bg-opacity-10  pr-2 text-2xs font-medium '
-          >
-            <IssueLabel
-              className=' hasChanged flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 text-2xs font-medium '
-              key={id}
-              label={labelOptions[id].label}
-              color={labelOptions[id].color}
-              id={labelOptions[id].id}
-              compact={true}
-            />
-            {labelOptions[id].label}
-          </div>
-        ))}
+    <Popover open={open} onOpenChange={onOpenChange}>
+      <div className='m-0 flex flex-col  flex-wrap items-start gap-2  overflow-hidden  rounded-md  p-0 '>
+        <PopoverTrigger asChild>
+          <button className='flex flex-wrap items-center gap-1'>
+            {selectedLabelIds.map((id) => (
+              <div
+                key={id}
+                className='flex  w-fit items-center  justify-start gap-2 rounded-xl border bg-opacity-10  pr-2 text-2xs font-medium '
+              >
+                <IssueLabel
+                  className=' hasChanged flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 text-2xs font-medium '
+                  key={id}
+                  label={labelOptions[id].label}
+                  color={labelOptions[id].color}
+                  id={labelOptions[id].id}
+                  compact={true}
+                />
+                {labelOptions[id].label}
+              </div>
+            ))}
+          </button>
+        </PopoverTrigger>
       </div>
-
-      <Popover open={open} onOpenChange={onOpenChange}>
-        <div className='m-0 flex items-center gap-0 overflow-hidden rounded-2xl border p-0   '>
-          <PopoverTrigger asChild>
-            <Button
-              variant='ghost'
-              size='sm'
-              className='border-right flex h-6 w-full justify-start gap-2 border-gray-200  px-2 text-2xs '
-            >
-              <TagsIcon className='h-4 w-4' />
-              Edit Labels
-            </Button>
-          </PopoverTrigger>
-        </div>
-        <PopoverContent className='p-0' side='right' align='start'>
-          {IssueLabelSection}
-        </PopoverContent>
-      </Popover>
-    </div>
+      <PopoverContent className='p-0' side='right' align='start'>
+        {IssueLabelSection}
+      </PopoverContent>
+    </Popover>
   );
 }

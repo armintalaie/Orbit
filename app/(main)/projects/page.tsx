@@ -1,13 +1,12 @@
 'use client';
 
 import { NewProject } from '@/components/projects/newProject';
-import { dateFormater, isOverdue } from '@/lib/util';
+import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
 import { Badge, Table } from '@radix-ui/themes';
 import { useContext } from 'react';
 import Link from 'next/link';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-
 interface IProject {
   id: number;
   title: string;
@@ -23,6 +22,7 @@ interface IProject {
 
 export default function ProjectPage() {
   const { projects, reload } = useContext(OrbitContext);
+  setDocumentMeta(`Projects`);
 
   return (
     <PageWrapper>
@@ -69,7 +69,6 @@ function TableView({ projects }: { projects: IProject[] }) {
                   <Link
                     href={{
                       pathname: `/projects/${project.id}`,
-                      query: { id: project.id, title: project.title },
                     }}
                     shallow={true}
                     className='underline'

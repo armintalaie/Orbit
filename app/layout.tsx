@@ -18,17 +18,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning={true}>
       <head>
         <link rel='icon' href='favicon.png' sizes='any' />
-        <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' />
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0'
+        />
         <meta charSet='utf-8' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning={true}>
         <Theme
           appearance='light'
-          accentColor='cyan'
+          accentColor='blue'
           grayColor='sand'
           radius='large'
           scaling='95%'

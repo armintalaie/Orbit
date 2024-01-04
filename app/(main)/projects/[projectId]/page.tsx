@@ -9,6 +9,7 @@ import ProjectTitleField from '@/components/projects/project/projectTitleField';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IProject } from '@/lib/types/issue';
 import { TextSelectIcon } from 'lucide-react';
+import { setDocumentMeta } from '@/lib/util';
 
 interface ProjectPageProps {
   id: number;
@@ -40,6 +41,8 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
   if (project === null) {
     return <ProjectNotFound />;
   }
+
+  setDocumentMeta(`Project ${project.title}`);
 
   return (
     <PageWrapper>

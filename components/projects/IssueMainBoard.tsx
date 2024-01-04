@@ -2,8 +2,8 @@
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Button } from '@radix-ui/themes';
-import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,7 +52,17 @@ export default function IssueBoard({ query }: IssueBoardProps) {
     key: '',
   });
   const [viewType, setViewType] = useState<ViewType>('board');
-  const [filters, setFilters] = useState([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  let queryFilters = searchParams.get('filters');
+  let defaultFilters = [];
+  try {
+    defaultFilters = queryFilters ? JSON.parse(queryFilters) : [];
+  } catch (e) {
+    defaultFilters = [];
+  }
+  const [filters, setFilters] = useState(defaultFilters);
   const [filterMethod, setFilterMethod] = useState('ANY');
 
   function updateIssueSet(issue: IIssue) {
@@ -155,9 +165,32 @@ export default function IssueBoard({ query }: IssueBoardProps) {
     setTransformedIssues(updatedIssues);
   }
 
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
   useEffect(() => {
     filterOutIssues();
   }, [filters, issues, filterMethod]);
+
+  useEffect(() => {
+    if (filters.length === 0) {
+      return;
+    }
+    const queriftyFilters = filters.map((filter) => {
+      return `${filter.type}:${filter.key}`;
+    });
+
+    const qString = createQueryString('filters', queriftyFilters.join(','));
+    console.log(qString);
+    router.push(pathname + '?' + qString);
+  }, [filters]);
 
   useEffect(() => {
     fetchIssues();

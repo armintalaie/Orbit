@@ -31,7 +31,6 @@ import { statusIconMapper } from '../statusIconMapper';
 import { UserFilter } from '../userFilter';
 import IssueLabel from './label';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
 type FilterType =

@@ -82,3 +82,13 @@ export function getFirstNameAndLastInitial(name: string) {
   const [first, last] = name.split(' ');
   return `${first} ${last[0]}.`;
 }
+
+export function setDocumentMeta(title: string, description?: string) {
+  'use client';
+  document.title = title;
+  if (description) {
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute('content', description);
+  }
+}

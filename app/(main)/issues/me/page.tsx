@@ -2,10 +2,12 @@
 import { NewIssue } from '@/components/newIssue';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { setDocumentMeta } from '@/lib/util';
 import { useContext, useEffect } from 'react';
 
 export default function MyIssuePage() {
   const userSession = useContext(UserSessionContext);
+
   const userId = userSession?.user?.id;
   let issueQuery = {
     q: {
@@ -13,6 +15,8 @@ export default function MyIssuePage() {
     },
     showProject: true,
   };
+
+  setDocumentMeta(`My Issues`);
 
   return (
     <div className='flex h-full w-full flex-col'>

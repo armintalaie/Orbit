@@ -7,9 +7,10 @@ import {
 } from '@/components/ui/select';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue } from '@/lib/types/issue';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import { Settings2Icon } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 type AttributeOptions = {
   id: string;
@@ -76,14 +77,17 @@ type Grouping = {
 
 export function IssueGrouping({
   issues,
-  teamid,
   setIssues,
 }: {
   issues: IIssue[];
   setIssues: (grouping: Grouping) => void;
-  teamid?: number;
 }) {
-  const defaultGrouping = issueAttributes['statusid'].id;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const pathname = usePathname();
+  const defaultGrouping =
+    searchParams.get('grouping') || issueAttributes['statusid'].id;
   const [selectedGrouping, setSelectedGrouping] = useState(defaultGrouping);
   const { status, labels, projects, teams } = useContext(OrbitContext);
 
@@ -124,9 +128,24 @@ export function IssueGrouping({
         return acc;
       }, {});
     }
-
     setIssues(groupBykey(issues, selectedGrouping));
   }
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  useEffect(() => {
+    router.push(
+      pathname + '?' + createQueryString('grouping', selectedGrouping)
+    );
+  }, [selectedGrouping]);
 
   useEffect(() => {
     updateGrouping();

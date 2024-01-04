@@ -4,14 +4,12 @@ import { useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import IssueStatusField from './fields/IssueStatusField';
-import { IssueDateField } from './fields/IssueDeadlineField';
 import { IssueAssigneeField } from './fields/issueAssigneeField';
 import { IssueProjectField } from './fields/issueProjectField';
-import { IssueTextField } from './fields/issueTextField';
 import Link from 'next/link';
 import { IssueLabelField } from './fields/issueLabelField';
-import { dateFormater } from '@/lib/util';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import IssueDeadlineField from './fields/IssueDeadlineField';
 
 export function IssueInfo({
   issueId,
@@ -51,11 +49,15 @@ export function IssueInfo({
     },
     {
       title: 'Deadline',
-      value: <IssueDateField date={issue.deadline} issueId={issue.id} />,
-    },
-    {
-      title: 'Assigned',
-      value: <IssueDateField date={issue.datestarted} issueId={issue.id} />,
+      value: (
+        <IssueDeadlineField
+          date={{
+            from: new Date(issue.deadline),
+            to: new Date(issue.datestarted),
+          }}
+          issueId={issue.id}
+        />
+      ),
     },
     {
       title: 'Assignee',
@@ -76,34 +78,18 @@ export function IssueInfo({
         />
       ),
     },
-
-    {
-      title: 'Team',
-      value: (
-        <Link
-          href={`/teams/${issue.teamid}`}
-          target='_blank'
-          referrerPolicy='no-referrer'
-          className='border-b-2 border-b-gray-400 '
-        >
-          <p className='text-xs font-medium   leading-tight text-gray-700 '>
-            {issue.team_title}
-          </p>
-        </Link>
-      ),
-    },
   ];
 
-  const isseuMetaInfo = [
-    {
-      title: 'Created',
-      value: <IssueTextField text={dateFormater(issue.datecreated)} />,
-    },
-    {
-      title: 'Updated',
-      value: <IssueTextField text={dateFormater(issue.dateupdated)} />,
-    },
-  ];
+  // const isseuMetaInfo = [
+  //   {
+  //     title: 'Created',
+  //     value: <IssueTextField text={dateFormater(issue.datecreated)} />,
+  //   },
+  //   {
+  //     title: 'Updated',
+  //     value: <IssueTextField text={dateFormater(issue.dateupdated)} />,
+  //   },
+  // ];
 
   return (
     <div className=' flex  w-full flex-col border-l border-gray-100 bg-white '>
@@ -125,7 +111,7 @@ export function IssueInfo({
         <div className='flex  flex-col  gap-6   p-4 py-3'>
           {IssueInfoFields.map(({ title, value }) => (
             <div key={title} className='flex h-6 flex-row items-center  gap-2'>
-              <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+              <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700 '>
                 {title}
               </p>
               <div className='flex-grow items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
@@ -135,24 +121,38 @@ export function IssueInfo({
           ))}
         </div>
 
-        <div className='flex  flex-col  gap-4   p-4 py-3'>
-          <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
-            Labels
-          </p>
-          <IssueLabelField issueId={issue.id} labels={issue.labels} />
-        </div>
         <div className='flex  flex-col  gap-6   p-4 py-3'>
-          {isseuMetaInfo.map(({ title, value }) => (
-            <div key={title} className='flex h-6 flex-row items-center  gap-2'>
-              <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
-                {title}
-              </p>
-              <div className='flex-grow items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
-                {value}
-              </div>
+          <div className='flex  flex-row   gap-2'>
+            <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+              Team
+            </p>
+            <div className='flex-grow items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+              <Link
+                href={`/teams/${issue.teamid}`}
+                target='_blank'
+                referrerPolicy='no-referrer'
+                className='border-b-2 border-b-gray-400 '
+              >
+                <p className='text-xs font-medium   leading-tight text-gray-700 '>
+                  {issue.team_title}
+                </p>
+              </Link>
             </div>
-          ))}
+          </div>
         </div>
+
+        <div className='flex  flex-col  gap-6   p-4 py-3'>
+          <div className='flex  flex-row   gap-2'>
+            <p className='w-24 items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+              Labels
+            </p>
+            <div className='flex-grow items-center  pr-2 text-xs font-medium leading-tight text-gray-700'>
+              <IssueLabelField issueId={issue.id} labels={issue.labels} />
+            </div>
+          </div>
+        </div>
+
+        <div className='flex  flex-col  gap-4   p-4 py-3'></div>
       </div>
     </div>
   );

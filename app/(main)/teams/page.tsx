@@ -7,9 +7,11 @@ import { NewTeam } from '@/components/newTeam';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { ITeam } from '@/lib/types/issue';
+import { setDocumentMeta } from '@/lib/util';
 
 export default function TeamPage() {
   const { teams, reload } = useContext(OrbitContext);
+  setDocumentMeta(`Teams`);
 
   return (
     <PageWrapper>

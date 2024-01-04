@@ -1,7 +1,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { dateFormater, isOverdue } from '@/lib/util';
+import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Table } from '@radix-ui/themes';
 import { useParams, useRouter } from 'next/navigation';
@@ -27,7 +27,6 @@ import { NewProject } from '@/components/projects/newProject';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { toast } from 'sonner';
-import ProjectTitleField from '@/components/projects/project/projectTitleField';
 import { Maximize2 } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IProject } from '@/lib/types/issue';
@@ -53,7 +52,6 @@ export default function ProjectPage() {
     const q = {
       teams: [params.teamid as string],
     };
-    console.log(q);
     const res = await fetcher(
       `/api/projects?q=${encodeURIComponent(JSON.stringify(q))}`,
       {
@@ -62,18 +60,19 @@ export default function ProjectPage() {
         },
       }
     );
+
     const projects = await res.json();
     setProjects(projects);
   }
 
   async function fetchMembers() {
-    // const res = await fetch(`/api/teams/${params.teamid}/members`, {
-    //   next: {
-    //     tags: ['teams'],
-    //   },
-    // });
-    // const members = await res.json();
-    // setMembers(members);
+    const res = await fetcher(`/api/teams/${params.teamid}/members`, {
+      next: {
+        tags: ['teams'],
+      },
+    });
+    const members = await res.json();
+    setMembers(members);
   }
 
   useEffect(() => {
@@ -84,6 +83,7 @@ export default function ProjectPage() {
         },
       });
       const team = await res.json();
+      setDocumentMeta(`Team: ${team.name}`);
       setTeam(team);
     }
     fetchTeam();
@@ -95,6 +95,8 @@ export default function ProjectPage() {
     fetchProjects();
     fetchMembers();
   }
+
+  const issueView = <IssueBoard query={issueQuery} />;
 
   return (
     <PageWrapper>
@@ -125,7 +127,7 @@ export default function ProjectPage() {
 
       <PageWrapper.Content>
         {viewType === 'ISSUES' ? (
-          <IssueBoard query={issueQuery} />
+          issueView
         ) : (
           <>
             <div className=' flex w-full  flex-col overflow-hidden pb-4   '>
@@ -237,10 +239,8 @@ function ProjectsTableView({ projects }: { projects: IProject[] }) {
             <Table.RowHeaderCell className='hidden lg:table-cell'>
               Description
             </Table.RowHeaderCell>
-            <Table.RowHeaderCell>Open</Table.RowHeaderCell>
 
             <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
-            <Table.RowHeaderCell>Date Created</Table.RowHeaderCell>
           </Table.Row>
           {projects.map((project: IProject) => (
             <Table.Row key={project.id}>
@@ -252,23 +252,11 @@ function ProjectsTableView({ projects }: { projects: IProject[] }) {
                 >
                   <Maximize2 className='h-3 w-3' />
                 </Link>
-                <ProjectTitleField
-                  projectTitle={project.title}
-                  projectId={project.id}
-                  teamid={project.teamid}
-                />
+                {project.title}
               </Table.RowHeaderCell>
 
               <Table.Cell className='hidden lg:table-cell'>
                 {project.description}
-              </Table.Cell>
-
-              <Table.Cell className=' '>
-                {/* {project.count > 10 ? (
-                  <Badge color='red'>{project.count}</Badge>
-                ) : (
-                  <Badge color='gray'> {project.count}</Badge>
-                )} */}
               </Table.Cell>
 
               <Table.Cell>
@@ -278,8 +266,6 @@ function ProjectsTableView({ projects }: { projects: IProject[] }) {
                   <Badge color='gray'> {dateFormater(project.deadline)}</Badge>
                 )}
               </Table.Cell>
-
-              <Table.Cell>{dateFormater(project.datecreated)}</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
