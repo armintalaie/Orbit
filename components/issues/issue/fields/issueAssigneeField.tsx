@@ -17,6 +17,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import AssigneeAvatar from '@/components/projects/AssigneeAvatar';
 
 interface Profile {
   id: string;
@@ -78,7 +79,11 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
       : 0;
   };
 
-  const onSelectedUserChange = (value: string) => {
+  const onSelectedUserChange = (value?: string) => {
+    if (!value || value === null || value === 'unassigned') {
+      updateAssignee();
+      return;
+    }
     const foundId = Object.keys(memberOptions).find((m) => m === value);
     if (!foundId) {
       return;
@@ -87,8 +92,8 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
     updateAssignee(foundId);
   };
 
-  async function updateAssignee(userId: string) {
-    if (!userId || userId === null) {
+  async function updateAssignee(userId?: string) {
+    if (!userId || userId === null || userId === 'unassigned') {
       fetcher(`/api/issues/${issueId}/assignees`, {
         method: 'DELETE',
       }).then(() => {
@@ -96,7 +101,7 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
       });
     } else {
       await fetcher(`/api/issues/${issueId}/assignees`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -111,14 +116,28 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
+          <CommandItem
+            key={-1}
+            value={'unassigned'}
+            onSelect={onSelectedUserChange}
+          >
+            <CircleUser className='mr-2 h-5 w-5 shrink-0 text-gray-500' />
+            <span className='text-[10px] text-gray-500'>Unassigned</span>
+          </CommandItem>
           {Object.entries(memberOptions).map(([, member]) => (
             <CommandItem
               key={member.id}
               value={member.id}
               onSelect={onSelectedUserChange}
             >
-              <CircleUser className='mr-2 h-4 w-4 shrink-0' />
-              <span>{member.full_name}</span>
+              <AssigneeAvatar
+                assignee={member}
+                formatting={{
+                  showFullName: true,
+                  showEmail: true,
+                  leftAlign: false,
+                }}
+              />
             </CommandItem>
           ))}
         </CommandGroup>
@@ -141,10 +160,9 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
           >
             {selectedStatusId ? (
               <>
-                <CircleUser className=' h-4 w-4 shrink-0 ' />
-                {memberOptions &&
-                  memberOptions[selectedStatusId] &&
-                  memberOptions[selectedStatusId].full_name}
+                {memberOptions && memberOptions[selectedStatusId] && (
+                  <AssigneeAvatar assignee={memberOptions[selectedStatusId]} />
+                )}
               </>
             ) : (
               <>

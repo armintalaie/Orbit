@@ -107,7 +107,7 @@ export default function IssueStatusField({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant='ghost' className='w-full justify-start p-0'>
-            <div className='flex items-center space-x-2 text-xs'>
+            <div className='flex items-center space-x-2 text-2xs'>
               {statusIconMapper(
                 statusOptions[selectedStatusId].label,
                 'h-4 w-4'

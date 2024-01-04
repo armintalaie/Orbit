@@ -5,10 +5,8 @@ export async function DELETE(
   { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
-  const { user_id } = await req.json();
   await db
     .deleteFrom('issue_assignee')
-    .where('user_id', '=', user_id)
     .where('issue_id', '=', Number(iid))
     .execute();
 
@@ -21,7 +19,16 @@ export async function PATCH(
 ) {
   try {
     const { iid } = params;
-    const { user_id } = await req.json();
+
+    await db
+      .deleteFrom('issue_assignee')
+      .where('issue_id', '=', Number(iid))
+      .execute();
+    const body = await req.json();
+    if (!body.user_id) {
+      return Response.json({ message: 'success' });
+    }
+    const user_id = body.user_id;
     await db
       .insertInto('issue_assignee')
       .values({
