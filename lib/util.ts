@@ -6,7 +6,7 @@ export function dateFormater(date: string) {
   // if overdue, return "overdue by x days" (e.g. overdue by 2 days)
 
   if (!date || date === 'null') {
-    return 'No date';
+    return '';
   }
 
   const today = new Date();
@@ -16,8 +16,8 @@ export function dateFormater(date: string) {
   const diffWeeks = Math.ceil(diffDays / 7);
   const diffMonths = Math.ceil(diffDays / 30);
   const diffYears = Math.ceil(diffDays / 365);
-  const day = dueDate.toLocaleString('default', { weekday: 'long' });
-  const month = dueDate.toLocaleString('default', { month: 'long' });
+  const day = dueDate.toLocaleString('default', { weekday: 'short' });
+  const month = dueDate.toLocaleString('default', { month: 'short' });
   const year = dueDate.getFullYear();
   const dayOfMonth = dueDate.getDate();
   const formattedDate = `${day}, ${month} ${dayOfMonth}`;

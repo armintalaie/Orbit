@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 
 type IssueDeadlineFieldProps = {
   issueId: number;
+  reload?: () => void;
   contentOnly?: boolean;
   date?: Date;
 };
@@ -22,6 +23,7 @@ export default function IssueDeadlineField({
   date: initialDate,
   issueId,
   contentOnly = false,
+  reload,
 }: IssueDeadlineFieldProps) {
   const { fetcher } = useContext(OrbitContext);
   const [open, setOpen] = useState(false);
@@ -38,6 +40,7 @@ export default function IssueDeadlineField({
         deadline: date ? date.toISOString().split('T')[0] : null,
       }),
     });
+    reload && reload();
 
     if (!res.ok) throw new Error(res.statusText);
     toast('Deadline updated');

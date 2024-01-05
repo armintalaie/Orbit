@@ -7,7 +7,7 @@ import IssueCard from './IssueCard';
 import { IIssue } from '@/lib/types/issue';
 export interface KanbanViewProps {
   groupedIssues: any;
-  reload: () => void;
+  reload: (issue?: IIssue) => void;
   projectId?: number;
   onIssueUpdate: (issue: IIssue) => void;
 }
@@ -19,6 +19,7 @@ export default function KanbanView({
   onIssueUpdate,
 }: KanbanViewProps) {
   if (!groupedIssues) return <></>;
+
   const nonEmptyGroups = groupedIssues.issues.filter(
     (gp: any) => gp.issues.length > 0
   );
@@ -74,11 +75,11 @@ export default function KanbanView({
 
       <div className='flex flex-col py-5'>
         <div className='h-full w-72 rounded-sm p-0 '>
-          <div className='flex h-full flex-col items-center gap-3'>
+          <div className='flex h-full flex-col items-center gap-3 pt-1'>
             {emptyGroups.map((grouping: any) => (
               <div key={grouping.key}>
                 <div className=' w-72 rounded-sm p-0 '>
-                  <div className='flex flex-row items-center justify-between rounded-sm bg-zinc-100 px-2 py-3'>
+                  <div className='flex flex-row items-center justify-between  rounded-md bg-white px-2 py-3 shadow-sm'>
                     <div className='flex flex-row items-center gap-2 '>
                       <Heading size='1' className='text-gray-700'>
                         {grouping.label}

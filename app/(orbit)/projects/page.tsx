@@ -52,11 +52,11 @@ export default function ProjectPage() {
 
 function TableView({ projects }: { projects: IProject[] }) {
   return (
-    <div className='flex h-full w-full flex-col  '>
+    <div className='flex w-full flex-grow flex-col overflow-scroll '>
       <div className='flex w-full flex-col items-center justify-between  bg-white  text-xs'>
         <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
           <Table.Body className='text-xs  '>
-            <Table.Row className='border-b-gray-100 bg-white text-xs '>
+            <Table.Row className='border-b-gray-100 bg-white text-xs  '>
               <Table.RowHeaderCell>Title</Table.RowHeaderCell>
               <Table.RowHeaderCell>Team</Table.RowHeaderCell>
 

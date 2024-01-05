@@ -8,7 +8,6 @@ import {
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue } from '@/lib/types/issue';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-
 import { Settings2Icon } from 'lucide-react';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -43,14 +42,6 @@ const issueAttributes: {
       hideEmpty: false,
     },
   },
-  // labelid: {
-  //   id: 'labelid',
-  //   label: 'Label',
-  //   options: {},
-  //   configuration: {
-  //     hideEmpty: false,
-  //   },
-  // },
   teamid: {
     id: 'teamid',
     label: 'Team',
@@ -78,9 +69,11 @@ type Grouping = {
 export function IssueGrouping({
   issues,
   setIssues,
+  teamid,
 }: {
   issues: IIssue[];
   setIssues: (grouping: Grouping) => void;
+  teamid?: number;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -89,7 +82,7 @@ export function IssueGrouping({
   const defaultGrouping =
     searchParams.get('grouping') || issueAttributes['statusid'].id;
   const [selectedGrouping, setSelectedGrouping] = useState(defaultGrouping);
-  const { status, labels, projects, teams } = useContext(OrbitContext);
+  const { status, projects, teams } = useContext(OrbitContext);
 
   async function updateGrouping() {
     if (selectedGrouping === 'statusid') {
@@ -102,19 +95,12 @@ export function IssueGrouping({
       );
     }
 
-    if (selectedGrouping === 'labelid') {
-      (issueAttributes['labelid'] as any).options = {
-        ...labels.reduce((acc, curr) => {
-          acc[curr.id] = { id: curr.id, label: curr.label };
-          return acc;
-        }, {}),
-        ...{ 0: { id: 0, label: 'No Label' } },
-      };
-    }
-
     if (selectedGrouping === 'projectid') {
       (issueAttributes['projectid'] as any).options = projects.reduce(
         (acc, project) => {
+          if (teamid && Number(project.teamid) !== Number(teamid)) {
+            return acc;
+          }
           acc[project.id] = { id: project.id, label: project.title };
           return acc;
         },
@@ -128,6 +114,7 @@ export function IssueGrouping({
         return acc;
       }, {});
     }
+
     setIssues(groupBykey(issues, selectedGrouping));
   }
 

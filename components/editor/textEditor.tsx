@@ -22,6 +22,7 @@ import Link from '@tiptap/extension-link';
 import Mention from '@tiptap/extension-mention';
 import suggestion from './suggestion';
 import Youtube from '@tiptap/extension-youtube';
+import Underline from '@tiptap/extension-underline';
 import {
   FontBoldIcon,
   FontItalicIcon,
@@ -121,7 +122,7 @@ export default function TextEditor({
           target: null,
         },
       }),
-
+      Underline,
       Paragraph,
       Text,
       TaskList.configure({
@@ -165,17 +166,19 @@ export default function TextEditor({
     >
       <MenuBar editor={editor} issue={issue} />
       <div className='relative flex flex-grow flex-col overflow-scroll'>
-        {editor && editor.storage && (
-          <div
-            className={`absolute bottom-3 left-3 z-20 m-0 flex h-8 w-fit  items-center rounded-md border bg-neutral-100 p-2 text-xs text-neutral-600 ${
-              editor.storage.characterCount.characters() >= LIMIT
-                ? 'bg-red-100 text-red-600'
-                : ''
-            }`}
-          >
-            {editor.storage.characterCount.characters()}/{LIMIT} words
-          </div>
-        )}
+        {editor &&
+          editor.storage &&
+          editor.storage.characterCount.characters() >= LIMIT && (
+            <div
+              className={`absolute bottom-3 left-3 z-20 m-0 flex h-8 w-fit  items-center rounded-md border bg-neutral-100 p-2 text-xs text-neutral-600 ${
+                editor.storage.characterCount.characters() >= LIMIT
+                  ? 'bg-red-100 text-red-600'
+                  : ''
+              }`}
+            >
+              {editor.storage.characterCount.characters()}/{LIMIT} words
+            </div>
+          )}
 
         {onSave && (
           <Button

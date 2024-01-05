@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { IIssue, IStatus } from '@/lib/types/issue';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -21,27 +22,39 @@ type IssueStatusFieldProps = {
   statusId: number;
   issueId: number;
   contentOnly?: boolean;
+  reload?: (issue?: IIssue) => void;
 };
 
 export default function IssueStatusField({
   statusId,
   issueId,
   contentOnly = false,
+  reload,
 }: IssueStatusFieldProps) {
-  const { status: statusOptions, fetcher } = useContext(OrbitContext);
+  const { status: statusOptionsArr, fetcher } = useContext(OrbitContext);
+  const statusOptions = groupById(statusOptionsArr);
   const [selectedStatusId, setSelectedStatusId] = useState<number>(statusId);
   const [open, setOpen] = useState(false);
+
+  function groupById(array: IStatus[]): { [key: number]: IStatus } {
+    return array.reduce((hash, obj) => ({ ...hash, [obj.id]: obj }), {});
+  }
 
   async function updateStatus(id: number) {
     const res = await fetcher(`/api/issues/${issueId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
+        // ...(reload ? { 'X-Full-Object': 'true' } : {}),
+        'X-Full-Object': 'true',
       },
       body: JSON.stringify({
         statusid: id,
       }),
     });
+
+    const data = (await res.json()) as IIssue;
+    reload && reload(data);
 
     if (!res.ok) throw new Error(res.statusText);
 
@@ -59,7 +72,6 @@ export default function IssueStatusField({
         ? 1
         : 0;
     } catch (error) {
-      console.log(error);
       return 0;
     }
   }
@@ -83,7 +95,7 @@ export default function IssueStatusField({
             {Object.keys(statusOptions).map((id) => (
               <CommandItem
                 key={id}
-                value={id}
+                value={id.toString()}
                 onSelect={onSelectedStatusChange}
               >
                 <div className='flex items-center space-x-2'>

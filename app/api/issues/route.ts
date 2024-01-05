@@ -88,7 +88,7 @@ export async function POST(
 
     const newissue = await query.executeTakeFirst();
 
-    if (assignees)
+    if (assignees && assignees.length > 0)
       await db
         .insertInto('issue_assignee')
         .values(

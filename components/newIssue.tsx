@@ -150,6 +150,7 @@ export function NewIssue({
 function NewIssueForm({
   defaultValues,
   onIssueUpdate,
+  close,
 }: {
   defaultValues?: object;
   close: Function;
@@ -163,7 +164,7 @@ function NewIssueForm({
       title: '',
       statusid: 1,
       contents: '',
-      deadline: new Date(),
+      deadline: null,
       assignee: null,
       labels: [],
       ...defaultValues,
@@ -178,7 +179,7 @@ function NewIssueForm({
       deadline: formVals.deadline
         ? formVals.deadline.toISOString().split('T')[0]
         : undefined,
-      assignees: [formVals.assignee] || null,
+      assignees: formVals.assignee ? [formVals.assignee] : [],
       labels: labels,
       projectid: formVals.projectid || undefined,
     };
@@ -196,12 +197,12 @@ function NewIssueForm({
         description: 'something went wrong',
       });
     } else {
+      close();
       const issue = (await res.json()) as IIssue;
       onIssueUpdate && onIssueUpdate(issue);
       toast('Issue created', {
         description: `Issue successfully created`,
       });
-      close();
     }
   }
 

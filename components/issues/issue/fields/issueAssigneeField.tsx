@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import AssigneeAvatar from '@/components/projects/AssigneeAvatar';
+import { IIssue } from '@/lib/types/issue';
 
 interface Profile {
   id: string;
@@ -27,6 +28,7 @@ interface Profile {
 }
 
 type AssigneeUpdateFieldProps = {
+  reload?: (issue?: IIssue) => void;
   contentOnly?: boolean;
   issueId: number;
   user: Profile | null;
@@ -37,7 +39,7 @@ type AssigneeUpdateFieldProps = {
 };
 
 export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
-  const { issueId, user, team, contentOnly = false } = props;
+  const { issueId, user, team, contentOnly = false, reload } = props;
   const { fetcher } = useContext(OrbitContext);
   const [memberOptions, setMemberOptions] = useState<{
     [key: string]: Profile;
@@ -98,15 +100,19 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
         method: 'DELETE',
       }).then(() => {
         setSelectedStatusId(null);
+        reload && reload();
       });
     } else {
-      await fetcher(`/api/issues/${issueId}/assignees`, {
+      const res = await fetcher(`/api/issues/${issueId}/assignees`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          ...(reload ? { 'X-Full-Object': 'true' } : {}),
         },
         body: JSON.stringify({ user_id: userId }),
       });
+      const data = await res.json();
+      reload && reload(data);
     }
   }
 

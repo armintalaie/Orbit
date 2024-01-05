@@ -195,8 +195,12 @@ export default function IssueBoard({ query }: IssueBoardProps) {
     fetchIssues();
   }, []);
 
-  async function reload() {
-    await fetchIssues();
+  async function reload(issue?: IIssue) {
+    if (issue) {
+      updateIssueSet(issue);
+    } else {
+      await fetchIssues();
+    }
   }
 
   return (

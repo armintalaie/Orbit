@@ -23,13 +23,14 @@ import Link from 'next/link';
 import { IssueProjectField } from '../issue/fields/issueProjectField';
 import { useContext } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { IIssue } from '@/lib/types/issue';
 
 export default function IssueMenuContext({
   issue,
   reload,
 }: {
   issue: any;
-  reload: () => void;
+  reload?: (issue?: IIssue) => void;
 }) {
   const { fetcher } = useContext(OrbitContext);
 
@@ -69,6 +70,7 @@ export default function IssueMenuContext({
             issueId={issue.id}
             statusId={issue.statusid}
             contentOnly={true}
+            reload={reload}
           />
         </ContextMenuSubContent>
       </ContextMenuSub>
@@ -87,6 +89,7 @@ export default function IssueMenuContext({
             user={issue.assignees ? issue.assignees[0] : null}
             team={{ id: issue.teamid, title: issue.team_title }}
             contentOnly={true}
+            reload={reload}
           />
         </ContextMenuSubContent>
       </ContextMenuSub>
@@ -104,6 +107,7 @@ export default function IssueMenuContext({
             issueId={issue.id}
             labels={issue.labels}
             contentOnly={true}
+            reload={reload}
           />
         </ContextMenuSubContent>
       </ContextMenuSub>
@@ -122,6 +126,7 @@ export default function IssueMenuContext({
             issueId={issue.id}
             project={{ id: issue.projectid, title: issue.project_title }}
             contentOnly={true}
+            reload={reload}
           />
         </ContextMenuSubContent>
       </ContextMenuSub>

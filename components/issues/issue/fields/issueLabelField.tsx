@@ -13,11 +13,12 @@ import {
 } from '@/components/ui/popover';
 import { CheckCircle2Icon, CircleIcon, TagsIcon } from 'lucide-react';
 import IssueLabel from '../../label';
-import { ILabel } from '@/lib/types/issue';
+import { IIssue, ILabel } from '@/lib/types/issue';
 import { toast } from 'sonner';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
 type IssueLabelFieldProps = {
+  reload?: (issue: IIssue) => void;
   labels: ILabel[];
   issueId: number;
   contentOnly?: boolean;
@@ -27,6 +28,7 @@ export function IssueLabelField({
   labels,
   issueId,
   contentOnly = false,
+  reload,
 }: IssueLabelFieldProps) {
   const [open, setOpen] = useState(false);
   const { labels: labelArray } = useContext(OrbitContext);
@@ -55,11 +57,15 @@ export function IssueLabelField({
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
+              ...(reload ? { 'X-Full-Object': 'true' } : {}),
             },
             body: JSON.stringify({
               labels: selectedLabelIds,
             }),
           });
+          const data = await res.json();
+          reload && reload(data);
+
           if (!res.ok) throw new Error(res.statusText);
         }, 4000);
 

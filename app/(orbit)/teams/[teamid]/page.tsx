@@ -34,9 +34,9 @@ import { IProject, ITeam } from '@/lib/types/issue';
 type viewTypes = 'ISSUES' | 'PROJECTS';
 
 export default function ProjectPage() {
-  const { fetcher } = useContext(OrbitContext);
+  const { fetcher, projects: projectContext } = useContext(OrbitContext);
   const params = useParams();
-  const [projects, setProjects] = useState([]);
+  const projects = getProjects();
   const [members, setMembers] = useState([]);
   const { teams: cachedTeams } = useContext(OrbitContext);
   const initialteam =
@@ -52,21 +52,10 @@ export default function ProjectPage() {
     showProject: true,
   };
 
-  async function fetchProjects() {
-    const q = {
-      teams: [params.teamid as string],
-    };
-    const res = await fetcher(
-      `/api/projects?q=${encodeURIComponent(JSON.stringify(q))}`,
-      {
-        next: {
-          tags: ['projects'],
-        },
-      }
+  function getProjects() {
+    return projectContext.filter(
+      (p) => p.teamid.toString() === params.teamid.toString()
     );
-
-    const projects = await res.json();
-    setProjects(projects);
   }
 
   async function fetchMembers() {
@@ -91,12 +80,10 @@ export default function ProjectPage() {
       setTeam(team);
     }
     fetchTeam();
-    fetchProjects();
     fetchMembers();
   }, []);
 
   async function reload() {
-    fetchProjects();
     fetchMembers();
   }
 

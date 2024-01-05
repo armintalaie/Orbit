@@ -11,7 +11,7 @@ import { IIssue } from '@/lib/types/issue';
 
 export interface IssueCardProps {
   issue: IIssue;
-  reload?: () => void;
+  reload?: (issue?: IIssue) => void;
 }
 
 export default function IssueCard({ issue, reload }: IssueCardProps) {
@@ -23,17 +23,17 @@ export default function IssueCard({ issue, reload }: IssueCardProps) {
           shallow={true}
           aria-disabled={true}
         >
-          <Box className='flex flex-col gap-2 rounded-sm border border-gray-100 bg-white  p-2 '>
+          <Box className='flex flex-col gap-2 rounded-md border border-gray-200 bg-white  p-2 '>
             <div className='flex w-full flex-row justify-between gap-2 py-0'>
-              <Text size='1' className='text-gray-600'>
+              <p className='text-2xs text-gray-600'>
                 {issue.project_title}#{issue.id}
-              </Text>
+              </p>
               {isOverdue(issue.deadline) ? (
-                <span className='text-xs text-red-500'>
+                <span className='line-clamp-1 text-2xs text-red-500'>
                   {dateFormater(issue.deadline)}
                 </span>
               ) : (
-                <span className='text-xs text-gray-600'>
+                <span className='text-2xs text-gray-600'>
                   {' '}
                   {dateFormater(issue.deadline)}
                 </span>

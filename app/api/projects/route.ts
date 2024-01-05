@@ -6,15 +6,17 @@ import { z } from 'zod';
 
 const projectSchema = z.object({
   title: z.string(),
-  description: z.string(),
-  statusid: z.number(),
+  description: z.string().nullable().optional(),
+  statusid: z.number().optional(),
   deadline: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
     .optional(),
   datestarted: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
     .optional(),
   teamid: z.number(),
 });

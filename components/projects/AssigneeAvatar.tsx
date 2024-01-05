@@ -32,7 +32,7 @@ export default function AssigneeAvatar({
       <div className={`flex  items-center gap-1  overflow-hidden`}>
         <p className='text-[10px]'></p>
         <Avatar className='flex  h-5 w-5 items-center gap-4 '>
-          <CircleUser className='h-5 w-5' />
+          <CircleUser className='h-5 w-5 stroke-2 opacity-50' />
         </Avatar>
       </div>
     );

@@ -17,13 +17,14 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import Link from 'next/link';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { IIssue } from '@/lib/types/issue';
 
 type IssueProjectFieldProps = {
   contentOnly?: boolean;
   issueId: number;
   project: Project | null;
+  reload?: (issue?: IIssue) => void;
 };
 
 type Project = {
@@ -32,7 +33,7 @@ type Project = {
 };
 
 export function IssueProjectField(props: IssueProjectFieldProps) {
-  const { issueId, project, contentOnly = false } = props;
+  const { issueId, project, contentOnly = false, reload } = props;
   const { fetcher, projects } = useContext(OrbitContext);
   const [options, setOptions] = useState<{ [key: string]: Project }>({});
   const [open, setOpen] = useState(false);
@@ -90,15 +91,19 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
         method: 'DELETE',
       }).then(() => {
         setSelectedId(null);
+        reload && reload();
       });
     } else {
-      await fetcher(`/api/issues/${issueId}`, {
+      const res = await fetcher(`/api/issues/${issueId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          ...(reload ? { 'X-Full-Object': 'true' } : {}),
         },
         body: JSON.stringify({ projectid: pId }),
       });
+      const data = (await res.json()) as IIssue;
+      reload && reload(data);
     }
   }
 

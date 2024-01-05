@@ -12,7 +12,7 @@ export const IssueViewOptions = ({
 }) => {
   return (
     <ToggleGroup
-      className='flex h-6 w-fit   flex-row  items-center justify-between gap-0 divide-x divide-gray-200 overflow-hidden  rounded-sm border border-gray-200  bg-gray-100 text-left text-xs  text-gray-500 shadow-sm '
+      className='flex h-6 w-fit   flex-row  items-center justify-between gap-0 divide-x divide-gray-200 overflow-hidden  rounded-sm border border-gray-200  bg-gray-100 text-left text-xs  text-gray-500 '
       type='single'
       defaultValue={viewType}
       aria-label='Text alignment'
