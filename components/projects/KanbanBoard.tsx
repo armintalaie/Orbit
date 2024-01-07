@@ -2,10 +2,8 @@
 
 import { NewIssue } from '@/components/newIssue';
 import { CardHeader, CardContent } from '@/components/ui/card';
-import { Heading } from '@radix-ui/themes';
 import IssueCard from './IssueCard';
 import { IIssue } from '@/lib/types/issue';
-import { motion } from 'framer-motion';
 
 export interface KanbanViewProps {
   groupedIssues: any;
@@ -64,15 +62,9 @@ export default function KanbanView({
                 <ul className='flex flex-grow flex-col space-y-3  pb-3 '>
                   {grouping.issues &&
                     grouping.issues.map((issue: IIssue, idx: number) => (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        transition={{ delay: Math.sqrt(idx + 1) * 0.2 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        key={issue.id}
-                      >
+                      <div key={issue.id}>
                         <IssueCard issue={issue} reload={reload} />
-                      </motion.div>
+                      </div>
                     ))}
                 </ul>
               </CardContent>
