@@ -2,7 +2,15 @@
 
 import { NewProject } from '@/components/projects/newProject';
 import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
-import { Badge, Table } from '@radix-ui/themes';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useContext } from 'react';
 import Link from 'next/link';
 import PageWrapper from '@/components/layouts/pageWrapper';
@@ -28,7 +36,7 @@ export default function ProjectPage() {
     <PageWrapper>
       <PageWrapper.Header>
         <div className=' flex w-full flex-row items-center justify-between gap-2'>
-          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
+          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700 dark:text-gray-200'>
             Your Projects
           </h1>
           <NewProject button={true} reload={() => reload(['projects'])} />
@@ -37,7 +45,7 @@ export default function ProjectPage() {
 
       <PageWrapper.SubHeader>
         <div className='flex flex-row items-center gap-2'>
-          <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'>
+          <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
             These are all the projects you have access to
           </p>
         </div>
@@ -53,19 +61,21 @@ export default function ProjectPage() {
 function TableView({ projects }: { projects: IProject[] }) {
   return (
     <div className='flex w-full flex-grow flex-col overflow-scroll '>
-      <div className='flex w-full flex-col items-center justify-between  bg-white  text-xs'>
-        <Table.Root className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none'>
-          <Table.Body className='text-xs  '>
-            <Table.Row className='border-b-gray-100 bg-white text-xs  '>
-              <Table.RowHeaderCell>Title</Table.RowHeaderCell>
-              <Table.RowHeaderCell>Team</Table.RowHeaderCell>
+      <div className='flex w-full flex-col items-center justify-between  bg-white  text-xs dark:bg-neutral-900'>
+        <Table className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none dark:bg-neutral-900'>
+          <TableHeader>
+            <TableRow className='border-b-gray-100 bg-white text-xs  dark:border-b-neutral-800 dark:bg-neutral-900'>
+              <TableHead>Title</TableHead>
+              <TableHead>Team</TableHead>
 
-              <Table.RowHeaderCell>Description</Table.RowHeaderCell>
-              <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
-            </Table.Row>
+              <TableHead>Description</TableHead>
+              <TableHead>Deadline</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className='text-xs  '>
             {projects.map((project) => (
-              <Table.Row key={project.id}>
-                <Table.RowHeaderCell>
+              <TableRow key={project.id}>
+                <TableCell>
                   <Link
                     href={{
                       pathname: `/projects/${project.id}`,
@@ -75,8 +85,8 @@ function TableView({ projects }: { projects: IProject[] }) {
                   >
                     {project.title}
                   </Link>
-                </Table.RowHeaderCell>
-                <Table.Cell>
+                </TableCell>
+                <TableCell>
                   <Link
                     href={{
                       pathname: `/teams/${project.teamid}`,
@@ -87,10 +97,10 @@ function TableView({ projects }: { projects: IProject[] }) {
                   >
                     {project.team_title}
                   </Link>
-                </Table.Cell>
+                </TableCell>
 
-                <Table.Cell>{project.description}</Table.Cell>
-                <Table.Cell>
+                <TableCell>{project.description}</TableCell>
+                <TableCell>
                   {isOverdue(project.deadline) ? (
                     <Badge color='red'>{dateFormater(project.deadline)}</Badge>
                   ) : (
@@ -99,11 +109,11 @@ function TableView({ projects }: { projects: IProject[] }) {
                       {dateFormater(project.deadline)}
                     </Badge>
                   )}
-                </Table.Cell>
-              </Table.Row>
+                </TableCell>
+              </TableRow>
             ))}
-          </Table.Body>
-        </Table.Root>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

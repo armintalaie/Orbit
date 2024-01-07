@@ -1,5 +1,5 @@
 'use client';
-import { Box, Text } from '@radix-ui/themes';
+
 import React, { useContext, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -23,6 +23,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CommandMenu } from '@/components/globalCommand';
 import OrbitContextProvider, { OrbitContext } from '@/lib/context/OrbitContext';
 import { GearIcon } from '@radix-ui/react-icons';
+import ThemeToggle from '@/components/themeToggle';
 
 export default function ProjectLayout({
   children,
@@ -32,10 +33,10 @@ export default function ProjectLayout({
   return (
     <AuthContextProvider>
       <OrbitContextProvider>
-        <div className='flex h-[100svh] w-[100svw] flex-row'>
+        <div className='flex h-[100svh] w-[100svw] flex-row dark:bg-neutral-900 dark:text-neutral-200 '>
           <SideBarContent className={'min-w-56 hidden w-72'} />
           <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
-            <div className='h-15 flex w-full items-center justify-between  border-t border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
+            <div className='h-15 flex w-full items-center justify-between border-t  border-gray-100 px-4 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
               <NextBreadcrumb
                 homeElement={
                   <MenuDialog>
@@ -43,10 +44,11 @@ export default function ProjectLayout({
                   </MenuDialog>
                 }
                 activeClasses='hidden'
-                containerClasses='flex py-5 px-2  from-purple-600 to-blue-600 h-12 items-center '
+                containerClasses='flex py-5   w-fit h-12 items-center '
                 listClasses='hover:underline px-2 '
                 capitalizeLinks
               />
+              <ThemeToggle />
             </div>
             {children}
           </div>
@@ -72,14 +74,12 @@ function SideBarContent({
     >
       {showLogo && (
         <div className='flex flex-row items-center justify-between '>
-          <Text size='4' className='dar:text-white h-12 p-4 font-bold'>
-            Orbit
-          </Text>
+          <span className='h-12 p-4 font-bold dark:text-white'>Orbit</span>
         </div>
       )}
       <div className='flex flex-grow flex-col gap-3 overflow-y-auto border-t border-gray-100 p-2 dark:border-gray-900'>
         <CommandMenu setOpen={openSearch} open={search} />
-        <Box className='w-full p-1 pb-3'>
+        <div className='w-full p-1 pb-3'>
           <button
             className='h-8 w-full rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-sm text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'
             onClick={() => openSearch(true)}
@@ -92,7 +92,7 @@ function SideBarContent({
               </span>
             </span>
           </button>
-        </Box>
+        </div>
         <section className='flex flex-col border-gray-100 '>
           <Link
             href={'/issues/me'}

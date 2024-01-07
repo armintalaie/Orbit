@@ -3,7 +3,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { Badge, Button, Table } from '@radix-ui/themes';
+import { Button } from '@radix-ui/themes';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { useParams, useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -95,10 +104,10 @@ export default function ProjectPage() {
     <PageWrapper>
       <PageWrapper.Header>
         <div className='flex flex-row items-center'>
-          <h1 className='text-md h-full  font-medium leading-tight text-gray-700'>
+          <h1 className='text-md h-full  font-medium leading-tight text-gray-700 dark:text-neutral-300'>
             {team.name}
           </h1>
-          <p className=' hidden flex-row items-center px-3 text-xs lg:flex'>
+          <p className=' hidden flex-row items-center px-3 text-xs text-gray-500 dark:text-neutral-400 lg:flex'>
             {team.description}
           </p>
           <div className='flex items-center pl-2'>
@@ -125,7 +134,7 @@ export default function ProjectPage() {
           <>
             <div className=' flex w-full  flex-col overflow-hidden pb-4   '>
               <div className='flex flex-row items-center justify-between px-4  '>
-                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
+                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700 dark:text-neutral-300'>
                   Projects
                 </h2>
                 <NewProject button={true} reload={reload} teamid={team.id} />
@@ -136,7 +145,7 @@ export default function ProjectPage() {
 
             <div className=' flex w-full  flex-col px-4'>
               <div className='flex flex-row items-center justify-between  '>
-                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
+                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700 dark:text-neutral-300'>
                   Members
                 </h2>
                 <NewTeamMember
@@ -165,16 +174,16 @@ const ToggleTeamViewContents = ({ viewType, setViewType }) => {
       type='single'
       value={viewType}
       onValueChange={setViewType}
-      className='m-0 flex h-6 items-center rounded-sm  border border-gray-200 bg-gray-100 p-0 text-xs shadow-sm'
+      className='m-0 flex h-6 items-center rounded-sm  border border-gray-200 bg-gray-100 p-0 text-xs shadow-sm dark:border-neutral-900 dark:bg-neutral-800 '
     >
       <ToggleGroupItem
-        className='m-0 flex h-full items-center gap-2 rounded-sm border-dashed p-1 px-2 text-xs text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700   '
+        className='m-0 flex h-full items-center gap-2 rounded-sm border-dashed p-1 px-2 text-xs text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700    dark:text-neutral-400 dark:data-[state=on]:bg-neutral-700 dark:data-[state=on]:text-neutral-300 '
         value='ISSUES'
       >
         Issues
       </ToggleGroupItem>
       <ToggleGroupItem
-        className='m-0 flex h-full items-center gap-2  rounded-sm border-dashed p-1 px-2 text-xs  text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700'
+        className='m-0 flex h-full items-center gap-2  rounded-sm border-dashed p-1 px-2 text-xs  text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700 dark:text-neutral-400 dark:data-[state=on]:bg-neutral-700 dark:data-[state=on]:text-neutral-300'
         value='PROJECTS'
       >
         Projects
@@ -223,44 +232,47 @@ function TeamOptions({ teamId }: { teamId: string }) {
 function ProjectsTableView({ projects }: { projects: IProject[] }) {
   return (
     <div className='flex  w-full flex-col overflow-hidden '>
-      <Table.Root className='w-full  overflow-hidden  border-gray-200 bg-white shadow-none'>
-        <Table.Body>
-          <Table.Row>
-            <Table.RowHeaderCell>Title</Table.RowHeaderCell>
-            <Table.RowHeaderCell className='hidden lg:table-cell'>
-              Description
-            </Table.RowHeaderCell>
+      <Table className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none dark:bg-neutral-900'>
+        <TableHeader>
+          <TableRow className='border-b-gray-100 bg-white text-xs  dark:border-b-neutral-800 dark:bg-neutral-900'>
+            <TableHead>Title</TableHead>
+            <TableHead className='hidden lg:table-cell'>Description</TableHead>
 
-            <Table.RowHeaderCell>Deadline</Table.RowHeaderCell>
-          </Table.Row>
+            <TableHead>Deadline</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody className='text-xs  '>
           {projects.map((project: IProject) => (
-            <Table.Row key={project.id}>
-              <Table.RowHeaderCell className='flex flex-row items-center gap-4'>
+            <TableRow
+              className='border-b-gray-100 bg-white text-xs  dark:border-b-neutral-800 dark:bg-neutral-900'
+              key={project.id}
+            >
+              <TableCell className='flex flex-row items-center gap-4'>
                 <Link
                   href={`/projects/${project.id}`}
                   shallow={true}
-                  className='underline'
+                  className='text-xs underline'
                 >
                   <Maximize2 className='h-3 w-3' />
                 </Link>
                 {project.title}
-              </Table.RowHeaderCell>
+              </TableCell>
 
-              <Table.Cell className='hidden lg:table-cell'>
+              <TableCell className='hidden lg:table-cell'>
                 {project.description}
-              </Table.Cell>
+              </TableCell>
 
-              <Table.Cell>
+              <TableCell>
                 {isOverdue(project.deadline) ? (
                   <Badge color='red'>{dateFormater(project.deadline)}</Badge>
                 ) : (
                   <Badge color='gray'> {dateFormater(project.deadline)}</Badge>
                 )}
-              </Table.Cell>
-            </Table.Row>
+              </TableCell>
+            </TableRow>
           ))}
-        </Table.Body>
-      </Table.Root>
+        </TableBody>
+      </Table>
     </div>
   );
 }

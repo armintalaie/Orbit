@@ -81,7 +81,8 @@ export default function TextEditor({
   const editor = useEditor({
     editorProps: {
       attributes: {
-        class: '  w-full focus:outline-none p-2 ',
+        class:
+          '  w-full focus:outline-none p-2 text-neutral-800 border-b-gray-200 dark:text-neutral-300 border-b-gray-200 dark:border-b-neutral-600',
       },
     },
     onUpdate: ({ editor }) => {
@@ -183,19 +184,22 @@ export default function TextEditor({
         {onSave && (
           <Button
             variant='outline'
-            className='absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center bg-neutral-700 p-2 text-xs text-neutral-50'
+            className='absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center rounded-md bg-inherit bg-neutral-700 px-2 text-2xs text-neutral-700 dark:text-neutral-400'
             onClick={async () => {
               const content = editor.storage.markdown.getMarkdown();
               await onSave(content);
               toast('Your changes have been saved');
             }}
           >
-            <SaveIcon className='mr-2 h-4 w-4' />
+            <SaveIcon className='mr-1 h-3 w-3' />
             Save
           </Button>
         )}
-        <div className=' relative h-full w-full flex-1 justify-center overflow-scroll p-2 '>
-          <EditorContent editor={editor} />
+        <div className=' relative h-full w-full flex-1 justify-center overflow-scroll bg-gray-50 dark:bg-neutral-900'>
+          <EditorContent
+            editor={editor}
+            className='flex h-full w-full flex-grow flex-col items-center  bg-gray-50 dark:bg-neutral-900'
+          />
         </div>
       </div>
     </div>
@@ -254,11 +258,11 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
   }
 
   return (
-    <div className='h-15 min-h-15  flex w-full flex-row  items-center justify-between overflow-x-scroll border-y  border-gray-100 bg-white '>
+    <div className='h-15 min-h-15  flex w-full flex-row  items-center justify-between overflow-x-scroll border-y  border-gray-100 bg-white dark:border-neutral-800 dark:bg-neutral-900'>
       <div className='sticky  z-10 m-0 flex h-full w-full min-w-fit flex-row items-center justify-center gap-2 p-0  text-xs '>
         <ToggleGroup
           type='single'
-          className='h-full min-w-fit overflow-hidden  border-l border-r border-gray-100  bg-white'
+          className='h-full min-w-fit overflow-hidden    '
           value={whichHeadingIsSelected()}
         >
           <ToggleGroupItem
@@ -294,7 +298,7 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
         <ToggleGroup
           type='multiple'
           value={whichStylingsAreSelected()}
-          className='h-full min-w-fit overflow-hidden  border-r  border-gray-100 bg-white'
+          className='h-full min-w-fit overflow-hidden  '
         >
           <ToggleGroupItem
             value='bold'
@@ -346,7 +350,7 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
         <ToggleGroup
           value={whichContainerIsSelected()}
           type='single'
-          className='h-full min-w-fit overflow-hidden  border-r  border-gray-100 bg-white'
+          className='h-full min-w-fit overflow-hidden  '
         >
           <ToggleGroupItem
             value='bulletList'
@@ -389,7 +393,7 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
           </ToggleGroupItem>
         </ToggleGroup>
 
-        <div className=' flex  h-full min-w-fit  items-center gap-4 overflow-hidden border-r  border-gray-100  bg-white px-2'>
+        <div className=' flex  h-full min-w-fit  items-center gap-4 overflow-hidden px-2'>
           {/* <div  aria-label='Toggle mention'>
             <ImagePlusIcon className='h-4 w-4' />
           </div> */}

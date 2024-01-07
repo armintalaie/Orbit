@@ -5,6 +5,8 @@ import { CardHeader, CardContent } from '@/components/ui/card';
 import { Heading } from '@radix-ui/themes';
 import IssueCard from './IssueCard';
 import { IIssue } from '@/lib/types/issue';
+import { motion } from 'framer-motion';
+
 export interface KanbanViewProps {
   groupedIssues: any;
   reload: (issue?: IIssue) => void;
@@ -40,12 +42,12 @@ export default function KanbanView({
             >
               <CardHeader className='m-0 flex flex-row items-center justify-between space-y-0 px-1'>
                 <div className='m-0 flex flex-row items-center gap-2'>
-                  <Heading size='1' className='flex items-center text-gray-700'>
+                  <p className='flex items-center text-xs text-gray-700 dark:text-gray-200'>
                     {grouping.label}
-                    <span className='ml-2 text-xs text-gray-400'>
+                    <span className='ml-2 flex h-5 w-5 items-center justify-center rounded-full p-1 text-xs text-gray-400 dark:bg-neutral-800 dark:text-neutral-400'>
                       {grouping.issues.length}
                     </span>
-                  </Heading>
+                  </p>
                 </div>
 
                 <NewIssue
@@ -58,13 +60,19 @@ export default function KanbanView({
                   }}
                 />
               </CardHeader>
-              <CardContent className='flex flex-grow  flex-col overflow-y-scroll p-0   '>
-                <ul className='flex flex-grow flex-col space-y-3  pb-3'>
+              <CardContent className='flex flex-grow  flex-col overflow-x-visible overflow-y-scroll p-0   '>
+                <ul className='flex flex-grow flex-col space-y-3  pb-3 '>
                   {grouping.issues &&
-                    grouping.issues.map((issue: IIssue) => (
-                      <div key={issue.id}>
+                    grouping.issues.map((issue: IIssue, idx: number) => (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        transition={{ delay: Math.sqrt(idx + 1) * 0.2 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        key={issue.id}
+                      >
                         <IssueCard issue={issue} reload={reload} />
-                      </div>
+                      </motion.div>
                     ))}
                 </ul>
               </CardContent>
@@ -79,14 +87,14 @@ export default function KanbanView({
             {emptyGroups.map((grouping: any) => (
               <div key={grouping.key}>
                 <div className=' w-72 rounded-sm p-0 '>
-                  <div className='flex flex-row items-center justify-between  rounded-md bg-white px-2 py-3 shadow-sm'>
+                  <div className='flex flex-row items-center justify-between  rounded-md bg-white px-2 py-3 shadow-sm dark:bg-neutral-800'>
                     <div className='flex flex-row items-center gap-2 '>
-                      <Heading size='1' className='text-gray-700'>
+                      <p className='text-xs text-gray-700 dark:text-gray-200 '>
                         {grouping.label}
                         <span className='ml-2 text-xs text-gray-400'>
                           {grouping.issues.length}
                         </span>
-                      </Heading>
+                      </p>
                     </div>
 
                     <NewIssue

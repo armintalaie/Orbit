@@ -17,6 +17,7 @@ import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue, IStatus } from '@/lib/types/issue';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
+// import { useReward } from 'react-rewards';
 
 type IssueStatusFieldProps = {
   statusId: number;

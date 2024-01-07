@@ -1,7 +1,6 @@
 'use client';
 
 import { dateFormater, isOverdue } from '@/lib/util';
-import { Box, Text } from '@radix-ui/themes';
 import Link from 'next/link';
 import AssigneeAvatar from './AssigneeAvatar';
 import { LabelList } from '../issues/label';
@@ -23,9 +22,9 @@ export default function IssueCard({ issue, reload }: IssueCardProps) {
           shallow={true}
           aria-disabled={true}
         >
-          <Box className='flex flex-col gap-2 rounded-md border border-gray-200 bg-white  p-2 '>
+          <div className='flex flex-col gap-2 rounded-md border border-gray-200 bg-white  p-2 transition-all  hover:border-gray-300 hover:shadow-sm dark:border-neutral-900 dark:bg-neutral-800'>
             <div className='flex w-full flex-row justify-between gap-2 py-0'>
-              <p className='text-2xs text-gray-600'>
+              <p className='text-2xs text-gray-600 dark:text-gray-400'>
                 {issue.project_title}#{issue.id}
               </p>
               {isOverdue(issue.deadline) ? (
@@ -39,13 +38,13 @@ export default function IssueCard({ issue, reload }: IssueCardProps) {
                 </span>
               )}
             </div>
-            <Text size='1' className='pb-2 font-medium  text-gray-800'>
+            <p className='pb-2  text-xs text-gray-800 dark:text-gray-200'>
               {issue.title}
-            </Text>
+            </p>
 
             <div className='flex w-full flex-row justify-between gap-2'>
               <LabelList labels={issue.labels} />
-              <Text size='1' className=' text-2xs text-gray-500'>
+              <p className=' text-2xs text-gray-500'>
                 {issue.assignees.length > 0 ? (
                   issue.assignees.map((assignee) => {
                     return (
@@ -55,9 +54,9 @@ export default function IssueCard({ issue, reload }: IssueCardProps) {
                 ) : (
                   <AssigneeAvatar />
                 )}
-              </Text>
+              </p>
             </div>
-          </Box>
+          </div>
         </Link>
       </ContextMenuTrigger>
       <IssueMenuContext issue={issue} reload={reload} />

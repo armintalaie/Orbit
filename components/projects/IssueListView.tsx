@@ -67,7 +67,7 @@ export default function IssueListView({
 
                           <div className='flex flex-grow flex-row justify-between gap-2'>
                             <LabelList labels={issue.labels} />
-                            <Text size='1' className=' text-2xs text-gray-500'>
+                            <p className=' text-2xs text-xs text-gray-500'>
                               {issue.assignees.length > 0 ? (
                                 issue.assignees.map((assignee: IProfile) => {
                                   return (
@@ -80,7 +80,7 @@ export default function IssueListView({
                               ) : (
                                 <AssigneeAvatar />
                               )}
-                            </Text>
+                            </p>
                           </div>
 
                           <div className='flex w-fit flex-row items-center justify-end gap-2'>

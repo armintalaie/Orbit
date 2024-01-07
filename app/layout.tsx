@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import '@radix-ui/themes/styles.css';
-import { Theme } from '@radix-ui/themes';
 import React from 'react';
 import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from '@/components/ThemeProvider';
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -29,16 +30,18 @@ export default function RootLayout({
         <meta name='apple-mobile-web-app-capable' content='yes' />
       </head>
       <body className={inter.className} suppressHydrationWarning={true}>
-        <Theme
+        {/* <Theme
           appearance='light'
           accentColor='blue'
           grayColor='sand'
           radius='large'
           scaling='95%'
-        >
+        > */}
+        <ThemeProvider enableSystem={true} attribute='class'>
           {children}
           <Toaster />
-        </Theme>
+        </ThemeProvider>
+        {/* </Theme> */}
       </body>
     </html>
   );

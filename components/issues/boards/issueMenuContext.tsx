@@ -35,7 +35,7 @@ export default function IssueMenuContext({
   const { fetcher } = useContext(OrbitContext);
 
   return (
-    <ContextMenuContent className='w-62  rounded-md border border-gray-200 bg-white  shadow-sm'>
+    <ContextMenuContent className='w-62  rounded-md border border-gray-200 bg-white  shadow-sm dark:border-neutral-900 dark:bg-neutral-950 dark:text-neutral-200'>
       <ContextMenuItem
         className='flex flex-row items-center gap-3 text-sm'
         onClick={() => {

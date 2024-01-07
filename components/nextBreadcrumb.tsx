@@ -37,15 +37,15 @@ const NextBreadcrumb = ({
           return (
             <React.Fragment key={index}>
               <li
-                className={`${itemClasses} text-sm font-medium text-gray-600`}
+                className={`${itemClasses} pl-0 text-sm font-medium  text-gray-600 dark:border-neutral-900 dark:text-neutral-300 `}
               >
-                <Link href={href} shallow={true}>
+                <Link href={href} shallow={true} className='p-0'>
                   {itemLink}
                 </Link>
               </li>
               {/* {index} */}
               {pathNames.length > index + 2 && (
-                <ChevronLeft className='h-4 w-4 text-gray-800' />
+                <ChevronLeft className='h-4 w-4 text-gray-800  dark:border-neutral-900 dark:text-neutral-300' />
               )}
             </React.Fragment>
           );

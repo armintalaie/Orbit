@@ -1,6 +1,13 @@
 'use client';
 
-import { Table } from '@radix-ui/themes';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useContext } from 'react';
 import Link from 'next/link';
 import { NewTeam } from '@/components/newTeam';
@@ -17,7 +24,7 @@ export default function TeamPage() {
     <PageWrapper>
       <PageWrapper.Header>
         <div className='flex w-full flex-row items-center justify-between gap-2'>
-          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700'>
+          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700 dark:text-neutral-300'>
             Your Teams
           </h1>
           <NewTeam button={true} reload={() => reload(['teams'])} />
@@ -27,7 +34,7 @@ export default function TeamPage() {
       <PageWrapper.SubHeader>
         <PageWrapper.SubHeader>
           <div className='flex flex-row items-center gap-2'>
-            <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'>
+            <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700 dark:text-neutral-400'>
               These are all the teams you have access to
             </p>
           </div>
@@ -44,23 +51,23 @@ export default function TeamPage() {
 function TableView({ teams }: { teams: ITeam[] }) {
   return (
     <div className='flex h-full w-full flex-col '>
-      <Table.Root className='w-full  overflow-hidden border-gray-200 bg-white shadow-none dark:border-neutral-800 dark:bg-neutral-900'>
-        <Table.Body>
+      <Table className='w-full  overflow-hidden border-gray-200 bg-white shadow-none dark:border-neutral-800 dark:bg-neutral-900'>
+        <TableBody>
           {teams.map((team) => (
-            <Table.Row key={team.id}>
-              <Table.RowHeaderCell>
+            <TableRow key={team.id}>
+              <TableCell>
                 <Link
                   href={`/teams/${team.id}`}
                   shallow={true}
-                  className='underline'
+                  className='p-1 text-xs underline'
                 >
                   {team.name}
                 </Link>
-              </Table.RowHeaderCell>
-            </Table.Row>
+              </TableCell>
+            </TableRow>
           ))}
-        </Table.Body>
-      </Table.Root>
+        </TableBody>
+      </Table>
     </div>
   );
 }

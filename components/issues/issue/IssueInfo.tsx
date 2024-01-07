@@ -82,8 +82,8 @@ export function IssueInfo({
   ];
 
   return (
-    <div className=' flex  w-full flex-col border-l border-gray-100 bg-white '>
-      <div className='flex h-12 w-full items-center justify-end gap-6  bg-white  p-4 px-4 '>
+    <div className=' flex h-full w-full flex-col border-l border-gray-100 bg-white dark:border-neutral-800 dark:bg-neutral-900'>
+      <div className='flex h-12 w-full items-center justify-end gap-6  bg-white p-4  px-4 dark:bg-neutral-900 '>
         <Button
           variant='ghost'
           className='p-0 hover:bg-inherit'
@@ -97,14 +97,14 @@ export function IssueInfo({
           <GitBranchIcon className='h-4 w-4' />
         </Button>
       </div>
-      <div className='flex flex-grow flex-col justify-between gap-3 divide-y divide-gray-100 border-t border-gray-100 bg-white  py-3'>
+      <div className='flex flex-grow flex-col justify-start gap-3 divide-y divide-gray-100 border-t border-gray-100 bg-white py-3  dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900'>
         <div className='flex  flex-col  gap-6   p-4 py-3'>
           {IssueInfoFields.map(({ title, value }) => (
             <div key={title} className='flex h-6 flex-row items-center  gap-2'>
-              <p className='w-16 items-center  pr-2 text-2xs font-medium leading-tight text-gray-700 '>
+              <p className='w-16 items-center  pr-2 text-2xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
                 {title}
               </p>
-              <div className='flex-grow items-center   pr-2 text-2xs font-medium leading-tight text-gray-700'>
+              <div className='flex-grow items-center   pr-2 text-2xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
                 {value}
               </div>
             </div>
@@ -113,17 +113,17 @@ export function IssueInfo({
 
         <div className='flex  flex-col  gap-6   p-4 py-3'>
           <div className='flex  flex-row   gap-2'>
-            <p className='w-16 items-center  pr-2 text-2xs font-medium leading-tight text-gray-700'>
+            <p className='w-16 items-center  pr-2 text-2xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
               Team
             </p>
-            <div className='flex-grow items-center   pr-2 text-xs font-medium leading-tight text-gray-700'>
+            <div className='flex-grow items-center   pr-2 text-xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
               <Link
                 href={`/teams/${issue.teamid}`}
                 target='_blank'
                 referrerPolicy='no-referrer'
                 className='border-b-2 border-b-gray-400 '
               >
-                <p className='text-2xs font-medium   leading-tight text-gray-700 '>
+                <p className='text-2xs font-medium   leading-tight text-gray-700 dark:text-neutral-300 '>
                   {issue.team_title}
                 </p>
               </Link>

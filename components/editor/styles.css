@@ -9,6 +9,7 @@
   font-size: 15px;
   overflow-y: scroll;
   padding: 0px 1.5rem;
+  height: 100%;
 }
 
 .tiptap p {
@@ -110,7 +111,7 @@ body > *:last-child {
     line-height: 1.225;
     margin: 35px 0 10px;
     padding-bottom: 0.5em;
-    border-bottom: 1px solid theme(colors.neutral.200);
+    border-bottom: 1px solid;
   }
 
   h3 {

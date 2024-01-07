@@ -54,7 +54,7 @@ export default function IssueLabel({
       }
     >
       <TagIcon className='h-3 w-3' />
-      <p className='items-center  text-2xs font-medium leading-tight'>
+      <p className='items-center  text-2xs font-medium leading-tight '>
         {label}
       </p>
     </div>

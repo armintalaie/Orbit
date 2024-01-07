@@ -13,6 +13,7 @@ import { CheckIcon, PencilLine, XIcon } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import React from 'react';
 
 export default function IssueTitleField({
   issueId,
@@ -56,8 +57,8 @@ export default function IssueTitleField({
   }
 
   return (
-    <>
-      <div className='flex h-full w-full flex-row items-center gap-2'>
+    <React.Fragment>
+      <div className='flex h-full w-full flex-row items-center gap-2 dark:bg-neutral-900 '>
         <div
           className='flex h-full w-full flex-row items-center gap-2'
           onMouseEnter={() => setShowEditButton(true)}
@@ -78,11 +79,11 @@ export default function IssueTitleField({
 
           {!editMode ? (
             <Button
-              className='hover:border hover:border-dashed hover:border-gray-700 hover:bg-gray-100'
+              className='p-0 hover:border hover:border-dashed hover:border-gray-700 hover:bg-gray-100'
               onClick={() => setEditMode(true)}
               variant='ghost'
             >
-              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700'>
+              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700 dark:text-neutral-300'>
                 {title}
               </h1>
               {showEditButton && (
@@ -114,7 +115,7 @@ export default function IssueTitleField({
         )}
       </div>
       <div className='flex h-full items-center justify-center gap-2'></div>
-    </>
+    </React.Fragment>
   );
 }
 

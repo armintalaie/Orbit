@@ -94,8 +94,8 @@ export default function IssuePage({ issueId }: { issueId: number }) {
   if (width < 820) {
     return (
       <div className='flex h-full w-full flex-col'>
-        <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
-          <div className='flex h-12 w-full items-center justify-between p-1  px-4 '>
+        <div className=' flex  w-full flex-1 flex-col overflow-hidden dark:bg-neutral-900'>
+          <div className='flex h-12 w-full items-center justify-between p-1 px-4  dark:bg-neutral-900   '>
             <IssueTitleField
               issueId={issueId}
               issueTitle={issue.title}
@@ -104,7 +104,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
           </div>
 
           <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
-            <div className=' flex  w-full flex-1 flex-grow flex-col justify-start overflow-hidden bg-gray-50'>
+            <div className=' flex  w-full flex-1 flex-grow flex-col justify-start overflow-hidden bg-gray-50 dark:bg-neutral-900'>
               <TextEditor
                 onSave={saveContentChanges}
                 content={issueContents}
@@ -154,7 +154,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
                       />
                     </div>
                   </ResizablePanel>
-                  <ResizableHandle withHandle />
+                  <ResizableHandle withHandle={false} />
                   <ResizablePanel
                     collapsedSize={6}
                     collapsible={true}
@@ -167,12 +167,11 @@ export default function IssuePage({ issueId }: { issueId: number }) {
               </div>
             </div>
           </ResizablePanel>
-          <ResizableHandle withHandle />
           <ResizablePanel
             collapsedSize={1}
             collapsible={true}
-            defaultSize={25}
-            minSize={25}
+            defaultSize={18}
+            minSize={15}
           >
             <IssueInfo issueId={issue.id} refIssue={issue} />
           </ResizablePanel>

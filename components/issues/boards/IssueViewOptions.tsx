@@ -1,5 +1,5 @@
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { ListIcon, KanbanSquareIcon } from 'lucide-react';
+import { KanbanSquareIcon } from 'lucide-react';
 
 type ViewType = 'board' | 'table';
 
@@ -12,23 +12,13 @@ export const IssueViewOptions = ({
 }) => {
   return (
     <ToggleGroup
-      className='flex h-6 w-fit   flex-row  items-center justify-between gap-0 divide-x divide-gray-200 overflow-hidden  rounded-sm border border-gray-200  bg-gray-100 text-left text-xs  text-gray-500 '
+      className='flex h-6 w-fit   flex-row  items-center justify-between gap-0 divide-x divide-gray-200 overflow-hidden  rounded-sm border   bg-gray-100 text-left text-xs   dark:bg-neutral-900 '
       type='single'
       defaultValue={viewType}
       aria-label='Text alignment'
     >
       <ToggleGroupItem
-        className={`flex w-8 items-center justify-center p-2 text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700
-         ${viewType === 'table' ? 'bg-gray-100' : 'bg-inherit'}`}
-        value='table'
-        aria-label='Left aligned'
-        onClick={() => setViewType('table')}
-      >
-        <ListIcon className='h-4 w-4' />
-      </ToggleGroupItem>
-      <ToggleGroupItem
-        className={`flex w-8 items-center justify-center p-2 text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700
-         ${viewType === 'board' ? 'bg-gray-100' : 'bg-inherit'}`}
+        className={`flex w-8 items-center justify-center p-2 text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700 dark:data-[state=on]:border-neutral-800 dark:data-[state=on]:bg-neutral-800 dark:data-[state=on]:text-neutral-300`}
         value='board'
         aria-label='Center aligned'
         onClick={() => setViewType('board')}

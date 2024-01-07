@@ -192,7 +192,7 @@ export default function FilterGroup({
         <PopoverTrigger asChild>
           <Button
             variant='outline'
-            className='m-0 flex h-6 items-center gap-2 border-dashed p-2 text-xs'
+            className='m-0 flex h-6 items-center gap-2 border-dashed p-2 text-xs dark:border-solid dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300'
             role='combobox'
             aria-expanded={open}
           >

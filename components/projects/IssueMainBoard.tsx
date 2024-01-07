@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import KanbanView from '@/components/projects/KanbanBoard';
-import IssueListView from '@/components/projects/IssueListView';
 import FilterGroup from '../issues/filterGroup';
 import { IssueViewOptions } from '../issues/boards/IssueViewOptions';
 import { IssueGrouping } from '../issues/boards/issueGrouping';
@@ -44,7 +43,6 @@ type Grouping = {
 };
 export default function IssueBoard({ query }: IssueBoardProps) {
   const { fetcher } = useContext(OrbitContext);
-  const projectId = query?.pid;
   const [issues, setIssues] = useState<IIssue[]>([]);
   const [transformedIssues, setTransformedIssues] = useState<IIssue[]>([]);
   const [groupedIssues, setGroupedIssues] = useState<Grouping>({
@@ -204,8 +202,8 @@ export default function IssueBoard({ query }: IssueBoardProps) {
   }
 
   return (
-    <div className=' flex w-full flex-grow flex-col overflow-hidden bg-gray-50'>
-      <div className='min-h-12 flex flex-row items-center justify-between gap-3 border-y border-gray-100 bg-white p-4 py-3'>
+    <div className=' flex w-full flex-grow flex-col overflow-hidden bg-gray-50 dark:bg-neutral-900'>
+      <div className='min-h-12 flex flex-row items-center justify-between gap-3 border-y border-gray-100 bg-white p-4 py-3 dark:border-neutral-800 dark:bg-neutral-900'>
         <FilterGroup
           filters={filters}
           setFilters={setFilters}
@@ -222,21 +220,12 @@ export default function IssueBoard({ query }: IssueBoardProps) {
         </div>
       </div>
       <div className=' flex   flex-grow flex-col overflow-hidden'>
-        {viewType === 'board' ? (
-          <KanbanView
-            groupedIssues={groupedIssues}
-            reload={reload}
-            projectId={query.pid}
-            onIssueUpdate={updateIssueSet}
-          />
-        ) : (
-          <IssueListView
-            groupedIssues={groupedIssues}
-            reload={reload}
-            onIssueUpdate={updateIssueSet}
-            projectId={projectId}
-          />
-        )}
+        <KanbanView
+          groupedIssues={groupedIssues}
+          reload={reload}
+          projectId={query.pid}
+          onIssueUpdate={updateIssueSet}
+        />
       </div>
     </div>
   );

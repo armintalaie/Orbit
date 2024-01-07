@@ -144,7 +144,7 @@ export function IssueGrouping({
 
   return (
     <Select onValueChange={onValueChange} defaultValue={defaultGrouping}>
-      <SelectTrigger className='flex h-6 w-fit  gap-1 p-1 text-xs'>
+      <SelectTrigger className='flex h-6 w-fit  gap-1 p-1 text-xs dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300'>
         <Settings2Icon className='mr-2 h-3 w-3' />
         Display
       </SelectTrigger>

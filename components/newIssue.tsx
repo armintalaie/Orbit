@@ -83,7 +83,10 @@ export function NewIssue({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild className='m-0 p-0'>
           {button ? (
-            <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
+            <Button
+              variant='outline'
+              className='m-0 h-6 p-2 text-xs dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 '
+            >
               New Issue
             </Button>
           ) : (
