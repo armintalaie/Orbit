@@ -21,6 +21,7 @@ import * as z from 'zod';
 import { UserFinder } from './userFinder';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { useReward } from 'react-rewards';
 
 export const issueSchema = z.object({
   title: z.string(),
@@ -66,6 +67,16 @@ export function NewTeamMember({
     },
   });
   const { fetcher } = useContext(OrbitContext);
+  const { reward: confettiReward, isAnimating: isConfettiAnimating } =
+    useReward('confettiReward', 'confetti', {
+      zIndex: 1000,
+      elementCount: 100,
+      spread: 150,
+      angle: 90,
+      decay: 0.91,
+      startVelocity: 40,
+      lifetime: 300,
+    });
 
   const [userInput, setUserInput] = useState(undefined);
   async function onSubmit() {
@@ -81,6 +92,9 @@ export function NewTeamMember({
         description: 'something went wrong',
       });
     } else {
+      if (!isConfettiAnimating) {
+        confettiReward();
+      }
       reload();
       toast('Member added', {
         description: ``,

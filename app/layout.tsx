@@ -10,9 +10,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Orbit',
   description: 'Project management app for teams',
-  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#fff' }],
   icons: [{ rel: 'icon', url: 'icons/icon-128x128.png' }],
-  manifest: '/manifest.json',
 };
 
 export default function RootLayout({

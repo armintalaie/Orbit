@@ -7,7 +7,6 @@ import AuthForm from '@/components/auth/authForm';
 export const metadata: Metadata = {
   title: 'Orbit',
   description: 'Project management app for teams',
-  manifest: '/manifest.json',
 };
 
 export default function AuthenticationPage() {

@@ -1,8 +1,6 @@
 'use client';
 
-import * as React from 'react';
 import { UserIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -11,6 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { useState, useRef, useEffect } from 'react';
 import {
   Popover,
   PopoverContent,
@@ -19,6 +18,7 @@ import {
 import { useContext } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import AssigneeAvatar from './projects/AssigneeAvatar';
+import { Button } from './ui/button';
 
 interface Profile {
   id: string | undefined;
@@ -37,20 +37,34 @@ export function UserFinder({
   setVal: Function;
   teamid: number;
 }) {
-  const [memberOptions, setMemberOptions] = React.useState<{
+  const [memberOptions, setMemberOptions] = useState<{
     [key: string]: Profile;
   }>({});
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const buttonRef = useRef(null);
+  const [buttonWidth, setButtonWidth] = useState(0);
+
+  useEffect(() => {
+    function updateWidth() {
+      if (buttonRef.current) {
+        setButtonWidth(buttonRef.current.offsetWidth);
+      }
+    }
+
+    window.addEventListener('resize', updateWidth);
+    updateWidth();
+
+    return () => {
+      window.removeEventListener('resize', updateWidth);
+    };
+  }, []);
 
   const { fetcher } = useContext(OrbitContext);
 
   async function fetchMembers() {
     const res = await fetcher(`/api/profiles/`, {
-      next: { revalidate: 10 },
-      headers: {
-        'cache-control': 'no-cache',
-      },
-      cache: 'no-cache',
+      next: { revalidate: 100 },
+      cache: 'default',
     });
     const profiles = await res.json();
     const options: { [key: string]: Profile } = {};
@@ -64,15 +78,20 @@ export function UserFinder({
     setMemberOptions(options);
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchMembers();
   }, []);
 
   return (
-    <div className='flex items-center space-x-4'>
-      <Popover open={open} onOpenChange={setOpen}>
+    <div className='flex w-full items-center space-x-4'>
+      <Popover open={open} onOpenChange={setOpen} modal>
         <PopoverTrigger asChild>
-          <Button variant='outline' size='sm' className='w-full justify-start'>
+          <Button
+            variant='outline'
+            size='sm'
+            className='w-full justify-start'
+            ref={buttonRef}
+          >
             {val ? (
               <>
                 <AssigneeAvatar
@@ -85,11 +104,21 @@ export function UserFinder({
                 />
               </>
             ) : (
-              <>+ Search Profiles</>
+              <span className='flex gap-2 text-sm font-normal text-neutral-400 dark:text-neutral-600'>
+                <UserIcon className='h-4 w-4' />
+                Search Profiles
+              </span>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='p-0' side='right' align='start'>
+        <PopoverContent
+          className={'p-0'}
+          side='bottom'
+          align='start'
+          style={{
+            width: buttonWidth,
+          }}
+        >
           <Command
             filter={(value, search) => {
               if (!value) {
