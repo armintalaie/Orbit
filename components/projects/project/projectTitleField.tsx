@@ -79,7 +79,7 @@ export default function ProjectTitleField({
               onClick={() => setEditMode(true)}
               variant='ghost'
             >
-              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700'>
+              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700 dark:text-neutral-200'>
                 {title}
               </h1>
             </Button>
