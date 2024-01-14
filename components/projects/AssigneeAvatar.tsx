@@ -55,8 +55,8 @@ export default function AssigneeAvatar({
           ? assignee.full_name
           : getFirstNameAndLastInitial(assignee.full_name)}
       </p>
-      {avatarFormatting.showEmail && (
-        <p className='text-[8px]'>{'<' + (assignee.email || '') + '>'}</p>
+      {avatarFormatting.showEmail && assignee.email && (
+        <p className='text-[8px]'>{'<' + assignee.email + '>'}</p>
       )}
     </div>
   );

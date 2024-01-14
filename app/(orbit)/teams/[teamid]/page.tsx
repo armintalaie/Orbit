@@ -39,6 +39,7 @@ import { toast } from 'sonner';
 import { Maximize2 } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IProject, ITeam } from '@/lib/types/issue';
+import { NewIssue } from '@/components/newIssue';
 
 type viewTypes = 'ISSUES' | 'PROJECTS';
 
@@ -114,18 +115,13 @@ export default function ProjectPage() {
             <TeamOptions teamId={team.id} />
           </div>
         </div>
-        <div className='flex h-full items-center justify-center gap-2'></div>
-      </PageWrapper.Header>
-      <PageWrapper.SubHeader>
-        <div className='flex w-full flex-row items-center justify-between gap-2'>
-          <div className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'></div>
-
+        <div className='flex h-full items-center justify-center gap-2'>
           <ToggleTeamViewContents
             viewType={viewType}
             setViewType={setViewType}
           />
         </div>
-      </PageWrapper.SubHeader>
+      </PageWrapper.Header>
 
       <PageWrapper.Content>
         {viewType === 'ISSUES' ? (

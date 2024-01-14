@@ -16,7 +16,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export function ProjectField({ field }: { field: any }) {
@@ -26,7 +25,6 @@ export function ProjectField({ field }: { field: any }) {
     [key: string]: any;
   }>({});
   const [open, setOpen] = useState(false);
-  const userSession = useContext(UserSessionContext);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(
     field ? field.value : null
   );
@@ -44,7 +42,7 @@ export function ProjectField({ field }: { field: any }) {
     fetchProjects();
   }, []);
   return (
-    <div className='flex items-center space-x-4'>
+    <div className='flex items-center space-x-4 '>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -54,37 +52,40 @@ export function ProjectField({ field }: { field: any }) {
           >
             {selectedStatus && selectedStatus !== null ? (
               <>
-                <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
-                {projects &&
-                  projects[selectedStatus] &&
-                  projects[selectedStatus].title}
+                <TargetIcon className='mr-2 h-4 w-4 shrink-0 dark:text-neutral-200' />
+                <span className='text-xs dark:text-neutral-200'>
+                  {projects &&
+                    projects[selectedStatus] &&
+                    projects[selectedStatus].title}
+                </span>
               </>
             ) : (
-              <div className=' flex text-xs '>
+              <div className=' flex text-xs dark:text-neutral-400'>
                 <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
                 Project
               </div>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='p-0' side='right' align='start'>
+        <PopoverContent className='p-0 ' side='bottom' align='start'>
           <Command
+            className='flex flex-grow flex-col'
             filter={(value, search) => {
               if (!value) {
                 return 0;
               }
-              if (!projects[value]) return 0;
+              if (value.toLowerCase().includes(search.toLowerCase())) {
+                return 1;
+              }
 
-              return projects[value].title
-                .toLowerCase()
-                .indexOf(search.toLowerCase()) !== -1
-                ? 1
-                : 0;
+              return 0;
             }}
           >
-            <CommandInput placeholder='Select project...' />
-            <CommandList>
-              <CommandEmpty>No member found.</CommandEmpty>
+            <CommandInput placeholder='Search projects...' />
+
+            <CommandList className=''>
+              <CommandEmpty>No project found.</CommandEmpty>
+
               <CommandGroup>
                 {Object.entries(projects).map(([key, project]) => (
                   <CommandItem
@@ -111,7 +112,7 @@ export function ProjectField({ field }: { field: any }) {
                   >
                     <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
 
-                    <span>{project.title}</span>
+                    <span className='text-xs'>{project.title}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

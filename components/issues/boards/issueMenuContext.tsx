@@ -36,20 +36,13 @@ export default function IssueMenuContext({
 
   return (
     <ContextMenuContent className='w-62  rounded-md border border-gray-200 bg-white  shadow-sm dark:border-neutral-900 dark:bg-neutral-950 dark:text-neutral-200'>
-      <ContextMenuItem
-        className='flex flex-row items-center gap-3 text-sm'
-        onClick={() => {
-          fetcher(`/api/issues/${issue.id}`, {
-            method: 'DELETE',
-          }).then(() => {
-            reload && reload();
-          });
-        }}
-      >
+      <ContextMenuItem className='flex flex-row items-center gap-3 text-sm'>
         <Link
           href={`/projects/${issue.projectid}/issues/${issue.id}`}
           shallow={true}
           aria-disabled={true}
+          target='_blank'
+          rel='noopener noreferrer'
           className='flex flex-row items-center gap-3 text-sm'
         >
           <ExternalLinkIcon className='h-4 w-4' />

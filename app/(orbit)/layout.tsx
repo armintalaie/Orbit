@@ -8,8 +8,8 @@ import {
   ConstructionIcon,
   FolderClosed,
   InboxIcon,
-  LayoutGridIcon,
   PanelLeft,
+  TargetIcon,
 } from 'lucide-react';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,8 @@ import { CommandMenu } from '@/components/globalCommand';
 import OrbitContextProvider, { OrbitContext } from '@/lib/context/OrbitContext';
 import { GearIcon } from '@radix-ui/react-icons';
 import ThemeToggle from '@/components/themeToggle';
+import { FeedbackButton } from '@/components/feedback';
+import { Changelog } from '@/components/changelog';
 
 export default function ProjectLayout({
   children,
@@ -48,7 +50,12 @@ export default function ProjectLayout({
                 listClasses='hover:underline px-2 '
                 capitalizeLinks
               />
-              <ThemeToggle />
+              <div className='flex items-center gap-2 '>
+                <Changelog />
+
+                <FeedbackButton />
+                <ThemeToggle />
+              </div>
             </div>
             {children}
           </div>
@@ -109,7 +116,7 @@ function SideBarContent({
             shallow={true}
             className=' flex h-8 w-full items-center p-1  px-2 text-left text-sm text-gray-700 dark:text-neutral-400'
           >
-            <LayoutGridIcon className='h-3 w-3 ' />
+            <TargetIcon className='h-3 w-3 ' />
             <span className='flex h-full items-center justify-between pl-2'>
               Projects
             </span>

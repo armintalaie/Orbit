@@ -64,7 +64,7 @@ export function LabelField({ setFields }: { setFields: any }) {
             ))}
           </div>
         </div>
-        <PopoverContent className='p-0' side='right' align='start'>
+        <PopoverContent className='p-0' side='bottom' align='start'>
           <Command
             filter={(value, search) => {
               if (!value || !labels[value]) {
@@ -80,7 +80,7 @@ export function LabelField({ setFields }: { setFields: any }) {
                 : 0;
             }}
           >
-            <CommandInput placeholder='Filte Labels...' />
+            <CommandInput placeholder='Filter Labels...' />
             <CommandList className=''>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup className='flex max-h-40 flex-col gap-2 '>

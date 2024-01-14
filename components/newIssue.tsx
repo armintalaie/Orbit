@@ -85,7 +85,7 @@ export function NewIssue({
           {button ? (
             <Button
               variant='outline'
-              className='m-0 h-6 p-2 text-xs dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 '
+              className='m-0 h-6 p-2 text-xs font-normal dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 '
             >
               New Issue
             </Button>
@@ -121,7 +121,7 @@ export function NewIssue({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild className='m-0 p-0'>
         {button ? (
-          <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
+          <Button variant='outline' className='m-0 h-6 p-2 text-xs font-normal'>
             New Issue
           </Button>
         ) : (
@@ -191,6 +191,7 @@ function NewIssueForm({
       body: JSON.stringify(issue),
       headers: {
         'Content-Type': 'application/json',
+        'X-Full-Object': 'true',
       },
       method: 'POST',
     });

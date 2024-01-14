@@ -102,7 +102,7 @@ export function NewProject({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {button ? (
-          <Button variant='outline' className='m-0 h-6 p-2 text-xs'>
+          <Button variant='outline' className='m-0 h-6 p-2 text-xs font-normal'>
             New Project
           </Button>
         ) : (
