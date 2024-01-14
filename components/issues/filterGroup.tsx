@@ -93,23 +93,23 @@ export default function FilterGroup({
         />
       ),
     },
-    assignee: {
-      name: 'assignee',
-      icon: <UserCircle className='h-4 w-4' />,
-      command: (
-        <UserFilter
-          teamid={1}
-          backBtn={() => {
-            setFilterType(undefined);
-          }}
-        />
-      ),
-    },
-    deadline: {
-      name: 'deadline',
-      icon: <CalendarIcon className='h-4 w-4' />,
-      command: <div>deadline</div>,
-    },
+    // assignee: {
+    //   name: 'assignee',
+    //   icon: <UserCircle className='h-4 w-4' />,
+    //   command: (
+    //     <UserFilter
+    //       teamid={1}
+    //       backBtn={() => {
+    //         setFilterType(undefined);
+    //       }}
+    //     />
+    //   ),
+    // },
+    // deadline: {
+    //   name: 'deadline',
+    //   icon: <CalendarIcon className='h-4 w-4' />,
+    //   command: <div>deadline</div>,
+    // },
     labels: {
       name: 'labels',
       icon: <TagIcon className='h-4 w-4' />,
@@ -134,11 +134,11 @@ export default function FilterGroup({
         />
       ),
     },
-    team: {
-      name: 'team',
-      icon: <Users2Icon className='h-4 w-4' />,
-      command: <div>team</div>,
-    },
+    // team: {
+    //   name: 'team',
+    //   icon: <Users2Icon className='h-4 w-4' />,
+    //   command: <div>team</div>,
+    // },
   };
 
   function AppliedProjectFilter(pr) {

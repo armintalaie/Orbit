@@ -102,7 +102,15 @@ export async function POST(
         .executeTakeFirst();
       return Response.json(updated);
     }
-    return NextResponse.json({ message: `issue with id ${id} is created` });
+    return NextResponse.json(
+      { message: `issue with id ${id} is created` },
+      {
+        status: 200,
+        headers: {
+          'cache-control': 'public, max-age=2',
+        },
+      }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: '' }, { status: 405 });

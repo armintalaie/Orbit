@@ -83,6 +83,7 @@ export default function OrbitContextProvider({
         ...init?.headers,
         Authorization: user?.access_token,
       },
+      cache: 'force-cache',
     });
 
     return res;

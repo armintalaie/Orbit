@@ -7,5 +7,9 @@ export async function GET(
 ) {
   const teamMembers = await db.selectFrom('profiles').selectAll().execute();
 
-  return NextResponse.json(teamMembers);
+  return NextResponse.json(teamMembers, {
+    headers: {
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
 }

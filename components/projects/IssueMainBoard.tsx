@@ -79,9 +79,7 @@ export default function IssueBoard({ query }: IssueBoardProps) {
     let route = `/api/issues?q=${encodeURIComponent(
       JSON.stringify(query.q || {})
     )}`;
-    const res = await fetcher(`${route}`, {
-      next: { revalidate: 600 },
-    });
+    const res = await fetcher(`${route}`);
     const tasks = await res.json();
     setIssues(tasks);
   }
