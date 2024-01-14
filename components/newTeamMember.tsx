@@ -85,7 +85,6 @@ export function NewTeamMember({
       toast('Member added', {
         description: ``,
       });
-      setOpen(false);
     }
   }
 

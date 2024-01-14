@@ -19,6 +19,7 @@ import {
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import AssigneeAvatar from '@/components/projects/AssigneeAvatar';
 import { IIssue } from '@/lib/types/issue';
+import { toast } from 'sonner';
 
 interface Profile {
   id: string;
@@ -100,10 +101,13 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
         method: 'DELETE',
       }).then(() => {
         setSelectedStatusId(null);
+        toast('Assignee updated', {
+          description: 'unassigned!',
+        });
         reload && reload();
       });
     } else {
-      const res = await fetcher(`/api/issues/${issueId}/assignees`, {
+      let res = fetcher(`/api/issues/${issueId}/assignees`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -111,6 +115,10 @@ export function IssueAssigneeField(props: AssigneeUpdateFieldProps) {
         },
         body: JSON.stringify({ user_id: userId }),
       });
+      toast('Assignee updated', {
+        description: `assigneed to ${memberOptions[userId]?.full_name}!`,
+      });
+      res = await res;
       const data = await res.json();
       reload && reload(data);
     }

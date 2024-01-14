@@ -16,12 +16,14 @@ import IssueLabel from '../../label';
 import { IIssue, ILabel } from '@/lib/types/issue';
 import { toast } from 'sonner';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { Button } from '@/components/ui/button';
 
 type IssueLabelFieldProps = {
   reload?: (issue: IIssue) => void;
   labels: ILabel[];
   issueId: number;
   contentOnly?: boolean;
+  setOpenChange?: (open: boolean) => void;
 };
 
 export function IssueLabelField({
@@ -52,31 +54,27 @@ export function IssueLabelField({
   async function onOpenChange(open: boolean) {
     if (!open) {
       if (hasChanged()) {
-        const operation = setTimeout(async () => {
-          const res = await fetcher(`/api/issues/${issueId}/labels`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(reload ? { 'X-Full-Object': 'true' } : {}),
-            },
-            body: JSON.stringify({
-              labels: selectedLabelIds,
-            }),
-          });
-          const data = await res.json();
-          reload && reload(data);
+        toast('Updating labels', {
+          duration: 2000,
+        });
 
-          if (!res.ok) throw new Error(res.statusText);
-        }, 4000);
+        const res = await fetcher(`/api/issues/${issueId}/labels`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(reload ? { 'X-Full-Object': 'true' } : {}),
+          },
+          body: JSON.stringify({
+            labels: selectedLabelIds,
+          }),
+        });
+        const data = await res.json();
+        reload && reload(data);
+
+        if (!res.ok) throw new Error(res.statusText);
 
         toast('Labels saved', {
           duration: 3000,
-          action: {
-            label: 'Undo',
-            onClick: () => {
-              clearTimeout(operation);
-            },
-          },
         });
       } else {
         toast('No changes to save', { duration: 1000 });
@@ -109,9 +107,9 @@ export function IssueLabelField({
 
   const onLabelSelect = (value: string) => {
     setSelectedLabelIds((prev: number[]) => {
-      const labelToAdd = labelOptions[value].id;
+      const labelToAdd = Number(labelOptions[value].id);
       if (prev.includes(labelToAdd)) {
-        return prev.filter((id) => id !== labelToAdd);
+        return [...prev.filter((id) => id !== labelToAdd)];
       } else {
         return [...prev, labelToAdd];
       }
@@ -151,6 +149,13 @@ export function IssueLabelField({
           </CommandItem>
         ))}
       </CommandList>
+      <Button
+        variant={'outline'}
+        className='h-fit w-full p-1'
+        onClick={() => onOpenChange(false)}
+      >
+        Apply
+      </Button>
     </Command>
   );
 

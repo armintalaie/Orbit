@@ -111,7 +111,6 @@ export default function IssueBoard({ query }: IssueBoardProps) {
           }
         } else if (filter.type === 'label') {
           let labelIds = issue.labels.map((label) => label.labelid.toString());
-          console.log(labelIds);
           if (!labelIds.includes(filter.key.toString())) {
             shouldAdd = false;
             break;
