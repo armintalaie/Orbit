@@ -7,16 +7,12 @@ import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 const inter = Inter({ subsets: ['latin'] });
-
 export const metadata: Metadata = {
   title: 'Orbit',
   description: 'Project management app for teams',
+  themeColor: [{ media: '(prefers-color-scheme: dark)', color: '#fff' }],
+  icons: [{ rel: 'icon', url: 'icons/icon-128x128.png' }],
   manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Orbit',
-  },
 };
 
 export default function RootLayout({
@@ -27,14 +23,12 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning={true}>
       <head>
-        <link rel='icon' href='favicon.png' sizes='any' />
-        <link rel='manifest' href='manifest.json' />
-        <meta
-          name='viewport'
-          content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0'
-        />
         <meta charSet='utf-8' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        />
       </head>
       <body className={inter.className} suppressHydrationWarning={true}>
         <ThemeProvider enableSystem={true} attribute='class'>

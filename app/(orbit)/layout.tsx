@@ -36,6 +36,10 @@ export default function ProjectLayout({
     <AuthContextProvider>
       <OrbitContextProvider>
         <div className='flex h-[100svh] w-[100svw] flex-row dark:bg-neutral-900 dark:text-neutral-200 '>
+          <span
+            id='confettiReward'
+            className='pointer-events-none fixed inset-0 left-1/2 top-1/2 z-50 h-2 w-2 -translate-x-1/2 -translate-y-1/2 transform'
+          />
           <SideBarContent className={'min-w-56 hidden w-72'} />
           <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
             <div className='h-15 flex w-full items-center justify-between border-t  border-gray-100 px-4 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
@@ -84,7 +88,7 @@ function SideBarContent({
           <span className='h-12 p-4 font-bold dark:text-white'>Orbit</span>
         </div>
       )}
-      <div className='flex flex-grow flex-col gap-3 overflow-y-auto border-t border-gray-100 p-2 dark:border-gray-900'>
+      <div className='flex flex-grow flex-col gap-3 overflow-y-auto border-t border-gray-100 p-2 dark:border-neutral-800'>
         <CommandMenu setOpen={openSearch} open={search} />
         <div className='w-full p-1 pb-3'>
           <button

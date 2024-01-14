@@ -29,8 +29,8 @@ import * as z from 'zod';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { useReward } from 'react-rewards';
 
 export const teamSchema = z.object({
   name: z.string(),
@@ -51,6 +51,17 @@ export function NewTeam({
   const form = useForm<z.infer<typeof teamSchema>>({
     resolver: zodResolver(teamSchema),
   });
+  const { reward: confettiReward, isAnimating: isConfettiAnimating } =
+    useReward('confettiReward', 'confetti', {
+      zIndex: 1000,
+      elementCount: 100,
+      spread: 150,
+      angle: 90,
+      decay: 0.91,
+      startVelocity: 40,
+      lifetime: 300,
+    });
+
   async function onSubmit() {
     const formVals = form.getValues();
     const team = {
@@ -66,7 +77,10 @@ export function NewTeam({
     if (!res.ok) {
       toast('Team not created');
     } else {
-      reload();
+      if (!isConfettiAnimating) {
+        confettiReward();
+      }
+      reload(['teams']);
       toast('Team created');
       setOpen(false);
     }

@@ -1,12 +1,19 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { middlewares as activatedMiddleware } from '@/lib/middlewares/config';
 import { withContext } from './context';
 const allowedContextKeys = ['user', 'query'];
 
 export default withContext(allowedContextKeys, async (setContext, req) => {
-  if (req.nextUrl.pathname.startsWith('/api/auth/callback')) {
+  if (req.nextUrl.pathname.endsWith('.js')) {
+    console.log('next.js file');
+    return NextResponse.next();
+  }
+
+  if (
+    req.nextUrl.pathname.startsWith('/api/auth/callback') ||
+    req.nextUrl.pathname.startsWith('/api/auth/signout')
+  ) {
     return NextResponse.next();
   }
   if (req.nextUrl.pathname.startsWith('/api')) {
@@ -75,6 +82,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - icon.png
      */
-    '/((?!_next/static|_next/image|favicon.ico|icon.png).*)',
+    '/((?!_next/static|_next/image|favicon.ico|icon.png|public/.*).*)',
   ],
 };

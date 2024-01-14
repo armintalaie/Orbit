@@ -1,3 +1,10 @@
+const withPWA = require('@ducanh2912/next-pwa').default({
+  dest: 'public', // Destination directory for the PWA files
+  disable: process.env.NODE_ENV === 'development', // Disable PWA in development mode
+  register: true, // Register the PWA service worker
+  skipWaiting: true, // Skip waiting for service worker activation
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true, // Enable React strict mode for improved error handling
@@ -12,18 +19,5 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
 };
-
-const withPWA = require('@ducanh2912/next-pwa').default({
-  dest: 'public',
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
-  swcMinify: true,
-  disable: process.env.NODE_ENV === 'development',
-  workboxOptions: {
-    disableDevLogs: true,
-  },
-  // ... other options you like
-});
 
 module.exports = withPWA(nextConfig);

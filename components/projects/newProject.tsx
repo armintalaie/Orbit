@@ -31,6 +31,7 @@ import { StatusField } from '../issues/form/statusField';
 import { Textarea } from '@/components/ui/textarea';
 import { TeamField } from './form/teamField';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { useReward } from 'react-rewards';
 
 export const projectSchema = z.object({
   title: z.string(),
@@ -65,6 +66,17 @@ export function NewProject({
       ...defaultValues,
     },
   });
+  const { reward: confettiReward, isAnimating: isConfettiAnimating } =
+    useReward('confettiReward', 'confetti', {
+      zIndex: 1000,
+      elementCount: 100,
+      spread: 150,
+      angle: 90,
+      decay: 0.91,
+      startVelocity: 40,
+      lifetime: 300,
+    });
+
   async function onSubmit() {
     const formVals = form.getValues();
     const project = {
@@ -90,6 +102,9 @@ export function NewProject({
         description: 'something went wrong',
       });
     } else {
+      if (!isConfettiAnimating) {
+        confettiReward();
+      }
       reload(['projects']);
       toast('Project created', {
         description: `Project successfully created`,

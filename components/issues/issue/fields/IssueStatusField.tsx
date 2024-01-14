@@ -17,7 +17,7 @@ import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue, IStatus } from '@/lib/types/issue';
 import { useContext, useState } from 'react';
 import { toast } from 'sonner';
-// import { useReward } from 'react-rewards';
+import { useReward } from 'react-rewards';
 
 type IssueStatusFieldProps = {
   statusId: number;
@@ -34,8 +34,21 @@ export default function IssueStatusField({
 }: IssueStatusFieldProps) {
   const { status: statusOptionsArr, fetcher } = useContext(OrbitContext);
   const statusOptions = groupById(statusOptionsArr);
+  const doneStatusId = Object.keys(statusOptions).find(
+    (m) => statusOptions[Number(m)].label === 'Done'
+  );
   const [selectedStatusId, setSelectedStatusId] = useState<number>(statusId);
   const [open, setOpen] = useState(false);
+  const { reward: confettiReward, isAnimating: isConfettiAnimating } =
+    useReward('confettiReward', 'confetti', {
+      zIndex: 1000,
+      elementCount: 100,
+      spread: 150,
+      angle: 90,
+      decay: 0.91,
+      startVelocity: 40,
+      lifetime: 300,
+    });
 
   function groupById(array: IStatus[]): { [key: number]: IStatus } {
     return array.reduce((hash, obj) => ({ ...hash, [obj.id]: obj }), {});
@@ -60,6 +73,13 @@ export default function IssueStatusField({
     if (!res.ok) throw new Error(res.statusText);
 
     toast('status updated');
+    if (
+      !isConfettiAnimating &&
+      doneStatusId &&
+      data.statusid.toString() === doneStatusId.toString()
+    ) {
+      confettiReward();
+    }
   }
 
   function filter(value: string, search: string) {
