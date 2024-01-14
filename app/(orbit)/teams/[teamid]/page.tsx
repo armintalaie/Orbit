@@ -75,7 +75,6 @@ export default function ProjectPage() {
       next: {
         tags: ['teams'],
       },
-
     });
     const members = await res.json();
     setMembers(members);

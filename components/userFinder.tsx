@@ -47,6 +47,10 @@ export function UserFinder({
   async function fetchMembers() {
     const res = await fetcher(`/api/profiles/`, {
       next: { revalidate: 10 },
+      headers: {
+        'cache-control': 'no-cache',
+      },
+      cache: 'no-cache',
     });
     const profiles = await res.json();
     const options: { [key: string]: Profile } = {};

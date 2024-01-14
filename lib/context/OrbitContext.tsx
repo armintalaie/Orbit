@@ -78,12 +78,12 @@ export default function OrbitContextProvider({
     init?: any | undefined
   ): Promise<Response> {
     const res = fetch(input, {
+      cache: 'default',
       ...init,
       headers: {
         ...init?.headers,
         Authorization: user?.access_token,
       },
-      cache: 'default',
     });
 
     return res;
