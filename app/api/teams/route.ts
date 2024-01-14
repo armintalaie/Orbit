@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
   const data = await supabase.from('team').select().in('id', teamIds);
   return NextResponse.json(data.data, {
     headers: {
-      'Cache-Control': 'public, max-age=3600, must-revalidate',
+      'Cache-Control': 'public, max-age=60, must-revalidate',
     },
   });
 }
