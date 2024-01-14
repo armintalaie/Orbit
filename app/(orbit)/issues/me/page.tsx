@@ -1,5 +1,4 @@
 'use client';
-import { NewIssue } from '@/components/newIssue';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { setDocumentMeta } from '@/lib/util';
@@ -27,9 +26,7 @@ export default function MyIssuePage() {
               My Issues
             </h1>
           </div>
-          <div className='flex h-full items-center justify-center gap-2'>
-            <NewIssue button={true} />
-          </div>
+          <div className='flex h-full items-center justify-center gap-2'></div>
         </div>
         {issueQuery.q.assignees.length > 0 && <IssueBoard query={issueQuery} />}
       </div>

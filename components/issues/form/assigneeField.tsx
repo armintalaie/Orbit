@@ -62,9 +62,9 @@ export function AssigneeField({ field }: { field: any }) {
               <>
                 <CircleUser className='mr-2 h-4 w-4 shrink-0 dark:text-neutral-200' />
                 <span className='dark:text-neutral-200'>
-                {memberOptions &&
-                  memberOptions[selectedStatus] &&
-                  memberOptions[selectedStatus].full_name}
+                  {memberOptions &&
+                    memberOptions[selectedStatus] &&
+                    memberOptions[selectedStatus].full_name}
                 </span>
               </>
             ) : (

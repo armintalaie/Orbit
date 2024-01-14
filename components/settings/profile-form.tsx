@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,6 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-// This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {};
 
 export function ProfileForm() {
@@ -54,6 +53,15 @@ export function ProfileForm() {
     defaultValues,
     mode: 'onChange',
   });
+
+  const signout = async () => {
+    const res = await fetcher(`/api/auth/signout`, {
+      method: 'POST',
+    });
+    if (res.ok) {
+      window.location.href = '/';
+    }
+  };
 
   function onSubmit(data: ProfileFormValues) {
     toast('You submitted the following values:', {
@@ -92,10 +100,7 @@ export function ProfileForm() {
                 <FormControl></FormControl>
                 <Input {...field} placeholder={profile.email} />
               </Select>
-              {/* <FormDescription>
-                You can manage verified email addresses in your{' '}
-                <Link href='/examples/forms'>email settings</Link>.
-              </FormDescription> */}
+
               <FormMessage />
             </FormItem>
           )}
@@ -147,60 +152,25 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        {/* <FormField
-          control={form.control}
-          name='bio'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder='Tell us a little bit about yourself'
-                  className='resize-none'
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                You can <span>@mention</span> other users and organizations to
-                link to them.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        <div>
-          {/* {fields.map((field, index) => (
-            <FormField
-              control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={cn(index !== 0 && 'sr-only')}>
-                    URLs
-                  </FormLabel>
-                  <FormDescription className={cn(index !== 0 && 'sr-only')}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))} */}
-          {/* <Button
-            type='button'
+
+        <div></div>
+        <div className='flex items-center justify-end gap-2 p-1 text-sm'>
+          <Button
             variant='outline'
-            size='sm'
-            className='mt-2'
-            onClick={() => append({ value: '' })}
+            className='rounded-sm px-2 py-0 text-sm'
+            type='submit'
           >
-            Add URL
-          </Button> */}
+            Update profile
+          </Button>
+          <Button
+            onClick={signout}
+            variant='outline'
+            className='rounded-sm px-2 py-0 text-sm'
+            type='button'
+          >
+            Sign out
+          </Button>
         </div>
-        <Button type='submit'>Update profile</Button>
       </form>
     </Form>
   );

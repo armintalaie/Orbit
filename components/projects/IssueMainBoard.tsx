@@ -18,6 +18,7 @@ import { IssueViewOptions } from '../issues/boards/IssueViewOptions';
 import { IssueGrouping } from '../issues/boards/issueGrouping';
 import { IIssue } from '@/lib/types/issue';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { NewIssue } from '../newIssue';
 
 interface IssueBoardProps {
   query: {
@@ -109,8 +110,9 @@ export default function IssueBoard({ query }: IssueBoardProps) {
             break;
           }
         } else if (filter.type === 'label') {
-          let labelIds = issue.labels.map((label) => label.labelid);
-          if (!labelIds.includes(filter.key)) {
+          let labelIds = issue.labels.map((label) => label.labelid.toString());
+          console.log(labelIds);
+          if (!labelIds.includes(filter.key.toString())) {
             shouldAdd = false;
             break;
           }
@@ -144,8 +146,8 @@ export default function IssueBoard({ query }: IssueBoardProps) {
             break;
           }
         } else if (filter.type === 'label') {
-          let labelIds = issue.labels.map((label) => label.labelid);
-          if (labelIds.includes(filter.key)) {
+          let labelIds = issue.labels.map((label) => label.id.toString());
+          if (labelIds.includes(filter.key.toString())) {
             shouldAdd = true;
             break;
           }
@@ -216,7 +218,9 @@ export default function IssueBoard({ query }: IssueBoardProps) {
             setIssues={setGroupedIssues}
             teamid={query.tid}
           />
-          <IssueViewOptions viewType={viewType} setViewType={setViewType} />
+
+          {/* <IssueViewOptions viewType={viewType} setViewType={setViewType} /> */}
+          <NewIssue button={true} onIssueUpdate={updateIssueSet} />
         </div>
       </div>
       <div className=' flex   flex-grow flex-col overflow-hidden'>

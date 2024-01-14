@@ -20,9 +20,13 @@ export function FeedbackButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className='flex h-8 w-full items-center rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-xs text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'>
+        <Button
+          variant='outline'
+          size='icon'
+          className='h-6 w-6 rounded-md p-0 dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300'
+        >
           <BugIcon className=' h-3 w-3' />
-        </button>
+        </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>

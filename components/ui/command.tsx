@@ -91,7 +91,6 @@ const CommandGroup = React.forwardRef<
       className
     )}
     {...props}
-    
   />
 ));
 

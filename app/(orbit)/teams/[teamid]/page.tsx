@@ -116,19 +116,12 @@ export default function ProjectPage() {
           </div>
         </div>
         <div className='flex h-full items-center justify-center gap-2'>
-          <NewIssue button={true} />
-        </div>
-      </PageWrapper.Header>
-      <PageWrapper.SubHeader>
-        <div className='flex w-full flex-row items-center justify-between gap-2'>
-          <div className='h-full pr-2 text-xs font-medium leading-tight text-gray-700'></div>
-
           <ToggleTeamViewContents
             viewType={viewType}
             setViewType={setViewType}
           />
         </div>
-      </PageWrapper.SubHeader>
+      </PageWrapper.Header>
 
       <PageWrapper.Content>
         {viewType === 'ISSUES' ? (

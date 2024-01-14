@@ -54,10 +54,10 @@ export function ProjectField({ field }: { field: any }) {
               <>
                 <TargetIcon className='mr-2 h-4 w-4 shrink-0 dark:text-neutral-200' />
                 <span className='text-xs dark:text-neutral-200'>
-                {projects &&
-                  projects[selectedStatus] &&
-                  projects[selectedStatus].title}
-                  </span>
+                  {projects &&
+                    projects[selectedStatus] &&
+                    projects[selectedStatus].title}
+                </span>
               </>
             ) : (
               <div className=' flex text-xs dark:text-neutral-400'>
@@ -85,36 +85,36 @@ export function ProjectField({ field }: { field: any }) {
 
             <CommandList className=''>
               <CommandEmpty>No project found.</CommandEmpty>
-             
-              <CommandGroup >
-              {Object.entries(projects).map(([key, project]) => (
-                <CommandItem
-                  key={project.id}
-                  value={project.id}
-                  onSelect={(value) => {
-                    const matchId =
-                      Object.keys(projects).find((m) => m === key) || null;
-                    if (
-                      !matchId ||
-                      !projects[matchId as string] ||
-                      !projects[matchId as string].id
-                    ) {
-                      setSelectedStatus(null);
-                      field.onChange(null);
-                    } else {
-                      const found = projects[matchId as string];
-                      field.onChange(found.id);
-                      setSelectedStatus(found.id || null);
-                    }
 
-                    setOpen(false);
-                  }}
-                >
-                  <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
+              <CommandGroup>
+                {Object.entries(projects).map(([key, project]) => (
+                  <CommandItem
+                    key={project.id}
+                    value={project.id}
+                    onSelect={(value) => {
+                      const matchId =
+                        Object.keys(projects).find((m) => m === key) || null;
+                      if (
+                        !matchId ||
+                        !projects[matchId as string] ||
+                        !projects[matchId as string].id
+                      ) {
+                        setSelectedStatus(null);
+                        field.onChange(null);
+                      } else {
+                        const found = projects[matchId as string];
+                        field.onChange(found.id);
+                        setSelectedStatus(found.id || null);
+                      }
 
-                  <span className='text-xs'>{project.title}</span>
-                </CommandItem>
-              ))}
+                      setOpen(false);
+                    }}
+                  >
+                    <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
+
+                    <span className='text-xs'>{project.title}</span>
+                  </CommandItem>
+                ))}
               </CommandGroup>
             </CommandList>
           </Command>
