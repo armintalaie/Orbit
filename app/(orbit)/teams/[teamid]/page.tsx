@@ -69,9 +69,13 @@ export default function ProjectPage() {
 
   async function fetchMembers() {
     const res = await fetcher(`/api/teams/${params.teamid}/members`, {
+      headers: {
+        'cache-control': 'no-cache',
+      },
       next: {
         tags: ['teams'],
       },
+
     });
     const members = await res.json();
     setMembers(members);
