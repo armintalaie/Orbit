@@ -1,10 +1,11 @@
-import { supabase } from '@/lib/supabase';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db/handler';
 
-export async function GET(req: Request) {
-  const { data } = await supabase.from('profiles').select();
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { tid: string } }
+) {
+  const teamMembers = await db.selectFrom('profiles').selectAll().execute();
 
-  return NextResponse.json(data, {
-    headers: { 'Cache-Control': 's-maxage=3, stale-while-revalidate' },
-  });
+  return NextResponse.json(teamMembers);
 }

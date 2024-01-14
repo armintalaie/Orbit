@@ -16,7 +16,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export function ProjectField({ field }: { field: any }) {
@@ -26,7 +25,6 @@ export function ProjectField({ field }: { field: any }) {
     [key: string]: any;
   }>({});
   const [open, setOpen] = useState(false);
-  const userSession = useContext(UserSessionContext);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(
     field ? field.value : null
   );
@@ -67,54 +65,53 @@ export function ProjectField({ field }: { field: any }) {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='p-0' side='right' align='start'>
+        <PopoverContent className='p-0 ' side='bottom' align='start'>
           <Command
+            className='flex flex-grow flex-col overflow-hidden bg-red-200 '
             filter={(value, search) => {
               if (!value) {
                 return 0;
               }
-              if (!projects[value]) return 0;
+              if (value.toLowerCase().includes(search.toLowerCase())) {
+                return 1;
+              }
 
-              return projects[value].title
-                .toLowerCase()
-                .indexOf(search.toLowerCase()) !== -1
-                ? 1
-                : 0;
+              return 0;
             }}
           >
             <CommandInput placeholder='Select project...' />
-            <CommandList>
-              <CommandEmpty>No member found.</CommandEmpty>
-              <CommandGroup>
-                {Object.entries(projects).map(([key, project]) => (
-                  <CommandItem
-                    key={project.id}
-                    value={project.id}
-                    onSelect={(value) => {
-                      const matchId =
-                        Object.keys(projects).find((m) => m === key) || null;
-                      if (
-                        !matchId ||
-                        !projects[matchId as string] ||
-                        !projects[matchId as string].id
-                      ) {
-                        setSelectedStatus(null);
-                        field.onChange(null);
-                      } else {
-                        const found = projects[matchId as string];
-                        field.onChange(found.id);
-                        setSelectedStatus(found.id || null);
-                      }
+            <CommandList className='h-40 overflow-y-scroll'>
+              <CommandEmpty>No project found.</CommandEmpty>
+              {/* <CommandGroup className='overflow-y-scroll flex flex-col flex-grow h-40'> */}
+              {Object.entries(projects).map(([key, project]) => (
+                <CommandItem
+                  key={project.id}
+                  value={project.id}
+                  onSelect={(value) => {
+                    const matchId =
+                      Object.keys(projects).find((m) => m === key) || null;
+                    if (
+                      !matchId ||
+                      !projects[matchId as string] ||
+                      !projects[matchId as string].id
+                    ) {
+                      setSelectedStatus(null);
+                      field.onChange(null);
+                    } else {
+                      const found = projects[matchId as string];
+                      field.onChange(found.id);
+                      setSelectedStatus(found.id || null);
+                    }
 
-                      setOpen(false);
-                    }}
-                  >
-                    <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
+                    setOpen(false);
+                  }}
+                >
+                  <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
 
-                    <span>{project.title}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+                  <span>{project.title}</span>
+                </CommandItem>
+              ))}
+              {/* </CommandGroup> */}
             </CommandList>
           </Command>
         </PopoverContent>

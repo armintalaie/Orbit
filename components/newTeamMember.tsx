@@ -1,6 +1,6 @@
 'use client'; // top to the file
 
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, RocketIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,6 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { UserFinder } from './userFinder';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 export const issueSchema = z.object({
   title: z.string(),
@@ -101,16 +102,28 @@ export function NewTeamMember({
           </button>
         )}
       </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='sm:max-w-lg'>
         <DialogHeader>
           <DialogTitle>Add Member</DialogTitle>
-          <DialogDescription>Add a new member</DialogDescription>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            <Alert>
+              <RocketIcon className='h-4 w-4' />
+              <AlertTitle>Who you can add</AlertTitle>
+              <AlertDescription>
+                You can add anyone who has signed in at least once in the past.
+              </AlertDescription>
+            </Alert>
             <UserFinder val={userInput} setVal={setUserInput} teamid={teamid} />
-            <Button type='submit' className='text-sm'>
+
+            <Button
+              type='submit'
+              className='w-full text-sm'
+              disabled={userInput === undefined}
+            >
               Add
             </Button>
           </form>

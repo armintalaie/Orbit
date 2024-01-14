@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/popover';
 import { useContext } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import AssigneeAvatar from './projects/AssigneeAvatar';
 
 interface Profile {
   id: string | undefined;
@@ -27,33 +28,39 @@ interface Profile {
   label: string;
 }
 
-export function UserFinder({ val, setVal, teamid }) {
+export function UserFinder({
+  val,
+  setVal,
+  teamid,
+}: {
+  val: string;
+  setVal: Function;
+  teamid: number;
+}) {
   const [memberOptions, setMemberOptions] = React.useState<{
     [key: string]: Profile;
   }>({});
   const [open, setOpen] = React.useState(false);
-  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
-    null
-  );
+
   const { fetcher } = useContext(OrbitContext);
 
-  React.useEffect(() => {
-    async function fetchMembers() {
-      const res = await fetcher(`/api/profiles/`, {
-        next: { revalidate: 10 },
-      });
-      const profiles = await res.json();
-      const options: { [key: string]: Profile } = {};
+  async function fetchMembers() {
+    const res = await fetcher(`/api/profiles/`, {
+      next: { revalidate: 10 },
+    });
+    const profiles = await res.json();
+    const options: { [key: string]: Profile } = {};
 
-      for (const profile of profiles) {
-        options[profile.id] = {
-          ...profile,
-          label: profile.full_name,
-        };
-      }
-      setMemberOptions(options);
+    for (const profile of profiles) {
+      options[profile.id] = {
+        ...profile,
+        label: profile.full_name,
+      };
     }
+    setMemberOptions(options);
+  }
 
+  React.useEffect(() => {
     fetchMembers();
   }, []);
 
@@ -62,11 +69,16 @@ export function UserFinder({ val, setVal, teamid }) {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant='outline' size='sm' className='w-full justify-start'>
-            {selectedStatus ? (
+            {val ? (
               <>
-                <UserIcon className='mr-2 h-4 w-4 shrink-0' />
-                {/* <selectedStatus.icon className='mr-2 h-4 w-4 shrink-0' /> */}
-                {selectedStatus}
+                <AssigneeAvatar
+                  assignee={memberOptions[val] as any}
+                  formatting={{
+                    showFullName: true,
+                    showEmail: true,
+                    leftAlign: false,
+                  }}
+                />
               </>
             ) : (
               <>+ Search Profiles</>
@@ -79,6 +91,9 @@ export function UserFinder({ val, setVal, teamid }) {
               if (!value) {
                 return 0;
               }
+              if (!memberOptions[value]) {
+                return 0;
+              }
               return memberOptions[value].full_name
                 .toLowerCase()
                 .indexOf(search.toLowerCase()) !== -1
@@ -86,30 +101,27 @@ export function UserFinder({ val, setVal, teamid }) {
                 : 0;
             }}
           >
-            <CommandInput placeholder='Change status...' />
+            <CommandInput placeholder='search profiles...' />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
-                {Object.entries(memberOptions).map(([key, member]) => (
+                {Object.entries(memberOptions).map(([, member]) => (
                   <CommandItem
                     key={member.id}
                     value={member.id}
                     onSelect={(value) => {
-                      const match = Object.values(memberOptions).find(
-                        (m) => m.id === value
-                      );
-                      if (match) {
-                        setSelectedStatus(match.full_name as string);
-                      } else {
-                        setSelectedStatus(null);
-                      }
                       setVal(value);
                       setOpen(false);
                     }}
                   >
-                    <UserIcon className='mr-2 h-4 w-4 shrink-0' />
-
-                    <span>{member.full_name}</span>
+                    <AssigneeAvatar
+                      assignee={member as any}
+                      formatting={{
+                        showFullName: true,
+                        showEmail: true,
+                        leftAlign: false,
+                      }}
+                    />
                   </CommandItem>
                 ))}
               </CommandGroup>
