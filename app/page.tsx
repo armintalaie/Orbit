@@ -7,6 +7,7 @@ import AuthForm from '@/components/auth/authForm';
 export const metadata: Metadata = {
   title: 'Orbit',
   description: 'Authentication forms built using the components.',
+  manifest: "/manifest.json",
 };
 
 export default function AuthenticationPage() {
