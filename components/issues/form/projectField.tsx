@@ -42,7 +42,7 @@ export function ProjectField({ field }: { field: any }) {
     fetchProjects();
   }, []);
   return (
-    <div className='flex items-center space-x-4'>
+    <div className='flex items-center space-x-4 '>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -52,13 +52,15 @@ export function ProjectField({ field }: { field: any }) {
           >
             {selectedStatus && selectedStatus !== null ? (
               <>
-                <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
+                <TargetIcon className='mr-2 h-4 w-4 shrink-0 dark:text-neutral-200' />
+                <span className='text-xs dark:text-neutral-200'>
                 {projects &&
                   projects[selectedStatus] &&
                   projects[selectedStatus].title}
+                  </span>
               </>
             ) : (
-              <div className=' flex text-xs '>
+              <div className=' flex text-xs dark:text-neutral-400'>
                 <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
                 Project
               </div>
@@ -67,7 +69,7 @@ export function ProjectField({ field }: { field: any }) {
         </PopoverTrigger>
         <PopoverContent className='p-0 ' side='bottom' align='start'>
           <Command
-            className='flex flex-grow flex-col overflow-hidden bg-red-200 '
+            className='flex flex-grow flex-col'
             filter={(value, search) => {
               if (!value) {
                 return 0;
@@ -79,10 +81,12 @@ export function ProjectField({ field }: { field: any }) {
               return 0;
             }}
           >
-            <CommandInput placeholder='Select project...' />
-            <CommandList className='h-40 overflow-y-scroll'>
+            <CommandInput placeholder='Search projects...' />
+
+            <CommandList className=''>
               <CommandEmpty>No project found.</CommandEmpty>
-              {/* <CommandGroup className='overflow-y-scroll flex flex-col flex-grow h-40'> */}
+             
+              <CommandGroup >
               {Object.entries(projects).map(([key, project]) => (
                 <CommandItem
                   key={project.id}
@@ -108,10 +112,10 @@ export function ProjectField({ field }: { field: any }) {
                 >
                   <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
 
-                  <span>{project.title}</span>
+                  <span className='text-xs'>{project.title}</span>
                 </CommandItem>
               ))}
-              {/* </CommandGroup> */}
+              </CommandGroup>
             </CommandList>
           </Command>
         </PopoverContent>

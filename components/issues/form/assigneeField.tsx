@@ -50,7 +50,7 @@ export function AssigneeField({ field }: { field: any }) {
   }, []);
 
   return (
-    <div className='flex items-center space-x-4'>
+    <div className='flex items-center space-x-4 '>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -60,20 +60,22 @@ export function AssigneeField({ field }: { field: any }) {
           >
             {selectedStatus ? (
               <>
-                <CircleUser className='mr-2 h-4 w-4 shrink-0' />
+                <CircleUser className='mr-2 h-4 w-4 shrink-0 dark:text-neutral-200' />
+                <span className='dark:text-neutral-200'>
                 {memberOptions &&
                   memberOptions[selectedStatus] &&
                   memberOptions[selectedStatus].full_name}
+                </span>
               </>
             ) : (
-              <div className=' flex text-xs'>
+              <div className=' flex text-xs text-neutral-400'>
                 <UserCircleIcon className='mr-2 h-4 w-4 shrink-0' />
                 Assignee
               </div>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='p-0' side='right' align='start'>
+        <PopoverContent className='p-0' side='bottom' align='start'>
           <Command
             filter={(value, search) => {
               if (!value) {
