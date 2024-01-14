@@ -1,5 +1,3 @@
-'use client';
-
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { useContext, useEffect, useState } from 'react';
 import { MessageCircleIcon, TextSelectIcon } from 'lucide-react';

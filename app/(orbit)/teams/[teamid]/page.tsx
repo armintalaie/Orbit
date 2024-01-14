@@ -39,7 +39,6 @@ import { toast } from 'sonner';
 import { Maximize2 } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IProject, ITeam } from '@/lib/types/issue';
-import { NewIssue } from '@/components/newIssue';
 
 type viewTypes = 'ISSUES' | 'PROJECTS';
 

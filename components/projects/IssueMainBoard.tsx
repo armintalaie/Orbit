@@ -1,20 +1,7 @@
-'use client';
-
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { Button } from '@radix-ui/themes';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import KanbanView from '@/components/projects/KanbanBoard';
 import FilterGroup from '../issues/filterGroup';
-import { IssueViewOptions } from '../issues/boards/IssueViewOptions';
 import { IssueGrouping } from '../issues/boards/issueGrouping';
 import { IIssue } from '@/lib/types/issue';
 import { OrbitContext } from '@/lib/context/OrbitContext';
@@ -50,7 +37,7 @@ export default function IssueBoard({ query }: IssueBoardProps) {
     issues: [],
     key: '',
   });
-  const [viewType, setViewType] = useState<ViewType>('board');
+  // const [viewType, setViewType] = useState<ViewType>('board');
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -229,41 +216,5 @@ export default function IssueBoard({ query }: IssueBoardProps) {
         />
       </div>
     </div>
-  );
-}
-
-function ProjectOptions({ projectId }: { projectId: number }) {
-  const router = useRouter();
-  const { fetcher } = useContext(OrbitContext);
-
-  async function deleteProject() {
-    const res = await fetcher(`/api/projects/${projectId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!res.ok) throw new Error(res.statusText);
-    router.push('/projects');
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost'>
-          <DotsHorizontalIcon className='h-4 w-4' />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-56'>
-        <DropdownMenuLabel>Project Settings</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Button variant='ghost' onClick={() => deleteProject()}>
-            Delete project
-          </Button>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }
