@@ -58,7 +58,11 @@ export async function GET(req: NextRequest) {
   teams = teams || [];
   const teamIds = teams.map((team: any) => team.teamid);
   const data = await supabase.from('team').select().in('id', teamIds);
-  return NextResponse.json(data.data);
+  return NextResponse.json(data.data, {
+    headers: {
+      'Cache-Control': 'public, max-age=3600, must-revalidate',
+    },
+  });
 }
 
 // function verifyAccess(req: NextRequest, teamId: string) {
