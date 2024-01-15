@@ -55,7 +55,7 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
           />
         </div>
         <div className='flex h-full items-center justify-center gap-2'>
-          <NewIssue button={true} defaultValues={{ projectid: project.id }} />
+          {/* <NewIssue button={true} defaultValues={{ projectid: project.id }} /> */}
         </div>
       </PageWrapper.Header>
       <PageWrapper.Content>

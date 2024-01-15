@@ -6,7 +6,6 @@ const allowedContextKeys = ['user', 'query'];
 
 export default withContext(allowedContextKeys, async (setContext, req) => {
   if (req.nextUrl.pathname.endsWith('.js')) {
-    console.log('next.js file');
     return NextResponse.next();
   }
 

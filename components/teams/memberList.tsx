@@ -24,9 +24,9 @@ export default function TeamMemberList({
     const res = await fetcher(`/api/teams/${teamid}/members`, {
       next: { revalidate: 100 },
       headers: {
-        'cache-control': 'max-age=3600',
+        'cache-control': 'max-age=30',
       },
-      cache: 'default',
+      cache: 'no-store',
     });
     const members = await res.json();
     setMembers(members);
