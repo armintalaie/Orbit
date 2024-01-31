@@ -18,14 +18,16 @@ export default function KanbanView({
   projectId,
   onIssueUpdate,
 }: KanbanViewProps) {
-  if (!groupedIssues) return <></>;
+  if (!groupedIssues || !groupedIssues.issues) return <></>;
 
+  const hiddenStatuses = ['Archive', 'Canceled', 'Done'];
   const nonEmptyGroups = groupedIssues.issues.filter(
-    (gp: any) => gp.issues.length > 0
+    (gp: any) => gp.issues.length > 0 && !hiddenStatuses.includes(gp.label)
   );
   const emptyGroups = groupedIssues.issues.filter(
-    (gp: any) => gp.issues.length === 0
+    (gp: any) => gp.issues.length === 0 && !hiddenStatuses.includes(gp.label)
   );
+  
   return (
     <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-hidden  overflow-x-scroll p-2 py-0'>
       <div className='flex h-full flex-grow  gap-4 '>

@@ -67,6 +67,7 @@ export function NewTeamMember({
     },
   });
   const { fetcher } = useContext(OrbitContext);
+  const [userInput, setUserInput] = useState(undefined);
   const { reward: confettiReward, isAnimating: isConfettiAnimating } =
     useReward('confettiReward', 'confetti', {
       zIndex: 1000,
@@ -78,7 +79,6 @@ export function NewTeamMember({
       lifetime: 300,
     });
 
-  const [userInput, setUserInput] = useState(undefined);
   async function onSubmit() {
     const res = await fetcher(`/api/teams/${teamid}/members/${userInput}`, {
       headers: {
@@ -96,8 +96,18 @@ export function NewTeamMember({
         confettiReward();
       }
       reload();
+      setOpen(false);
+      setUserInput(undefined);
       toast('Member added', {
         description: ``,
+        action: 
+          {
+            label: 'Add another',
+            onClick: () => {
+              setOpen(true);
+            }
+          }
+        
       });
     }
   }
