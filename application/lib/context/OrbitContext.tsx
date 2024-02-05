@@ -2,7 +2,6 @@ import React, { useEffect, useState, Suspense, useContext } from 'react';
 import { ILabel, IProject, IStatus, ITeam } from '../types/issue';
 import { UserSessionContext } from './AuthProvider';
 
-
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
 type OrbitType = {
@@ -52,66 +51,6 @@ export default function OrbitContextProvider({
     profile: {},
     ws: null,
   });
-
-  const WS_URL = "ws://127.0.0.1:3000";
-  // const { sendJsonMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(
-  //   WS_URL,
-  //   {
-  //     share: false,
-  //     shouldReconnect: () => true,
-  //   },
-  // )
-
-  // Run when the connection state (readyState) changes
-  // useEffect(() => {
-  //   console.log("Connection state changed")
-  //   if (readyState === ReadyState.OPEN) {
-  //     sendJsonMessage({
-  //       command: "getProjects",
-  //     })
-  //     sendJsonMessage({
-  //       command: "getTeams",
-  //     })
-  //     sendJsonMessage({ 
-  //       command: "getLabels"
-  //     })
-  //     sendJsonMessage({ 
-  //       command: "getStatus"
-  //     })
-  //   }
-  // }, [readyState])
-
-  // Run when a new WebSocket message is received (lastJsonMessage)
-  // useEffect(() => {
-  //   // console.log(`Got a new message: ${lastJsonMessage}`)
-  //   if (lastJsonMessage) {
-  //     console.log("Got a new message")
-  //     console.log(lastJsonMessage.event)
-  //     if (
-  //       lastJsonMessage.event === "getProjects" &&
-  //       lastJsonMessage.status === "success"
-  //     ) {
-  //       setOrbit((prev) => ({ ...prev, projects: lastJsonMessage.data }))
-  //     }
-
-  //     if (
-  //       lastJsonMessage.event === "getTeams" &&
-  //       lastJsonMessage.status === "success"
-  //     ) {
-  //       console.log("Got teams")
-  //       setOrbit((prev) => ({ ...prev, teams: lastJsonMessage.data }))
-  //     }
-
-  //     if (
-  //       lastJsonMessage.event === "getLabels" &&
-  //       lastJsonMessage.status === "success"
-  //     ) {
-  //       setOrbit((prev) => ({ ...prev, labels: lastJsonMessage.data }))
-  //     }
-    
-  
-  //   }
-  // }, [lastJsonMessage])
 
   const reload = async (items: ReloadTypes[] = []) => {
     if (items.length === 0) {

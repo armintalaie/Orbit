@@ -89,7 +89,6 @@ export default function IssuePage({ issueId }: { issueId: number }) {
 
   useEffect(() => {
     if (lastMessage) {
-      console.log('issue change', lastMessage);
       const issue = JSON.parse(lastMessage) as IIssue;
       setIssue(issue);
     }

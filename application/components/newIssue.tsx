@@ -8,10 +8,8 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -35,10 +33,8 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { LabelField } from './issues/form/labelField';
@@ -98,10 +94,8 @@ export function NewIssue({
             </Button>
           )}
         </DialogTrigger>
-        <DialogContent className='sm:max-w-3xl'>
+        <DialogContent className='sm:max-w-xl'>
           <DialogHeader>
-            <DialogTitle>New Issue</DialogTitle>
-            <DialogDescription>Create a new Issue.</DialogDescription>
           </DialogHeader>
           <NewIssueForm
             defaultValues={defaultValues}
@@ -132,8 +126,6 @@ export function NewIssue({
       </DrawerTrigger>
       <DrawerContent className='max-h-[90%] px-3 '>
         <DrawerHeader className='text-left'>
-          <DrawerTitle>New Issue</DrawerTitle>
-          <DrawerDescription>Create a new Issue.</DrawerDescription>
         </DrawerHeader>
         <NewIssueForm
           defaultValues={defaultValues}

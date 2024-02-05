@@ -93,7 +93,6 @@ export default function ProjectPage() {
 
 
   function updateIssueSet(issue: IIssue) {
-    console.log('updateIssueSet', issue);
     const issueExists = issues.some((i) => i.id === issue.id);
     let newIssues = issues;
     if (issueExists) {

@@ -19,8 +19,6 @@ export function IssueInfo({
   const [IssueInfoFields, setIssueInfoFields] = useState(assignIssueInfoComponent(refIssue));
 
   useEffect(() => {
-    console.log('issue infooo change', refIssue);
-
     setIssueInfoFields(() => assignIssueInfoComponent(refIssue))
   }
   , [refIssue]);  
@@ -34,7 +32,6 @@ export function IssueInfo({
     if (!issue) {
       return [];
     }
-    console.log('issue', issue);
   
     return [
       {

@@ -14,64 +14,36 @@ export interface KanbanViewProps {
 
 export default function KanbanView({
   groupedIssues,
-  reload,
   projectId,
   onIssueUpdate,
 }: KanbanViewProps) {
   if (!groupedIssues || !groupedIssues.issues) return <></>;
 
-  const hiddenStatuses = ['Archive', 'Canceled', 'Done'];
   const nonEmptyGroups = groupedIssues.issues.filter(
-    (gp: any) => gp.issues.length > 0 && !hiddenStatuses.includes(gp.label)
+    (gp: any) => gp.issues.length > 0
   );
   const emptyGroups = groupedIssues.issues.filter(
-    (gp: any) => gp.issues.length === 0 && !hiddenStatuses.includes(gp.label)
+    (gp: any) => gp.issues.length === 0
   );
-  
+
+  function handleOnDrag(e: React.DragEvent) {}
+
+  function handleOnDrop(e: React.DragEvent) {}
+
+  function handleOnDragOver(e: React.DragEvent) {
+    e.preventDefault();
+  }
+
   return (
     <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-hidden  overflow-x-scroll p-2 py-0'>
       <div className='flex h-full flex-grow  gap-4 '>
         {nonEmptyGroups.map((grouping: any) => (
-          <div
+          <IssueColumn
             key={grouping.key}
-            className='flex h-full   flex-col  overflow-hidden'
-          >
-            <div
-              key={grouping.label}
-              className='flex h-full  w-72 flex-col rounded-sm  p-0 '
-            >
-              <CardHeader className='m-0 flex flex-row items-center justify-between space-y-0 px-1'>
-                <div className='m-0 flex flex-row items-center gap-2'>
-                  <p className='flex items-center text-xs text-gray-700 dark:text-gray-200'>
-                    {grouping.label}
-                    <span className='ml-2 flex h-5 w-5 items-center justify-center rounded-full p-1 text-xs text-gray-400 dark:bg-neutral-800 dark:text-neutral-400'>
-                      {grouping.issues.length}
-                    </span>
-                  </p>
-                </div>
-
-                <NewIssue
-                  button={false}
-                  reload={reload}
-                  onIssueUpdate={onIssueUpdate}
-                  defaultValues={{
-                    projectid: projectId,
-                    [groupedIssues.key]: grouping.key,
-                  }}
-                />
-              </CardHeader>
-              <CardContent className='flex flex-grow  flex-col overflow-x-visible overflow-y-scroll p-0   '>
-                <ul className='flex flex-grow flex-col space-y-3  pb-3 '>
-                  {grouping.issues &&
-                    grouping.issues.map((issue: IIssue, idx: number) => (
-                      <div key={issue.id}>
-                        <IssueCard issue={issue} reload={reload} />
-                      </div>
-                    ))}
-                </ul>
-              </CardContent>
-            </div>
-          </div>
+            grouping={grouping}
+            projectId={projectId}
+            groupedIssues={groupedIssues}
+          />
         ))}
       </div>
 
@@ -93,7 +65,6 @@ export default function KanbanView({
 
                     <NewIssue
                       button={false}
-                      reload={reload}
                       onIssueUpdate={onIssueUpdate}
                       defaultValues={{
                         projectid: projectId,
@@ -106,6 +77,44 @@ export default function KanbanView({
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function IssueColumn({ grouping, projectId, groupedIssues }) {
+  return (
+    <div key={grouping.key} className='flex h-full   flex-col  overflow-hidden'>
+      <div
+        key={grouping.label}
+        className='relative flex  h-full w-72 flex-col  rounded-sm p-0'
+      >
+        <CardHeader className='m-0 flex flex-row items-center justify-between space-y-0 px-1'>
+          <div className='m-0 flex flex-row items-center gap-2'>
+            <p className='flex items-center text-xs text-gray-700 dark:text-gray-200'>
+              {grouping.label}
+              <span className='ml-2 flex h-5 w-5 items-center justify-center rounded-full p-1 text-xs text-gray-400 dark:bg-neutral-800 dark:text-neutral-400'>
+                {grouping.issues.length}
+              </span>
+            </p>
+          </div>
+
+          <NewIssue
+            button={false}
+            defaultValues={{
+              projectid: projectId,
+              [groupedIssues.key]: grouping.key,
+            }}
+          />
+        </CardHeader>
+        <CardContent className='z-20 flex  flex-grow flex-col overflow-x-visible overflow-y-scroll  p-0  '>
+          <ul className='flex flex-grow flex-col space-y-3  pb-3 '>
+            {grouping.issues &&
+              grouping.issues.map((issue: IIssue, idx: number) => (
+                <IssueCard issue={issue} />
+              ))}
+          </ul>
+        </CardContent>
       </div>
     </div>
   );

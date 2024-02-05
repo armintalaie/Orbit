@@ -20,7 +20,6 @@ export function useOrbitSync(initialSubscription: OrbitSyncSubscription) {
     );
 
     useEffect(() => {
-        console.log('subscription', subscription);
         if (readyState === 1) {
           sendJsonMessage({ type: "subscribe", channels: subscription.channels });
         }
@@ -28,7 +27,6 @@ export function useOrbitSync(initialSubscription: OrbitSyncSubscription) {
   
     // Handle incoming WebSocket messages
     useEffect(() => {
-        console.log('lastJsonMessage', lastJsonMessage);
       if (lastJsonMessage) {
         setLastMessage(lastJsonMessage.data);
       }

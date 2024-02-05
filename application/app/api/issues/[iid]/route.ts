@@ -109,10 +109,11 @@ export async function PATCH(
         .where('issue.id', '=', Number(iid))
         .executeTakeFirst();
 
+        const assigneeSubs = updated.assignees.map((a: any) => "user:" + a.id);
         publishEvent(
-          [ "project:" + updated.projectid, "team:" + updated.teamid, "issue:" + updated.id],
+          [ "project:" + updated.projectid, "team:" + updated.teamid, "issue:" + updated.id, ...assigneeSubs],
           updated,
-          );
+       );
 
       return Response.json(updated);
 

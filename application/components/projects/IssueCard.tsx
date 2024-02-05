@@ -27,16 +27,10 @@ export default function IssueCard({ issue, reload }: IssueCardProps) {
               <p className='text-2xs text-gray-600 dark:text-gray-400'>
                 {issue.project_title}#{issue.id}
               </p>
-              {isOverdue(issue.deadline) ? (
-                <span className='line-clamp-1 text-2xs text-red-500'>
+                <span className='text-2xs line-clamp-1 text-gray-600'>
                   {dateFormater(issue.deadline)}
                 </span>
-              ) : (
-                <span className='text-2xs text-gray-600'>
-                  {' '}
-                  {dateFormater(issue.deadline)}
-                </span>
-              )}
+    
             </div>
             <p className='pb-2  text-xs text-gray-800 dark:text-gray-200'>
               {issue.title}

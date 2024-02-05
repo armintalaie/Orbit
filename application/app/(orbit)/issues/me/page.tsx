@@ -11,10 +11,7 @@ import { useContext, useEffect, useState } from 'react';
 export default function MyIssuePage() {
   const userSession = useContext(UserSessionContext);
   const [issues, setIssues] = useState<IIssue[]>([]);
-  const { fetcher, ws } = useContext(OrbitContext);
-
-  
-
+  const { fetcher } = useContext(OrbitContext);
   const userId = userSession?.user?.id;
   let issueQuery = {
     q: {
@@ -22,8 +19,11 @@ export default function MyIssuePage() {
     },
     showProject: true,
   };
-
-
+  
+  const { lastMessage } = useOrbitSync({
+    channels: [`user:${userSession?.user?.id}`]
+  });
+  
   setDocumentMeta(`My Issues`);
 
   async function fetchIssues() {
@@ -37,7 +37,6 @@ export default function MyIssuePage() {
 
 
   function updateIssueSet(issue: IIssue) {
-    console.log('updateIssueSet', issue);
     const issueExists = issues.some((i) => i.id === issue.id);
     let newIssues = issues;
     if (issueExists) {
@@ -50,21 +49,15 @@ export default function MyIssuePage() {
 
 
   useEffect(() => {
-    ws.sendJsonMessage({ type: 'subscribe', channels: [`user:${userId}`, 'issues'] });
     fetchIssues();
   },[]);
 
-
-
   useEffect(() => {
-    console.log('ws', ws);
-    if (!lastJsonMessage || !lastJsonMessage.data) return;
-    console.log('lastJsonMessage', lastJsonMessage.data);
-
-    const m = JSON.parse(lastJsonMessage.data);
-    console.log('m', m);
-        updateIssueSet(m);
-  }, [ws.lastJsonMessage]);
+    if (lastMessage) {
+      const issue = JSON.parse(lastMessage);
+      updateIssueSet(issue);
+    }
+  }, [lastMessage]);
 
   return (
     <div className='flex h-full w-full flex-col'>
