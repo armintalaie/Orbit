@@ -1,4 +1,4 @@
-const socket = new WebSocket('ws://localhost:3000');
+const socket = new WebSocket(NEXT_PUBLIC_SYNC_URL || 'ws://localhost:3000'
 
 type WSPubSubMessage = {
     type: "subscribe" | "unsubscribe" | "publish";
