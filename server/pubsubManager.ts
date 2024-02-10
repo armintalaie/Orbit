@@ -13,7 +13,7 @@ export  class  PubSubManager {
         authToken: string;
     }>, message: string | Buffer) {
 
-        console.log(`Received ${message}`);
+        // console.log(`Received ${message}`);
 
         try {
             const messageString = message.toString(); // Convert message to string

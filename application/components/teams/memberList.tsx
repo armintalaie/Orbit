@@ -53,7 +53,7 @@ export default function TeamMemberList({
 function MembersList({ members, teamid, reload }) {
   return (
     <div className='flex w-full   flex-row flex-wrap gap-4 px-2 py-4'>
-      {members.map((member) => (
+      {members && members.length > 0 && members.map((member) => (
         <MemberAvatar
           key={member.memberid}
           member={member}

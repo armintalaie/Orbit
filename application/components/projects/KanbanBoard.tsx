@@ -4,6 +4,8 @@ import { NewIssue } from '@/components/newIssue';
 import { CardHeader, CardContent } from '@/components/ui/card';
 import IssueCard from './IssueCard';
 import { IIssue } from '@/lib/types/issue';
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 export interface KanbanViewProps {
   groupedIssues: any;
@@ -108,12 +110,22 @@ function IssueColumn({ grouping, projectId, groupedIssues }) {
           />
         </CardHeader>
         <CardContent className='z-20 flex  flex-grow flex-col overflow-x-visible overflow-y-scroll  p-0  '>
-          <ul className='flex flex-grow flex-col space-y-3  pb-3 '>
+          <motion.ul className='flex flex-grow flex-col space-y-3  pb-3 '>
             {grouping.issues &&
               grouping.issues.map((issue: IIssue, idx: number) => (
+                <motion.div
+                key={issue.id}
+                layout={true}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { duration: 0.5 } }}
+                exit={{ opacity: 0, transition: { duration: 0.5 } }}
+                transition={{ type: 'spring', stiffness: 100, damping: 10 }} // Customize the transition
+
+              >
                 <IssueCard issue={issue} />
+              </motion.div>
               ))}
-          </ul>
+          </motion.ul>
         </CardContent>
       </div>
     </div>

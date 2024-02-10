@@ -142,7 +142,6 @@ export class QueryEngine {
   }
 
   const result = await query.execute()
-  console.log(result.length)
   return result;
 }
 
