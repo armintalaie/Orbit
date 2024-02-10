@@ -1,0 +1,17 @@
+{
+  "name": "orbitsync",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.11.16",
+    "@types/pg": "^8.11.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "kysely": "^0.27.2",
+    "pg": "^8.11.3"
+  }
+}
