@@ -1,4 +1,5 @@
 
+const NEXT_PUBLIC_SYNC_URL = process.env.NEXT_PUBLIC_SYNC_URL;
 const socket = new WebSocket(NEXT_PUBLIC_SYNC_URL || 'ws://localhost:3000');
 
 type WSPubSubMessage = {
