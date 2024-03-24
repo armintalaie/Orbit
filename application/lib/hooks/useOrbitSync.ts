@@ -8,7 +8,7 @@ type OrbitSyncSubscription = {
   
   
 export function useOrbitSync(initialSubscription: OrbitSyncSubscription) {
-    const WS_URL = "ws://127.0.0.1:3000";
+    const WS_URL = process.env.NEXT_PUBLIC_SYNC_URL || "ws://localhost:3000";
     const [lastMessage, setLastMessage] = useState<any>(null);
     const [subscription, setSubscription] = useState<OrbitSyncSubscription>(initialSubscription);
     const { sendJsonMessage, lastJsonMessage, readyState, getWebSocket } = useWebSocket(
