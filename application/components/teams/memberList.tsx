@@ -75,7 +75,7 @@ function MemberAvatar({ member, teamid, reload }) {
 
   function getFirstNameAndLastInitial(name: string) {
     const [first, last] = name.split(' ');
-    return `${first} ${last[0]}.`;
+    return `${first} ${last? last[0]: ''}`;
   }
 
   function deleteMember() {
