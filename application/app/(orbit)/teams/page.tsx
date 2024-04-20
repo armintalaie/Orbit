@@ -31,15 +31,6 @@ export default function TeamPage() {
         </div>
       </PageWrapper.Header>
 
-      <PageWrapper.SubHeader>
-        <PageWrapper.SubHeader>
-          <div className='flex flex-row items-center gap-2'>
-            <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700 dark:text-neutral-400'>
-              These are all the teams you have access to
-            </p>
-          </div>
-        </PageWrapper.SubHeader>
-      </PageWrapper.SubHeader>
 
       <PageWrapper.Content>
         <TableView teams={teams} />

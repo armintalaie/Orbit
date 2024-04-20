@@ -43,14 +43,6 @@ export default function ProjectPage() {
         </div>
       </PageWrapper.Header>
 
-      <PageWrapper.SubHeader>
-        <div className='flex flex-row items-center gap-2'>
-          <p className='h-full pr-2 text-xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
-            These are all the projects you have access to
-          </p>
-        </div>
-      </PageWrapper.SubHeader>
-
       <PageWrapper.Content>
         <TableView projects={projects} />
       </PageWrapper.Content>

@@ -58,8 +58,6 @@ export default function IssueBoard({ query, issues }: IssueBoardProps) {
     // setIssues(newIssues);
   }
 
-
-
   function filterOutIssues() {
     if (filterMethod === 'ALL') {
       filterByAnd();

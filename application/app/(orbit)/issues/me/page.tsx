@@ -1,11 +1,15 @@
 'use client';
+import ContentLoader from '@/components/general/ContentLoader';
+import Spinner from '@/components/general/Spinner';
 import IssueBoard from '@/components/projects/IssueMainBoard';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { useOrbitSync } from '@/lib/hooks/useOrbitSync';
 import { IIssue } from '@/lib/types/issue';
 import { setDocumentMeta } from '@/lib/util';
-import { useContext, useEffect, useState } from 'react';
+import { use, useContext, useEffect, useState } from 'react';
+import useSWR from 'swr'
+
 
 
 export default function MyIssuePage() {
@@ -23,17 +27,24 @@ export default function MyIssuePage() {
   const { lastMessage } = useOrbitSync({
     channels: [`user:${userSession?.user?.id}`]
   });
-  
-  setDocumentMeta(`My Issues`);
 
-  async function fetchIssues() {
-    let route = `/api/issues?q=${encodeURIComponent(
-      JSON.stringify(issueQuery.q || {})
-    )}`;
-    const res = await fetcher(`${route}`);
-    const tasks = await res.json();
-    setIssues(tasks);
-  }
+  let route = `/api/issues?q=${encodeURIComponent(
+    JSON.stringify(issueQuery.q || {})
+  )}`;
+
+  const { data , isLoading, error} = useSWR(route, {
+    fetcher: () => fetcher(route).then((res) => res.json())
+  });
+  
+  
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      setIssues(data as unknown as IIssue[]);
+    }
+  }, [data]);
+
+  setDocumentMeta(`My Issues`);
 
 
   function updateIssueSet(issue: IIssue) {
@@ -47,17 +58,18 @@ export default function MyIssuePage() {
     setIssues(newIssues);
   }
 
-
-  useEffect(() => {
-    fetchIssues();
-  },[]);
-
   useEffect(() => {
     if (lastMessage) {
       const issue = JSON.parse(lastMessage);
       updateIssueSet(issue);
     }
   }, [lastMessage]);
+
+  function getContent() {
+    if (error) return <div>failed to load</div>
+    if (isLoading || true) return <Spinner />
+    // return <IssueBoard query={issueQuery} issues={issues}/>
+  }
 
   return (
     <div className='flex h-full w-full flex-col'>
@@ -70,7 +82,9 @@ export default function MyIssuePage() {
           </div>
           <div className='flex h-full items-center justify-center gap-2'></div>
         </div>
-        {issueQuery.q.assignees.length > 0 && <IssueBoard query={issueQuery} issues={issues}/>}
+        <ContentLoader isLoading={isLoading}  data={data} error={error} childProps={{ query: issueQuery}} childDataProp='issues'>
+           <IssueBoard/>
+        </ContentLoader>
       </div>
     </div>
   );
