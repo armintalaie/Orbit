@@ -7,7 +7,6 @@ interface IssueTable {
   statusid: number | null;
   projectid: number | null;
   deadline: Date | null;
-  datestarted: Date | null;
   datecreated: Date;
   dateupdated: Date;
 }
@@ -42,7 +41,6 @@ interface ProjectTable {
   deadline: Date | null;
   datecreated: Date;
   dateupdated: Date;
-  datestarted: Date;
   teamid: number | null;
 }
 
