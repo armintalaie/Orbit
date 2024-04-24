@@ -24,13 +24,12 @@ export default function TeamPage() {
     <PageWrapper>
       <PageWrapper.Header>
         <div className='flex w-full flex-row items-center justify-between gap-2'>
-          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700 dark:text-neutral-300'>
-            Your Teams
+          <h1 className='h-full pr-2 text-sm font-medium leading-tight text-gray-700 dark:text-neutral-300'>
+            Teams
           </h1>
           <NewTeam button={true} reload={() => reload(['teams'])} />
         </div>
       </PageWrapper.Header>
-
 
       <PageWrapper.Content>
         <TableView teams={teams} />

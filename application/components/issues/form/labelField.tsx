@@ -45,7 +45,7 @@ export function LabelField({ setFields }: { setFields: any }) {
             <Button
               variant='ghost'
               size='sm'
-              className='border-right flex h-8 w-fit items-center justify-start gap-2 rounded-md border-gray-200 text-2xs'
+              className='border-right text-2xs flex h-8 w-fit items-center justify-start gap-2 rounded-md border-gray-200'
             >
               <TagsIcon className='h-4 w-4' />
               Labels

@@ -35,7 +35,6 @@ export const issueSchema = z.object({
   contents: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   assignee: z.array(z.string()),
 });
 

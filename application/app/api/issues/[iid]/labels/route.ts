@@ -30,46 +30,49 @@ export async function PATCH(
 
   await Promise.all([insertLabels, deleteLabels]);
 
-    const updated = await db
-      .selectFrom('issue')
-      .leftJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
-      .innerJoin('project', 'issue.projectid', 'project.id')
-      .innerJoin('team', 'project.teamid', 'team.id')
-      .select(({ eb, fn }) => [
-        'issue.id',
-        'issue.title',
-        'issue.contents',
-        'issue.statusid',
-        'issue.deadline',
-        'issue.datestarted',
-        'issue.projectid',
-        'project.title as project_title',
-        'project.teamid',
-        'team.name as team_title',
-        jsonArrayFrom(
-          eb
-            .selectFrom('issue_label')
-            .innerJoin('label', 'issue_label.labelid', 'label.id')
-            .select(['labelid as id', 'label', 'color'])
-            .whereRef('issue_label.issueid', '=', 'issue.id')
-        ).as('labels'),
-        jsonArrayFrom(
-          eb
-            .selectFrom('issue_assignee')
-            .innerJoin('profiles', 'issue_assignee.user_id', 'profiles.id')
-            .selectAll()
-            .whereRef('issue_assignee.issue_id', '=', 'issue.id')
-        ).as('assignees'),
-      ])
-      .where('issue.id', '=', Number(iid))
-      .executeTakeFirst();
+  const updated = await db
+    .selectFrom('issue')
+    .leftJoin('issue_assignee', 'issue.id', 'issue_assignee.issue_id')
+    .innerJoin('project', 'issue.projectid', 'project.id')
+    .innerJoin('team', 'project.teamid', 'team.id')
+    .select(({ eb, fn }) => [
+      'issue.id',
+      'issue.title',
+      'issue.contents',
+      'issue.statusid',
+      'issue.deadline',
+      'issue.projectid',
+      'project.title as project_title',
+      'project.teamid',
+      'team.name as team_title',
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_label')
+          .innerJoin('label', 'issue_label.labelid', 'label.id')
+          .select(['labelid as id', 'label', 'color'])
+          .whereRef('issue_label.issueid', '=', 'issue.id')
+      ).as('labels'),
+      jsonArrayFrom(
+        eb
+          .selectFrom('issue_assignee')
+          .innerJoin('profiles', 'issue_assignee.user_id', 'profiles.id')
+          .selectAll()
+          .whereRef('issue_assignee.issue_id', '=', 'issue.id')
+      ).as('assignees'),
+    ])
+    .where('issue.id', '=', Number(iid))
+    .executeTakeFirst();
 
-      const assigneeSubs = updated.assignees.map((a: any) => "user:" + a.id);
-      publishEvent(
-        [ "project:" + updated.projectid, "team:" + updated.teamid, "issue:" + updated.id, ...assigneeSubs],
-        updated,
-     );
+  const assigneeSubs = updated.assignees.map((a: any) => 'user:' + a.id);
+  publishEvent(
+    [
+      'project:' + updated.projectid,
+      'team:' + updated.teamid,
+      'issue:' + updated.id,
+      ...assigneeSubs,
+    ],
+    updated
+  );
 
-    return Response.json(updated);
-  
+  return Response.json(updated);
 }

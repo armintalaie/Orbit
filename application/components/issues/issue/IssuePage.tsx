@@ -94,14 +94,12 @@ export default function IssuePage({ issueId }: { issueId: number }) {
     }
   }, [lastMessage]);
 
-
   if (issue === undefined)
     return <div className='flex items-center space-x-4'></div>;
 
   if (issue === null) {
     return <IssueNotFound />;
   }
-  
 
   if (width < 820) {
     return (

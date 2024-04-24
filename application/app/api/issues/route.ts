@@ -13,10 +13,6 @@ const issueSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
-  datestarted: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .optional(),
   projectid: z.number() || z.string(),
   assignees: z.array(z.string()).optional(),
 });
@@ -78,7 +74,6 @@ export async function POST(
           'issue.contents',
           'issue.statusid',
           'issue.deadline',
-          'issue.datestarted',
           'issue.projectid',
           'project.title as project_title',
           'project.teamid',
@@ -130,7 +125,6 @@ export async function GET(req: NextRequest) {
       'issue.contents',
       'issue.statusid',
       'issue.deadline',
-      'issue.datestarted',
       'issue.projectid',
       'project.title as project_title',
       'project.teamid',

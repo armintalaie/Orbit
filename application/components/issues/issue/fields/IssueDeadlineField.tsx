@@ -105,7 +105,7 @@ export default function IssueDeadlineField({
             id='date'
             variant={'ghost'}
             className={cn(
-              ' h-8 w-full justify-start p-0 text-left text-2xs ',
+              ' text-2xs h-8 w-full justify-start p-0 text-left ',
               !date && 'text-muted-foreground'
             )}
           >

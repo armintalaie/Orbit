@@ -184,7 +184,7 @@ export default function TextEditor({
         {onSave && (
           <Button
             variant='outline'
-            className='absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center rounded-md bg-inherit bg-neutral-700 px-2 text-2xs text-neutral-200 dark:text-neutral-400'
+            className='text-2xs absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center rounded-md bg-inherit bg-neutral-700 px-2 text-neutral-200 dark:text-neutral-400'
             onClick={async () => {
               const content = editor.storage.markdown.getMarkdown();
               await onSave(content);

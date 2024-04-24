@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Suspense, useContext } from 'react';
 import { ILabel, IProject, IStatus, ITeam } from '../types/issue';
 import { UserSessionContext } from './AuthProvider';
-
+import useSWR from 'swr';
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
 type OrbitType = {
@@ -20,6 +20,7 @@ type OrbitContextType = {
     input: string | URL | Request,
     init?: any | undefined
   ) => Promise<Response>;
+  SWRFetcher: (input: string | URL | Request) => Promise<any>;
   reload: (items?: ReloadTypes[]) => Promise<void>;
 } & OrbitType;
 
@@ -33,7 +34,8 @@ export const OrbitContext = React.createContext<OrbitContextType>({
     return new Response();
   },
   reload: async () => {},
-  ws: null
+  SWRFetcher: async () => {},
+  ws: null,
 });
 
 export default function OrbitContextProvider({
@@ -91,6 +93,10 @@ export default function OrbitContextProvider({
     return res;
   }
 
+  async function SWRFetcher(input: string | URL | Request) {
+    return fetcher(input).then((res) => res.json());
+  }
+
   const getLabels = async () => {
     const res = await fetcher('/api/issues/labels');
     const data = await res.json();
@@ -111,8 +117,6 @@ export default function OrbitContextProvider({
     // const data = await res.json();
     // setOrbit((prev) => ({ ...prev, projects: data }));
   };
-
-
 
   const getTeams = async () => {
     const res = await fetcher('/api/teams');
@@ -148,11 +152,8 @@ export default function OrbitContextProvider({
     ...orbit,
     fetcher,
     reload,
-    ws: {
-     
-    },
-    
-    
+    SWRFetcher,
+    ws: {},
   };
 
   if (!user || loading) {

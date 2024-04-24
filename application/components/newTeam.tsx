@@ -106,14 +106,14 @@ export function NewTeam({
             Create a new team
           </DialogDescription>
 
-          <Alert>
+          {/* <Alert>
             <InfoCircledIcon className='h-4 w-4' />
             <AlertTitle>Heads up!</AlertTitle>
             <AlertDescription>
               By creating a new team, you will be a member of the team. You can
               add more members later on the team page.
             </AlertDescription>
-          </Alert>
+          </Alert> */}
         </DialogHeader>
 
         <Form {...form}>

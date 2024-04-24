@@ -11,7 +11,9 @@ export default withContext(allowedContextKeys, async (setContext, req) => {
 
   if (
     req.nextUrl.pathname.startsWith('/api/auth/callback') ||
-    req.nextUrl.pathname.startsWith('/api/auth/signout')
+    req.nextUrl.pathname.startsWith('/api/auth/signout') ||
+    req.nextUrl.pathname.startsWith('/auth') ||
+    req.nextUrl.pathname.startsWith('/api/health')
   ) {
     return NextResponse.next();
   }

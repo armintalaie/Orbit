@@ -1,11 +1,9 @@
-
 export interface IIssue {
   id: number;
   title: string;
   contents: string;
   statusid: number;
   deadline: string;
-  datestarted: string;
   projectid: number;
   project_title: string;
   datecreated: string;
@@ -36,7 +34,6 @@ export interface IProject {
   statusid: number;
   datecreated: string;
   dateupdated: string;
-  datestarted: string;
   deadline: string;
 }
 

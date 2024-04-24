@@ -1,8 +1,5 @@
 import { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
-
-import AuthForm from '@/components/auth/authForm';
 
 export const metadata: Metadata = {
   title: 'Orbit',
@@ -11,59 +8,34 @@ export const metadata: Metadata = {
 
 export default function AuthenticationPage() {
   return (
-    <main className='flex h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-50 '>
-      <div className=' container relative h-screen  w-full flex-col items-center justify-center sm:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
-        <div className='relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex'>
-          <div className='absolute inset-0 bg-zinc-900 bg-gradient-to-tl from-zinc-800 to-black' />
-          <div className='relative z-20 flex items-center px-6 text-3xl font-bold '>
-            <Image
-              src='/icon.png'
-              alt='Orbit'
-              width={40}
-              height={40}
-              className='mr-3'
-            />
-            <h1>Orbit</h1>
-          </div>
-          <div className='relative z-20 mt-auto'>
-            <blockquote className='space-y-2'>
-              <p className='text-lg'>
-                A simple, intuitive, and delightful project management platform
-                for all cases.
-              </p>
-            </blockquote>
-          </div>
+    <main className='flex h-screen flex-col items-center justify-center bg-neutral-950 text-white'>
+      <div className='  relative flex h-screen w-full  max-w-[1500px] justify-between overflow-hidden p-6'>
+        <div className='flex max-w-md flex-1 flex-col gap-6 pt-40 text-center'>
+          <h1 className='text-left text-5xl font-bold tracking-tight text-white'>
+            Orbit
+          </h1>
+          <p className='text-left text-2xl'>
+            A simple, intuitive, and delightful project management platform for
+            all cases.
+          </p>
+          <Link
+            href='/auth/'
+            className='w-fit rounded bg-[#45ffa2] px-8 py-2 font-bold text-black'
+          >
+            Get Started
+          </Link>
         </div>
-        <div className='flex  h-full flex-col   justify-center bg-gray-50 bg-gradient-to-tl dark:bg-gray-50 lg:p-8 '>
-          <div className='mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
-            <div className='flex flex-col space-y-2 text-center'>
-              <h1 className='text-3xl font-bold tracking-tight text-neutral-900'>
-                Sign into Orbit
-              </h1>
-              <p className='text-sm text-muted-foreground'>
-                Use one of the following providers to sign in.
-              </p>
-            </div>
-            <AuthForm />
 
-            <p className='px-8 text-center text-sm text-muted-foreground'>
-              By clicking continue, you agree to our{' '}
-              <Link
-                href='/terms'
-                className='pointer-events-none underline underline-offset-4 hover:text-primary'
-              >
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link
-                href='/privacy'
-                className='pointer-events-none underline underline-offset-4 hover:text-primary'
-              >
-                Privacy Policy
-              </Link>
-              .
+        <div className='hidden flex-1 flex-col items-end py-10 text-center sm:hidden md:flex'>
+          <div className='relative flex h-[740px] w-[740px] flex-col items-center justify-center rounded-full bg-[#111111] text-center'>
+            <div className='absolute left-1/2 top-1/2 flex h-[600px] w-[600px] -translate-x-[calc(50%)] -translate-y-[calc(50%-1rem)] transform flex-col space-y-2 rounded-full  bg-[#151515] text-center'></div>
+            <p className='-leading-2 z-10   max-w-lg text-4xl font-bold text-neutral-200'>
+              Get things done with{' '}
+              <span className='text-[#45ffa2] '>Orbit</span>
             </p>
           </div>
+          {/* <div className='flex flex-col absolute space-y-2 text-center w-72 h-72 rounded-full bg-neutral-700'>
+            </div> */}
         </div>
       </div>
     </main>

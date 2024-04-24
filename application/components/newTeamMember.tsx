@@ -28,7 +28,6 @@ export const issueSchema = z.object({
   contents: z.string(),
   statusid: z.number(),
   deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  datestarted: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   assignee: z.array(z.string()),
 });
 
@@ -100,14 +99,12 @@ export function NewTeamMember({
       setUserInput(undefined);
       toast('Member added', {
         description: ``,
-        action: 
-          {
-            label: 'Add another',
-            onClick: () => {
-              setOpen(true);
-            }
-          }
-        
+        action: {
+          label: 'Add another',
+          onClick: () => {
+            setOpen(true);
+          },
+        },
       });
     }
   }

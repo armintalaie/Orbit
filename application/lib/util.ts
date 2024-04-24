@@ -80,9 +80,8 @@ export function getInitials(name: string) {
 
 export function getFirstNameAndLastInitial(name: string) {
   const [first, last] = name.split(' ');
-  return `${first} ${last? last[0]: ''}`;
+  return `${first} ${last ? last[0] : ''}`;
 }
-
 
 export function setDocumentMeta(title: string, description?: string) {
   'use client';

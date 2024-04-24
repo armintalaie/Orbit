@@ -168,7 +168,7 @@ export function IssueLabelField({
       <div className='m-0 flex w-full  flex-col flex-wrap items-start  gap-2  overflow-hidden  rounded-md p-0 '>
         <PopoverTrigger asChild className='w-full p-0 '>
           <button className='flex flex-wrap items-center justify-start gap-1 p-0 '>
-            <div className='flex  w-fit items-center justify-start  gap-2 rounded-xl border bg-opacity-10 p-1  pr-2 text-2xs font-medium dark:border-neutral-800 dark:text-neutral-300'>
+            <div className='text-2xs  flex w-fit items-center  justify-start gap-2 rounded-xl border bg-opacity-10  p-1 pr-2 font-medium dark:border-neutral-800 dark:text-neutral-300'>
               <TagsIcon className='h-4 w-4' />
               Add labels
             </div>
@@ -176,10 +176,10 @@ export function IssueLabelField({
             {selectedLabelIds.map((id) => (
               <div
                 key={id}
-                className='flex  w-fit items-center  justify-start gap-2 rounded-xl border bg-opacity-10  pr-2 text-2xs font-medium dark:border-neutral-800 dark:text-neutral-300 '
+                className='text-2xs  flex w-fit  items-center justify-start gap-2 rounded-xl border  bg-opacity-10 pr-2 font-medium dark:border-neutral-800 dark:text-neutral-300 '
               >
                 <IssueLabel
-                  className=' hasChanged flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 text-2xs font-medium '
+                  className=' hasChanged text-2xs flex h-5 w-fit items-center justify-start gap-2 bg-opacity-10 font-medium '
                   key={id}
                   label={labelOptions[id].label}
                   color={labelOptions[id].color}

@@ -95,8 +95,7 @@ export function NewIssue({
           )}
         </DialogTrigger>
         <DialogContent className='sm:max-w-xl'>
-          <DialogHeader>
-          </DialogHeader>
+          <DialogHeader></DialogHeader>
           <NewIssueForm
             defaultValues={defaultValues}
             onIssueUpdate={onIssueUpdate}
@@ -125,8 +124,7 @@ export function NewIssue({
         )}
       </DrawerTrigger>
       <DrawerContent className='max-h-[90%] px-3 '>
-        <DrawerHeader className='text-left'>
-        </DrawerHeader>
+        <DrawerHeader className='text-left'></DrawerHeader>
         <NewIssueForm
           defaultValues={defaultValues}
           onIssueUpdate={onIssueUpdate}

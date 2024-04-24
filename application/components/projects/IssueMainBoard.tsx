@@ -166,21 +166,9 @@ export default function IssueBoard({ query, issues }: IssueBoardProps) {
     // !issueProp && fetchIssues();
   }, []);
 
-  // useEffect(() => {
-  //   setIssues(issueProp);
-  // }, [issueProp]);
-
-  async function reload(issue?: IIssue) {
-    if (issue) {
-      // updateIssueSet(issue);
-    } else {
-      // await fetchIssues();
-    }
-  }
-
   return (
     <div className=' flex w-full flex-grow flex-col overflow-hidden bg-gray-50 dark:bg-neutral-900'>
-      <div className='min-h-12 flex flex-row items-center justify-between gap-3 border-y border-gray-100 bg-white p-4 py-3 dark:border-neutral-800 dark:bg-neutral-900'>
+      <div className='flex min-h-12 flex-row items-center justify-between gap-3 border-y border-gray-100 bg-white p-4 py-3 dark:border-neutral-800 dark:bg-neutral-900'>
         <FilterGroup
           filters={filters}
           setFilters={setFilters}
@@ -201,7 +189,6 @@ export default function IssueBoard({ query, issues }: IssueBoardProps) {
       <div className=' flex   flex-grow flex-col overflow-hidden'>
         <KanbanView
           groupedIssues={groupedIssues}
-          reload={reload}
           projectId={query.pid}
           onIssueUpdate={updateIssueSet}
         />

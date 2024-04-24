@@ -20,13 +20,12 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
   const params = useParams();
   const projectId = id ? id : Number(params.projectId);
   const { projects } = useContext(OrbitContext);
-  const initialProject = projects && projects.find((p) => p.id === projectId);  
+  const initialProject = projects && projects.find((p) => p.id === projectId);
   const [issues, setIssues] = useState<IIssue[]>([]);
   const { fetcher } = useContext(OrbitContext);
   const { lastMessage } = useOrbitSync({
     channels: [`project:${projectId}`],
   });
-
 
   const project: IProject | undefined | null = initialProject
     ? initialProject
@@ -59,7 +58,6 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
     setIssues(tasks);
   }
 
-
   function updateIssueSet(issue: IIssue) {
     const issueExists = issues.some((i) => i.id === issue.id);
     let newIssues = issues;
@@ -75,14 +73,12 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
     fetchIssues();
   }, []);
 
-
   useEffect(() => {
     if (lastMessage) {
       const issue = JSON.parse(lastMessage);
       updateIssueSet(issue);
     }
   }, [lastMessage]);
-
 
   return (
     <PageWrapper>
@@ -94,8 +90,7 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
             teamid={project.teamid}
           />
         </div>
-        <div className='flex h-full items-center justify-center gap-2'>
-        </div>
+        <div className='flex h-full items-center justify-center gap-2'></div>
       </PageWrapper.Header>
       <PageWrapper.Content>
         <IssueBoard query={issueQuery} issues={issues} />

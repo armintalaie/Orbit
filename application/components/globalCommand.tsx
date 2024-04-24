@@ -24,12 +24,12 @@ import {
   SettingsIcon,
   LogOutIcon,
   PanelLeft,
-  Link,
   FolderClosed,
   ChevronDownIcon,
   ChevronRightIcon,
 } from 'lucide-react';
 import { NewIssue } from './newIssue';
+import Link from 'next/link';
 
 export function CommandMenu({
   open,
@@ -78,8 +78,10 @@ export function CommandMenu({
         </CommandGroup>
         <CommandGroup heading='Profile' className='text-xs'>
           <CommandItem>
-            <SettingsIcon className='mr-2 h-2 w-2 text-xs' />
-            <span>Settings</span>
+            <Link className='flex items-center justify-start' href='/settings'>
+              <SettingsIcon className='mr-2 h-2 w-2 text-xs' />
+              <span>Settings</span>
+            </Link>
           </CommandItem>
           <CommandItem className=''>
             <LogOutIcon className='mr-2 h-2 w-2 ' />

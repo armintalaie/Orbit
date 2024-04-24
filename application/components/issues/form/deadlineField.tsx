@@ -51,7 +51,7 @@ export function DeadlineField({
             id='date'
             variant={'outline'}
             className={cn(
-              ' h-8 w-full justify-start text-left text-2xs text-xs font-normal ',
+              ' text-2xs h-8 w-full justify-start text-left text-xs font-normal ',
               !date && 'text-muted-foreground'
             )}
           >

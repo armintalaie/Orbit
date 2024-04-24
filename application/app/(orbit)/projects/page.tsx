@@ -21,7 +21,6 @@ interface IProject {
   description: string;
   datecreated: string;
   dateupdated: string;
-  datestarted: string;
   deadline: string;
   statusid: number;
   teamid: number;
@@ -36,8 +35,8 @@ export default function ProjectPage() {
     <PageWrapper>
       <PageWrapper.Header>
         <div className=' flex w-full flex-row items-center justify-between gap-2'>
-          <h1 className='text-md h-full pr-2 font-medium leading-tight text-gray-700 dark:text-gray-200'>
-            Your Projects
+          <h1 className='h-full pr-2 text-sm font-medium leading-tight text-gray-700 dark:text-gray-200'>
+            Projects
           </h1>
           <NewProject button={true} reload={() => reload(['projects'])} />
         </div>

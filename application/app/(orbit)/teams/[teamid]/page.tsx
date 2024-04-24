@@ -1,41 +1,77 @@
 'use client';
-
-import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { Button } from '@radix-ui/themes';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { useParams, useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
-import Link from 'next/link';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { setDocumentMeta } from '@/lib/util';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import PageWrapper from '@/components/layouts/pageWrapper';
 import { NewProject } from '@/components/projects/newProject';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import IssueBoard from '@/components/projects/IssueMainBoard';
-import { Maximize2 } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-import { IIssue, IProject, ITeam } from '@/lib/types/issue';
+import { IIssue, ITeam } from '@/lib/types/issue';
 import TeamMemberList from '@/components/teams/memberList';
 import { useOrbitSync } from '@/lib/hooks/useOrbitSync';
+import ContentLoader from '@/components/general/ContentLoader';
+import TeamOptions from '@/components/teams/TeamOptions';
+import ProjectsTableView from '@/components/teams/ProjectsTableView';
 
-type viewTypes = 'ISSUES' | 'PROJECTS';
+type viewTypes = 'ISSUES' | 'PROJECTS' | 'TEAM';
 
-export default function ProjectPage() {
+const ToggleTeamViewContents = ({
+  viewType,
+  setViewType,
+}: {
+  viewType: viewTypes;
+  setViewType: (v: viewTypes) => void;
+}) => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const toggleClass = useMemo(() => {
+    return 'm-0 flex h-full items-center gap-2 rounded-sm border-dashed p-1 px-2 text-xs text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700    dark:text-neutral-400 dark:data-[state=on]:bg-neutral-700 dark:data-[state=on]:text-neutral-300 ';
+  }, []);
+
+  const toggleOptions = useMemo(() => {
+    return ['ISSUES', 'PROJECTS', 'TEAM'];
+  }, []);
+
+  useEffect(() => {
+    if (!searchParams.get('view')) {
+      setViewType('ISSUES');
+      const queryString = createQueryString();
+      router.push('?' + queryString);
+    } else {
+      setViewType(searchParams.get('view')?.toUpperCase() as viewTypes);
+    }
+  }, []);
+
+  const createQueryString = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set('view', viewType);
+
+    return params.toString();
+  };
+
+  useEffect(() => {
+    const queryString = createQueryString();
+    router.push('?' + queryString);
+  }, [viewType]);
+
+  return (
+    <ToggleGroup
+      type='single'
+      value={viewType}
+      onValueChange={setViewType}
+      className='m-0 flex h-6 items-center rounded-sm  border border-gray-200 bg-gray-100 p-0 text-xs shadow-sm dark:border-neutral-900 dark:bg-neutral-800 '
+    >
+      {toggleOptions.map((option) => (
+        <ToggleGroupItem key={option} value={option} className={toggleClass}>
+          {option.toLowerCase()}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
+  );
+};
+
+export default function TeamPage() {
   const { fetcher, projects: projectContext } = useContext(OrbitContext);
   const params = useParams();
   const projects = getProjects();
@@ -57,7 +93,6 @@ export default function ProjectPage() {
     },
     showProject: true,
   };
-
 
   function getProjects() {
     return projectContext.filter(
@@ -82,16 +117,6 @@ export default function ProjectPage() {
 
   async function reload() {}
 
-  async function fetchIssues() {
-    let route = `/api/issues?q=${encodeURIComponent(
-      JSON.stringify(issueQuery.q || {})
-    )}`;
-    const res = await fetcher(`${route}`);
-    const tasks = await res.json();
-    setIssues(tasks);
-  }
-
-
   function updateIssueSet(issue: IIssue) {
     const issueExists = issues.some((i) => i.id === issue.id);
     let newIssues = issues;
@@ -104,34 +129,58 @@ export default function ProjectPage() {
   }
 
   useEffect(() => {
-    fetchIssues();
-  }, []);
-
-
-  useEffect(() => {
     if (lastMessage) {
       const issue = JSON.parse(lastMessage);
       updateIssueSet(issue);
     }
   }, [lastMessage]);
 
-
-
+  const getRoute = () => {
+    return `/api/issues?q=${encodeURIComponent(
+      JSON.stringify(issueQuery.q || {})
+    )}`;
+  };
 
   if (!team) return <></>;
 
-  const issueView = <IssueBoard issues={issues} query={issueQuery} />;
+  const issueView = (
+    <ContentLoader
+      route={getRoute()}
+      childProps={{ query: issueQuery }}
+      childDataProp='issues'
+    >
+      <IssueBoard />
+    </ContentLoader>
+  );
+
+  const viewMap: { [key in viewTypes]: JSX.Element } = {
+    ISSUES: issueView,
+    PROJECTS: (
+      <>
+        <div className=' flex w-full  flex-col overflow-hidden pb-4   '>
+          <div className='flex h-12 flex-row items-center justify-between border-y border-neutral-100 bg-white px-4  '>
+            <div className='flex w-full flex-row items-center gap-2  '></div>
+            <NewProject button={true} reload={reload} teamid={team.id} />
+          </div>
+          <ProjectsTableView projects={projects} />
+        </div>
+      </>
+    ),
+    TEAM: (
+      <>
+        <TeamMemberList teamid={params.teamid} reload={reload} />
+      </>
+    ),
+  };
 
   return (
     <PageWrapper>
       <PageWrapper.Header>
         <div className='flex flex-row items-center'>
-          <h1 className='text-md h-full  font-medium leading-tight text-gray-700 dark:text-neutral-300'>
+          <h1 className='h-full text-sm  font-medium leading-tight text-gray-700 dark:text-neutral-300'>
             {team.name}
           </h1>
-          <p className=' hidden flex-row items-center px-3 text-xs text-gray-500 dark:text-neutral-400 lg:flex'>
-            {team.description}
-          </p>
+
           <div className='flex items-center pl-2'>
             <TeamOptions teamId={team.id} />
           </div>
@@ -144,135 +193,7 @@ export default function ProjectPage() {
         </div>
       </PageWrapper.Header>
 
-      <PageWrapper.Content>
-        {viewType === 'ISSUES' ? (
-          issueView
-        ) : (
-          <>
-            <div className=' flex w-full  flex-col overflow-hidden pb-4   '>
-              <div className='flex flex-row items-center justify-between px-4  '>
-                <h2 className='text-md  py-3 font-medium leading-tight text-gray-700 dark:text-neutral-300'>
-                  Projects
-                </h2>
-                <NewProject button={true} reload={reload} teamid={team.id} />
-              </div>
-
-              <ProjectsTableView projects={projects} />
-            </div>
-
-            <TeamMemberList teamid={params.teamid} reload={reload} />
-          </>
-        )}
-      </PageWrapper.Content>
+      <PageWrapper.Content>{viewMap[viewType]}</PageWrapper.Content>
     </PageWrapper>
-  );
-}
-
-const ToggleTeamViewContents = ({ viewType, setViewType }) => {
-  return (
-    <ToggleGroup
-      type='single'
-      value={viewType}
-      onValueChange={setViewType}
-      className='m-0 flex h-6 items-center rounded-sm  border border-gray-200 bg-gray-100 p-0 text-xs shadow-sm dark:border-neutral-900 dark:bg-neutral-800 '
-    >
-      <ToggleGroupItem
-        className='m-0 flex h-full items-center gap-2 rounded-sm border-dashed p-1 px-2 text-xs text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700    dark:text-neutral-400 dark:data-[state=on]:bg-neutral-700 dark:data-[state=on]:text-neutral-300 '
-        value='ISSUES'
-      >
-        Issues
-      </ToggleGroupItem>
-      <ToggleGroupItem
-        className='m-0 flex h-full items-center gap-2  rounded-sm border-dashed p-1 px-2 text-xs  text-gray-700 data-[state=on]:bg-white data-[state=on]:text-gray-700 dark:text-neutral-400 dark:data-[state=on]:bg-neutral-700 dark:data-[state=on]:text-neutral-300'
-        value='PROJECTS'
-      >
-        Projects
-      </ToggleGroupItem>
-    </ToggleGroup>
-  );
-};
-
-function TeamOptions({ teamId }: { teamId: string }) {
-  const { reload, fetcher } = useContext(OrbitContext);
-  const router = useRouter();
-  async function deleteProject() {
-    const res = await fetcher(`/api/teams/${teamId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    reload(['teams']);
-    if (!res.ok) throw new Error(res.statusText);
-
-    router.push('/teams');
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost'>
-          <DotsHorizontalIcon className='h-4 w-4' />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-56'>
-        <DropdownMenuLabel>Team Settings</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Button variant='ghost' onClick={() => deleteProject()}>
-            Delete team
-          </Button>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-function ProjectsTableView({ projects }: { projects: IProject[] }) {
-  return (
-    <div className='flex  w-full flex-col overflow-hidden '>
-      <Table className='w-full  overflow-hidden rounded-sm border-gray-200 bg-white shadow-none dark:bg-neutral-900'>
-        <TableHeader>
-          <TableRow className='border-b-gray-100 bg-white text-xs  dark:border-b-neutral-800 dark:bg-neutral-900'>
-            <TableHead>Title</TableHead>
-            <TableHead className='hidden lg:table-cell'>Description</TableHead>
-
-            <TableHead>Deadline</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className='text-xs  '>
-          {projects.map((project: IProject) => (
-            <TableRow
-              className='border-b-gray-100 bg-white text-xs  dark:border-b-neutral-800 dark:bg-neutral-900'
-              key={project.id}
-            >
-              <TableCell className='flex flex-row items-center gap-4'>
-                <Link
-                  href={`/projects/${project.id}`}
-                  shallow={true}
-                  className='text-xs underline'
-                >
-                  <Maximize2 className='h-3 w-3' />
-                </Link>
-                {project.title}
-              </TableCell>
-
-              <TableCell className='hidden lg:table-cell'>
-                {project.description}
-              </TableCell>
-
-              <TableCell>
-                {isOverdue(project.deadline) ? (
-                  <Badge color='red'>{dateFormater(project.deadline)}</Badge>
-                ) : (
-                  <Badge color='gray'> {dateFormater(project.deadline)}</Badge>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
   );
 }

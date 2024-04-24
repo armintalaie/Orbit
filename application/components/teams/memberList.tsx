@@ -53,14 +53,16 @@ export default function TeamMemberList({
 function MembersList({ members, teamid, reload }) {
   return (
     <div className='flex w-full   flex-row flex-wrap gap-4 px-2 py-4'>
-      {members && members.length > 0 && members.map((member) => (
-        <MemberAvatar
-          key={member.memberid}
-          member={member}
-          teamid={teamid}
-          reload={reload}
-        />
-      ))}
+      {members &&
+        members.length > 0 &&
+        members.map((member) => (
+          <MemberAvatar
+            key={member.memberid}
+            member={member}
+            teamid={teamid}
+            reload={reload}
+          />
+        ))}
     </div>
   );
 }
@@ -75,7 +77,7 @@ function MemberAvatar({ member, teamid, reload }) {
 
   function getFirstNameAndLastInitial(name: string) {
     const [first, last] = name.split(' ');
-    return `${first} ${last? last[0]: ''}`;
+    return `${first} ${last ? last[0] : ''}`;
   }
 
   function deleteMember() {

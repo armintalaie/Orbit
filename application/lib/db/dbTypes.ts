@@ -7,7 +7,6 @@ interface IssueTable {
   statusid: number | null;
   projectid: number | null;
   deadline: Date | null;
-  datestarted: Date | null;
   datecreated: Date;
   dateupdated: Date;
 }
@@ -42,7 +41,6 @@ interface ProjectTable {
   deadline: Date | null;
   datecreated: Date;
   dateupdated: Date;
-  datestarted: Date;
   teamid: number | null;
 }
 
@@ -67,6 +65,18 @@ interface teamTable {
   updatedAt: Date;
 }
 
+interface WorkspaceTable {
+  id: Generated<number>;
+  name: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface WorkspaceMemberTable {
+  workspace_id: number;
+  profile_id: string;
+}
+
 // Keys of this interface are table names.
 export interface Database {
   issue: IssueTable;
@@ -78,4 +88,6 @@ export interface Database {
   team: teamTable;
   team_member: teamMemberTable;
   status: StatusTable;
+  workspace: WorkspaceTable;
+  workspace_member: WorkspaceMemberTable;
 }

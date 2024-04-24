@@ -30,6 +30,16 @@ import { GearIcon } from '@radix-ui/react-icons';
 import ThemeToggle from '@/components/themeToggle';
 import { FeedbackButton } from '@/components/feedback';
 import { Changelog } from '@/components/changelog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
+import { Label } from '@radix-ui/react-label';
+import useSWR from 'swr';
+import Spinner from '@/components/general/Spinner';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 export default function ProjectLayout({
   children,
@@ -44,9 +54,9 @@ export default function ProjectLayout({
             id='confettiReward'
             className='pointer-events-none fixed inset-0 left-1/2 top-1/2 z-50 h-2 w-2 -translate-x-1/2 -translate-y-1/2 transform'
           />
-          <SideBarContent className={'min-w-56 hidden w-72'} />
+          <SideBarContent className={'hidden w-72 min-w-56'} />
           <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
-            <div className='h-15 flex w-full items-center justify-between border-t  border-gray-100 px-4 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
+            {/* <div className='h-15 flex w-full items-center justify-between border-t  border-gray-100 px-4 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
               <NextBreadcrumb
                 homeElement={
                   <MenuDialog>
@@ -64,7 +74,7 @@ export default function ProjectLayout({
                 <FeedbackButton />
                 <ThemeToggle />
               </div>
-            </div>
+            </div> */}
             {children}
           </div>
         </div>
@@ -85,64 +95,78 @@ function SideBarContent({
   return (
     <section
       id='sidebar '
-      className={` flex h-full flex-col border-r border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 lg:flex ${className} justify-between `}
+      className={` flex h-full flex-col border-r border-gray-100 lg:flex dark:border-neutral-800 dark:bg-neutral-900 ${className} justify-between `}
     >
-      {showLogo && (
-        <div className='flex flex-row items-center justify-between '>
-          <span className='h-12 p-4 font-bold dark:text-white'>Orbit<span className='text-2xs text-neutral-600 p-1 font-semibold'>Launch Pad</span></span>
-        </div>
-      )}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            className=' hover:none flex h-12 flex-row items-center justify-between rounded-none'
+            variant='ghost'
+          >
+            <div className='flex w-full flex-row items-center  justify-between gap-2 rounded border border-neutral-100 bg-neutral-50 p-1 px-3'>
+              <span className=' text-left text-sm   font-normal dark:text-white '>
+                UBC Launch Pad
+              </span>
+              <ChevronDownIcon className='h-4 w-4  text-gray-600 dark:text-neutral-400' />
+            </div>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className='min-h-60 w-full max-w-lg px-0'>
+          <UserWorkspaces />
+        </DialogContent>
+      </Dialog>
+
       <div className='flex flex-grow flex-col gap-3 overflow-y-auto border-t border-gray-100 p-2 dark:border-neutral-800'>
         <CommandMenu setOpen={openSearch} open={search} />
         <div className='w-full p-1 '>
           <button
-            className='h-8 w-full rounded-sm border border-gray-200 bg-white p-1 px-2 text-left text-sm text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'
+            className='h-8 w-full rounded-sm border border-neutral-200 bg-white p-1 px-2 text-left text-sm text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'
             onClick={() => openSearch(true)}
           >
             <span className='flex items-center justify-between text-sm'>
               <SearchIcon className='h-4 w-4' />
               {/* <ConstructionIcon className='h-4 w-4' /> */}
               Search{' '}
-              <span className='rounded-sm border border-gray-200 bg-gray-100 px-1 text-[9px] shadow-sm dark:border-neutral-800 dark:bg-neutral-700'>
+              <span className='rounded-sm border border-neutral-200 bg-neutral-50 px-1 text-[9px] shadow-sm dark:border-neutral-800 dark:bg-neutral-700'>
                 cmd + k
               </span>
             </span>
           </button>
         </div>
         <section className='flex flex-col border-gray-100 '>
-        <section className='flex flex-col border-gray-100 pb-5 '>
-        <div className='flex items-center justify-between  '>
-        <Link
-          href={'/teams'}
-          shallow={true}
-          className=' flex h-8 w-full items-center   text-left text-2xs  text-gray-700 dark:text-neutral-400 '
-        >
-          {/* <div className='h-3 w-3 ' /> */}
-          <span className='flex h-full items-center justify-between p-0'>
-            My Space
-          </span>
-        </Link>
-        </div>
-          <Link
-            href={'/issues/me'}
-            className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
-            shallow={true}
-          >
-            <InboxIcon className='h-3 w-3 ' />
-            <span className='flex h-full items-center justify-between pl-2'>
-              My Issues
-            </span>
-          </Link>
-          <Link
-            href={'/projects'}
-            shallow={true}
-            className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
-          >
-            <LayoutGrid className='h-3 w-3 ' />
-            <span className='flex h-full items-center justify-between pl-2'>
-              Projects
-            </span>
-          </Link>
+          <section className='flex flex-col border-gray-100 pb-5 '>
+            <div className='flex items-center justify-between  '>
+              <Link
+                href={'/teams'}
+                shallow={true}
+                className=' text-2xs flex h-8 w-full   items-center text-left  text-gray-700 dark:text-neutral-400 '
+              >
+                {/* <div className='h-3 w-3 ' /> */}
+                <span className='flex h-full items-center justify-between p-0'>
+                  My Space
+                </span>
+              </Link>
+            </div>
+            <Link
+              href={'/issues/me'}
+              className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
+              shallow={true}
+            >
+              <InboxIcon className='h-3 w-3 ' />
+              <span className='flex h-full items-center justify-between pl-2'>
+                My Issues
+              </span>
+            </Link>
+            <Link
+              href={'/projects'}
+              shallow={true}
+              className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
+            >
+              <LayoutGrid className='h-3 w-3 ' />
+              <span className='flex h-full items-center justify-between pl-2'>
+                Projects
+              </span>
+            </Link>
           </section>
 
           <TeamsSidebarSection teams={teams} />
@@ -188,7 +212,7 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
         <Link
           href={'/teams'}
           shallow={true}
-          className=' flex h-8 w-full items-center   text-left text-2xs  text-gray-700 dark:text-neutral-400 '
+          className=' text-2xs flex h-8 w-full   items-center text-left  text-gray-700 dark:text-neutral-400 '
         >
           {/* <div className='h-3 w-3 ' /> */}
           <span className='flex h-full items-center justify-between p-0'>
@@ -208,7 +232,6 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
       </div>
 
       <CollapsibleContent className='space-y-2  '>
-
         {teams.map((team, index) => (
           // <Link
           //   href={`/teams/${team.id}`}
@@ -227,7 +250,6 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
   );
 }
 
-
 function TeamSection({ team }: { team: any[] }) {
   const [isOpen, setIsOpen] = React.useState(true);
 
@@ -243,8 +265,8 @@ function TeamSection({ team }: { team: any[] }) {
           shallow={true}
           className=' flex h-8 w-full items-center p-1   text-left text-sm text-gray-700 dark:text-neutral-400'
         >
-          <div className='h-5 w-5 rounded-md p-1 bg-neutral-100 dark:bg-neutral-800'>
-          <FolderClosed className='h-full w-full ' />
+          <div className='h-5 w-5 rounded-md bg-neutral-100 p-1 dark:bg-neutral-800'>
+            <FolderClosed className='h-full w-full ' />
           </div>
 
           <span className='flex h-full items-center justify-between pl-1 text-xs'>
@@ -264,19 +286,20 @@ function TeamSection({ team }: { team: any[] }) {
       </div>
 
       <CollapsibleContent className=' px-2 '>
-        <Link className='flex relative flex-col  justify-between z-10 text-gray-600 dark:text-neutral-300 pl-4 text-xs' href={`/teams/${team.id}`}>
-          <div className='flex items-center gap-1 z-10'>
-          <div className='h-4 w-4 rounded-sm p-1 bg-neutral-100  dark:bg-neutral-800'>
-          <InboxIcon className='h-full w-full ' />
-          </div>
-          <span>
-            Issues
-          </span>
+        <Link
+          className='relative z-10 flex flex-col justify-between pb-4 pl-4 text-xs text-gray-600 dark:text-neutral-300'
+          href={`/teams/${team.id}?view=issues`}
+        >
+          <div className='z-10 flex items-center gap-1'>
+            <div className='h-4 w-4 rounded-sm bg-neutral-100 p-1  dark:bg-neutral-800'>
+              <InboxIcon className='h-full w-full ' />
+            </div>
+            <span>Issues</span>
           </div>
 
-          <div className='h-full w-[1px] left-[24px] absolute bg-neutral-100 dark:bg-neutral-800' />
-         
-          <section className='flex flex-col border-gray-100 py-1 '>
+          <div className='absolute left-[24px] h-full w-[1px] bg-neutral-100 dark:bg-neutral-800' />
+
+          {/* <section className='flex flex-col border-gray-100 py-1 '>
             <Link
               href={`/teams/${team.id}`}
               className=' flex h-6 w-full items-center    text-left text-2xs text-gray-700 dark:text-neutral-400'
@@ -297,19 +320,72 @@ function TeamSection({ team }: { team: any[] }) {
                 Active
               </span>
             </Link>
-          </section>
+          </section> */}
         </Link>
-        <Link className='flex relative flex-col text-gray-600 dark:text-neutral-300 justify-between z-10 pl-4 text-xs' href={`/teams/${team.id}`}>
-          <div className='flex items-center gap-1 z-10'>
-          <div className='h-4 w-4 rounded-sm p-1 bg-neutral-100  dark:bg-neutral-800'>
-          <LayoutGrid className='h-full w-full ' />
+
+        <Link
+          className='relative z-10 flex flex-col justify-between pl-4 text-xs text-gray-600 dark:text-neutral-300'
+          href={`/teams/${team.id}?view=projects`}
+        >
+          <div className='z-10 flex items-center gap-1'>
+            <div className='h-4 w-4 rounded-sm bg-neutral-100 p-1  dark:bg-neutral-800'>
+              <LayoutGrid className='h-full w-full ' />
+            </div>
+            <span>Projects</span>
           </div>
-          <span>
-            Projects
-          </span>
-          </div>
-          </Link>
+        </Link>
       </CollapsibleContent>
     </Collapsible>
+  );
+}
+
+function UserWorkspaces() {
+  const { fetcher, profile } = useContext(OrbitContext);
+  const { data, isLoading, error } = useSWR(
+    `/api/profiles/${profile.id}/workspaces`,
+    {
+      fetcher: () =>
+        fetcher(`/api/profiles/${profile.id}/workspaces`).then((res) =>
+          res.json()
+        ),
+    }
+  );
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  return (
+    <div className='flex flex-col border-gray-100 pb-5  '>
+      <h2 className='border-b p-3 text-xs font-semibold text-gray-700 dark:text-neutral-300'>
+        Workspaces
+      </h2>
+      <div className='flex flex-col items-center justify-between gap-4 '>
+        {data.map((workspace, index) => (
+          <Link
+            href={`/workspaces/${workspace.id}`}
+            key={index}
+            shallow={true}
+            className=' flex h-10 w-full items-center gap-4  border-b p-1 px-2  text-left text-sm text-gray-700 hover:bg-neutral-200 dark:text-neutral-400'
+          >
+            <div className='h-5 w-5 rounded-md bg-blue-100 p-1 dark:bg-neutral-800'>
+              <FolderClosed className='h-full w-full ' />
+            </div>
+            <span className='flex h-full items-center justify-between pl-2'>
+              {workspace.name}
+            </span>
+          </Link>
+        ))}
+        <Button
+          variant='ghost'
+          size='sm'
+          className='h-8 w-full text-left text-sm text-gray-700 dark:text-neutral-400'
+        >
+          <span className='flex h-full items-center justify-between pl-2'>
+            Create Workspace
+          </span>
+        </Button>
+      </div>
+    </div>
   );
 }
