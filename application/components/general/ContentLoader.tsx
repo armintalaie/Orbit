@@ -39,7 +39,7 @@ export default function ContentLoader(props: ContentLoaderProps) {
   }, [data]);
 
   useEffect(() => {
-    if (lastMessage && !isLoading) {
+    if (lastMessage && !isLoading && !error && lastMessage.data) {
       const event = lastMessage.event;
       const issue = JSON.parse(lastMessage.data);
       issueSyncEvent(issue, reactiveData, setReactiveData, event);

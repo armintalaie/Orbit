@@ -117,17 +117,6 @@ export default function TeamPage() {
 
   async function reload() {}
 
-  function updateIssueSet(issue: IIssue) {
-    const issueExists = issues.some((i) => i.id === issue.id);
-    let newIssues = issues;
-    if (issueExists) {
-      newIssues = issues.map((i) => (i.id === issue.id ? issue : i));
-    } else {
-      newIssues = [...issues, issue];
-    }
-    setIssues(newIssues);
-  }
-
   const getRoute = () => {
     return `/api/issues?q=${encodeURIComponent(
       JSON.stringify(issueQuery.q || {})

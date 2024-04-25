@@ -10,6 +10,7 @@ import { IIssue, IProject } from '@/lib/types/issue';
 import { TextSelectIcon } from 'lucide-react';
 import { setDocumentMeta } from '@/lib/util';
 import { useOrbitSync } from '@/lib/hooks/useOrbitSync';
+import ContentLoader from '@/components/general/ContentLoader';
 
 interface ProjectPageProps {
   id: number;
@@ -21,11 +22,6 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
   const projectId = id ? id : Number(params.projectId);
   const { projects } = useContext(OrbitContext);
   const initialProject = projects && projects.find((p) => p.id === projectId);
-  const [issues, setIssues] = useState<IIssue[]>([]);
-  const { fetcher } = useContext(OrbitContext);
-  const { lastMessage } = useOrbitSync({
-    channels: [`project:${projectId}`],
-  });
 
   const project: IProject | undefined | null = initialProject
     ? initialProject
@@ -49,36 +45,24 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
 
   setDocumentMeta(`Project ${project.title}`);
 
-  async function fetchIssues() {
-    let route = `/api/issues?q=${encodeURIComponent(
+
+  const getRoute = () => {
+    return `/api/issues?q=${encodeURIComponent(
       JSON.stringify(issueQuery.q || {})
     )}`;
-    const res = await fetcher(`${route}`);
-    const tasks = await res.json();
-    setIssues(tasks);
-  }
+  };
 
-  function updateIssueSet(issue: IIssue) {
-    const issueExists = issues.some((i) => i.id === issue.id);
-    let newIssues = issues;
-    if (issueExists) {
-      newIssues = issues.map((i) => (i.id === issue.id ? issue : i));
-    } else {
-      newIssues = [...issues, issue];
-    }
-    setIssues(newIssues);
-  }
 
-  useEffect(() => {
-    fetchIssues();
-  }, []);
-
-  useEffect(() => {
-    if (lastMessage) {
-      const issue = JSON.parse(lastMessage.data);
-      updateIssueSet(issue);
-    }
-  }, [lastMessage]);
+  const issueView = (
+    <ContentLoader
+      route={getRoute()}
+      childProps={{ query: issueQuery }}
+      childDataProp='issues'
+      syncChannels={[`project:${project.id}`]}
+    >
+      <IssueBoard />
+    </ContentLoader>
+  );
 
   return (
     <PageWrapper>
@@ -93,7 +77,7 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
         <div className='flex h-full items-center justify-center gap-2'></div>
       </PageWrapper.Header>
       <PageWrapper.Content>
-        <IssueBoard query={issueQuery} issues={issues} />
+        {issueView}
       </PageWrapper.Content>
     </PageWrapper>
   );

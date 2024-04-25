@@ -286,7 +286,7 @@ function TeamSection({ team }: { team: any[] }) {
       </div>
 
       <CollapsibleContent className=' px-2 '>
-        <Link
+        {/* <Link
           className='relative z-10 flex flex-col justify-between pb-4 pl-4 text-xs text-gray-600 dark:text-neutral-300'
           href={`/teams/${team.id}?view=issues`}
         >
@@ -297,7 +297,7 @@ function TeamSection({ team }: { team: any[] }) {
             <span>Issues</span>
           </div>
 
-          <div className='absolute left-[24px] h-full w-[1px] bg-neutral-100 dark:bg-neutral-800' />
+          <div className='absolute left-[24px] h-full w-[1px] bg-neutral-100 dark:bg-neutral-800' /> */}
 
           {/* <section className='flex flex-col border-gray-100 py-1 '>
             <Link
@@ -321,7 +321,7 @@ function TeamSection({ team }: { team: any[] }) {
               </span>
             </Link>
           </section> */}
-        </Link>
+        {/* </Link>
 
         <Link
           className='relative z-10 flex flex-col justify-between pl-4 text-xs text-gray-600 dark:text-neutral-300'
@@ -333,7 +333,7 @@ function TeamSection({ team }: { team: any[] }) {
             </div>
             <span>Projects</span>
           </div>
-        </Link>
+        </Link> */}
       </CollapsibleContent>
     </Collapsible>
   );
