@@ -88,8 +88,8 @@ export default function IssuePage({ issueId }: { issueId: number }) {
   }, []);
 
   useEffect(() => {
-    if (lastMessage) {
-      const issue = JSON.parse(lastMessage) as IIssue;
+    if (lastMessage && lastMessage.data) {
+      const issue = JSON.parse(lastMessage.data) as IIssue;
       setIssue(issue);
     }
   }, [lastMessage]);
