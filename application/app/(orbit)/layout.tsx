@@ -1,19 +1,15 @@
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Link from 'next/link';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
-  ConstructionIcon,
+  CommandIcon,
   FolderClosed,
-  Grid2x2Icon,
-  GridIcon,
   InboxIcon,
   LayoutGrid,
   PanelLeft,
-  SearchIcon,
-  TargetIcon,
 } from 'lucide-react';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
 import { Button } from '@/components/ui/button';
@@ -30,18 +26,11 @@ import { GearIcon } from '@radix-ui/react-icons';
 import ThemeToggle from '@/components/themeToggle';
 import { FeedbackButton } from '@/components/feedback';
 import { Changelog } from '@/components/changelog';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
-import { Label } from '@radix-ui/react-label';
 import useSWR from 'swr';
 import Spinner from '@/components/general/Spinner';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { useTheme } from 'next-themes';
-import { set } from 'date-fns';
+import PreviewModalProvider from '@/lib/context/PreviewModalProvider';
+import { DraggableModalWindow } from '@/lib/context/DraggableModalWindow';
 
 export default function ProjectLayout({
   children,
@@ -56,29 +45,13 @@ export default function ProjectLayout({
             id='confettiReward'
             className='pointer-events-none fixed inset-0 left-1/2 top-1/2 z-50 h-2 w-2 -translate-x-1/2 -translate-y-1/2 transform'
           />
-          <SideBarContent className={' w-72 min-w-56'} />
-          <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
-            {/* <div className='h-15 flex w-full items-center justify-between border-t  border-gray-100 px-4 dark:border-neutral-800 dark:bg-neutral-900 md:border-b md:border-t-0  '>
-              <NextBreadcrumb
-                homeElement={
-                  <MenuDialog>
-                    <SideBarContent className='w-full' showLogo={true} />
-                  </MenuDialog>
-                }
-                activeClasses='hidden'
-                containerClasses='flex py-5   w-fit h-12 items-center '
-                listClasses='hover:underline px-2 '
-                capitalizeLinks
-              />
-              <div className='flex items-center gap-2 '>
-                <Changelog />
-
-                <FeedbackButton />
-                <ThemeToggle />
-              </div>
-            </div> */}
-            {children}
-          </div>
+          <PreviewModalProvider>
+            <SideBarContent className={' w-72 min-w-56'} />
+            <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
+              {children}
+            </div>
+            <DraggableModalWindow />
+          </PreviewModalProvider>
         </div>
       </OrbitContextProvider>
     </AuthContextProvider>
@@ -94,8 +67,6 @@ function SideBarContent({
 }) {
   const [search, openSearch] = useState(false);
   const { teams } = useContext(OrbitContext);
-  const { setTheme } = useTheme();
-  setTheme('dark');
   return (
     <section
       id='sidebar '
@@ -120,11 +91,11 @@ function SideBarContent({
         </Dialog>
 
         <button
-          className='h-8 w-fit rounded-sm border border-neutral-200 bg-white p-1 px-2 text-left text-sm text-gray-500 shadow-sm dark:border-neutral-800 dark:bg-neutral-800'
+          className='h-8 w-fit rounded-sm border border-neutral-200 bg-white p-1 px-2 text-left text-sm text-gray-700 shadow-sm dark:border-neutral-800 dark:bg-neutral-800 dark:text-gray-300'
           onClick={() => openSearch(true)}
         >
           <span className='flex items-center justify-between text-sm'>
-            <SearchIcon className='h-4 w-4' />
+            <CommandIcon className='h-3 w-3' />
           </span>
         </button>
       </div>
@@ -171,15 +142,20 @@ function SideBarContent({
           <TeamsSidebarSection teams={teams} />
         </section>
       </div>
-      <div className='flex flex-col  gap-2 overflow-y-auto p-2'>
-        <Link
-          href={'/settings'}
-          shallow={true}
-          className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs  text-gray-700 dark:text-neutral-400'
-        >
-          <GearIcon className='mr-2 h-3 w-3' />
-          <span>Settings</span>
+      <div className='j flex flex-row gap-2 overflow-y-auto p-2 text-neutral-700'>
+        <Link href={'/settings'} shallow={true}>
+          <Button
+            variant='outline'
+            size='icon'
+            className='h-6 w-6 rounded-md p-0 dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300'
+          >
+            <GearIcon className=' h-3 w-3' />
+          </Button>
         </Link>
+        <div className='flex-1' />
+        <ThemeToggle />
+        <Changelog />
+        <FeedbackButton />
       </div>
     </section>
   );

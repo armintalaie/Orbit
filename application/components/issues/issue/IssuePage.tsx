@@ -16,22 +16,22 @@ import {
   DrawerFooter,
   DrawerClose,
 } from '@/components/ui/drawer';
-import { useWindowSize } from 'usehooks-ts';
 import { toast } from 'sonner';
 import { IIssue } from '@/lib/types/issue';
 import { IssueComments } from './IssueComments';
 import { IssueInfo } from './IssueInfo';
 import IssueTitleField from './fields/issueTitleField';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-import Head from 'next/head';
 import { setDocumentMeta } from '@/lib/util';
 import { useOrbitSync } from '@/lib/hooks/useOrbitSync';
 
 export default function IssuePage({ issueId }: { issueId: number }) {
   const [issue, setIssue] = useState<IIssue | null | undefined>(undefined);
-  const { width } = useWindowSize();
+  const ref = React.useRef<any | null>(null);
   const { fetcher } = useContext(OrbitContext);
   const [issueContents, setIssueContents] = useState<string | undefined>();
+  const [issueTitle, setIssueTitle] = useState<string | undefined>();
+  const [issueProjectId, setIssueProjectId] = useState<number | undefined>();
 
   const { lastMessage } = useOrbitSync({
     channels: [`issue:${issueId}`],
@@ -50,6 +50,8 @@ export default function IssuePage({ issueId }: { issueId: number }) {
     }
     setDocumentMeta(`Issue ${issueId} - ${resultIssue.title}`);
     setIssue(resultIssue);
+    setIssueTitle(resultIssue.title);
+    setIssueProjectId(resultIssue.projectid);
   };
 
   const fetchIssueContents = async () => {
@@ -80,12 +82,9 @@ export default function IssuePage({ issueId }: { issueId: number }) {
   }
 
   useEffect(() => {
-    fetchIssueContents();
-  }, []);
-
-  useEffect(() => {
     fetchIssue();
-  }, []);
+    fetchIssueContents();
+  }, [issueId]);
 
   useEffect(() => {
     if (lastMessage && lastMessage.data) {
@@ -94,22 +93,26 @@ export default function IssuePage({ issueId }: { issueId: number }) {
     }
   }, [lastMessage]);
 
-  if (issue === undefined)
+  if (
+    issue === undefined ||
+    issueTitle === undefined ||
+    issueProjectId === undefined
+  )
     return <div className='flex items-center space-x-4'></div>;
 
   if (issue === null) {
     return <IssueNotFound />;
   }
 
-  if (width < 820) {
+  const compactContent = () => {
     return (
-      <div className='flex h-full w-full flex-col'>
+      <div className='relative flex w-full flex-col'>
         <div className=' flex  w-full flex-1 flex-col overflow-hidden dark:bg-neutral-900'>
           <div className='flex h-12 w-full items-center justify-between p-1 px-4  dark:bg-neutral-900   '>
             <IssueTitleField
               issueId={issueId}
-              issueTitle={issue.title}
-              projectId={issue.projectid}
+              issueTitle={issueTitle}
+              projectId={issueProjectId}
             />
           </div>
 
@@ -124,22 +127,17 @@ export default function IssuePage({ issueId }: { issueId: number }) {
           </div>
         </div>
 
-        <div className='fixed bottom-1 flex w-full items-center justify-end gap-4  p-4 px-4'>
+        <div className='-translate-y  absolute bottom-0 flex w-full transform  items-center justify-end gap-4 p-4 px-4'>
           <CommentsMobilePopver issueId={issueId} />
           <IssueInfoMobilePopver issue={issue} issueId={issueId} />
         </div>
       </div>
     );
-  }
+  };
 
-  return (
-    <>
-      <Head>
-        <title>
-          Issue {issueId} - {issue.title}
-        </title>
-      </Head>
-      <div className='flex h-full w-full flex-col'>
+  const fullContent = () => {
+    return (
+      <>
         <ResizablePanelGroup direction='horizontal'>
           <ResizablePanel minSize={30} collapsedSize={1} collapsible={true}>
             <div className=' flex h-full w-full flex-1 flex-col '>
@@ -186,8 +184,22 @@ export default function IssuePage({ issueId }: { issueId: number }) {
             <IssueInfo issueId={issue.id} refIssue={issue} />
           </ResizablePanel>
         </ResizablePanelGroup>
-      </div>
-    </>
+      </>
+    );
+  };
+
+  const isCompact = () => {
+    if (ref.current) {
+      return ref.current.clientWidth < 600;
+    } else {
+      return false;
+    }
+  };
+
+  return (
+    <div className='flex h-full w-full flex-col' ref={ref}>
+      {isCompact() ? compactContent() : fullContent()}
+    </div>
   );
 }
 
