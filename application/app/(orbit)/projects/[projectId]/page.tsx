@@ -45,13 +45,11 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
 
   setDocumentMeta(`Project ${project.title}`);
 
-
   const getRoute = () => {
     return `/api/issues?q=${encodeURIComponent(
       JSON.stringify(issueQuery.q || {})
     )}`;
   };
-
 
   const issueView = (
     <ContentLoader
@@ -76,9 +74,7 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
         </div>
         <div className='flex h-full items-center justify-center gap-2'></div>
       </PageWrapper.Header>
-      <PageWrapper.Content>
-        {issueView}
-      </PageWrapper.Content>
+      <PageWrapper.Content>{issueView}</PageWrapper.Content>
     </PageWrapper>
   );
 }

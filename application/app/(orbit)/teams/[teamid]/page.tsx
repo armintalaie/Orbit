@@ -141,8 +141,8 @@ export default function TeamPage() {
     PROJECTS: (
       <>
         <div className=' flex w-full  flex-col overflow-hidden pb-4   '>
-          <div className='flex h-12 flex-row items-center justify-between border-y border-neutral-100 bg-white px-4  '>
-            <div className='flex w-full flex-row items-center gap-2  '></div>
+          <div className='flex h-12 flex-row items-center justify-between border-y border-neutral-100 bg-white px-4  dark:border-neutral-800 dark:bg-neutral-900  '>
+            <div className='flex w-full flex-row items-center gap-2  dark:bg-neutral-800 '></div>
             <NewProject button={true} reload={reload} teamid={team.id} />
           </div>
           <ProjectsTableView projects={projects} />

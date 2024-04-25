@@ -21,7 +21,7 @@ export default function ProjectsTableView({
     <div className='flex  w-full flex-col overflow-hidden '>
       <Table className='w-full  overflow-hidden rounded-sm border-gray-200 bg-neutral-100 shadow-none dark:bg-neutral-900'>
         <TableHeader>
-          <TableRow className='border-b-gray-100 bg-neutral-50 text-xs  dark:border-b-neutral-800 dark:bg-neutral-900'>
+          <TableRow className='border-b-gray-100 bg-neutral-50  text-xs  dark:border-b-neutral-800 dark:bg-neutral-900'>
             <TableHead>Title</TableHead>
             <TableHead className='hidden lg:table-cell'>Description</TableHead>
 
