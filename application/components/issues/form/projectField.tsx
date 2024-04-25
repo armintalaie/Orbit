@@ -18,8 +18,14 @@ import {
 } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
-export function ProjectField({ field }: { field: any }) {
-  const { projects: projectsArray } = useContext(OrbitContext);
+export function ProjectField({
+  field,
+  teamid,
+}: {
+  field: any;
+  teamid: number;
+}) {
+  const { projects: projectsArray, teams } = useContext(OrbitContext);
 
   const [projects, setprojects] = useState<{
     [key: string]: any;
@@ -33,6 +39,9 @@ export function ProjectField({ field }: { field: any }) {
     async function fetchProjects() {
       const options: { [key: string]: any } = {};
       for (const p of projectsArray) {
+        if (p.teamid !== teamid) {
+          continue;
+        }
         options[p.id] = {
           ...p,
         };
@@ -40,7 +49,7 @@ export function ProjectField({ field }: { field: any }) {
       setprojects(options);
     }
     fetchProjects();
-  }, []);
+  }, [teamid]);
   return (
     <div className='flex items-center space-x-4 '>
       <Popover open={open} onOpenChange={setOpen}>

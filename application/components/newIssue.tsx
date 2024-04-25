@@ -41,6 +41,7 @@ import { LabelField } from './issues/form/labelField';
 import { ProjectField } from './issues/form/projectField';
 import { IIssue } from '@/lib/types/issue';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { TeamField } from './projects/form/teamField';
 export const issueSchema = z.object({
   title: z.string(),
   contents: z.string(),
@@ -56,7 +57,8 @@ export const formSchema = z.object({
   deadline: z.date().nullable(),
   labels: z.array(z.string()),
   assignee: z.string().nullable(),
-  projectid: z.number(),
+  projectid: z.number().optional(),
+  teamid: z.number(),
 });
 
 export function NewIssue({
@@ -163,7 +165,9 @@ function NewIssueForm({
       ...defaultValues,
     },
   });
+  const chosenTeam = form.watch('teamid');
   async function onSubmit() {
+    form.getFieldState('title').isTouched = true;
     const formVals = form.getValues();
     const issue = {
       title: formVals.title,
@@ -175,6 +179,7 @@ function NewIssueForm({
       assignees: formVals.assignee ? [formVals.assignee] : [],
       labels: labels,
       projectid: formVals.projectid || undefined,
+      teamid: formVals.teamid,
     };
     const URL = `/api/issues`;
     const res = await fetcher(`${URL}`, {
@@ -244,24 +249,40 @@ function NewIssueForm({
           <div className='flex flex-row flex-wrap gap-1'>
             <FormField
               control={form.control}
-              name='statusid'
+              name='teamid'
               render={({ field }) => (
                 <FormItem className='p-0'>
                   <FormControl>
-                    <StatusField {...field} />
+                    <TeamField field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            {chosenTeam && (
+              <FormField
+                control={form.control}
+                name='projectid'
+                render={({ field }) => (
+                  <FormItem className='p-0'>
+                    <FormControl>
+                      <ProjectField field={field} teamid={chosenTeam} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </div>
 
+          <div className='flex flex-row flex-wrap gap-1'>
             <FormField
               control={form.control}
-              name='projectid'
+              name='statusid'
               render={({ field }) => (
                 <FormItem className='p-0'>
                   <FormControl>
-                    <ProjectField field={field} />
+                    <StatusField {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -294,7 +315,8 @@ function NewIssueForm({
                 </FormItem>
               )}
             />
-
+          </div>
+          <div className='flex flex-row flex-wrap gap-1'>
             <FormField
               control={form.control}
               name='labels'

@@ -9,6 +9,7 @@ interface IssueTable {
   deadline: Date | null;
   datecreated: Date;
   dateupdated: Date;
+  teamid: number;
 }
 interface IssueAssigneeTable {
   user_id: string;

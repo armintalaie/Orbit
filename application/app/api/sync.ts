@@ -14,12 +14,17 @@ socket.onopen = function (e) {
 
 export default socket;
 
-export const publishEvent = (channels: string[], data: object) => {
+export const publishEvent = (
+  channels: string[],
+  data: object,
+  event?: string
+) => {
   socket.send(
     JSON.stringify({
       type: 'publish',
       channels: channels,
       data: JSON.stringify(data),
+      event: event?.toString() || 'default',
     })
   );
 };

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { db } from '@/lib/db/handler';
 import { headers } from 'next/headers';
+import { publishEvent } from '../sync';
 
 const issueSchema = z.object({
   title: z.string(),
@@ -13,8 +14,9 @@ const issueSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
-  projectid: z.number() || z.string(),
+  projectid: z.number().optional() || z.string().optional(),
   assignees: z.array(z.string()).optional(),
+  teamid: z.number(),
 });
 
 export async function POST(
@@ -95,6 +97,15 @@ export async function POST(
         ])
         .where('issue.id', '=', Number(id))
         .executeTakeFirst();
+
+      publishEvent(
+        [
+          'project:' + updated.projectid,
+          'team:' + updated.teamid,
+          'issue:' + updated.id,
+        ],
+        updated
+      );
       return Response.json(updated);
     }
     return NextResponse.json(

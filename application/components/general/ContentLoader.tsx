@@ -1,13 +1,23 @@
-import { ReactNode, isValidElement, cloneElement, useContext } from 'react';
+import {
+  ReactNode,
+  isValidElement,
+  cloneElement,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
 import Spinner from './Spinner';
 import useSWR from 'swr';
 import { OrbitContext } from '@/lib/context/OrbitContext';
+import { useOrbitSync } from '@/lib/hooks/useOrbitSync';
+import { IIssue } from '@/lib/types/issue';
 
 type ContentLoaderProps = {
   children: ReactNode;
   route: string;
   childProps: any;
   childDataProp: string;
+  syncChannels?: string[];
 };
 
 export default function ContentLoader(props: ContentLoaderProps) {
@@ -17,6 +27,24 @@ export default function ContentLoader(props: ContentLoaderProps) {
   const { data, isLoading, error } = useSWR(route, {
     fetcher: () => fetcher(route).then((res) => res.json()),
   });
+  const [reactiveData, setReactiveData] = useState<any>([]);
+  const { lastMessage } = useOrbitSync({
+    channels: props.syncChannels || [],
+  });
+
+  useEffect(() => {
+    if (data) {
+      setReactiveData(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (lastMessage && !isLoading) {
+      const event = lastMessage.event;
+      const issue = JSON.parse(lastMessage.data);
+      issueSyncEvent(issue, reactiveData, setReactiveData, event);
+    }
+  }, [lastMessage]);
 
   if (isLoading) {
     return <Spinner />;
@@ -29,7 +57,7 @@ export default function ContentLoader(props: ContentLoaderProps) {
   if (isValidElement(children)) {
     return cloneElement(children, {
       ...childProps,
-      [childDataProp]: data,
+      [childDataProp]: reactiveData,
     });
   }
   return <></>;
@@ -47,4 +75,26 @@ function ErrorDisplay({ error }: { error: Error }) {
       </div>
     </div>
   );
+}
+
+function issueSyncEvent(
+  issue: any,
+  issues: IIssue[],
+  setIssues: Function,
+  event: any
+) {
+  if (event === 'delete') {
+    const newIssues = issues.filter((i) => i.id !== issue.id);
+    setIssues(newIssues);
+    return;
+  }
+
+  const issueExists = issues.some((i) => i.id === issue.id);
+  let newIssues = issues;
+  if (issueExists) {
+    newIssues = issues.map((i) => (i.id === issue.id ? issue : i));
+  } else {
+    newIssues = [...issues, issue];
+  }
+  setIssues(newIssues);
 }

@@ -29,24 +29,6 @@ export default function MyIssuePage() {
     )}`;
   };
 
-  function updateIssueSet(issue: IIssue) {
-    const issueExists = issues.some((i) => i.id === issue.id);
-    let newIssues = issues;
-    if (issueExists) {
-      newIssues = issues.map((i) => (i.id === issue.id ? issue : i));
-    } else {
-      newIssues = [...issues, issue];
-    }
-    setIssues(newIssues);
-  }
-
-  useEffect(() => {
-    if (lastMessage) {
-      const issue = JSON.parse(lastMessage);
-      updateIssueSet(issue);
-    }
-  }, [lastMessage]);
-
   return (
     <div className='flex h-full w-full flex-col'>
       <div className=' flex h-full w-full flex-1 flex-col '>
@@ -62,6 +44,7 @@ export default function MyIssuePage() {
           route={getRoute()}
           childProps={{ query: issueQuery }}
           childDataProp='issues'
+          syncChannels={[`user:${userId}`]}
         >
           <IssueBoard />
         </ContentLoader>

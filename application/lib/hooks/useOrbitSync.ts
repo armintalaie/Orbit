@@ -25,7 +25,10 @@ export function useOrbitSync(initialSubscription: OrbitSyncSubscription) {
   // Handle incoming WebSocket messages
   useEffect(() => {
     if (lastJsonMessage) {
-      setLastMessage(lastJsonMessage.data);
+      setLastMessage({
+        data: lastJsonMessage.data,
+        event: lastJsonMessage.event,
+      });
     }
   }, [lastJsonMessage]);
 

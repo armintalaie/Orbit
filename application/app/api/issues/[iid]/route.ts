@@ -53,7 +53,23 @@ export async function DELETE(
   { params }: { params: { iid: string } }
 ) {
   const { iid } = params;
-  await db.deleteFrom('issue').where('id', '=', Number(iid)).execute();
+  const deletedIssue = await db
+    .deleteFrom('issue')
+    .where('id', '=', Number(iid))
+    .returningAll()
+    .executeTakeFirst();
+  if (!deletedIssue) {
+    return Response.json({ error: 'Issue not found' }, { status: 404 });
+  }
+  publishEvent(
+    [
+      'project:' + deletedIssue.projectid,
+      'team:' + deletedIssue.teamid,
+      'issue:' + deletedIssue.id,
+    ],
+    deletedIssue,
+    'delete'
+  );
   return Response.json({ message: 'success' });
 }
 

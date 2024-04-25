@@ -75,7 +75,7 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
 
   useEffect(() => {
     if (lastMessage) {
-      const issue = JSON.parse(lastMessage);
+      const issue = JSON.parse(lastMessage.data);
       updateIssueSet(issue);
     }
   }, [lastMessage]);

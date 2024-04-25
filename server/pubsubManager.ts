@@ -5,6 +5,7 @@ type WSPubSubMessage = {
     channels: string[];
     type: "subscribe" | "unsubscribe" | "publish";
     data: any;
+    event: string;
 };
 
 
@@ -20,7 +21,7 @@ export  class  PubSubManager {
             const wsMessage = JSON.parse(messageString) as WSPubSubMessage; // Parse message to WSMessage type
             switch (wsMessage.type) {
                 case "publish":
-                    await this.publishToChannels(ws, wsMessage.channels, wsMessage.data);
+                    await this.publishToChannels(ws, wsMessage.channels, wsMessage.data, wsMessage.event);
                     break;
                 case "subscribe":
                     await this.subscribeToChannels(ws, wsMessage.channels);
@@ -37,10 +38,11 @@ export  class  PubSubManager {
 
     static async publishToChannels(ws: ServerWebSocket<{
         authToken: string;
-    }>, channels: string[], data: any) {
+    }>, channels: string[], data: any, event: string) {
         for (const channel of channels) {
             ws.publish(channel, JSON.stringify({
                 data: data,
+                event: event?.toString() || "default",
             }));
         }
     }

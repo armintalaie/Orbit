@@ -1,10 +1,4 @@
-import { db } from "./db/handler";
 import  { PubSubManager } from "./pubsubManager";
-import type { WSMessage } from "./types/message";
-import { QueryEngine } from "./util/queryHelper";
-
-
-
 class SyncServer {
   private server;
 
@@ -19,7 +13,7 @@ class SyncServer {
           return undefined;
         } else {
           console.log("Upgrade failed");
-          console.log(req);
+          // console.log(req);
         }
         // handle HTTP request normally
         return new Response(null, {

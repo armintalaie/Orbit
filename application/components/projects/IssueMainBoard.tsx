@@ -27,7 +27,6 @@ type Grouping = {
   key: string;
 };
 export default function IssueBoard({ query, issues }: IssueBoardProps) {
-  const { fetcher } = useContext(OrbitContext);
   const [transformedIssues, setTransformedIssues] = useState<IIssue[]>([]);
   const [groupedIssues, setGroupedIssues] = useState<Grouping>({
     issues: [],

@@ -128,13 +128,6 @@ export default function TeamPage() {
     setIssues(newIssues);
   }
 
-  useEffect(() => {
-    if (lastMessage) {
-      const issue = JSON.parse(lastMessage);
-      updateIssueSet(issue);
-    }
-  }, [lastMessage]);
-
   const getRoute = () => {
     return `/api/issues?q=${encodeURIComponent(
       JSON.stringify(issueQuery.q || {})
@@ -148,6 +141,7 @@ export default function TeamPage() {
       route={getRoute()}
       childProps={{ query: issueQuery }}
       childDataProp='issues'
+      syncChannels={[`team:${team.id}`]}
     >
       <IssueBoard />
     </ContentLoader>
