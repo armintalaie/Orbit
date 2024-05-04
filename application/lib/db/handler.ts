@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 import { Kysely, PostgresDialect } from 'kysely';
-import { Database } from './dbTypes';
-const DB_CONNECTION = process.env.DB_CONNECTION;
+import { Database } from '@/app/database/src/schema';
+const DB_CONNECTION = process.env.DB_CONNECTION_2;
 const dialect = new PostgresDialect({
   pool: new Pool({
     connectionString: DB_CONNECTION,

@@ -46,7 +46,7 @@ interface ProjectTable {
 }
 
 interface Profiles {
-  id: Generated<string>;
+  id: Generated<number>;
   full_name: string;
   avatar_url: string | null;
   email: string;
@@ -71,24 +71,28 @@ interface WorkspaceTable {
   name: string;
   created_at: Date;
   updated_at: Date;
+  config: JSON;
 }
 
 interface WorkspaceMemberTable {
   workspace_id: number;
-  profile_id: string;
+  profile_id: number;
+  added_at: Date;
+  updated_at: Date;
+  status: string;
 }
 
 // Keys of this interface are table names.
 export interface Database {
-  issue: IssueTable;
-  issue_assignee: IssueAssigneeTable;
-  project: ProjectTable;
-  label: LabelTable;
-  issue_label: IssueLabelTable;
-  profiles: Profiles;
-  team: teamTable;
-  team_member: teamMemberTable;
-  status: StatusTable;
+  //   issue: IssueTable;
+  //   issue_assignee: IssueAssigneeTable;
+  //   project: ProjectTable;
+  //   label: LabelTable;
+  //   issue_label: IssueLabelTable;
+  //   profiles: Profiles;
+  //   team: teamTable;
+  //   team_member: teamMemberTable;
+  //   status: StatusTable;
   workspace: WorkspaceTable;
   workspace_member: WorkspaceMemberTable;
 }
