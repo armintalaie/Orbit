@@ -1,4 +1,4 @@
-import { Kysely, sql } from 'kysely';
+import { Kysely } from 'kysely';
 
 // list of all workspace permissions
 const PERMISSIONS = [

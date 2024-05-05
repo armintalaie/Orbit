@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
-import { Kysely, PostgresDialect } from 'kysely';
-import { Database } from '@/app/database/src/schema';
-const DB_CONNECTION = process.env.DB_CONNECTION_2;
+import { CamelCasePlugin, Kysely, PostgresDialect } from 'kysely';
+import { Database } from '@/app/database/src/schema/workspace';
+const DB_CONNECTION = process.env.DB_CONNECTION;
 const dialect = new PostgresDialect({
   pool: new Pool({
     connectionString: DB_CONNECTION,
@@ -14,4 +14,5 @@ const dialect = new PostgresDialect({
 // to communicate with your database.
 export const db = new Kysely<Database>({
   dialect,
+  plugins: [new CamelCasePlugin()],
 });
