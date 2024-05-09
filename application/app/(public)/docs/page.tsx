@@ -1,20 +1,17 @@
-import { getBlogPosts } from "./utils";
+import { getBlogPosts } from './utils';
 
-export default function Page()
+export default function Page() {
+  let posts = getBlogPosts(true);
+  console.log('posts');
+  console.log(posts.map((post) => post.slug));
 
-
-{
-    let posts = getBlogPosts(true);
-    console.log("posts")
-    console.log(posts.map((post) => post.slug))
-
-    return (
-        <div className="prose prose-invert">
-           <h1>Orbit Docs</h1>
-           <p>
-                Welcome to Orbit Docs. Here you will find all the documentation you need to get started with Orbit.
-           </p>
-
-        </div>
-    );
+  return (
+    <div className='prose prose-invert'>
+      <h1>Orbit Docs</h1>
+      <p>
+        Welcome to Orbit Docs. Here you will find all the documentation you need
+        to get started with Orbit.
+      </p>
+    </div>
+  );
 }

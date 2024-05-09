@@ -8,7 +8,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 
 const poppins = Poppins({
   subsets: ['latin'],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 });
 export const metadata: Metadata = {
   title: 'Orbit',
@@ -16,15 +16,13 @@ export const metadata: Metadata = {
   icons: [{ rel: 'icon', url: 'icons/icon-128x128.png' }],
 };
 
-
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en' suppressHydrationWarning={true} >
+    <html lang='en' suppressHydrationWarning={true}>
       <head>
         <meta charSet='utf-8' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
@@ -32,9 +30,8 @@ export default function RootLayout({
           name='viewport'
           content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
         />
-        
       </head>
-      <body  suppressHydrationWarning={true} className={poppins.className}>
+      <body suppressHydrationWarning={true} className={poppins.className}>
         <ThemeProvider enableSystem={true} attribute='class'>
           {children}
           <Toaster />

@@ -8,7 +8,6 @@ import webpack from 'webpack';
 import createMDX from '@next/mdx';
 import remarkGfm from 'remark-gfm';
 
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
@@ -26,10 +25,9 @@ const nextConfig = {
   webpack(config) {
     config.plugins.push(
       new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ })
-
     );
     return config;
-  }
+  },
 };
 
 const withMDX = createMDX({
@@ -38,6 +36,6 @@ const withMDX = createMDX({
     remarkPlugins: [remarkGfm],
     rehypePlugins: [],
   },
-})
+});
 
 export default withMDX(nextConfig);

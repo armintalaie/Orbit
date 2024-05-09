@@ -2,8 +2,7 @@ import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '../supabase';
 // import { db } from '@/lib/db/handler';
-import { updateSession } from '@/utils/supabase/middleware'
-
+import { updateSession } from '@/utils/supabase/middleware';
 
 export default async function Authentication(
   setContext: (key: string, value: string) => void,
@@ -11,18 +10,15 @@ export default async function Authentication(
 ): Promise<NextResponse> {
   const authorization = headers().get('authorization');
 
-
   if (!authorization) {
     return NextResponse.json(
       { error: 'Not authenticated (missing header)' },
       { status: 401 }
     );
-
   }
-  
 
   console.log('authorization', authorization);
-  const { data: userData , error} = await supabase.auth.getUser(authorization);
+  const { data: userData, error } = await supabase.auth.getUser(authorization);
 
   if (error) {
     console.error(error.stack);
@@ -35,7 +31,7 @@ export default async function Authentication(
 
   if (userData.user === null) {
     return NextResponse.json(
-    { error: 'Could not authenticate' },
+      { error: 'Could not authenticate' },
       { status: 401 }
     );
   }
@@ -52,7 +48,6 @@ export default async function Authentication(
     userRoles = await getUserRoles(userData.user.id, workspaceId);
   }
 
-  
   const res = NextResponse.next();
   console.log('user', userData.user);
   console.log('roles', userRoles);
@@ -70,12 +65,11 @@ export default async function Authentication(
   return res;
 }
 
-
-
 async function getUserRoles(userId: string, workspaceId: string) {
   const { data: roles, error } = await supabase
     .from(`workspace_${workspaceId}:workspaceMember`)
-    .select(`
+    .select(
+      `
       workspaceMemberRole (
         *,
         role (
@@ -85,7 +79,8 @@ async function getUserRoles(userId: string, workspaceId: string) {
           )
         )
       )
-    `)
+    `
+    )
     .eq('memberId', userId);
 
   if (!roles) {
@@ -93,5 +88,4 @@ async function getUserRoles(userId: string, workspaceId: string) {
   }
 
   return roles;
-
 }

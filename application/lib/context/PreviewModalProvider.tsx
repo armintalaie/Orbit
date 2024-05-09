@@ -28,11 +28,15 @@ export default function PreviewModalContextProvider({
 
   const closeFunction = () => {
     setIssueId(undefined);
-  }
+  };
 
   return (
     <PreviewModalContext.Provider
-      value={{ close: closeFunction, setIssueId: updatedIssueId, issueid: issueid }}
+      value={{
+        close: closeFunction,
+        setIssueId: updatedIssueId,
+        issueid: issueid,
+      }}
     >
       <div className='relative flex h-full w-full'>{children}</div>
     </PreviewModalContext.Provider>

@@ -1,18 +1,20 @@
-import { notFound } from 'next/navigation'
+import { notFound } from 'next/navigation';
 import { CustomMDX } from '@/components/docs/MDX';
-import { formatDate, getBlogPosts } from 'app/(public)/docs/utils'
-import { baseUrl } from '../sitemap'
+import { formatDate, getBlogPosts } from 'app/(public)/docs/utils';
+import { baseUrl } from '../sitemap';
 
 export async function generateStaticParams() {
   let posts = getBlogPosts(true);
 
   return posts.map((post) => ({
-    slug: post.slug.split('/')
-  }))
+    slug: post.slug.split('/'),
+  }));
 }
 
 export function generateMetadata({ params }) {
-  let post = getBlogPosts(true).find((post) => post.slug === params.slug.join('/') )
+  let post = getBlogPosts(true).find(
+    (post) => post.slug === params.slug.join('/')
+  );
 
   if (!post) {
     return;
@@ -23,8 +25,10 @@ export function generateMetadata({ params }) {
     publishedAt: publishedTime,
     summary: description,
     image,
-  } = post.metadata
-  let ogImage = image ? image : `${baseUrl}/og?title=${encodeURIComponent(title)}`
+  } = post.metadata;
+  let ogImage = image
+    ? image
+    : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
 
   return {
     title,
@@ -47,20 +51,22 @@ export function generateMetadata({ params }) {
     //   description,
     //   images: [ogImage],
     // },
-  }
+  };
 }
 
 export default function Blog({ params }) {
-  let post = getBlogPosts(true).find((post) => post.slug === params.slug.join('/') )
+  let post = getBlogPosts(true).find(
+    (post) => post.slug === params.slug.join('/')
+  );
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
   return (
-    <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 overflow-y-scroll w-full   max-h-none ">
+    <section className='mx-auto max-h-none w-full max-w-4xl overflow-y-scroll px-4 py-12 sm:px-6   lg:px-8 '>
       <script
-        type="application/ld+json"
+        type='application/ld+json'
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -81,17 +87,17 @@ export default function Blog({ params }) {
           }),
         }}
       />
-      <h1 className="title font-semibold text-2xl tracking-tighter">
+      <h1 className='title text-2xl font-semibold tracking-tighter'>
         {post.metadata.title}
       </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+      <div className='mb-8 mt-2 flex items-center justify-between text-sm'>
+        <p className='text-sm text-neutral-600 dark:text-neutral-400'>
           {formatDate(post.metadata.publishedAt)}
         </p>
       </div>
-      <article className="prose prose-stone prose-invert max-w-4xl h-fit ">
+      <article className='prose prose-stone prose-invert h-fit max-w-4xl '>
         <CustomMDX source={post.content} />
       </article>
     </section>
-  )
+  );
 }

@@ -58,14 +58,14 @@ export default function Home() {
   );
 }
 
-
 function Hero() {
   const ref = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState('80%');
 
   React.useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
       const newWidth = Math.min(80 + scrollTop / 100, 100);
       setWidth(`${newWidth}%`);
     };
@@ -88,11 +88,7 @@ function Hero() {
       <Image
         src={ImageHero}
         alt='Orbit'
-  
-        
-        
-       style={{
-         
+        style={{
           objectFit: 'contain',
         }}
       />

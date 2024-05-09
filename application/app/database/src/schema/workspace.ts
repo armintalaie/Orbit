@@ -98,8 +98,6 @@ interface RolePermissionTable {
   permission: string;
 }
 
-
-
 // Keys of this interface are table names.
 export interface Database extends PublicDatabase {
   issue: IssueTable;
@@ -116,5 +114,4 @@ export interface Database extends PublicDatabase {
   workspaceMemberRole: WorkspaceMemberRole;
   role: RoleTable;
   rolePermission: RolePermissionTable;
-  
 }
