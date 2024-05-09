@@ -1,29 +1,33 @@
 ---
 title: 'Create Workspace'
 publishedAt: '2024-04-07'
+labels: 'v0.2'
 ---
 
-## Create Workspaces
+`POST workspaces/`
 
-POST workspaces/
 
-### Body Params
+Body Params
 
 | Name   | Type   | Required? | Description                                                         |
 | ------ | ------ | --------- | ------------------------------------------------------------------- |
 | name   | string | yes       |                                                                     |
 | config | object | no        | Customization configurations - if undefined will use default config |
 
-### Query Param
+Query Params: N/A
 
-- N/A
 
-### Responses
 
-- 200
-- 400
 
 ### Scenarios
+
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+- [Bad Request - Existing Name](#bad-request---existing-name)
+- [Bad Request - Missing Name](#bad-request---missing-name)
+
+---
 
 #### Successful request
 
@@ -35,13 +39,11 @@ Request:
 }
 ```
 
-Response:
-
-- Status: 200
+Response: 200
 
 ```json
 {
-  "message": "Workspace acme successfully created"
+  "message": "Workspace acme successfully created."
 }
 ```
 
@@ -55,13 +57,11 @@ Request:
 }
 ```
 
-Response:
-
-- Status: 200
+Response: 401
 
 ```json
 {
-  "message": "Workspace acme successfully created"
+  "message": "Not authenticated."
 }
 ```
 
@@ -75,13 +75,11 @@ Request:
 }
 ```
 
-Response:
-
-- Status: 200
+Response: 403
 
 ```json
 {
-  "message": "Workspace acme successfully created"
+  "message": "Not authorized to access resource."
 }
 ```
 
@@ -95,13 +93,11 @@ Request:
 }
 ```
 
-Response:
-
-- Status: 200
+Response: 400
 
 ```json
 {
-  "message": "Workspace acme successfully created"
+  "message": "Workspace with name acme already exists."
 }
 ```
 
@@ -110,18 +106,14 @@ Response:
 Request:
 
 ```json
-{
-  "name": "acme"
-}
+{}
 ```
 
-Response:
-
-- Status: 200
+Response: 400
 
 ```json
 {
-  "message": "Workspace acme successfully created"
+  "message": "Missing workspace name"
 }
 ```
 

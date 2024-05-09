@@ -1,128 +1,73 @@
 ---
 title: 'Get Workspace'
 publishedAt: '2024-04-07'
+labels: 'v0.2'
+
 ---
 
-## Create Workspaces
+`GET workspace/{workspaceid}`
 
-POST workspaces/
+Query Params: N/A
 
-### Body Params
-
-| Name   | Type   | Required? | Description                                                         |
-| ------ | ------ | --------- | ------------------------------------------------------------------- |
-| name   | string | yes       |                                                                     |
-| config | object | no        | Customization configurations - if undefined will use default config |
-
-### Query Param
-
-- N/A
-
-### Responses
-
-- 200
-- 400
+Path Params: 
+- `workspaceid`: id of the workspace (uuid or name)
 
 ### Scenarios
 
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+- [Not Found](#not-found)
+
+---
+
 #### Successful request
 
-Request:
+Request: No body
 
-```json
+Response: 200
+
+```
 {
-  "name": "acme"
+  "id": "123",
+  "name": "acme",
+  "config": {
+    // Configuration details
+  }
 }
 ```
-
-Response:
-
-- Status: 200
-
-```json
-{
-  "message": "Workspace acme successfully created"
-}
-```
-
 #### Unauthenticated Request
 
-Request:
+Request: No body
+
+Response: 401
 
 ```json
 {
-  "name": "acme"
-}
-```
-
-Response:
-
-- Status: 200
-
-```json
-{
-  "message": "Workspace acme successfully created"
+  "message": "Not authenticated."
 }
 ```
 
 #### Unauthorized Request
 
-Request:
+Request: No body
 
-```json
+Response: 403
+
+```
 {
-  "name": "acme"
+  "message": "Not authorized to access resource."
 }
 ```
 
-Response:
+#### Not Found
 
-- Status: 200
+Request: No body
 
-```json
+Response: 404
+
+```
 {
-  "message": "Workspace acme successfully created"
+  "message": "Workspace does not exist"
 }
 ```
-
-#### Bad Request - Existing Name
-
-Request:
-
-```json
-{
-  "name": "acme"
-}
-```
-
-Response:
-
-- Status: 200
-
-```json
-{
-  "message": "Workspace acme successfully created"
-}
-```
-
-#### Bad Request - Missing Name
-
-Request:
-
-```json
-{
-  "name": "acme"
-}
-```
-
-Response:
-
-- Status: 200
-
-```json
-{
-  "message": "Workspace acme successfully created"
-}
-```
-
----

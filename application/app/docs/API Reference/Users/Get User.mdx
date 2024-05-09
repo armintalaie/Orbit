@@ -1,20 +1,22 @@
 ---
-title: 'Get Workspaces'
+title: 'Get User'
 publishedAt: '2024-04-07'
-labels: 'v0.2'
 
 ---
 
-
-`GET workspaces/`
+`GET workspace/{workspaceid}`
 
 Query Params: N/A
+
+Path Params: 
+- `workspaceid`: id of the workspace (uuid or name)
 
 ### Scenarios
 
 - [Successful request](#successful-request)
 - [Unauthenticated Request](#unauthenticated-request)
 - [Unauthorized Request](#unauthorized-request)
+- [Not Found](#not-found)
 
 ---
 
@@ -26,23 +28,11 @@ Response: 200
 
 ```
 {
-  "workspaces": [
-    {
-      "id": "123",
-      "name": "acme",
-      "config": {
-        // Configuration details
-      }
-    },
-    {
-      "id": "124",
-      "name": "example",
-      "config": {
-        // Configuration details
-      }
-    },
-    // Additional workspaces...
-  ]
+  "id": "123",
+  "name": "acme",
+  "config": {
+    // Configuration details
+  }
 }
 ```
 #### Unauthenticated Request
@@ -69,3 +59,14 @@ Response: 403
 }
 ```
 
+#### Not Found
+
+Request: No body
+
+Response: 404
+
+```
+{
+  "message": "Workspace does not exist"
+}
+```

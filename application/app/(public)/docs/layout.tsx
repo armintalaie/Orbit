@@ -25,7 +25,7 @@ export default function Layout({ children }) {
         </div>
       </nav>
       <section className='flex flex-1 overflow-y-hidden p-4'>
-        <aside className='h-screen w-72 overflow-y-scroll text-sm text-white'>
+        <aside className=' w-72 overflow-y-scroll text-sm text-white'>
           <SideBarNav posts={posts} directories={directories} />
         </aside>
         <div className='flex h-full flex-1 justify-center overflow-y-hidden '>
@@ -37,6 +37,7 @@ export default function Layout({ children }) {
 }
 
 function SideBarNav({ posts, directories }) {
+  console.log('posts');
   return (
     <>
       {posts.map((post) => {
@@ -61,7 +62,13 @@ function SideBarNav({ posts, directories }) {
               {directory.posts.map((post) => {
                 return (
                   <li className='line-clamp-1  block truncate p-1 hover:text-blue-500'>
-                    <a href={`/docs/${post.slug}`}>{post.metadata.title}</a>
+                    <a href={`/docs/${post.slug}`}>{post.metadata.title}
+                    {post.metadata.labels? post.metadata.labels.split(',').map((label) => (
+                      <span className='bg-teal-700 text-white text-xs rounded-sm p-1 py-0.5 ml-1'>
+                        {label}
+                      </span>
+                    )): null}
+                    </a>
                   </li>
                 );
               })}

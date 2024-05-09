@@ -1,0 +1,66 @@
+---
+title: 'Setup'
+publishedAt: '2024-04-07'
+summary: 'Installation of Orbit"
+labels: 'draft'
+
+---
+
+If you haven't checked the [Tech Stack](./Tech-Stack), please review that before setting up the project
+besides knowing the tech stack, setup is quite straightforward.
+
+## Prerequisites
+
+- Have [Node.js](https://nodejs.org/en/) installed.
+- Have [npm](https://www.npmjs.com/) installed.
+- Have [Git](https://git-scm.com/) installed.
+- Setup a [Supabase](https://supabase.com/) project or use an existing one.
+  - For Google authentication, follow the instructions [here](https://supabase.io/docs/guides/auth#sign-in-with-google) to setup Google authentication for your Supabase project.
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/armintalaie/Orbit.git
+```
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+
+Create a `.env.local` file in the root directory of the project and add the following environment variables:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=<supabase_url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase_anon_key>
+GOOGE_CLIENT_ID=<google_client_id>
+GOOGLE_CLIENT_SECRET=<google_client_secret>
+```
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+
+---
+
+## Resources
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+To learn more about the technologies used in this project, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - learn about Tailwind CSS features and API.
+- [Shadcn](https://ui.shadcn.com/) - Re-usable components built using Radix UI and Tailwind CSS.
+- [Radix UI](https://www.radix-ui.com/) - A collection of open source UI components for building high-quality, accessible design systems and web apps.
+- [Supabase](https://supabase.com) - The open source Firebase alternative. Instant APIs, authentication, and realtime subscriptions.
+
