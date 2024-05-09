@@ -1,7 +1,7 @@
 import { getBlogPosts } from './utils';
 
 export default function Page() {
-  let posts = getBlogPosts(true);
+  let posts = getBlogPosts(true, undefined, 1);
   console.log('posts');
   console.log(posts.map((post) => post.slug));
 
