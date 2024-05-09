@@ -1,7 +1,7 @@
 import { db } from '@/lib/db/handler';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { headers } from 'next/headers';
-import socket, { publishEvent } from '../../sync';
+import socket, { publishEvent } from '../../../app/api/sync';
 
 export async function GET(
   req: Request,

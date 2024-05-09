@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { db } from '@/lib/db/handler';
 import { headers } from 'next/headers';
-import { publishEvent } from '../sync';
+import { publishEvent } from '../../app/api/sync';
 
 const issueSchema = z.object({
   title: z.string(),
