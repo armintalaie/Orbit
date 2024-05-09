@@ -83,5 +83,38 @@ interface WorkspaceMemberTable {
   status: string;
 }
 
+interface WorkspaceMemberRole {
+  member_id: string;
+  role: string;
+}
+
+interface RoleTable {
+  name: string;
+  description: string;
+}
+
+interface RolePermissionTable {
+  role: string;
+  permission: string;
+}
+
+
+
 // Keys of this interface are table names.
-export interface Database extends PublicDatabase {}
+export interface Database extends PublicDatabase {
+  issue: IssueTable;
+  issueAssignee: IssueAssigneeTable;
+  label: LabelTable;
+  issueLabel: IssueLabelTable;
+  status: StatusTable;
+  project: ProjectTable;
+  profiles: Profiles;
+  teamMember: teamMemberTable;
+  team: teamTable;
+  workspace: WorkspaceTable;
+  workspaceMember: WorkspaceMemberTable;
+  workspaceMemberRole: WorkspaceMemberRole;
+  role: RoleTable;
+  rolePermission: RolePermissionTable;
+  
+}

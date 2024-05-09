@@ -14,10 +14,10 @@ export default function AuthForm() {
       supabaseClient={supabase}
       view='sign_in'
       appearance={{ theme: ThemeSupa }}
-      theme='light'
-      onlyThirdPartyProviders={true}
+      theme='dark'
+      onlyThirdPartyProviders={false}
       showLinks={true}
-      providers={['google']}
+      providers={[]}
       redirectTo={`${NEXT_PUBLIC_BASE_URL}/api/auth/callback`}
     />
   );

@@ -16,6 +16,10 @@ module.exports = {
       fontSize: {
         '2xs': '0.65rem',
       },
+      fontFamily: {
+        sans: ['Poppins', ...fontFamily.sans],
+      },
+
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -75,5 +79,7 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'),
+  require('@tailwindcss/typography'),
+],
 };

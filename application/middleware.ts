@@ -5,6 +5,8 @@ import { withContext } from './context';
 const allowedContextKeys = ['user', 'query'];
 
 export default withContext(allowedContextKeys, async (setContext, req) => {
+
+  return NextResponse.next();
   if (req.nextUrl.pathname.endsWith('.js')) {
     return NextResponse.next();
   }
