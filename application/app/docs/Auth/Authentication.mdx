@@ -1,5 +1,27 @@
 ---
 title: 'Authentication'
-publishedAt: '2024-04-07'
-summary: 'Installation of Orbit"
+publishedAt: '2024-05-09'
+summary: 'Authentication For Orbit"
+labels: 'v0.2'
 ---
+
+Implementing authentication from scratch is a difficult task; espcially when it governs the security across all the services of Orbit.
+That is why for authentication we use Supabase.
+
+At the moment we only allow two type of authentication:
+
+- Traditional email and password
+- Via Google
+
+When a user signs up, they will have an account across Orbit. They do not need to create accounts per workspace but they will need to be added to workspaces to be able to see and access them.
+Check [Authorization](./Authorization) for more information.
+
+### Authentication Features
+
+- Resetting passwords
+- Verification
+- Sessions
+
+### Resources
+
+- Learn about [Supabase Auth](https://supabase.com/docs/guides/auth)

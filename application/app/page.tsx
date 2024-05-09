@@ -28,7 +28,7 @@ const TEXTS = {
 
 export default function Home() {
   return (
-    <main className='flex min-h-screen w-screen flex-col items-center justify-center bg-neutral-950 text-white'>
+    <main className='flex min-h-screen w-screen flex-col items-center  bg-neutral-950 text-white'>
       <NavigationMenuDemo />
 
       <div className='flex h-[60vh] max-w-[1500px] flex-col  items-center justify-center'>
@@ -47,13 +47,13 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <Hero />
+      {/* <Hero />
 
       <Hero />
 
       <Hero />
 
-      <Hero />
+      <Hero /> */}
     </main>
   );
 }

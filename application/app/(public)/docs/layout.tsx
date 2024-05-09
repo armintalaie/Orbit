@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getAllBlogPostMetadata } from './utils';
+import { GithubIcon, GlobeIcon } from 'lucide-react';
 
 export default function Layout({ children }) {
   const { posts, directories } = getAllBlogPostMetadata();
@@ -8,19 +9,22 @@ export default function Layout({ children }) {
     <div className='dark flex h-screen max-h-screen flex-col overflow-hidden bg-neutral-950 text-white'>
       <nav className=' flex w-full items-center justify-between border-b p-2 px-4 text-center'>
         <div className='flex w-full items-center justify-between '>
-          <h2>Orbit Docs</h2>
-          <div className='flex items-center gap-4'>
+          <Link href='/docs' className='pl-2 text-xl font-semibold'>
+            Orbit Docs
+          </Link>
+          <div className='flex items-center gap-2'>
             <Link
               href='/'
-              className='h-full w-24 rounded-lg bg-gradient-to-r from-teal-900 to-teal-800 p-0.5 text-sm text-white'
+              className='h-7 rounded-sm  border  p-1 text-sm text-teal-600 '
             >
-              <p className='w-full rounded-md bg-neutral-950 p-2'>Orbit</p>
+              <GlobeIcon className='h-full w-fit' />
             </Link>
-            <input
-              type='text'
-              placeholder='Search'
-              className='rounded-lg bg-neutral-900 p-2 text-white'
-            />
+            <Link
+              href='https://github.com/armintalaie/Orbit'
+              className='h-7 rounded-sm  border p-1  text-sm text-teal-600 '
+            >
+              <GithubIcon className='h-full w-fit' />
+            </Link>
           </div>
         </div>
       </nav>
@@ -37,7 +41,6 @@ export default function Layout({ children }) {
 }
 
 function SideBarNav({ posts, directories }) {
-  console.log('posts');
   return (
     <>
       {posts.map((post) => {
@@ -62,12 +65,17 @@ function SideBarNav({ posts, directories }) {
               {directory.posts.map((post) => {
                 return (
                   <li className='line-clamp-1  block truncate p-1 hover:text-blue-500'>
-                    <a href={`/docs/${post.slug}`}>{post.metadata.title}
-                    {post.metadata.labels? post.metadata.labels.split(',').map((label) => (
-                      <span className='bg-teal-700 text-white text-xs rounded-sm p-1 py-0.5 ml-1'>
-                        {label}
-                      </span>
-                    )): null}
+                    <a href={`/docs/${post.slug}`}>
+                      {post.metadata.title}
+                      {post.metadata.labels
+                        ? post.metadata.labels
+                            .split(',')
+                            .map((label) => (
+                              <span className='ml-1 rounded-sm bg-teal-700 p-1 py-0.5 text-xs text-white'>
+                                {label}
+                              </span>
+                            ))
+                        : null}
                     </a>
                   </li>
                 );

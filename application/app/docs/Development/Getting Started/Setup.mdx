@@ -1,21 +1,21 @@
 ---
 title: 'Setup'
-publishedAt: '2024-04-07'
+publishedAt: '2024-05-09'
 summary: 'Installation of Orbit"
-labels: 'draft'
+labels: 'v0.2'
 
 ---
 
-If you haven't checked the [Tech Stack](./Tech-Stack), please review that before setting up the project
-besides knowing the tech stack, setup is quite straightforward.
+If you haven't checked the [Tech Stack](./Tech-Stack), please review that before setting up the project. Besides knowing the tech stack, setup is quite straightforward.
 
 ## Prerequisites
 
 - Have [Node.js](https://nodejs.org/en/) installed.
-- Have [npm](https://www.npmjs.com/) installed.
+- Have [NPM](https://www.npmjs.com/) installed.
 - Have [Git](https://git-scm.com/) installed.
 - Setup a [Supabase](https://supabase.com/) project or use an existing one.
-  - For Google authentication, follow the instructions [here](https://supabase.io/docs/guides/auth#sign-in-with-google) to setup Google authentication for your Supabase project.
+  - For Google auth, follow the instructions [here](https://supabase.io/docs/guides/auth#sign-in-with-google) to setup Google authentication for your Supabase project.
+  - You can opt out of Supabase by supplying your own auth flow and database. It will require more domain knowledge for the developer but it is an option if you plan to fork this project.
 
 ## Installation
 
@@ -31,14 +31,21 @@ Install the dependencies:
 npm install
 ```
 
+In the `application` directory:
 
-Create a `.env.local` file in the root directory of the project and add the following environment variables:
+Create a `.env.local` file in the root directory of the nextjs project and add the following environment variables and replace the values with your own credentials.
 
 ```text
+NODE_ENV=development # environment
 NEXT_PUBLIC_SUPABASE_URL=<supabase_url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<supabase_anon_key>
-GOOGE_CLIENT_ID=<google_client_id>
-GOOGLE_CLIENT_SECRET=<google_client_secret>
+DB_CONNECTION=<connectionURI> # check your postgres server
+NEXT_PUBLIC_BASE_URL=<public_URL> # used for auth redirects
+
+GOOGE_CLIENT_ID=<google_client_id> # if you use Google Auth
+GOOLE_CLIENT_SECRET=<google_client_secret>  # if you use Google Auth
+
+NEXT_PUBLIC_SYNC_URL=ws://localhost:3000 # Optional: used for live-syncing. Referes to the websocket server
 ```
 
 Run the development server:
@@ -47,8 +54,7 @@ Run the development server:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
+Check your terminal for the localhost URL to open
 
 ---
 
@@ -63,4 +69,3 @@ To learn more about the technologies used in this project, take a look at the fo
 - [Shadcn](https://ui.shadcn.com/) - Re-usable components built using Radix UI and Tailwind CSS.
 - [Radix UI](https://www.radix-ui.com/) - A collection of open source UI components for building high-quality, accessible design systems and web apps.
 - [Supabase](https://supabase.com) - The open source Firebase alternative. Instant APIs, authentication, and realtime subscriptions.
-
