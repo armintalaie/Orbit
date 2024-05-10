@@ -36,17 +36,17 @@ export default function Home() {
           {TEXTS.LANDING_MESSAGE}
         </h1>
         <p className='mt-10 text-3xl'>{TEXTS.LANDING_SUB_MESSAGE}</p>
-        <div className='mt-10 rounded-[40px] border-4 border-black bg-gradient-to-r from-teal-900 to-teal-800  p-1 text-lg'>
-          <div className=' rounded-[36px] border-4 border-black bg-gradient-to-r from-teal-900 to-teal-800  p-1 text-lg'>
-            <Button
-              className=' h-12 w-96 rounded-[32px] border-4 border-black bg-gradient-to-r from-teal-900 to-teal-800 p-4 text-lg
-        '
-            >
-              Get started
-            </Button>
+        <Link href='/auth/signup' className='mt-10'>
+          <div className=' rounded-[40px] border-4 border-black bg-gradient-to-r from-teal-900 to-teal-800  p-1 text-lg'>
+            <div className=' rounded-[36px] border-4 border-black bg-gradient-to-r from-teal-900 to-teal-800  p-1 text-lg'>
+              <Button className=' h-12 w-96 rounded-[32px] border-4 border-black bg-gradient-to-r from-teal-900 to-teal-800 p-4 text-lg'>
+                Get started
+              </Button>
+            </div>
           </div>
-        </div>
+        </Link>
       </div>
+
       {/* <Hero />
 
       <Hero />

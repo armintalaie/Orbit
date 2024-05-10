@@ -11,7 +11,7 @@
     "start:server": "node --loader ts-node/esm server/index.ts",
     "format": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore .",
-    "db:up": "tsc -p app/database && node app/database/dist/index.js"
+    "db:up": "tsc -p database && node database/dist/index.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

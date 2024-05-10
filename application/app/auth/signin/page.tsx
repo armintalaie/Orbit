@@ -1,0 +1,47 @@
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { signin } from '../actions';
+
+export const metadata: Metadata = {
+  title: 'Orbit',
+  description: 'Project management app for teams',
+};
+
+export default function Signin() {
+  return (
+    <div className='dark mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
+      <div className='flex flex-col space-y-2 text-center'>
+        <h1 className='text-3xl font-bold tracking-tight text-neutral-200'>
+          Sign into Orbit
+        </h1>
+        <p className='text-muted-foreground text-sm'>
+          Use one of the following providers to sign in.
+        </p>
+      </div>
+
+      <form className='flex flex-col space-y-2 text-sm'>
+        <label htmlFor='email'>Email:</label>
+        <Input id='email' name='email' type='email' required />
+        <label htmlFor='password'>Password:</label>
+        <Input id='password' name='password' type='password' required />
+        <Button formAction={signin}>Log in</Button>
+      </form>
+
+      <div className='flex flex-col space-y-2 text-center '>
+        <p className='text-muted-foreground pointer-events-auto text-sm'>
+          Don't have an account?{' '}
+          <span className='text-primary underline underline-offset-4'>
+            <Link
+              href='/auth/signup'
+              className='hover:text-primary underline underline-offset-4'
+            >
+              Sign up
+            </Link>
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+}

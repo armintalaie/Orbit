@@ -2,10 +2,14 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import { middlewares as activatedMiddleware } from '@/lib/middlewares/config';
 import { withContext } from './context';
+import { updateSession } from '@/lib/utils/supabase/middleware';
+
 const allowedContextKeys = ['user', 'query'];
 
 export default withContext(allowedContextKeys, async (setContext, req) => {
-  return NextResponse.next();
+  return await updateSession(req);
+
+  // return NextResponse.next();
   if (req.nextUrl.pathname.endsWith('.js')) {
     return NextResponse.next();
   }

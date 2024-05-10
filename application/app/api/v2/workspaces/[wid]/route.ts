@@ -1,4 +1,4 @@
-import { DatabaseUtils } from '@/app/database/src/helpers/workspace';
+import { DatabaseUtils } from '@/database/src/helpers/workspace';
 import { db } from '@/lib/db/handler';
 import { NextRequest, NextResponse } from 'next/server';
 
