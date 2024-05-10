@@ -138,12 +138,12 @@ export function NavigationMenuDemo() {
   return (
     <nav className='flex w-full  items-center p-2'>
       <div className='flex items-center gap-4'>
-        <Image src='/icons/icon.png' alt='Orbit' width={40} height={200} />
+        {/* <Image src='/icons/icon.png' alt='Orbit' width={40} height={200} /> */}
         <h1 className='text-3xl font-bold'>Orbit</h1>
       </div>
       <NavigationMenu className='dark absolute left-1/2 flex-1 -translate-x-1/2 transform'>
         <NavigationMenuList>
-          <NavigationMenuItem>
+          {/* <NavigationMenuItem>
             <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className='grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]'>
@@ -153,7 +153,7 @@ export function NavigationMenuDemo() {
                       className='from-muted/50 to-muted flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b p-6 no-underline outline-none focus:shadow-md'
                       href='/'
                     >
-                      {/* <Icons.logo className="h-6 w-6" /> */}
+                      {/* <Icons.logo className="h-6 w-6" /> 
                       <div className='mb-2 mt-4 text-lg font-medium'>
                         shadcn/ui
                       </div>
@@ -176,7 +176,7 @@ export function NavigationMenuDemo() {
                 </ListItem>
               </ul>
             </NavigationMenuContent>
-          </NavigationMenuItem>
+          </NavigationMenuItem> 
           <NavigationMenuItem>
             <NavigationMenuTrigger>Components</NavigationMenuTrigger>
             <NavigationMenuContent>
@@ -192,7 +192,7 @@ export function NavigationMenuDemo() {
                 ))}
               </ul>
             </NavigationMenuContent>
-          </NavigationMenuItem>
+          </NavigationMenuItem>*/}
           <NavigationMenuItem>
             <Link href='/docs' legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
