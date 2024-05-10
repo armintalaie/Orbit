@@ -1,83 +1,26 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import { middlewares as activatedMiddleware } from '@/lib/middlewares/config';
-import { withContext } from './context';
+import { NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/lib/utils/supabase/middleware';
 
-const allowedContextKeys = ['user', 'query'];
-
-export default withContext(allowedContextKeys, async (setContext, req) => {
-  return await updateSession(req);
-
-  // return NextResponse.next();
-  if (req.nextUrl.pathname.endsWith('.js')) {
-    return NextResponse.next();
+export async function middleware(request: NextRequest) {
+  const resp = await updateSession(request);
+  if (request.nextUrl.pathname.endsWith('.js')) {
+    return resp;
   }
 
   if (
-    req.nextUrl.pathname.startsWith('/api/auth/callback') ||
-    req.nextUrl.pathname.startsWith('/api/auth/signout') ||
-    req.nextUrl.pathname.startsWith('/auth') ||
-    req.nextUrl.pathname.startsWith('/api/health')
+    request.nextUrl.pathname.startsWith('/api/auth/callback') ||
+    request.nextUrl.pathname.startsWith('/api/auth/signout') ||
+    request.nextUrl.pathname.startsWith('/auth')
   ) {
-    return NextResponse.next();
+    return resp;
   }
-  if (req.nextUrl.pathname.startsWith('/api')) {
-    // Load middleware functions
-    const middlewareFunctions = activatedMiddleware.map((fn) =>
-      fn(setContext, req)
-    );
-
-    // Option 1: Run middleware synchronously
-    // This allows you to handle each result before moving to the next\
-    for (const fn of middlewareFunctions) {
-      const result = await fn;
-
-      // console.log(result);
-
-      if (!result.ok) {
-        return result;
-      }
+  if (request.nextUrl.pathname.startsWith('/api')) {
+    if (!resp.headers.get('user') || !resp.headers.get('user') === null) {
+      return NextResponse.redirect(new URL('/auth/login', request.url));
     }
-
-    return NextResponse.next();
-
-    // Option 2: Run middleware asynchronously
-    // Using Promise.allSettled allows concurrent execution
-    // const results = await Promise.allSettled(middlewareFunctions);
-
-    // // Check each result
-    // for (const result of results) {
-    //   // If rejected or not OK, return first response
-    //   if (result.status === 'fulfilled' && !result.value?.ok) {
-    //     return result.value;
-    //   } else if (result.status === 'rejected') {
-    //     throw result.reason;
-    //   }
-    // }
-
-    // return NextResponse.next();
   }
-
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req, res });
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // if user is signed in and the current path is / redirect the user to /account
-  if (user && req.nextUrl.pathname === '/') {
-    return NextResponse.redirect(new URL('/issues/me', req.url));
-  }
-
-  // if user is not signed in and the current path is not / redirect the user to /
-  if (!user && req.nextUrl.pathname !== '/') {
-    return NextResponse.redirect(new URL('/', req.url));
-  }
-
-  return res;
-});
+  return resp;
+}
 
 export const config = {
   matcher: [

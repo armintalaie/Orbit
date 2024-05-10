@@ -1,127 +1,54 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-
+import { toast } from 'sonner';
+import { useContext, useEffect, useState } from 'react';
+import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { Button } from '@/components/ui/button';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { toast } from 'sonner';
-import { useContext } from 'react';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
-
-const profileFormSchema = z.object({
-  username: z
-    .string()
-    .min(2, {
-      message: 'Username must be at least 2 characters.',
-    })
-    .max(30, {
-      message: 'Username must not be longer than 30 characters.',
-    })
-    .optional(),
-  email: z
-    .string({
-      required_error: 'Please select an email to display.',
-    })
-    .email()
-    .optional(),
-  full_name: z.string().optional(),
-  website: z.string().optional(),
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
-
-const defaultValues: Partial<ProfileFormValues> = {};
 
 export default function Account() {
-  // const { fetcher, profile } = useContext(OrbitContext);
   const UserSession = useContext(UserSessionContext);
   const user = UserSession.user;
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
-    defaultValues,
-    mode: 'onChange',
-  });
+  const [userInfo, setUserInfo] = useState(null);
 
-  const signout = async () => {
-    // const res = await fetcher(`/api/auth/signout`, {
-    //   method: 'POST',
-    // });
-    // if (res.ok) {
-    //   window.location.href = '/';
-    // }
+  const getUserInfo = async () => {
+    const res = await fetch(`/api/v2/users/${user.id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${UserSession.access_token}`,
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      console.log(data);
+      setUserInfo(data);
+    }
   };
 
-  function onSubmit(data: ProfileFormValues) {
-    toast('You submitted the following values:', {
-      description: (
-        <div className='flex w-fit items-center justify-center p-2'>
-          <pre className=' w-full rounded-md bg-slate-950 p-4'>
-            <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-          </pre>
-        </div>
-      ),
-    });
-
-    // fetcher(`/api/profiles/${UserSession?.user.id}`, {
-    //   method: 'PATCH',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data),
-    // });
-  }
-
-  // if (!profile) {
-  //   return <div className='flex items-center space-x-4'></div>;
-  // }
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   return (
-    <div>
-      <h1 className='text-2xl font-semibold'>Account</h1>
-      Update your account information here.
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl></FormControl>
-                  <Input {...field} placeholder={user.email} />
-                </Select>
+    <div className='flex h-screen w-screen flex-col items-center  p-10'>
+      <div className='flex w-full max-w-xl flex-col gap-4 divide-y py-5'>
+        <h1 className='py-10 text-2xl font-semibold'>Account</h1>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className='flex items-center justify-end gap-2 p-1 text-sm'>
+        <section className='flex w-full flex-col gap-4 py-5 '>
+          <div className='flex items-center gap-4'>
+            <h2 className='text-lg font-semibold'>Profile</h2>
             <Button
-              variant='outline'
-              className='rounded-sm px-2 py-0 text-sm'
-              type='submit'
-            >
-              Update profile
-            </Button>
-            <Button
-              onClick={signout}
+              // onClick={signout}
               variant='outline'
               className='rounded-sm px-2 py-0 text-sm'
               type='button'
@@ -129,8 +56,109 @@ export default function Account() {
               Sign out
             </Button>
           </div>
-        </form>
-      </Form>
+          <div className='flex flex-col gap-2'>
+            <div className='flex items-center gap-2'>
+              <label htmlFor='name' className='text-sm font-semibold'>
+                Email
+              </label>
+              <p>{user.email}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className='flex w-full flex-col gap-4 py-5 '>
+          <div className='flex items-center gap-4'>
+            <h2 className='text-lg font-semibold'>Workspaces</h2>
+            <CreateWorkspace />
+          </div>
+          <div className='flex flex-col gap-2'>
+            <div className='flex max-w-lg flex-col items-center gap-2'>
+              {userInfo &&
+                userInfo.workspaces.map((workspace) => (
+                  <div
+                    key={workspace.id}
+                    className='flex w-full items-center justify-between gap-2 rounded border bg-neutral-800 p-2'
+                  >
+                    <p>{workspace.name}</p>
+                    <p className='text-sm'>
+                      Updated:{' '}
+                      {new Date(workspace.updatedAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
+  );
+}
+
+function CreateWorkspace() {
+  const [name, setName] = useState('');
+  const UserSession = useContext(UserSessionContext);
+  async function createWorkspace() {
+    const res = await fetch(`/api/v2/workspaces`, {
+      method: 'POST',
+      body: JSON.stringify({ workspaceId: name }),
+      headers: {
+        Authorization: `Bearer ${UserSession.access_token}`,
+      },
+    });
+    console.log(res);
+    const data = await res.json();
+    if (res.ok) {
+      toast('Workspace created');
+    } else {
+      toast(data.error);
+    }
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant='outline'
+          className='rounded-sm px-2 py-0 text-sm'
+          type='button'
+        >
+          Create workspace
+        </Button>
+      </DialogTrigger>
+      <DialogContent className='max-w-md'>
+        <DialogHeader>
+          <DialogTitle>New workspace</DialogTitle>
+          <DialogDescription>
+            Create a new workspace to start collaborating.
+          </DialogDescription>
+        </DialogHeader>
+        <div className='grid gap-4 py-4'>
+          <div className='flex items-center gap-4'>
+            <Label htmlFor='name' className='text-right'>
+              Name
+            </Label>
+            <Input
+              className='w-full'
+              id='name'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            type='submit'
+            onClick={(e) => {
+              console.log(e);
+              e.preventDefault();
+              toast('Creating workspace');
+              createWorkspace();
+            }}
+          >
+            Create
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

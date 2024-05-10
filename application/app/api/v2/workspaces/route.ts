@@ -10,12 +10,35 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 400 }
     );
   }
-  const id = await DatabaseUtils.setupWorkspace(db, {
-    name: body.workspaceId,
-    config: {},
-    ownerId: 'e5f58d1d-204d-4775-a46a-db6327f6cc02',
-  });
-  return NextResponse.json(id);
+
+  try {
+    const user = JSON.parse(request.headers.get('user')!);
+
+    const workspace = await db
+      .selectFrom('public.workspace')
+      .selectAll()
+      .where('name', '=', body.workspaceId)
+      .executeTakeFirst();
+    if (workspace) {
+      return NextResponse.json(
+        { error: 'Workspace already exists' },
+        { status: 400 }
+      );
+    }
+
+    const id = await DatabaseUtils.setupWorkspace(db, {
+      name: body.workspaceId,
+      config: {},
+      ownerId: user.id,
+    });
+    return NextResponse.json(id);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: 'Could not create workspace' },
+      { status: 400 }
+    );
+  }
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {

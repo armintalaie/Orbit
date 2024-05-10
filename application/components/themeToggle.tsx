@@ -15,6 +15,8 @@ import {
 export default function ThemeToggle() {
   const { setTheme } = useTheme();
 
+  setTheme('dark');
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -31,7 +31,7 @@ export default function AuthContextProvider({
   }, []);
 
   if (!session || !session.user || session === null) {
-    return LoadingFallback;
+    return <></>;
   }
   return (
     <Suspense fallback={<LoadingFallback />}>
