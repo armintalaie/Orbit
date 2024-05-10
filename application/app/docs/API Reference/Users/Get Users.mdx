@@ -1,23 +1,18 @@
 ---
-title: 'Get User'
+title: 'Get Users'
 publishedAt: '2024-05-09'
 labels: 'v0.2'
 ---
 
-`GET users/{userid}`
+`GET users`
 
 Query Params: N/A
-
-Path Params:
-
-- `userid`: id of the user (uuid)
 
 ### Scenarios
 
 - [Successful request](#successful-request)
 - [Unauthenticated Request](#unauthenticated-request)
 - [Unauthorized Request](#unauthorized-request)
-- [Not Found](#not-found)
 
 ---
 
@@ -29,15 +24,20 @@ Response: 200
 
 ```
 {
-  "id": "111111111-e225-476b-8e3e-9d528296be81",
-  "email": "user@email.com",
-  "workspaces": [
-      {
-          "workspaceId": "1111111-5c76-40ed-a0cc-7f4a4aba8386",
-          "name": "workspace",
-          "username": "user",
-          "updatedAt": "2024-05-05T00:00:16.722679+00:00"
-      }
+  [
+    {
+      "id": "111111111-e225-476b-8e3e-9d528296be81",
+      "email": "user@email.com",
+      "workspaces": [
+          {
+              "workspaceId": "1111111-5c76-40ed-a0cc-7f4a4aba8386",
+              "name": "workspace",
+              "username": "user",
+              "updatedAt": "2024-05-05T00:00:16.722679+00:00"
+          }
+      ]
+    },
+    ...
   ]
 }
 ```
@@ -63,17 +63,5 @@ Response: 403
 ```
 {
   "message": "Not authorized to access resource."
-}
-```
-
-#### Not Found
-
-Request: No body
-
-Response: 404
-
-```
-{
-  "message": "user does not exist"
 }
 ```
