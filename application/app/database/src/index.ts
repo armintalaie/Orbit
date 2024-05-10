@@ -7,16 +7,16 @@ import {
   PostgresDialect,
   FileMigrationProvider,
 } from 'kysely';
-import { Database } from './schema/index.js';
+import { PublicDatabase } from './schema';
 import dotenv from 'dotenv';
 dotenv.config();
 
 async function migrateToLatest() {
   console.log('migrating to latest');
-  const db = new Kysely<Database>({
+  const db = new Kysely<PublicDatabase>({
     dialect: new PostgresDialect({
       pool: new Pool({
-        connectionString: process.env.DB_CONNECTION_2,
+        connectionString: process.env.DB_CONNECTION,
       }),
     }),
   });

@@ -29,6 +29,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "./middleware.ts",
+    "app/docs/API Reference/Resources/Permissions.mdx",
   ],
   "exclude": ["node_modules"],
 }

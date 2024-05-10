@@ -1,0 +1,46 @@
+---
+title: 'Get Permissions'
+publishedAt: '2024-05-09'
+labels: 'v0.2'
+---
+
+`GET permissions`
+
+Query Params: N/A
+
+### Scenarios
+
+- [Successful request](#successful-request)
+
+---
+
+#### Successful request
+
+Request: No body
+
+Response: 200
+
+```json
+[
+  {
+    "permission": "read",
+    "entity": "project",
+    "description": "Read project"
+  },
+  {
+    "permission": "write",
+    "entity": "project",
+    "description": "Write project"
+  },
+  {
+    "permission": "delete",
+    "entity": "project",
+    "description": "Delete project"
+  },
+  {
+    "permission": "invite",
+    "entity": "project",
+    "description": "Invite to project"
+  }
+]
+```

@@ -14,7 +14,13 @@ Workspaces users with the correct permissions can create and modify roles based 
 
 ### Permissions
 
-permissions follow the following pair values: `permission type` and `permission entity`
+permissions follow the following pair values: `permission type` and `permission entity`.
+
+_Check the [Permissions API endpoint](../API-Reference/Resources/Permissions). Workspaces can will be able to apply a subset of those to their custom roles._
+
+- These types and entities can change in the future that might cause breaking changes until a `v1` release.
+
+---
 
 #### List of permission types:
 
@@ -36,5 +42,3 @@ permissions follow the following pair values: `permission type` and `permission 
 Workspace admins, i.e. ones with the `<workspace,admin>` permissions can create roles that refer to one or more type and permission combination. For example, a workspace admin can make a role with `<team,admin>` permission to assign team owners.
 
 ---
-
-- These types and entities can change in the future that might cause breaking changes until a `v1` release.
