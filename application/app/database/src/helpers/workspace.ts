@@ -1,4 +1,4 @@
-import { Kysely, sql } from 'kysely';
+import { Kysely, Transaction, sql } from 'kysely';
 
 type WorkspaceCreateInput = {
   name: string;
@@ -10,42 +10,120 @@ async function createWorkspaceTenant(
   db: Kysely<any>,
   input: WorkspaceCreateInput
 ) {
-  let workspace = await db
-    .withSchema('public')
-    .insertInto('workspace')
-    .values({
-      name: input.name,
-      config: input.config,
-    })
-    .returning('id')
-    .executeTakeFirstOrThrow();
+  const workspace = await db.transaction().execute(async (trx) => {
+    let workspace = await trx
+      .withSchema('public')
+      .insertInto('workspace')
+      .values({
+        name: input.name,
+        config: input.config,
+      })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+
+    console.log('LOG: Workspace entry created');
+
+    await trx
+      .withSchema('public')
+      .insertInto('workspace_member')
+      .values({
+        workspace_id: workspace.id,
+        user_id: input.ownerId,
+        username: input.ownerId,
+      })
+      .execute();
+
+    console.log('LOG: Workspace member added');
+
+    await setupWorkspaceTables(trx, workspace.id);
+    console.log('LOG: Workspace tables setup');
+
+    await createStarterRoles(trx, workspace.id, input.ownerId);
+    await addCreaterToWorkspace(trx, workspace.id, input.ownerId);
+    console.log('LOG: Starter roles created');
+
+    return workspace;
+  });
 
   console.log('LOG: Workspace created', workspace);
-
-  await db
-    .withSchema('public')
-    .insertInto('workspace_member')
-    .values({
-      workspace_id: workspace.id,
-      user_id: input.ownerId,
-      username: input.ownerId,
-    })
-    .execute();
-
-  console.log('LOG: Workspace member added', workspace);
-
-  await setupWorkspaceTables(db, workspace.id);
-
-  console.log('LOG: Workspace tables setup', workspace);
 
   return workspace;
 }
 
-async function setupWorkspaceTables(db: Kysely<any>, workspaceId: string) {
+async function setupWorkspaceTables(db: Transaction<any>, workspaceId: string) {
   const workspaceSchema = `workspace_${workspaceId}`;
   await db.schema.createSchema(workspaceSchema).ifNotExists().execute();
   await setupWorkspacePermissionsAndRoles(db, workspaceSchema);
   await setupWorkspaceTeamTable(db, workspaceSchema);
+}
+
+async function createStarterRoles(
+  db: Transaction<any>,
+  workspaceId: string,
+  ownerId: string
+) {
+  const starterRoles = [
+    { name: 'owner', description: 'Owner of the workspace' },
+    { name: 'admin', description: 'Admin of the workspace' },
+    { name: 'member', description: 'Member of the workspace' },
+  ];
+
+  const workspaceSchema = `workspace_${workspaceId}`;
+  await db
+    .withSchema(workspaceSchema)
+    .insertInto('role')
+    .values(starterRoles)
+    .execute();
+
+  await db
+    .withSchema(workspaceSchema)
+    .insertInto('role_permission')
+    .values([
+      { role_name: 'owner', permission: 'admin', entity: 'workspace' },
+      { role_name: 'owner', permission: 'delete', entity: 'workspace' },
+      { role_name: 'admin', permission: 'admin', entity: 'workspace' },
+      { role_name: 'member', permission: 'read', entity: 'workspace' },
+    ])
+    .execute();
+}
+
+async function addCreaterToWorkspace(
+  db: Kysely<any>,
+  workspaceId: string,
+  ownerId: string
+) {
+  const workspaceSchema = `workspace_${workspaceId}`;
+
+  await db
+    .withSchema(workspaceSchema)
+    .insertInto('workspaceMember')
+    .values({
+      memberId: ownerId,
+      addedAt: new Date(),
+      updatedAt: new Date(),
+      username: ownerId,
+      profile: {},
+    })
+    .execute();
+
+  await db
+    .withSchema(workspaceSchema)
+    .insertInto('workspaceMemberRole')
+    .values([
+      {
+        member_id: ownerId,
+        role_name: 'owner',
+      },
+      {
+        member_id: ownerId,
+        role_name: 'admin',
+      },
+      {
+        member_id: ownerId,
+        role_name: 'member',
+      },
+    ])
+    .execute();
 }
 
 async function setupWorkspacePermissionsAndRoles(
@@ -197,24 +275,26 @@ async function setupWorkspaceTeamTable(
 
 async function destroyWorkspaceTenant(db: Kysely<any>, workspaceId: string) {
   const workspaceSchema = `workspace_${workspaceId}`;
-  await db
-    .withSchema('public')
-    .schema.dropSchema(workspaceSchema)
-    .ifExists()
-    .cascade()
-    .execute();
+  await db.transaction().execute(async (trx) => {
+    await trx
+      .withSchema('public')
+      .schema.dropSchema(workspaceSchema)
+      .ifExists()
+      .cascade()
+      .execute();
 
-  console.log(`Dropped schema ${workspaceSchema}`);
-  await db
-    .deleteFrom('workspace_member')
-    .where('workspace_id', '=', workspaceId)
-    .execute();
+    console.log(`Dropped schema ${workspaceSchema}`);
+    await trx
+      .deleteFrom('workspace_member')
+      .where('workspace_id', '=', workspaceId)
+      .execute();
 
-  console.log(`Deleted workspace members for workspace ${workspaceId}`);
+    console.log(`Deleted workspace members for workspace ${workspaceId}`);
 
-  await db.deleteFrom('workspace').where('id', '=', workspaceId).execute();
+    await trx.deleteFrom('workspace').where('id', '=', workspaceId).execute();
 
-  console.log(`Deleted workspace ${workspaceId}`);
+    console.log(`Deleted workspace ${workspaceId}`);
+  });
   return workspaceId;
 }
 
