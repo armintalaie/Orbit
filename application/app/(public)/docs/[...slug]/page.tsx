@@ -33,24 +33,6 @@ export function generateMetadata({ params }) {
   return {
     title,
     description,
-    // openGraph: {
-    //   title,
-    //   description,
-    //   type: 'article',
-    //   publishedTime,
-    //   url: `${baseUrl}/blog/${post.slug}`,
-    //   images: [
-    //     {
-    //       url: ogImage,
-    //     },
-    //   ],
-    // },
-    // twitter: {
-    //   card: 'summary_large_image',
-    //   title,
-    //   description,
-    //   images: [ogImage],
-    // },
   };
 }
 

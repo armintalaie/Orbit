@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getAllBlogPostMetadata } from './utils';
 import { GithubIcon, GlobeIcon } from 'lucide-react';
+import DocView from '@/components/docs/view';
 
 export default function Layout({ children }) {
   const { posts, directories } = getAllBlogPostMetadata();
@@ -28,63 +29,9 @@ export default function Layout({ children }) {
           </div>
         </div>
       </nav>
-      <section className='flex flex-1 overflow-y-hidden p-4'>
-        <aside className=' w-72 overflow-y-scroll text-sm text-white'>
-          <SideBarNav posts={posts} directories={directories} />
-        </aside>
-        <div className='flex h-full flex-1 justify-center overflow-y-hidden '>
-          {children}
-        </div>
-      </section>
+      <DocView posts={posts} directories={directories}>
+        {children}
+      </DocView>
     </div>
-  );
-}
-
-function SideBarNav({ posts, directories }) {
-  return (
-    <>
-      {posts.map((post) => {
-        return (
-          <div>
-            <a
-              className='line-clamp-1 block truncate p-1 pr-0 hover:text-blue-500'
-              href={`/docs/${post.slug}`}
-            >
-              {post.metadata.title}
-            </a>
-          </div>
-        );
-      })}
-      {directories.map((directory) => {
-        return (
-          <div className='p-2 pr-0'>
-            <h4 className='text-md border-b p-1 pr-0 font-semibold'>
-              {directory.metadata.title}
-            </h4>
-            <ul className='p-1 pr-0 text-sm'>
-              {directory.posts.map((post) => {
-                return (
-                  <li className='line-clamp-1  block truncate p-1 hover:text-blue-500'>
-                    <a href={`/docs/${post.slug}`}>
-                      {post.metadata.title}
-                      {post.metadata.labels
-                        ? post.metadata.labels
-                            .split(',')
-                            .map((label) => (
-                              <span className='ml-1 rounded-sm bg-teal-700 p-1 py-0.5 text-xs text-white'>
-                                {label}
-                              </span>
-                            ))
-                        : null}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-            <SideBarNav posts={[]} directories={directory.directories} />
-          </div>
-        );
-      })}
-    </>
   );
 }
