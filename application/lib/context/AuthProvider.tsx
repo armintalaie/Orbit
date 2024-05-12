@@ -2,6 +2,7 @@
 import { Session } from '@supabase/supabase-js';
 import React, { useEffect, useState, Suspense } from 'react';
 import { createClient } from '../utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
@@ -14,12 +15,16 @@ export default function AuthContextProvider({
 }) {
   let supabase = createClient();
   const [session, setSession] = useState<Session | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      console.log(data);
-      if (data && data.session) setSession(data.session);
-      console.log(session);
+      if (data && data.session) {
+        setSession(data.session);
+      } else {
+        setSession(null);
+        router.push('/auth/signin');
+      }
     });
 
     const {

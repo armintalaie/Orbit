@@ -13,9 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default function ThemeToggle() {
-  const { setTheme } = useTheme();
-
-  setTheme('dark');
+  const { theme, setTheme } = useTheme();
 
   return (
     <DropdownMenu>
@@ -23,10 +21,9 @@ export default function ThemeToggle() {
         <Button
           variant='outline'
           size='icon'
-          className='h-6 w-6 rounded-md p-0 dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300'
+          className=' w-24 rounded-md p-0 dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300'
         >
-          <SunIcon className='h-[0.8rem] w-[1rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
-          <MoonIcon className='absolute h-[0.8rem] w-[1rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
+          {theme}
           <span className='sr-only'>Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
@@ -37,7 +34,7 @@ export default function ThemeToggle() {
         <DropdownMenuItem onClick={() => setTheme('dark')}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('light')}>
+        <DropdownMenuItem onClick={() => setTheme('system')}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -11,11 +11,9 @@ export const metadata: Metadata = {
 
 export default function Signin() {
   return (
-    <div className='dark mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
+    <div className=' mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
       <div className='flex flex-col space-y-2 text-center'>
-        <h1 className='text-3xl font-bold tracking-tight text-neutral-200'>
-          Sign into Orbit
-        </h1>
+        <h1 className='text-3xl font-bold tracking-tight '>Sign into Orbit</h1>
         <p className='text-muted-foreground text-sm'>
           Use one of the following providers to sign in.
         </p>
@@ -26,7 +24,7 @@ export default function Signin() {
         <Input id='email' name='email' type='email' required />
         <label htmlFor='password'>Password:</label>
         <Input id='password' name='password' type='password' required />
-        <Button formAction={signin}>Log in</Button>
+        <Button formAction={signin}>Sign in</Button>
       </form>
 
       <div className='flex flex-col space-y-2 text-center '>
@@ -42,6 +40,10 @@ export default function Signin() {
           </span>
         </p>
       </div>
+
+      <p className='text-muted-foreground px-8 text-center text-sm'>
+        You can later connect your account to other providers in the settings.
+      </p>
     </div>
   );
 }

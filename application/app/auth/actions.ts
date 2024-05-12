@@ -16,13 +16,14 @@ export async function signin(formData: FormData) {
   };
 
   const { error } = await supabase.auth.signInWithPassword(data);
+  console.log(error);
 
   if (error) {
     redirect('/error');
   }
 
   revalidatePath('/', 'layout');
-  redirect('/');
+  redirect('/orbit');
 }
 
 export async function signup(formData: FormData) {

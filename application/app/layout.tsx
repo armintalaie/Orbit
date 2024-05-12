@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en' suppressHydrationWarning={true} className='dark'>
+    <html lang='en' suppressHydrationWarning={true} className=''>
       <head>
         <meta charSet='utf-8' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
@@ -32,14 +32,14 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning={true} className={poppins.className}>
-        {/* <ThemeProvider
+        <ThemeProvider
           enableSystem={false}
           attribute='class'
           defaultTheme='dark'
-        > */}
-        {children}
-        <Toaster />
-        {/* </The/meProvider> */}
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
