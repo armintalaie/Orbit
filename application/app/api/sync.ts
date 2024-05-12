@@ -1,5 +1,6 @@
 const NEXT_PUBLIC_SYNC_URL = process.env.NEXT_PUBLIC_SYNC_URL;
-const socket = new WebSocket(NEXT_PUBLIC_SYNC_URL || 'ws://localhost:3000');
+// const socket = new WebSocket(NEXT_PUBLIC_SYNC_URL || 'ws://localhost:3000');
+const socket = null;
 
 type WSPubSubMessage = {
   type: 'subscribe' | 'unsubscribe' | 'publish';
@@ -7,10 +8,10 @@ type WSPubSubMessage = {
   data?: string;
 };
 
-socket.onopen = function (e) {
-  console.log('Connected to server');
-  socket.send(JSON.stringify({ type: 'subscribe', channels: ['test'] }));
-};
+// socket.onopen = function (e) {
+//   console.log('Connected to server');
+//   socket.send(JSON.stringify({ type: 'subscribe', channels: ['test'] }));
+// };
 
 export default socket;
 
@@ -19,12 +20,12 @@ export const publishEvent = (
   data: object,
   event?: string
 ) => {
-  socket.send(
-    JSON.stringify({
-      type: 'publish',
-      channels: channels,
-      data: JSON.stringify(data),
-      event: event?.toString() || 'default',
-    })
-  );
+  // socket.send(
+  //   JSON.stringify({
+  //     type: 'publish',
+  //     channels: channels,
+  //     data: JSON.stringify(data),
+  //     event: event?.toString() || 'default',
+  //   })
+  // );
 };
