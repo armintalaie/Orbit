@@ -1,7 +1,10 @@
 {
   "name": "orbit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "clean": "rm -rf .next && rm -rf node_modules",
     "dev": "next dev -p 3001",
