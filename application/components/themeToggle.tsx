@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 import { useTheme } from 'next-themes';
 
 import { Button } from '@/components/ui/button';
@@ -19,9 +18,9 @@ export default function ThemeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant='outline'
+          variant='ghost'
           size='icon'
-          className=' w-24 rounded-md p-0 dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300'
+          className='primary-surface h-fit w-12 rounded-md border p-2  text-xs'
         >
           {theme}
           <span className='sr-only'>Toggle theme</span>

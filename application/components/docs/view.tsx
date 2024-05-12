@@ -91,7 +91,7 @@ function SideBarNav({
                         ? post.metadata.labels
                             .split(',')
                             .map((label) => (
-                              <span className='ml-1 rounded-sm bg-teal-700 p-1 py-0.5 text-xs text-white'>
+                              <span className='ml-1 rounded-sm bg-teal-700 p-1 py-0.5 text-xs '>
                                 {label}
                               </span>
                             ))
@@ -119,7 +119,7 @@ function MobileView({ children, posts, directories }) {
     <div className='flex flex-1  flex-col justify-center overflow-y-hidden'>
       <div className='flex flex-1  flex-col  overflow-y-scroll'>{children}</div>
       <Drawer open={isOpen} onClose={() => setIsOpen(false)}>
-        <DrawerTrigger className='rounded-t-3xl border-t-2 border-neutral-800 bg-neutral-900 p-3 text-white'>
+        <DrawerTrigger className='rounded-t-3xl border-t-2  p-3 '>
           <button className='' onClick={() => setIsOpen(true)}>
             <ArrowUp />
           </button>
@@ -140,7 +140,7 @@ function MobileView({ children, posts, directories }) {
 const DesktopView = ({ children, posts, directories }) => {
   return (
     <section className='flex flex-1 overflow-y-hidden p-4'>
-      <aside className=' w-72 overflow-y-scroll text-sm text-white'>
+      <aside className=' w-72 overflow-y-scroll text-sm '>
         <SideBarNav posts={posts} directories={directories} />
       </aside>
       <div className='flex h-full flex-1 justify-center overflow-y-hidden'>

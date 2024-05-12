@@ -73,11 +73,9 @@ export default function Blog({ params }) {
         {post.metadata.title}
       </h1>
       <div className='mb-8 mt-2 flex items-center justify-between text-sm'>
-        <p className='text-sm text-neutral-600 dark:text-neutral-400'>
-          {formatDate(post.metadata.publishedAt)}
-        </p>
+        <p className='text-sm'>{formatDate(post.metadata.publishedAt)}</p>
       </div>
-      <article className='prose prose-stone prose-invert h-fit max-w-4xl '>
+      <article className='prose prose-stone dark:prose-invert h-fit max-w-4xl '>
         <CustomMDX source={post.content} />
       </article>
     </section>

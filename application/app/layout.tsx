@@ -32,11 +32,7 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning={true} className={poppins.className}>
-        <ThemeProvider
-          enableSystem={false}
-          attribute='class'
-          defaultTheme='dark'
-        >
+        <ThemeProvider attribute='class' defaultTheme='dark'>
           {children}
           <Toaster />
         </ThemeProvider>
