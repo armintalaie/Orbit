@@ -31,11 +31,9 @@ export default function OrbitContextProvider({
   });
 
   function changeWorkspace(id?: any) {
-    console.log('changeWorkspace', id);
     setLoading(true);
     if (!id) {
       setOrbit({ ...orbit, currentWorkspace: null });
-      //   setLoading(false);
       return;
     }
     getWorkspace(id).then((data) => {

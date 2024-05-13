@@ -21,8 +21,8 @@ export async function GET(
             .select((eb) => [
               'workspaceId',
               'workspace.name',
-              'username',
               'public.workspaceMember.updatedAt',
+              'public.workspaceMember.status',
             ])
         ).as('workspaces'),
       ])

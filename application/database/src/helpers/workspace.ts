@@ -29,7 +29,6 @@ async function createWorkspaceTenant(
       .values({
         workspace_id: workspace.id,
         user_id: input.ownerId,
-        username: input.ownerId,
       })
       .execute();
 

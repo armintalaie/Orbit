@@ -22,6 +22,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               'workspaceId',
               'workspace.name',
               'public.workspaceMember.updatedAt',
+              'public.workspaceMember.status',
             ])
         ).as('workspaces'),
       ])

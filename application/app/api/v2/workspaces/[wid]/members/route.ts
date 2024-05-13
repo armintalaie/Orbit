@@ -44,7 +44,13 @@ export async function POST(
         .returningAll()
         .executeTakeFirstOrThrow();
 
-      await AddUserToWorkspace(params.wid, userId, body.roles, trx);
+      await AddUserToWorkspace(
+        params.wid,
+        body.email,
+        userId,
+        rolesToVerify,
+        trx
+      );
       return user;
     });
 
@@ -73,6 +79,7 @@ export async function GET(
 
 async function AddUserToWorkspace(
   workspaceId: string,
+  email: string,
   userId: string,
   roles: any,
   trx: any
@@ -83,6 +90,7 @@ async function AddUserToWorkspace(
     .values({
       memberId: userId,
       profile: {},
+      username: email,
     })
     .returningAll()
     .executeTakeFirstOrThrow();
@@ -90,7 +98,7 @@ async function AddUserToWorkspace(
   await trx
     .withSchema(`workspace_${workspaceId}`)
     .insertInto('workspaceMemberRole')
-    .values(roles.map((role: any) => ({ memberId: member.id, roleName: role })))
+    .values(roles.map((role: any) => ({ memberId: userId, roleName: role })))
     .execute();
   return member;
 }

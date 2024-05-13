@@ -3,7 +3,15 @@
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
 import { useContext, useMemo, useState } from 'react';
-import { Grid2X2, LockIcon, PaintBucket, User2 } from 'lucide-react';
+import {
+  Grid2X2,
+  InfoIcon,
+  LockIcon,
+  PaintBucket,
+  SettingsIcon,
+  User2,
+  Users2Icon,
+} from 'lucide-react';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import ThemeToggle from '../themeToggle';
 import { createClient } from '@/lib/utils/supabase/client';
@@ -17,38 +25,74 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+import WorkspaceGeneralSettings from '../workspace/workspaceGeneralSettings';
+import AccountWorkspaces from './accountWorkspaces';
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function AccountModal() {
-  const [activeMenu, setActiveMenu] = useState('account');
+  const [activeMenu, setActiveMenu] = useState(['account', 'account']);
+  const { currentWorkspace } = useContext(OrbitContext);
   const menuOptions = useMemo(
     () => ({
       account: {
-        label: 'Account',
-        icon: <User2 size={16} />,
-        content: <AccountSettings />,
+        info: {
+          label: 'Account',
+          icon: <SettingsIcon size={16} />,
+        },
+        options: {
+          account: {
+            label: 'User Account',
+            icon: <User2 size={16} />,
+            content: <AccountSettings />,
+          },
+          appearance: {
+            label: 'Appearance',
+            icon: <PaintBucket size={16} />,
+            content: <AppearanceSettings />,
+          },
+          workspaces: {
+            label: 'Workspaces',
+            icon: <Grid2X2 size={16} />,
+            content: <AccountWorkspaces />,
+          },
+        },
       },
-      workspace: {
-        label: 'Workspace',
-        icon: <Grid2X2 size={16} />,
-        content: <WorkspacesSettings />,
-      },
-      security: {
-        label: 'Security',
-        icon: <LockIcon size={16} />,
-        content: <SecuritySettings />,
-      },
-      appearance: {
-        label: 'Appearance',
-        icon: <PaintBucket size={16} />,
-        content: <AppearanceSettings />,
-      },
+      ...(currentWorkspace && {
+        workspace: {
+          info: {
+            label: currentWorkspace.name,
+            icon: <Grid2X2 size={16} />,
+          },
+
+          options: {
+            general: {
+              label: 'General',
+              icon: <InfoIcon size={16} />,
+              content: <WorkspaceGeneralSettings />,
+            },
+            profile: {
+              label: 'Profile',
+              icon: <User2 size={16} />,
+              content: <WorkspaceMembers />,
+            },
+            members: {
+              label: 'Members',
+              icon: <Users2Icon size={16} />,
+              content: <WorkspaceMembers />,
+            },
+            security: {
+              label: 'Security and Roles',
+              icon: <LockIcon size={16} />,
+              content: <SecuritySettings />,
+            },
+          },
+        },
+      }),
     }),
-    []
+    [currentWorkspace]
   );
 
   return (
@@ -56,7 +100,7 @@ export default function AccountModal() {
       <DialogTrigger>
         <button>Settings</button>
       </DialogTrigger>
-      <DialogContent className='flex h-full max-h-[90%] w-full max-w-4xl overflow-hidden p-0'>
+      <DialogContent className='flex h-full max-h-[90%] w-full max-w-6xl overflow-hidden p-0'>
         <ModalSidebar
           menuOptions={menuOptions}
           setActiveMenu={setActiveMenu}
@@ -64,10 +108,10 @@ export default function AccountModal() {
         />
         <div className='flex flex-1 flex-col gap-4 divide-y overflow-hidden px-6 py-4 '>
           <h1 className='  overflow-scroll text-2xl  font-semibold '>
-            {menuOptions[activeMenu].label}
+            {menuOptions[activeMenu[0]].options[activeMenu[1]].label}
           </h1>
           <section className='flex  w-full flex-col gap-4 py-5  '>
-            {menuOptions[activeMenu].content}
+            {menuOptions[activeMenu[0]].options[activeMenu[1]].content}
           </section>
         </div>
       </DialogContent>
@@ -83,19 +127,29 @@ function ModalSidebar({ menuOptions, setActiveMenu, activeMenu }) {
           <h1 className='text-lg font-bold'>Settings</h1>
         </div>
 
-        <div className='flex flex-1 flex-col gap-2 py-10'>
-          {Object.entries(menuOptions).map(([key, option]) => (
-            <Button
-              variant='ghost'
-              className='secondary-surface hover:tertiary-surface flex w-full justify-start gap-4 px-1'
-              key={option.id}
-              onClick={() => setActiveMenu(key)}
-            >
-              {option.icon}
-              {option.label}
-            </Button>
-          ))}
-        </div>
+        {Object.entries(menuOptions).map(([menuKey, menu]) => (
+          <div className='flex flex-col gap-2 py-5'>
+            <div className='flex items-center gap-2 border-b pb-4 text-sm'>
+              {menu.info.icon}
+              {menu.info.label}
+            </div>
+            {Object.entries(menu.options).map(
+              (
+                [key, option] // Assuming items have an 'options' property to iterate over
+              ) => (
+                <Button
+                  variant='ghost'
+                  className='secondary-surface hover:tertiary-surface flex w-full justify-start gap-4 px-1'
+                  key={option.id}
+                  onClick={() => setActiveMenu([menuKey, key])}
+                >
+                  {option.icon}
+                  {option.label}
+                </Button>
+              )
+            )}
+          </div>
+        ))}
 
         <div className='flex  gap-2 '></div>
       </div>
@@ -167,14 +221,6 @@ function SecuritySettings() {
       <div className='secondary-surface flex h-full w-full flex-col  items-center rounded-md p-5'>
         You can enable two-factor authentication here.
       </div>
-    </div>
-  );
-}
-
-function WorkspacesSettings() {
-  return (
-    <div className='flex h-full w-full flex-col items-center gap-5 overflow-hidden'>
-      <WorkspaceMembers />
     </div>
   );
 }
