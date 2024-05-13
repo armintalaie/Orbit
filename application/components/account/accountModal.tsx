@@ -30,6 +30,7 @@ import {
 } from '../ui/select';
 import WorkspaceGeneralSettings from '../workspace/workspaceGeneralSettings';
 import AccountWorkspaces from './accountWorkspaces';
+import WorkspaceSecuritySettings from '../workspace/workspaceSecuritySettings';
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function AccountModal() {
@@ -86,7 +87,7 @@ export default function AccountModal() {
             security: {
               label: 'Security and Roles',
               icon: <LockIcon size={16} />,
-              content: <SecuritySettings />,
+              content: <WorkspaceSecuritySettings />,
             },
           },
         },
@@ -110,7 +111,7 @@ export default function AccountModal() {
           <h1 className='  overflow-scroll text-2xl  font-semibold '>
             {menuOptions[activeMenu[0]].options[activeMenu[1]].label}
           </h1>
-          <section className='flex  w-full flex-col gap-4 py-5  '>
+          <section className='flex  w-full flex-col gap-4 overflow-scroll py-5 '>
             {menuOptions[activeMenu[0]].options[activeMenu[1]].content}
           </section>
         </div>
