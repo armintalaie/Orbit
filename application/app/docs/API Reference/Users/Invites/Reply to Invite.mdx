@@ -1,0 +1,111 @@
+---
+title: 'Reply to Invite'
+publishedAt: '2024-05-12'
+labels: 'v0.2.5'
+---
+
+User can respond to a workspace invitation. User has the following options: accept, reject, block.
+
+---
+
+`POST users/{userId}/invites/{workspaceId}`
+
+Body Params
+
+| Name   | Type | Required? | Description                                        |
+| ------ | ---- | --------- | -------------------------------------------------- |
+| status | enum | No        | one of accept, block, reject. Default is 'accept'  |
+
+Query Params: N/A
+
+Path Params:
+
+- `userId`: id of the user (uuid)
+- `workspaceId`: id of the workspace (uuid)
+
+### Scenarios
+
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+- [Bad Request](#bad-request)
+
+---
+
+#### Successful request
+
+Request:
+
+```json
+{
+  "status": "accept"
+}
+```
+
+Response: 200
+
+```json
+{
+  "message": "You have joined the workspace"
+}
+```
+
+#### Unauthenticated Request
+
+Request:
+
+```json
+{
+  "status": "accept"
+}
+```
+
+Response: 401
+
+```json
+{
+  "message": "Not authenticated."
+}
+```
+
+#### Unauthorized Request
+
+Request:
+
+```json
+{
+  "status": "accept"
+}
+```
+
+Response: 403
+
+```json
+{
+  "message": "Not authorized to access resource."
+}
+```
+
+#### Bad Request
+
+Request:
+
+```json
+{
+  "status": "maybe"
+}
+```
+
+Response: 400
+
+```json
+{
+  "message": "Invalid"
+}
+```
+
+Some other 400 scenarios:
+
+- No user invitation for workspace
+
+---

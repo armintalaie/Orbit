@@ -1,12 +1,12 @@
 ---
-title: 'Get Members'
+title: 'Add Member'
 publishedAt: '2024-05-12'
 labels: 'v0.2.5'
 ---
 
-Users can be invited to a workspace at anytime as long as the initiator has proper access. [Learn about roles and permission.](../../Auth/Authentication)
+Users can be invited to a workspace at anytime as long as the initiator has proper access. [Learn about roles and permission.](../../../Auth/Authentication)
 
-Invitations if supplied a role they will be assigned that role otherwise a `Default` role is assigned. When a user invite is sent, they will be added to the workspace but the
+Invitations if supplied a role they will be assigned that role otherwise a `Member` role is assigned. When a user invite is sent, they will be added to the workspace but the
 invited user can approve or deny the invite. At the moment users can be invited many times.
 
 ---
@@ -41,7 +41,8 @@ Request:
 
 ```json
 {
-  "email": "john@email.com"
+  "email": "john@email.com",
+  "roles": ["admin", ...]
 }
 ```
 
@@ -103,7 +104,7 @@ Response: 400
 
 ```json
 {
-  "message": "user already added"
+  "message": "User already invited"
 }
 ```
 

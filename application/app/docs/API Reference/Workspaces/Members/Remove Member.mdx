@@ -4,46 +4,31 @@ publishedAt: '2024-05-12'
 labels: 'v0.2.5'
 ---
 
-Users can be invited to a workspace at anytime as long as the initiator has proper access. [Learn about roles and permission.](../../Auth/Authentication)
-
-Invitations if supplied a role they will be assigned that role otherwise a `Default` role is assigned. When a user invite is sent, they will be added to the workspace but the
-invited user can approve or deny the invite. At the moment users can be invited many times.
+Users can be removed from a workspace at anytime as long as the initiator has proper access. [Learn about roles and permission.](../../../Auth/Authentication)
 
 ---
 
-`POST workspaces/{workspaceid}/members/`
+`DELETE workspaces/{workspaceid}/members/{userid}`
 
-Body Params
-
-| Name  | Type   | Required? | Description                                                                   |
-| ----- | ------ | --------- | ----------------------------------------------------------------------------- |
-| email | string | yes       |                                                                               |
-| roles | array  | no        | List of roles to be given to the user should they accept; must be valid roles |
+Body Params: N/A
 
 Query Params: N/A
 
 Path Params:
 
 - `workspaceid`: id of the workspace (uuid or name)
+- `userid`: id of the user to be removed (uuid)
 
 ### Scenarios
 
 - [Successful request](#successful-request)
 - [Unauthenticated Request](#unauthenticated-request)
 - [Unauthorized Request](#unauthorized-request)
-- [Bad Reques](#bad-request)
+- [Bad Request](#bad-request)
 
 ---
 
 #### Successful request
-
-Request:
-
-```json
-{
-  "email": "john@email.com"
-}
-```
 
 Response: 200
 
@@ -55,14 +40,6 @@ Response: 200
 
 #### Unauthenticated Request
 
-Request:
-
-```json
-{
-  "email": "john@email.com"
-}
-```
-
 Response: 401
 
 ```json
@@ -72,14 +49,6 @@ Response: 401
 ```
 
 #### Unauthorized Request
-
-Request:
-
-```json
-{
-  "email": "john@email.com"
-}
-```
 
 Response: 403
 
@@ -91,25 +60,12 @@ Response: 403
 
 #### Bad Request
 
-Request:
-
-```json
-{
-  "email": "john@email.com"
-}
-```
-
 Response: 400
 
 ```json
 {
-  "message": "user already added"
+  "message": "user not a member"
 }
 ```
-
-Some other 400 scenarios:
-
-- Invalid roles supplied
-- User already a member
 
 ---

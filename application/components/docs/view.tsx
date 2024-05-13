@@ -61,7 +61,7 @@ function SideBarNav({
     }
   };
   return (
-    <div className='flex w-full flex-col overflow-scroll p-2 pr-0'>
+    <div className='flex w-full flex-col overflow-scroll p-1 py-0 pr-0'>
       {posts.map((post) => {
         return (
           <div>

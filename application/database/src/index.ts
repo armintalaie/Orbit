@@ -6,6 +6,7 @@ import {
   Migrator,
   PostgresDialect,
   FileMigrationProvider,
+  CamelCasePlugin,
 } from 'kysely';
 import { PublicDatabase } from './schema';
 import dotenv from 'dotenv';
@@ -14,6 +15,7 @@ dotenv.config();
 async function migrateToLatest() {
   console.log('migrating to latest');
   const db = new Kysely<PublicDatabase>({
+    plugins: [new CamelCasePlugin()],
     dialect: new PostgresDialect({
       pool: new Pool({
         connectionString: process.env.DB_CONNECTION,
