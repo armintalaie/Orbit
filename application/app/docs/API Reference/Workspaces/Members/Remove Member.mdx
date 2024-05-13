@@ -1,0 +1,115 @@
+---
+title: 'Remove Member'
+publishedAt: '2024-05-12'
+labels: 'v0.2.5'
+---
+
+Users can be invited to a workspace at anytime as long as the initiator has proper access. [Learn about roles and permission.](../../Auth/Authentication)
+
+Invitations if supplied a role they will be assigned that role otherwise a `Default` role is assigned. When a user invite is sent, they will be added to the workspace but the
+invited user can approve or deny the invite. At the moment users can be invited many times.
+
+---
+
+`POST workspaces/{workspaceid}/members/`
+
+Body Params
+
+| Name  | Type   | Required? | Description                                                                   |
+| ----- | ------ | --------- | ----------------------------------------------------------------------------- |
+| email | string | yes       |                                                                               |
+| roles | array  | no        | List of roles to be given to the user should they accept; must be valid roles |
+
+Query Params: N/A
+
+Path Params:
+
+- `workspaceid`: id of the workspace (uuid or name)
+
+### Scenarios
+
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+- [Bad Reques](#bad-request)
+
+---
+
+#### Successful request
+
+Request:
+
+```json
+{
+  "email": "john@email.com"
+}
+```
+
+Response: 200
+
+```json
+{
+  "message": "User has been invited to join your workspace"
+}
+```
+
+#### Unauthenticated Request
+
+Request:
+
+```json
+{
+  "email": "john@email.com"
+}
+```
+
+Response: 401
+
+```json
+{
+  "message": "Not authenticated."
+}
+```
+
+#### Unauthorized Request
+
+Request:
+
+```json
+{
+  "email": "john@email.com"
+}
+```
+
+Response: 403
+
+```json
+{
+  "message": "Not authorized to access resource."
+}
+```
+
+#### Bad Request
+
+Request:
+
+```json
+{
+  "email": "john@email.com"
+}
+```
+
+Response: 400
+
+```json
+{
+  "message": "user already added"
+}
+```
+
+Some other 400 scenarios:
+
+- Invalid roles supplied
+- User already a member
+
+---

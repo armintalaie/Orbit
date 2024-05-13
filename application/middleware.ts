@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
   }
   if (request.nextUrl.pathname.startsWith('/api')) {
     if (!resp.headers.get('user') || !resp.headers.get('user') === null) {
-      return NextResponse.redirect(new URL('/auth/login', request.url));
+      // return NextResponse.redirect(new URL('/auth/login', request.url));
     }
   }
   return resp;

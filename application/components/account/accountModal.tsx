@@ -8,6 +8,20 @@ import { UserSessionContext } from '@/lib/context/AuthProvider';
 import ThemeToggle from '../themeToggle';
 import { createClient } from '@/lib/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
+import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function AccountModal() {
   const [activeMenu, setActiveMenu] = useState('account');
@@ -18,8 +32,8 @@ export default function AccountModal() {
         icon: <User2 size={16} />,
         content: <AccountSettings />,
       },
-      workspaces: {
-        label: 'Workspaces',
+      workspace: {
+        label: 'Workspace',
         icon: <Grid2X2 size={16} />,
         content: <WorkspacesSettings />,
       },
@@ -42,25 +56,19 @@ export default function AccountModal() {
       <DialogTrigger>
         <button>Settings</button>
       </DialogTrigger>
-      <DialogContent className='h-full max-h-[90%] w-full max-w-4xl overflow-hidden p-0'>
-        <div className='flex'>
-          <ModalSidebar
-            menuOptions={menuOptions}
-            setActiveMenu={setActiveMenu}
-            activeMenu={activeMenu}
-          />
-          <div className='flex flex-1 p-4'>
-            <div className='flex h-full w-full flex-col  items-center p-5'>
-              <div className='flex w-full flex-col gap-4 divide-y '>
-                <h1 className=' w-full text-2xl font-semibold'>
-                  {menuOptions[activeMenu].label}
-                </h1>
-                <section className='flex w-full flex-col gap-4 py-5 '>
-                  {menuOptions[activeMenu].content}
-                </section>
-              </div>
-            </div>
-          </div>
+      <DialogContent className='flex h-full max-h-[90%] w-full max-w-4xl overflow-hidden p-0'>
+        <ModalSidebar
+          menuOptions={menuOptions}
+          setActiveMenu={setActiveMenu}
+          activeMenu={activeMenu}
+        />
+        <div className='flex flex-1 flex-col gap-4 divide-y overflow-hidden px-6 py-4 '>
+          <h1 className='  overflow-scroll text-2xl  font-semibold '>
+            {menuOptions[activeMenu].label}
+          </h1>
+          <section className='flex  w-full flex-col gap-4 py-5  '>
+            {menuOptions[activeMenu].content}
+          </section>
         </div>
       </DialogContent>
     </Dialog>
@@ -69,7 +77,7 @@ export default function AccountModal() {
 
 function ModalSidebar({ menuOptions, setActiveMenu, activeMenu }) {
   return (
-    <div className='secondary-surface flex w-72 min-w-56 flex-col'>
+    <div className='secondary-surface flex w-56 min-w-56 flex-col'>
       <div className='flex flex-1 flex-col gap-2 p-4'>
         <div className='flex items-center gap-2'>
           <h1 className='text-lg font-bold'>Settings</h1>
@@ -165,12 +173,102 @@ function SecuritySettings() {
 
 function WorkspacesSettings() {
   return (
-    <div className='flex h-full w-full flex-col  items-center gap-5'>
-      <div className='secondary-surface flex h-full w-full flex-col  items-center rounded-md p-5'>
-        You can create a new workspace here.
+    <div className='flex h-full w-full flex-col items-center gap-5 overflow-hidden'>
+      <WorkspaceMembers />
+    </div>
+  );
+}
+
+function WorkspaceMembers() {
+  const { currentWorkspace } = useContext(OrbitContext);
+  const [showInvites, setShowInvites] = useState(false);
+
+  const { data, error, isLoading } = useSWR(
+    `/api/v2/workspaces/${currentWorkspace.id}/members`,
+    fetcher
+  );
+
+  const membersComponent = useMemo(
+    () => <MembersSection members={data} isLoading={isLoading} />,
+    [data]
+  );
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading members</div>;
+
+  return (
+    <div className='flex h-full w-full flex-col items-center gap-5 overflow-hidden'>
+      <div className=' flex w-full flex-col   gap-5'>
+        <div className=' flex w-full  justify-between   gap-5'>
+          <h2 className='w-full text-left text-lg font-semibold'>Members</h2>
+          <Button onClick={() => setShowInvites((prev) => !prev)}>
+            {showInvites ? 'Close Invites' : 'Invite Member'}
+          </Button>
+        </div>
+
+        {showInvites ? <WorkspaceInvites /> : membersComponent}
       </div>
-      <div className='secondary-surface flex h-full w-full flex-col  items-center rounded-md p-5'>
-        You can delete a workspace here.
+    </div>
+  );
+}
+
+function MembersSection({ members, isLoading }) {
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <div className='secondary-surface flex w-full flex-col items-center   justify-start overflow-x-scroll rounded border text-sm'>
+      <div className='primary-surface flex w-full flex-shrink-0 justify-between gap-4 border-b p-2 '>
+        <span className='w-40 flex-shrink-0'>Name</span>
+        <span className='w-40 flex-shrink-0'>Username</span>
+        <span className='w-40 flex-shrink-0'>Added At</span>
+        <span className='w-40 flex-shrink-0'>Roles</span>
+      </div>
+      {members?.map((member) => (
+        <div className=' primary-surface flex w-full justify-between gap-4 p-2  '>
+          <span className='w-40 flex-shrink-0'>{member.username}</span>
+          <span className='w-40 flex-shrink-0'>{member.username}</span>
+          <span className='w-40 flex-shrink-0'>
+            {new Date(member.addedAt).toLocaleDateString()}
+          </span>
+          <span className='w-40 flex-shrink-0'>Default</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WorkspaceInvites() {
+  const roles = ['Admin', 'Member', 'Viewer'];
+  return (
+    <div className=' flex w-full flex-col gap-2  '>
+      <div className='secondary-surface  flex w-full items-end  gap-5 rounded-md p-3 text-sm '>
+        <p>Currently you can only invite one person at a time.</p>
+      </div>
+      <div className='primary-surface flex w-full items-end  gap-5 rounded-md border p-3 shadow-sm'>
+        <div className=' flex w-full  gap-5 '>
+          <div className='flex w-full flex-col gap-2'>
+            <Label htmlFor='email'>Email</Label>
+            <Input type='email' name='email' placeholder='john@email.com' />
+          </div>
+          <div className='flex w-full flex-col gap-2'>
+            <Label htmlFor='role'>Role</Label>
+            <Select>
+              <SelectTrigger className='w-[180px]'>
+                <SelectValue placeholder='Select a Role' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {roles.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <Button>Invite</Button>
       </div>
     </div>
   );

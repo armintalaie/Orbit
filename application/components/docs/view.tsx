@@ -91,7 +91,7 @@ function SideBarNav({
                         ? post.metadata.labels
                             .split(',')
                             .map((label) => (
-                              <span className='ml-1 rounded-sm bg-teal-700 p-1 py-0.5 text-xs '>
+                              <span className='ml-1 rounded-sm bg-teal-800 p-1 py-0.5 text-xs text-white '>
                                 {label}
                               </span>
                             ))
