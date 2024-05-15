@@ -3,10 +3,17 @@ import { Session } from '@supabase/supabase-js';
 import React, { useEffect, useState, Suspense } from 'react';
 import { createClient } from '../utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import { toCamelCase } from '../util';
 
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
-export const UserSessionContext = React.createContext<Session>({} as Session);
+type UserSession = {
+  account: any;
+} & Session;
+
+export const UserSessionContext = React.createContext<UserSession>(
+  {} as UserSession
+);
 
 export default function AuthContextProvider({
   children,
@@ -14,13 +21,34 @@ export default function AuthContextProvider({
   children: React.ReactNode;
 }) {
   let supabase = createClient();
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState<UserSession | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data && data.session) {
-        setSession(data.session);
+        supabase
+          .from('account')
+          .select('*')
+          .eq('id', data.session.user.id)
+          .single()
+          .then(({ data: accountdata }) => {
+            if (!data) {
+              router.push('/auth/signin');
+            } else {
+              console.log(data);
+              console.log(data.session);
+              const accountdataCamel = Object.keys(accountdata).reduce(
+                (acc, key) => {
+                  acc[toCamelCase(key)] = accountdata[key];
+                  return acc;
+                },
+                {}
+              );
+
+              setSession({ ...data.session, account: accountdataCamel });
+            }
+          });
       } else {
         setSession(null);
         router.push('/auth/signin');

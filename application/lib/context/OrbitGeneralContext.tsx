@@ -66,12 +66,29 @@ export default function OrbitContextProvider({
         Authorization: `Bearer ${user.access_token}`,
       },
     });
+    let data = {};
     if (res.ok) {
-      const data = res.json();
-      return data;
+      const result = await res.json();
+      data = { ...result };
     } else {
       return null;
     }
+
+    const memberRes = await fetch(
+      `/api/v2/workspaces/${id}/members/${user.user.id}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${user.access_token}`,
+        },
+      }
+    );
+    let member = null;
+    if (memberRes.ok) {
+      member = await memberRes.json();
+    }
+
+    return { ...data, member: member };
   }
 
   const contextValue = {

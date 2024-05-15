@@ -101,7 +101,6 @@ async function addCreaterToWorkspace(
       addedAt: new Date(),
       updatedAt: new Date(),
       username: ownerId,
-      profile: {},
     })
     .execute();
 
@@ -157,6 +156,9 @@ async function setupWorkspacePermissionsAndRoles(
     )
     .execute();
 
+  const defaultAvatar =
+    'https://vzbnqbrfobqivmismxxj.supabase.co/storage/v1/object/public/profile_photos/default/av5.png';
+
   await db
     .withSchema(workspaceSchema)
     .schema.createTable('workspace_member')
@@ -170,7 +172,18 @@ async function setupWorkspacePermissionsAndRoles(
       col.defaultTo(sql`now()`).notNull()
     )
     .addColumn('username', 'varchar', (col) => col.notNull().unique())
-    .addColumn('profile', 'json', (col) => col.notNull())
+    .addColumn('first_name', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('last_name', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('pronouns', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('avatar', 'text', (col) =>
+      col.notNull().defaultTo(defaultAvatar)
+    )
+    .addColumn('location', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('timezone', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('status', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('notes', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('display_name', 'text', (col) => col.notNull().defaultTo(''))
+
     .execute();
 
   await db

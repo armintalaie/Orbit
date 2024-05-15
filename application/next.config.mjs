@@ -19,6 +19,16 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'vzbnqbrfobqivmismxxj.supabase.co',
+        port: '',
+        pathname: '/**/*',
+      },
+    ],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

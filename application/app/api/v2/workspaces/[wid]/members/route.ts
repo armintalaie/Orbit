@@ -69,9 +69,9 @@ export async function GET(
   { params }: { params: { wid: string } }
 ) {
   const members = await db
-    .selectFrom('public.workspaceMember')
+    .withSchema(`workspace_${params.wid}`)
+    .selectFrom('workspaceMember')
     .selectAll()
-    .where('workspaceId', '=', params.wid)
     .execute();
 
   return NextResponse.json(members);

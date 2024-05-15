@@ -1,5 +1,18 @@
 import { db } from '@/lib/db/handler';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const schema = z.object({
+  firstName: z.string().nullable().optional(),
+  lastName: z.string().nullable().optional(),
+  pronouns: z.string().nullable().optional(),
+  avatar: z.string().nullable().optional(),
+  location: z.string().nullable().optional(),
+  notes: z.string().nullable().optional(),
+  displayName: z.string().nullable().optional(),
+  timezone: z.string().nullable().optional(),
+  status: z.string().nullable().optional(),
+});
 
 export async function DELETE(
   request: NextRequest,
@@ -18,6 +31,11 @@ export async function PATCH(
   { params }: { params: { wid: string; mid: string } }
 ): Promise<NextResponse> {
   const body = await request.json();
+  try {
+    schema.parse(body);
+  } catch (error) {
+    return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+  }
 
   try {
     const member = await db
@@ -27,16 +45,19 @@ export async function PATCH(
       .where('userId', '=', params.mid)
       .executeTakeFirstOrThrow();
     const updatedMember = await db
-      .updateTable('public.workspaceMember')
+      .withSchema(`workspace_${params.wid}`)
+      .updateTable('workspaceMember')
       .set({
-        username: body.username,
+        ...body,
         updatedAt: new Date(),
       })
-      .where('workspaceId', '=', member.workspaceId)
-      .where('userId', '=', member.userId)
+      .where('memberId', '=', member.userId)
       .execute();
-    return NextResponse.json(updatedMember);
+    return NextResponse.json({
+      message: 'Member updated successfully',
+    });
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { error: 'Could not update member' },
       { status: 400 }

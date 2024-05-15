@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { getAllBlogPostMetadata } from './utils';
 import { GithubIcon, GlobeIcon } from 'lucide-react';
 import DocView from '@/components/docs/view';
-import ThemeToggle from '@/components/themeToggle';
 
 export default function Layout({ children }) {
   const { posts, directories } = getAllBlogPostMetadata();
@@ -24,7 +23,6 @@ export default function Layout({ children }) {
             >
               <GithubIcon className='h-full w-fit' />
             </Link>
-            <ThemeToggle />
           </div>
         </div>
       </nav>

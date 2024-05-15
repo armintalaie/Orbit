@@ -92,3 +92,7 @@ export function setDocumentMeta(title: string, description?: string) {
       ?.setAttribute('content', description);
   }
 }
+
+export const toCamelCase = (str: string): string => {
+  return str.replace(/(_\w)/g, (matches) => matches[1].toUpperCase());
+};
