@@ -3,10 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const perms = await db
-      .selectFrom('public.workspacePermission')
-      .selectAll()
-      .execute();
+    const perms = await db.selectFrom('public.workspacePermission').selectAll().execute();
 
     return NextResponse.json(perms, {
       headers: {
@@ -17,8 +14,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not fetch permissions' },
-      { status: 500 }
+      {
+        error: 'Could not fetch permissions',
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

@@ -3,14 +3,7 @@ import AccountModal from '@/components/account/accountModal';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { useContext, useEffect, useState } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 export default function Sidebar() {
   const UserSession = useContext(UserSessionContext);
@@ -45,10 +38,7 @@ export default function Sidebar() {
             }}
           >
             <SelectTrigger className='primary-surface w-full text-sm'>
-              <SelectValue
-                className='text-xs'
-                placeholder='Select a workspace'
-              />
+              <SelectValue className='text-xs' placeholder='Select a workspace' />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

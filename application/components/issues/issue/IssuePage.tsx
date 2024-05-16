@@ -1,21 +1,11 @@
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { useContext, useEffect, useState } from 'react';
 import { MessageCircleIcon, TextSelectIcon } from 'lucide-react';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import TextEditor from '@/components/editor/textEditor';
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Drawer,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerFooter,
-  DrawerClose,
-} from '@/components/ui/drawer';
+import { Drawer, DrawerTrigger, DrawerContent, DrawerFooter, DrawerClose } from '@/components/ui/drawer';
 import { toast } from 'sonner';
 import { IIssue } from '@/lib/types/issue';
 import { IssueComments } from './IssueComments';
@@ -93,11 +83,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
     }
   }, [lastMessage]);
 
-  if (
-    issue === undefined ||
-    issueTitle === undefined ||
-    issueProjectId === undefined
-  )
+  if (issue === undefined || issueTitle === undefined || issueProjectId === undefined)
     return <div className='flex items-center space-x-4'></div>;
 
   if (issue === null) {
@@ -109,20 +95,12 @@ export default function IssuePage({ issueId }: { issueId: number }) {
       <div className='relative flex w-full flex-col'>
         <div className=' flex  w-full flex-1 flex-col overflow-hidden dark:bg-neutral-900'>
           <div className='flex h-12 w-full items-center justify-between p-1 px-4  dark:bg-neutral-900   '>
-            <IssueTitleField
-              issueId={issueId}
-              issueTitle={issueTitle}
-              projectId={issueProjectId}
-            />
+            <IssueTitleField issueId={issueId} issueTitle={issueTitle} projectId={issueProjectId} />
           </div>
 
           <div className=' flex  w-full flex-1 flex-col overflow-hidden '>
             <div className=' flex  w-full flex-1 flex-grow flex-col justify-start overflow-hidden bg-gray-50 dark:bg-neutral-900'>
-              <TextEditor
-                onSave={saveContentChanges}
-                content={issueContents}
-                issue={issue}
-              />
+              <TextEditor onSave={saveContentChanges} content={issueContents} issue={issue} />
             </div>
           </div>
         </div>
@@ -142,11 +120,7 @@ export default function IssuePage({ issueId }: { issueId: number }) {
           <ResizablePanel minSize={30} collapsedSize={1} collapsible={true}>
             <div className=' flex h-full w-full flex-1 flex-col '>
               <div className='flex h-12 w-full items-center justify-between p-1  px-4 '>
-                <IssueTitleField
-                  issueId={issueId}
-                  issueTitle={issue.title}
-                  projectId={issue.projectid}
-                />
+                <IssueTitleField issueId={issueId} issueTitle={issue.title} projectId={issue.projectid} />
 
                 <div className='flex h-full items-center justify-center gap-2'></div>
               </div>
@@ -155,32 +129,18 @@ export default function IssuePage({ issueId }: { issueId: number }) {
                 <ResizablePanelGroup direction='vertical'>
                   <ResizablePanel>
                     <div className=' flex h-full w-full flex-grow flex-col overflow-x-hidden overflow-y-scroll bg-gray-50'>
-                      <TextEditor
-                        onSave={saveContentChanges}
-                        content={issueContents}
-                        issue={issue}
-                      />
+                      <TextEditor onSave={saveContentChanges} content={issueContents} issue={issue} />
                     </div>
                   </ResizablePanel>
                   <ResizableHandle withHandle={false} />
-                  <ResizablePanel
-                    collapsedSize={6}
-                    collapsible={true}
-                    defaultSize={6}
-                    minSize={6}
-                  >
+                  <ResizablePanel collapsedSize={6} collapsible={true} defaultSize={6} minSize={6}>
                     <IssueComments issueId={issue.id} />
                   </ResizablePanel>
                 </ResizablePanelGroup>
               </div>
             </div>
           </ResizablePanel>
-          <ResizablePanel
-            collapsedSize={1}
-            collapsible={true}
-            defaultSize={25}
-            minSize={25}
-          >
+          <ResizablePanel collapsedSize={1} collapsible={true} defaultSize={25} minSize={25}>
             <IssueInfo issueId={issue.id} refIssue={issue} />
           </ResizablePanel>
         </ResizablePanelGroup>
@@ -203,20 +163,11 @@ export default function IssuePage({ issueId }: { issueId: number }) {
   );
 }
 
-function IssueInfoMobilePopver({
-  issueId,
-  issue,
-}: {
-  issueId: number;
-  issue: any;
-}) {
+function IssueInfoMobilePopver({ issueId, issue }: { issueId: number; issue: any }) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button
-          variant='outline'
-          className='m-0 flex h-8 items-center bg-neutral-700 p-2 text-xs text-neutral-50'
-        >
+        <Button variant='outline' className='m-0 flex h-8 items-center bg-neutral-700 p-2 text-xs text-neutral-50'>
           <InfoCircledIcon className='h-6 w-6 px-1 text-neutral-50' />
         </Button>
       </DrawerTrigger>
@@ -238,10 +189,7 @@ function CommentsMobilePopver({ issueId }: { issueId: number }) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button
-          variant='outline'
-          className='m-0 flex h-8 items-center bg-neutral-700 p-2 text-xs text-neutral-50'
-        >
+        <Button variant='outline' className='m-0 flex h-8 items-center bg-neutral-700 p-2 text-xs text-neutral-50'>
           <MessageCircleIcon className='h-6 w-6 pr-2 text-neutral-50' />
           Comments
         </Button>

@@ -1,32 +1,22 @@
 import * as React from 'react';
 
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { NewTemplate } from '../editor/popoverEditor';
 import { useContext, useEffect } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { FileTextIcon } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
-export default function IssueTemplates({
-  teamid,
-  sendTemplate,
-}: {
-  teamid: string;
-  sendTemplate: Function;
-}) {
+export default function IssueTemplates({ teamid, sendTemplate }: { teamid: string; sendTemplate: Function }) {
   const [templates, setTemplates] = React.useState<any[]>([]);
   const { fetcher } = useContext(OrbitContext);
 
   async function fetchTemplates() {
     const res = await fetcher(`/api/teams/${teamid}/templates`, {
-      next: { revalidate: 10 },
+      next: {
+        revalidate: 10,
+      },
     });
     const templates = await res.json();
     setTemplates(templates);
@@ -40,21 +30,13 @@ export default function IssueTemplates({
     <div className=' flex w-full flex-grow  flex-col px-4 '>
       <div className='flex w-full  flex-col   '>
         <div className='flex flex-row items-center gap-2 '>
-          <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
-            Templates
-          </h2>
-          <NewTemplate
-            button={true}
-            reload={() => fetchTemplates()}
-            teamid={teamid}
-          />
+          <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>Templates</h2>
+          <NewTemplate button={true} reload={() => fetchTemplates()} teamid={teamid} />
         </div>
 
         <div className='flex flex-col items-center justify-center gap-2 py-5'>
           <Alert className='bg-inherit'>
-            <AlertDescription>
-              Choose a template to insert into the editor.
-            </AlertDescription>
+            <AlertDescription>Choose a template to insert into the editor.</AlertDescription>
           </Alert>
         </div>
 
@@ -101,9 +83,7 @@ export default function IssueTemplates({
         ) : (
           <div className='flex flex-col items-center justify-center gap-2 py-5'>
             <Alert className='bg-inherit'>
-              <AlertDescription>
-                You have no templates for this team. Create one now.
-              </AlertDescription>
+              <AlertDescription>You have no templates for this team. Create one now.</AlertDescription>
             </Alert>
           </div>
         )}

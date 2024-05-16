@@ -16,14 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useContext, useState } from 'react';
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  Form,
-} from '../ui/form';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from '../ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { DeadlineField } from '../issues/form/deadlineField';
@@ -66,16 +59,15 @@ export function NewProject({
       ...defaultValues,
     },
   });
-  const { reward: confettiReward, isAnimating: isConfettiAnimating } =
-    useReward('confettiReward', 'confetti', {
-      zIndex: 1000,
-      elementCount: 100,
-      spread: 150,
-      angle: 90,
-      decay: 0.91,
-      startVelocity: 40,
-      lifetime: 300,
-    });
+  const { reward: confettiReward, isAnimating: isConfettiAnimating } = useReward('confettiReward', 'confetti', {
+    zIndex: 1000,
+    elementCount: 100,
+    spread: 150,
+    angle: 90,
+    decay: 0.91,
+    startVelocity: 40,
+    lifetime: 300,
+  });
 
   async function onSubmit() {
     const formVals = form.getValues();
@@ -83,9 +75,7 @@ export function NewProject({
       title: formVals.title,
       description: formVals.description,
       statusid: formVals.statusid,
-      deadline: formVals.deadline
-        ? formVals.deadline.toISOString().split('T')[0]
-        : null,
+      deadline: formVals.deadline ? formVals.deadline.toISOString().split('T')[0] : null,
       teamid: Number(formVals.teamid),
     };
 
@@ -133,10 +123,7 @@ export function NewProject({
         </DialogHeader>
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='w-full space-y-8 overflow-hidden px-2 '
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className='w-full space-y-8 overflow-hidden px-2 '>
             <FormField
               control={form.control}
               name='title'

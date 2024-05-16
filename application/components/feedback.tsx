@@ -31,20 +31,14 @@ export function FeedbackButton() {
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>Feedback</DialogTitle>
-          <DialogDescription>
-            Log an issue or request a feature.
-          </DialogDescription>
+          <DialogDescription>Log an issue or request a feature.</DialogDescription>
         </DialogHeader>
         <div className='flex items-center space-x-2'>
           <div className='grid flex-1 gap-2'>
             <Label htmlFor='link' className='sr-only'>
               Link
             </Label>
-            <Input
-              id='link'
-              defaultValue='https://github.com/armintalaie/Orbit/issues'
-              readOnly
-            />
+            <Input id='link' defaultValue='https://github.com/armintalaie/Orbit/issues' readOnly />
           </div>
           <Button type='submit' size='sm' className='px-3'>
             <span className='sr-only'>Copy</span>

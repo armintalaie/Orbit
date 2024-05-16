@@ -12,8 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
             {/* {children} */}
             <div className='flex h-full w-full flex-1 flex-col items-center justify-center p-2'>
-              Nothing to see here yet. You are signed in but there is no content
-              to display.
+              Nothing to see here yet. You are signed in but there is no content to display.
             </div>
           </div>
         </div>

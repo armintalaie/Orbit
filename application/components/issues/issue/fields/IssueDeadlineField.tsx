@@ -1,10 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -104,10 +100,7 @@ export default function IssueDeadlineField({
           <Button
             id='date'
             variant={'ghost'}
-            className={cn(
-              ' text-2xs h-8 w-full justify-start p-0 text-left ',
-              !date && 'text-muted-foreground'
-            )}
+            className={cn(' h-8 w-full justify-start p-0 text-left text-2xs ', !date && 'text-muted-foreground')}
           >
             <CalendarIcon className='mr-2 h-4 w-4' />
             {date ? <>{format(date, 'LLL dd, y')}</> : <span>Pick a date</span>}

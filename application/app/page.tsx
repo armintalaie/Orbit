@@ -32,9 +32,7 @@ export default function Home() {
       <NavigationMenuDemo />
 
       <div className='flex h-[60vh] max-w-[1500px] flex-col  items-center justify-center'>
-        <h1 className='whitespace-pre-line text-center text-7xl font-bold '>
-          {TEXTS.LANDING_MESSAGE}
-        </h1>
+        <h1 className='whitespace-pre-line text-center text-7xl font-bold '>{TEXTS.LANDING_MESSAGE}</h1>
         <p className='mt-10 text-3xl'>{TEXTS.LANDING_SUB_MESSAGE}</p>
         <Link href='/auth/signup' className='mt-10'>
           <div className=' rounded-[40px] border-4 border-black bg-gradient-to-r from-teal-900 to-teal-800  p-1 text-lg'>
@@ -64,8 +62,7 @@ function Hero() {
 
   React.useEffect(() => {
     const handleScroll = () => {
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const newWidth = Math.min(80 + scrollTop / 100, 100);
       setWidth(`${newWidth}%`);
     };
@@ -96,18 +93,20 @@ function Hero() {
   );
 }
 
-const components: { title: string; href: string; description: string }[] = [
+const components: {
+  title: string;
+  href: string;
+  description: string;
+}[] = [
   {
     title: 'Alert Dialog',
     href: '/docs/primitives/alert-dialog',
-    description:
-      'A modal dialog that interrupts the user with important content and expects a response.',
+    description: 'A modal dialog that interrupts the user with important content and expects a response.',
   },
   {
     title: 'Hover Card',
     href: '/docs/primitives/hover-card',
-    description:
-      'For sighted users to preview content available behind a link.',
+    description: 'For sighted users to preview content available behind a link.',
   },
   {
     title: 'Progress',
@@ -123,8 +122,7 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: 'Tabs',
     href: '/docs/primitives/tabs',
-    description:
-      'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
+    description: 'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
   },
   {
     title: 'Tooltip',
@@ -195,9 +193,7 @@ export function NavigationMenuDemo() {
           </NavigationMenuItem>*/}
           <NavigationMenuItem>
             <Link href='/docs' legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Documentation
-              </NavigationMenuLink>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Documentation</NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -206,28 +202,25 @@ export function NavigationMenuDemo() {
   );
 }
 
-const ListItem = React.forwardRef<
-  React.ElementRef<'a'>,
-  React.ComponentPropsWithoutRef<'a'>
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors',
-            className
-          )}
-          {...props}
-        >
-          <div className='text-sm font-medium leading-none'>{title}</div>
-          <p className='text-muted-foreground line-clamp-2 text-sm leading-snug'>
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
+const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWithoutRef<'a'>>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+              className
+            )}
+            {...props}
+          >
+            <div className='text-sm font-medium leading-none'>{title}</div>
+            <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>{children}</p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
 ListItem.displayName = 'ListItem';

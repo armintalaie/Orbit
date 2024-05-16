@@ -6,19 +6,9 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-export function DeadlineField({
-  className,
-  field,
-}: {
-  className?: string;
-  field: any;
-}) {
+export function DeadlineField({ className, field }: { className?: string; field: any }) {
   const [date, setDate] = React.useState<Date | undefined>(field.value);
 
   const footer = (
@@ -51,7 +41,7 @@ export function DeadlineField({
             id='date'
             variant={'outline'}
             className={cn(
-              ' text-2xs h-8 w-full justify-start text-left text-xs font-normal ',
+              ' h-8 w-full justify-start text-left text-2xs text-xs font-normal ',
               !date && 'text-muted-foreground'
             )}
           >

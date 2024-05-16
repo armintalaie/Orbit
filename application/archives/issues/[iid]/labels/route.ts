@@ -5,7 +5,13 @@ import { headers } from 'next/headers';
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { iid: string } }
+  {
+    params,
+  }: {
+    params: {
+      iid: string;
+    };
+  }
 ) {
   const { iid } = params;
 
@@ -65,12 +71,7 @@ export async function PATCH(
 
   const assigneeSubs = updated.assignees.map((a: any) => 'user:' + a.id);
   publishEvent(
-    [
-      'project:' + updated.projectid,
-      'team:' + updated.teamid,
-      'issue:' + updated.id,
-      ...assigneeSubs,
-    ],
+    ['project:' + updated.projectid, 'team:' + updated.teamid, 'issue:' + updated.id, ...assigneeSubs],
     updated
   );
 

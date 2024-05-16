@@ -42,15 +42,7 @@ export const formSchema = z.object({
   assignee: z.string().nullable(),
 });
 
-export function NewTeamMember({
-  teamid,
-  button,
-  reload,
-}: {
-  teamid: number;
-  button?: boolean;
-  reload: Function;
-}) {
+export function NewTeamMember({ teamid, button, reload }: { teamid: number; button?: boolean; reload: Function }) {
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,16 +59,15 @@ export function NewTeamMember({
   });
   const { fetcher } = useContext(OrbitContext);
   const [userInput, setUserInput] = useState(undefined);
-  const { reward: confettiReward, isAnimating: isConfettiAnimating } =
-    useReward('confettiReward', 'confetti', {
-      zIndex: 1000,
-      elementCount: 100,
-      spread: 150,
-      angle: 90,
-      decay: 0.91,
-      startVelocity: 40,
-      lifetime: 300,
-    });
+  const { reward: confettiReward, isAnimating: isConfettiAnimating } = useReward('confettiReward', 'confetti', {
+    zIndex: 1000,
+    elementCount: 100,
+    spread: 150,
+    angle: 90,
+    decay: 0.91,
+    startVelocity: 40,
+    lifetime: 300,
+  });
 
   async function onSubmit() {
     const res = await fetcher(`/api/teams/${teamid}/members/${userInput}`, {
@@ -133,17 +124,11 @@ export function NewTeamMember({
             <Alert>
               <RocketIcon className='h-4 w-4' />
               <AlertTitle>Who you can add</AlertTitle>
-              <AlertDescription>
-                You can add anyone who has signed in at least once in the past.
-              </AlertDescription>
+              <AlertDescription>You can add anyone who has signed in at least once in the past.</AlertDescription>
             </Alert>
             <UserFinder val={userInput} setVal={setUserInput} teamid={teamid} />
 
-            <Button
-              type='submit'
-              className='w-full text-sm'
-              disabled={userInput === undefined}
-            >
+            <Button type='submit' className='w-full text-sm' disabled={userInput === undefined}>
               Add
             </Button>
           </form>

@@ -2,19 +2,8 @@
 
 import { useState, useEffect, useContext } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import IssueLabel from '../label';
 import { TagsIcon } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
@@ -45,7 +34,7 @@ export function LabelField({ setFields }: { setFields: any }) {
             <Button
               variant='ghost'
               size='sm'
-              className='border-right text-2xs flex h-8 w-fit items-center justify-start gap-2 rounded-md border-gray-200'
+              className='border-right flex h-8 w-fit items-center justify-start gap-2 rounded-md border-gray-200 text-2xs'
             >
               <TagsIcon className='h-4 w-4' />
               Labels
@@ -54,13 +43,7 @@ export function LabelField({ setFields }: { setFields: any }) {
 
           <div className='flex h-8 items-center space-x-2 p-1'>
             {selectedLabels.map((label) => (
-              <IssueLabel
-                key={label.id}
-                label={label.label}
-                color={label.color}
-                className='h-full'
-                id={label.id}
-              />
+              <IssueLabel key={label.id} label={label.label} color={label.color} className='h-full' id={label.id} />
             ))}
           </div>
         </div>
@@ -73,11 +56,7 @@ export function LabelField({ setFields }: { setFields: any }) {
               if (labels[value].label.toLowerCase() === search.toLowerCase()) {
                 return 1;
               }
-              return labels[value].label
-                .toLowerCase()
-                .indexOf(search.toLowerCase()) !== -1
-                ? 0.5
-                : 0;
+              return labels[value].label.toLowerCase().indexOf(search.toLowerCase()) !== -1 ? 0.5 : 0;
             }}
           >
             <CommandInput placeholder='Filter Labels...' />
@@ -101,11 +80,7 @@ export function LabelField({ setFields }: { setFields: any }) {
                     }}
                   >
                     <div className='flex items-center gap-2'>
-                      <IssueLabel
-                        label={label.label}
-                        color={label.color}
-                        id={label.id}
-                      />
+                      <IssueLabel label={label.label} color={label.color} id={label.id} />
                     </div>
                   </CommandItem>
                 ))}

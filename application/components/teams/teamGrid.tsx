@@ -25,9 +25,7 @@ function TeamCard({ team }: { team: any }) {
         </div>
 
         <div className='z-10 flex h-10 w-full border-t  border-gray-100 bg-gray-100 bg-opacity-20 p-2'>
-          <h2 className='center text-xs italic text-gray-600 '>
-            {team.description}
-          </h2>
+          <h2 className='center text-xs italic text-gray-600 '>{team.description}</h2>
         </div>
         <div className='z-10 flex h-fit w-full justify-end  bg-gray-100 bg-opacity-20 p-2 py-1'>
           <Badge color='gray' className='m-0 h-fit p-1'>

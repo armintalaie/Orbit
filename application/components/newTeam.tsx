@@ -16,14 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useContext, useState } from 'react';
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  Form,
-} from './ui/form';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from './ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Textarea } from '@/components/ui/textarea';
@@ -37,30 +30,21 @@ export const teamSchema = z.object({
   description: z.string(),
 });
 
-export function NewTeam({
-  button,
-  reload,
-  teamid,
-}: {
-  button?: boolean;
-  reload: Function;
-  teamid?: string;
-}) {
+export function NewTeam({ button, reload, teamid }: { button?: boolean; reload: Function; teamid?: string }) {
   const [open, setOpen] = useState(false);
   const { fetcher } = useContext(OrbitContext);
   const form = useForm<z.infer<typeof teamSchema>>({
     resolver: zodResolver(teamSchema),
   });
-  const { reward: confettiReward, isAnimating: isConfettiAnimating } =
-    useReward('confettiReward', 'confetti', {
-      zIndex: 1000,
-      elementCount: 100,
-      spread: 150,
-      angle: 90,
-      decay: 0.91,
-      startVelocity: 40,
-      lifetime: 300,
-    });
+  const { reward: confettiReward, isAnimating: isConfettiAnimating } = useReward('confettiReward', 'confetti', {
+    zIndex: 1000,
+    elementCount: 100,
+    spread: 150,
+    angle: 90,
+    decay: 0.91,
+    startVelocity: 40,
+    lifetime: 300,
+  });
 
   async function onSubmit() {
     const formVals = form.getValues();
@@ -102,9 +86,7 @@ export function NewTeam({
       <DialogContent className='sm:max-w-3xl'>
         <DialogHeader>
           <DialogTitle>New Team</DialogTitle>
-          <DialogDescription className='pb-2'>
-            Create a new team
-          </DialogDescription>
+          <DialogDescription className='pb-2'>Create a new team</DialogDescription>
 
           {/* <Alert>
             <InfoCircledIcon className='h-4 w-4' />
@@ -125,10 +107,7 @@ export function NewTeam({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder='What shall be the title of this legendary team'
-                      {...field}
-                    />
+                    <Input placeholder='What shall be the title of this legendary team' {...field} />
                   </FormControl>
 
                   <FormMessage />

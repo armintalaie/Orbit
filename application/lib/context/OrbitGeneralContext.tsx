@@ -17,11 +17,7 @@ export const OrbitContext = React.createContext<OrbitContextType>({
   fetcher: async () => {},
 });
 
-export default function OrbitContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OrbitContextProvider({ children }: { children: React.ReactNode }) {
   const user = useContext(UserSessionContext);
   const [loading, setLoading] = useState(true);
   const [orbit, setOrbit] = useState<OrbitType>({
@@ -33,19 +29,22 @@ export default function OrbitContextProvider({
   function changeWorkspace(id?: any) {
     setLoading(true);
     if (!id) {
-      setOrbit({ ...orbit, currentWorkspace: null });
+      setOrbit({
+        ...orbit,
+        currentWorkspace: null,
+      });
       return;
     }
     getWorkspace(id).then((data) => {
-      setOrbit({ ...orbit, currentWorkspace: data });
+      setOrbit({
+        ...orbit,
+        currentWorkspace: data,
+      });
       setLoading(false);
     });
   }
 
-  async function fetcher(
-    input: string | URL | Request,
-    init?: any | undefined
-  ): Promise<Response> {
+  async function fetcher(input: string | URL | Request, init?: any | undefined): Promise<Response> {
     const res = fetch(input, {
       ...init,
       headers: {
@@ -69,26 +68,28 @@ export default function OrbitContextProvider({
     let data = {};
     if (res.ok) {
       const result = await res.json();
-      data = { ...result };
+      data = {
+        ...result,
+      };
     } else {
       return null;
     }
 
-    const memberRes = await fetch(
-      `/api/v2/workspaces/${id}/members/${user.user.id}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${user.access_token}`,
-        },
-      }
-    );
+    const memberRes = await fetch(`/api/v2/workspaces/${id}/members/${user.user.id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${user.access_token}`,
+      },
+    });
     let member = null;
     if (memberRes.ok) {
       member = await memberRes.json();
     }
 
-    return { ...data, member: member };
+    return {
+      ...data,
+      member: member,
+    };
   }
 
   const contextValue = {

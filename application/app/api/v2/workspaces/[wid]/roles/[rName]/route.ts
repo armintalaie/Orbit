@@ -12,27 +12,44 @@ const defaultRoles = ['admin', 'member', 'owner'];
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { wid: string; rName: string }; body: any }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+      rName: string;
+    };
+    body: any;
+  }
 ): Promise<NextResponse> {
   const role = await request.json();
 
   try {
     schema.parse(role);
   } catch (error) {
-    return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: 'Invalid input',
+      },
+      {
+        status: 400,
+      }
+    );
   }
 
   if (defaultRoles.includes(role.name)) {
     return NextResponse.json(
-      { error: 'Cannot update default roles' },
-      { status: 400 }
+      {
+        error: 'Cannot update default roles',
+      },
+      {
+        status: 400,
+      }
     );
   }
 
   try {
-    const allowedPermissionsReq = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/resources/permissions`
-    );
+    const allowedPermissionsReq = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/resources/permissions`);
     const allowedPermissions = await allowedPermissionsReq.json();
     const allowedPermissionsNames = allowedPermissions.map(
       (permission: any) => `${permission.entity}:${permission.permission}`
@@ -43,8 +60,12 @@ export async function PATCH(
     );
     if (invalidPermissions.length > 0) {
       return NextResponse.json(
-        { error: 'Invalid permissions' },
-        { status: 400 }
+        {
+          error: 'Invalid permissions',
+        },
+        {
+          status: 400,
+        }
       );
     }
 
@@ -59,13 +80,14 @@ export async function PATCH(
 
     const entityPerms = role.permissions.map((permission: string) => {
       const [entity, perm] = permission.split(':');
-      return { entity, permission: perm, role: role.name };
+      return {
+        entity,
+        permission: perm,
+        role: role.name,
+      };
     });
 
-    await db
-      .withSchema(`workspace_${params.wid}`)
-      .deleteFrom('rolePermission')
-      .where('roleName', '=', role.name);
+    await db.withSchema(`workspace_${params.wid}`).deleteFrom('rolePermission').where('roleName', '=', role.name);
 
     if (role.name) {
       await db
@@ -82,37 +104,48 @@ export async function PATCH(
       .withSchema(`workspace_${params.wid}`)
       .insertInto('rolePermission')
       .values(
-        entityPerms.map(
-          (entityPerms: {
-            entity: string;
-            permission: string;
-            role: string;
-          }) => ({
-            roleName: entityPerms.role,
-            permission: entityPerms.permission,
-            entity: entityPerms.entity,
-          })
-        )
+        entityPerms.map((entityPerms: { entity: string; permission: string; role: string }) => ({
+          roleName: entityPerms.role,
+          permission: entityPerms.permission,
+          entity: entityPerms.entity,
+        }))
       )
       .execute();
-    return NextResponse.json({ message: 'Role created successfully' });
+    return NextResponse.json({
+      message: 'Role created successfully',
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not create role' },
-      { status: 500 }
+      {
+        error: 'Could not create role',
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { wid: string; rName: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+      rName: string;
+    };
+  }
 ): Promise<NextResponse> {
   if (defaultRoles.includes(params.rName)) {
     return NextResponse.json(
-      { error: 'Cannot delete default roles' },
-      { status: 400 }
+      {
+        error: 'Cannot delete default roles',
+      },
+      {
+        status: 400,
+      }
     );
   }
 

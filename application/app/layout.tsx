@@ -13,23 +13,21 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'Orbit',
   description: 'Project management app for teams',
-  icons: [{ rel: 'icon', url: 'icons/icon-128x128.png' }],
+  icons: [
+    {
+      rel: 'icon',
+      url: 'icons/icon-128x128.png',
+    },
+  ],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='en' suppressHydrationWarning={true} className=''>
       <head>
         <meta charSet='utf-8' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
-        <meta
-          name='viewport'
-          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
-        />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
       </head>
       <body suppressHydrationWarning={true} className={poppins.className}>
         <ThemeProvider attribute='class' defaultTheme='dark'>

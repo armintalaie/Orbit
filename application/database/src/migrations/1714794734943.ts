@@ -1,16 +1,7 @@
 import { Kysely } from 'kysely';
 
 // list of all workspace permissions
-const PERMISSIONS = [
-  'read',
-  'write',
-  'delete',
-  'invite',
-  'remove',
-  'admin',
-  'share',
-  'comment',
-];
+const PERMISSIONS = ['read', 'write', 'delete', 'invite', 'remove', 'admin', 'share', 'comment'];
 
 const ENTITY_TYPES = ['project', 'team', 'workspace', 'issue', 'comment'];
 

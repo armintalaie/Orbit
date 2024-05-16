@@ -11,7 +11,13 @@ export const schema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { wid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+    };
+  }
 ): Promise<NextResponse> {
   try {
     const workspace = await db
@@ -21,10 +27,7 @@ export async function GET(
         'name',
         'role.description',
         jsonArrayFrom(
-          eb
-            .selectFrom('rolePermission')
-            .whereRef('rolePermission.roleName', '=', 'role.name')
-            .selectAll()
+          eb.selectFrom('rolePermission').whereRef('rolePermission.roleName', '=', 'role.name').selectAll()
         ).as('permissions'),
       ])
       .execute();
@@ -32,28 +35,46 @@ export async function GET(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Workspace does not exist' },
-      { status: 400 }
+      {
+        error: 'Workspace does not exist',
+      },
+      {
+        status: 400,
+      }
     );
   }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { wid: string }; body: { name: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+    };
+    body: {
+      name: string;
+    };
+  }
 ): Promise<NextResponse> {
   const role = await request.json();
 
   try {
     schema.parse(role);
   } catch (error) {
-    return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: 'Invalid input',
+      },
+      {
+        status: 400,
+      }
+    );
   }
 
   try {
-    const allowedPermissionsReq = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/resources/permissions`
-    );
+    const allowedPermissionsReq = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/resources/permissions`);
     const allowedPermissions = await allowedPermissionsReq.json();
     const allowedPermissionsNames = allowedPermissions.map(
       (permission: any) => `${permission.entity}:${permission.permission}`
@@ -64,8 +85,12 @@ export async function POST(
     );
     if (invalidPermissions.length > 0) {
       return NextResponse.json(
-        { error: 'Invalid permissions' },
-        { status: 400 }
+        {
+          error: 'Invalid permissions',
+        },
+        {
+          status: 400,
+        }
       );
     }
 
@@ -80,32 +105,36 @@ export async function POST(
 
     const entityPerms = role.permissions.map((permission: string) => {
       const [entity, perm] = permission.split(':');
-      return { entity, permission: perm, role: role.name };
+      return {
+        entity,
+        permission: perm,
+        role: role.name,
+      };
     });
 
     await db
       .withSchema(`workspace_${params.wid}`)
       .insertInto('rolePermission')
       .values(
-        entityPerms.map(
-          (entityPerms: {
-            entity: string;
-            permission: string;
-            role: string;
-          }) => ({
-            roleName: entityPerms.role,
-            permission: entityPerms.permission,
-            entity: entityPerms.entity,
-          })
-        )
+        entityPerms.map((entityPerms: { entity: string; permission: string; role: string }) => ({
+          roleName: entityPerms.role,
+          permission: entityPerms.permission,
+          entity: entityPerms.entity,
+        }))
       )
       .execute();
-    return NextResponse.json({ message: 'Role created successfully' });
+    return NextResponse.json({
+      message: 'Role created successfully',
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not create role' },
-      { status: 500 }
+      {
+        error: 'Could not create role',
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

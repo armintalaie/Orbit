@@ -16,7 +16,14 @@ const schema = z.object({
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { wid: string; mid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+      mid: string;
+    };
+  }
 ): Promise<NextResponse> {
   const id = await db
     .deleteFrom('public.workspaceMember')
@@ -28,13 +35,27 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { wid: string; mid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+      mid: string;
+    };
+  }
 ): Promise<NextResponse> {
   const body = await request.json();
   try {
     schema.parse(body);
   } catch (error) {
-    return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: 'Invalid input',
+      },
+      {
+        status: 400,
+      }
+    );
   }
 
   try {
@@ -59,15 +80,26 @@ export async function PATCH(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not update member' },
-      { status: 400 }
+      {
+        error: 'Could not update member',
+      },
+      {
+        status: 400,
+      }
     );
   }
 }
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { wid: string; mid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+      mid: string;
+    };
+  }
 ): Promise<NextResponse> {
   try {
     const member = await db
@@ -85,8 +117,12 @@ export async function GET(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not get member' },
-      { status: 400 }
+      {
+        error: 'Could not get member',
+      },
+      {
+        status: 400,
+      }
     );
   }
 }

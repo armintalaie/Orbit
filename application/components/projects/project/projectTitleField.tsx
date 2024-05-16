@@ -79,9 +79,7 @@ export default function ProjectTitleField({
               onClick={() => setEditMode(true)}
               variant='ghost'
             >
-              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700 dark:text-neutral-200'>
-                {title}
-              </h1>
+              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700 dark:text-neutral-200'>{title}</h1>
             </Button>
           ) : (
             <input
@@ -96,11 +94,7 @@ export default function ProjectTitleField({
         </div>
 
         {editMode ? (
-          <Button
-            variant='outline'
-            className='m-0 p-2'
-            onClick={() => saveTitleChanges()}
-          >
+          <Button variant='outline' className='m-0 p-2' onClick={() => saveTitleChanges()}>
             <CheckIcon className='h-4 w-4' />
           </Button>
         ) : (
@@ -112,13 +106,7 @@ export default function ProjectTitleField({
   );
 }
 
-function ProjectOptions({
-  projectId,
-  teamid,
-}: {
-  projectId: number;
-  teamid?: number;
-}) {
+function ProjectOptions({ projectId, teamid }: { projectId: number; teamid?: number }) {
   const router = useRouter();
   const { fetcher, reload } = useContext(OrbitContext);
 

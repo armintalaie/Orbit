@@ -3,14 +3,7 @@
 import * as React from 'react';
 import { ArrowLeftCircle, UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { useContext } from 'react';
 
@@ -27,19 +20,21 @@ export function UserFilter({ val, setVal, teamid, backBtn }) {
     [key: string]: Profile;
   }>({});
   const [open, setOpen] = React.useState(false);
-  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
-    null
-  );
+  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(null);
 
   const { fetcher } = useContext(OrbitContext);
 
   React.useEffect(() => {
     async function fetchMembers() {
       const res = await fetcher(`/api/profiles/`, {
-        next: { revalidate: 10 },
+        next: {
+          revalidate: 10,
+        },
       });
       const profiles = await res.json();
-      const options: { [key: string]: Profile } = {};
+      const options: {
+        [key: string]: Profile;
+      } = {};
 
       for (const profile of profiles) {
         options[profile.id] = {
@@ -62,11 +57,7 @@ export function UserFilter({ val, setVal, teamid, backBtn }) {
         if (!memberOptions[value]) {
           return 0;
         }
-        return memberOptions[value].full_name
-          .toLowerCase()
-          .indexOf(search.toLowerCase()) !== -1
-          ? 1
-          : 0;
+        return memberOptions[value].full_name.toLowerCase().indexOf(search.toLowerCase()) !== -1 ? 1 : 0;
       }}
     >
       <CommandInput placeholder='Search...' />
@@ -78,9 +69,7 @@ export function UserFilter({ val, setVal, teamid, backBtn }) {
               key={member.id}
               value={member.id}
               onSelect={(value) => {
-                const match = Object.values(memberOptions).find(
-                  (m) => m.id === value
-                );
+                const match = Object.values(memberOptions).find((m) => m.id === value);
                 if (match) {
                   setSelectedStatus(match.full_name as string);
                 } else {

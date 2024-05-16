@@ -8,30 +8,18 @@ export async function up(db: Kysely<any>): Promise<void> {
     .schema.createTable('workspace')
     .addColumn('id', 'uuid', (col) => col.primaryKey())
     .addColumn('name', 'varchar', (col) => col.notNull().unique())
-    .addColumn('created_at', 'timestamptz', (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
-    .addColumn('updated_at', 'timestamptz', (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
+    .addColumn('created_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
+    .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('config', 'json', (col) => col.notNull())
     .execute();
 
   await db
     .withSchema('public')
     .schema.createTable('workspace_member')
-    .addColumn('workspace_id', 'uuid', (col) =>
-      col.references('workspace.id').notNull()
-    )
-    .addColumn('user_id', 'uuid', (col) =>
-      col.references('auth.users.id').notNull()
-    )
-    .addColumn('added_at', 'timestamptz', (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
-    .addColumn('updated_at', 'timestamptz', (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
+    .addColumn('workspace_id', 'uuid', (col) => col.references('workspace.id').notNull())
+    .addColumn('user_id', 'uuid', (col) => col.references('auth.users.id').notNull())
+    .addColumn('added_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
+    .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('username', 'varchar', (col) => col.notNull())
     .execute();
 }

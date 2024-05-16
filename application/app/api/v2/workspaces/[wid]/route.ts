@@ -5,7 +5,13 @@ import { z } from 'zod';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { wid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+    };
+  }
 ): Promise<NextResponse> {
   console.log('params', params);
   const id = await DatabaseUtils.destroyWorkspace(db, params.wid);
@@ -14,7 +20,13 @@ export async function DELETE(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { wid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+    };
+  }
 ): Promise<NextResponse> {
   try {
     const workspace = await db
@@ -25,15 +37,25 @@ export async function GET(
     return NextResponse.json(workspace);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Workspace does not exist' },
-      { status: 400 }
+      {
+        error: 'Workspace does not exist',
+      },
+      {
+        status: 400,
+      }
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { wid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+    };
+  }
 ): Promise<NextResponse> {
   const body = await request.json();
   const schema = z.object({
@@ -49,8 +71,12 @@ export async function PATCH(
     schema.parse(body);
   } catch (error) {
     return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 400 }
+      {
+        error: (error as Error).message,
+      },
+      {
+        status: 400,
+      }
     );
   }
   const workspace = await db

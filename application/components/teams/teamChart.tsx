@@ -1,15 +1,5 @@
 import React, { PureComponent } from 'react';
-import {
-  BarChart,
-  Bar,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const data = [
   {
@@ -61,9 +51,7 @@ export default function Analytics() {
 
   return (
     <div className='flex w-full flex-col border-t border-gray-200 p-3 '>
-      <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>
-        Members
-      </h2>
+      <h2 className='text-md  py-3 font-medium leading-tight text-gray-700'>Members</h2>
       <div className='flex h-[400px] w-full flex-col border border-gray-100'>
         <ResponsiveContainer width='100%' height='100%'>
           <BarChart width={150} height={40} data={data}>

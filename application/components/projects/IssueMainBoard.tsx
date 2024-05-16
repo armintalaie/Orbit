@@ -175,22 +175,14 @@ export default function IssueBoard({ query, issues }: IssueBoardProps) {
           setFilterMethod={setFilterMethod}
         />
         <div className='flex flex-row items-center gap-3'>
-          <IssueGrouping
-            issues={transformedIssues}
-            setIssues={setGroupedIssues}
-            teamid={query.tid}
-          />
+          <IssueGrouping issues={transformedIssues} setIssues={setGroupedIssues} teamid={query.tid} />
 
           {/* <IssueViewOptions viewType={viewType} setViewType={setViewType} /> */}
           <NewIssue button={true} onIssueUpdate={updateIssueSet} />
         </div>
       </div>
       <div className=' flex   flex-grow flex-col overflow-hidden'>
-        <KanbanView
-          groupedIssues={groupedIssues}
-          projectId={query.pid}
-          onIssueUpdate={updateIssueSet}
-        />
+        <KanbanView groupedIssues={groupedIssues} projectId={query.pid} onIssueUpdate={updateIssueSet} />
       </div>
     </div>
   );

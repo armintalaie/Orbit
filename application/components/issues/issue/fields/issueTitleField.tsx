@@ -83,12 +83,8 @@ export default function IssueTitleField({
               onClick={() => setEditMode(true)}
               variant='ghost'
             >
-              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700 dark:text-neutral-300'>
-                {title}
-              </h1>
-              {showEditButton && (
-                <PencilLine className='h-4 w-4 text-gray-700' />
-              )}
+              <h1 className='text-md pr-2 font-medium leading-tight text-gray-700 dark:text-neutral-300'>{title}</h1>
+              {showEditButton && <PencilLine className='h-4 w-4 text-gray-700' />}
             </Button>
           ) : (
             <input
@@ -103,11 +99,7 @@ export default function IssueTitleField({
         </div>
 
         {editMode ? (
-          <Button
-            variant='outline'
-            className='m-0 p-2'
-            onClick={() => saveTitleChanges()}
-          >
+          <Button variant='outline' className='m-0 p-2' onClick={() => saveTitleChanges()}>
             <CheckIcon className='h-4 w-4' />
           </Button>
         ) : (
@@ -119,13 +111,7 @@ export default function IssueTitleField({
   );
 }
 
-function IssueOptions({
-  issueId,
-  projectId,
-}: {
-  issueId: number;
-  projectId: number;
-}) {
+function IssueOptions({ issueId, projectId }: { issueId: number; projectId: number }) {
   const { fetcher } = useContext(OrbitContext);
   async function deleteIssue() {
     const res = await fetcher(`/api/issues/${issueId}`, {

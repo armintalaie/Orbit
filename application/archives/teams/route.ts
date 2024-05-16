@@ -25,7 +25,14 @@ export async function POST(req: NextRequest) {
     const { data } = await supabase.from('team').insert(team).select();
 
     if (!data) {
-      return NextResponse.json({ error: 'Team not created' }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'Team not created',
+        },
+        {
+          status: 400,
+        }
+      );
     }
     await supabase.from('team_member').insert({
       teamid: data[0].id,
@@ -33,7 +40,14 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: error.member }, { status: 405 });
+    return NextResponse.json(
+      {
+        error: error.member,
+      },
+      {
+        status: 405,
+      }
+    );
   }
 }
 
@@ -49,10 +63,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/', req.nextUrl).toString());
   }
 
-  let query = supabase
-    .from('team_member')
-    .select(`teamid`)
-    .eq('memberid', userData.user.id);
+  let query = supabase.from('team_member').select(`teamid`).eq('memberid', userData.user.id);
   let { data: teams } = await query;
 
   teams = teams || [];

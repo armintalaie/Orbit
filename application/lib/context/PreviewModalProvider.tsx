@@ -11,11 +11,7 @@ export const PreviewModalContext = React.createContext<PreviewModalType>({
   setIssueId: () => {},
 });
 
-export default function PreviewModalContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PreviewModalContextProvider({ children }: { children: React.ReactNode }) {
   const [issueid, setIssueId] = useState<number | undefined>(undefined);
 
   const updatedIssueId = (issueid?: number) => {

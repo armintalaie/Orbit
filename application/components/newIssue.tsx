@@ -4,39 +4,18 @@ import { PlusIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@uidotdev/usehooks';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useContext, useState } from 'react';
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  Form,
-} from './ui/form';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from './ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { DeadlineField } from './issues/form/deadlineField';
 import { StatusField } from './issues/form/statusField';
 import { Textarea } from '@/components/ui/textarea';
 import { AssigneeField } from './issues/form/assigneeField';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from '@/components/ui/drawer';
 import { LabelField } from './issues/form/labelField';
 import { ProjectField } from './issues/form/projectField';
 import { IIssue } from '@/lib/types/issue';
@@ -88,21 +67,14 @@ export function NewIssue({
               New Issue
             </Button>
           ) : (
-            <Button
-              className='m-0 mt-0 flex h-fit w-fit items-center space-y-0 p-0'
-              variant='outline'
-            >
+            <Button className='m-0 mt-0 flex h-fit w-fit items-center space-y-0 p-0' variant='outline'>
               <PlusIcon className='h-4 w-4' />
             </Button>
           )}
         </DialogTrigger>
         <DialogContent className='sm:max-w-xl'>
           <DialogHeader></DialogHeader>
-          <NewIssueForm
-            defaultValues={defaultValues}
-            onIssueUpdate={onIssueUpdate}
-            close={close}
-          />
+          <NewIssueForm defaultValues={defaultValues} onIssueUpdate={onIssueUpdate} close={close} />
 
           <DialogFooter className='sm:justify-start'>
             <DialogClose asChild></DialogClose>
@@ -127,11 +99,7 @@ export function NewIssue({
       </DrawerTrigger>
       <DrawerContent className='max-h-[90%] px-3 '>
         <DrawerHeader className='text-left'></DrawerHeader>
-        <NewIssueForm
-          defaultValues={defaultValues}
-          onIssueUpdate={onIssueUpdate}
-          close={close}
-        />
+        <NewIssueForm defaultValues={defaultValues} onIssueUpdate={onIssueUpdate} close={close} />
         <DrawerFooter className='pt-2'>
           <DrawerClose asChild>
             <Button variant='outline'>Cancel</Button>
@@ -173,9 +141,7 @@ function NewIssueForm({
       title: formVals.title,
       contents: formVals.contents,
       statusid: formVals.statusid,
-      deadline: formVals.deadline
-        ? formVals.deadline.toISOString().split('T')[0]
-        : undefined,
+      deadline: formVals.deadline ? formVals.deadline.toISOString().split('T')[0] : undefined,
       assignees: formVals.assignee ? [formVals.assignee] : [],
       labels: labels,
       projectid: formVals.projectid || undefined,
@@ -216,10 +182,7 @@ function NewIssueForm({
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder='Next big thing start with the little things...'
-                    {...field}
-                  />
+                  <Input placeholder='Next big thing start with the little things...' {...field} />
                 </FormControl>
 
                 <FormMessage />

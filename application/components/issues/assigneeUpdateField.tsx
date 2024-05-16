@@ -4,19 +4,8 @@ import * as React from 'react';
 import { CircleUser } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { useContext } from 'react';
 
@@ -39,25 +28,25 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
     [key: string]: Profile;
   }>({});
   const [open, setOpen] = React.useState(false);
-  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
-    user ? user.id : null
-  );
+  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(user ? user.id : null);
   const { fetcher } = useContext(OrbitContext);
 
   React.useEffect(() => {
     async function fetchMembers() {
       const res = await fetcher(`/api/projects/${projectid}/members`, {
-        next: { revalidate: 10 },
+        next: {
+          revalidate: 10,
+        },
       });
       let members = await res.json();
-      members = members.map(
-        (member: { profile: Profile; memberid: string }) => ({
-          ...member.profile,
-          id: member.memberid,
-        })
-      );
+      members = members.map((member: { profile: Profile; memberid: string }) => ({
+        ...member.profile,
+        id: member.memberid,
+      }));
 
-      const options: { [key: string]: Profile } = {};
+      const options: {
+        [key: string]: Profile;
+      } = {};
       options[noAssignee.id as string] = noAssignee;
       for (const member of members) {
         options[member.id] = {
@@ -82,7 +71,9 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user_id: id }),
+        body: JSON.stringify({
+          user_id: id,
+        }),
       });
     }
   }
@@ -91,17 +82,11 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
     <div className='flex items-center space-x-4'>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant='ghost'
-            size='sm'
-            className='justify-start gap-2 p-0 text-xs'
-          >
+          <Button variant='ghost' size='sm' className='justify-start gap-2 p-0 text-xs'>
             {selectedStatus ? (
               <>
                 <CircleUser className=' h-4 w-4 shrink-0 ' />
-                {memberOptions &&
-                  memberOptions[selectedStatus] &&
-                  memberOptions[selectedStatus].full_name}
+                {memberOptions && memberOptions[selectedStatus] && memberOptions[selectedStatus].full_name}
               </>
             ) : (
               <>
@@ -117,11 +102,7 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
               if (!value) {
                 return 0;
               }
-              return memberOptions[value].full_name
-                .toLowerCase()
-                .indexOf(search.toLowerCase()) !== -1
-                ? 1
-                : 0;
+              return memberOptions[value].full_name.toLowerCase().indexOf(search.toLowerCase()) !== -1 ? 1 : 0;
             }}
           >
             <CommandInput placeholder='Change Assignee...' />
@@ -133,9 +114,7 @@ export function AssigneeUpdateField({ issueid, user, projectid }) {
                     key={member.id}
                     value={member.id}
                     onSelect={(value) => {
-                      const matchId =
-                        Object.keys(memberOptions).find((m) => m === value) ||
-                        null;
+                      const matchId = Object.keys(memberOptions).find((m) => m === value) || null;
                       if (!matchId) {
                         setSelectedStatus(null);
                         return;

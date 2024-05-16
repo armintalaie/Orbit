@@ -2,20 +2,13 @@
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { PencilLineIcon, Trash2Icon } from 'lucide-react';
 import { LockClosedIcon } from '@radix-ui/react-icons';
 
@@ -52,17 +45,11 @@ export default function WorkspaceSecuritySettings() {
           </Button>
         </div>
         <div className='secondary-surface flex flex-col gap-4 rounded border p-4'>
-          <p className='text-sm'>
-            You can add or adjust roles. Owner, admin, member roles are
-            read-only
-          </p>
+          <p className='text-sm'>You can add or adjust roles. Owner, admin, member roles are read-only</p>
         </div>
 
         {roleEdit ? (
-          <NewModifyRole
-            role={selectedRole}
-            setSelectedRole={setSelectedRole}
-          />
+          <NewModifyRole role={selectedRole} setSelectedRole={setSelectedRole} />
         ) : (
           <ViewRoles setSelectedRole={setSelectedRole} />
         )}
@@ -104,18 +91,11 @@ function ViewRoles({ setSelectedRole }) {
       </div>
       {roles.map((role) => (
         <div key={role.name} className='flex items-center  gap-4 border-b p-2 '>
-          <span className='h-full w-24 flex-shrink-0 truncate'>
-            {role.name}
-          </span>
-          <p className='line-clamp-1 h-full w-80 flex-shrink-0  truncate	 '>
-            {role.description}
-          </p>
+          <span className='h-full w-24 flex-shrink-0 truncate'>{role.name}</span>
+          <p className='line-clamp-1 h-full w-80 flex-shrink-0  truncate	 '>{role.description}</p>
           <div className='flex flex-1 flex-wrap gap-2'>
             {role.permissions.map((permission) => (
-              <div
-                key={permission.permission}
-                className='flex gap-1 rounded-sm border p-1 pb-2'
-              >
+              <div key={permission.permission} className='flex gap-1 rounded-sm border p-1 pb-2'>
                 <p>
                   {permission.entity}:{permission.permission}
                 </p>
@@ -129,9 +109,7 @@ function ViewRoles({ setSelectedRole }) {
               setSelectedRole({
                 name: role.name,
                 description: role.description,
-                permissions: role.permissions.map(
-                  (p) => `${p.entity}:${p.permission}`
-                ),
+                permissions: role.permissions.map((p) => `${p.entity}:${p.permission}`),
               })
             }
             disabled={readOnlyRoles.includes(role.name)}
@@ -194,17 +172,14 @@ function NewModifyRole({ role, setSelectedRole }) {
     let res;
     console.log(values);
     if (role) {
-      res = await fetch(
-        `/api/v2/workspaces/${currentWorkspace.id}/roles/${role.name}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${userSession.access_token}`,
-          },
-          body: JSON.stringify(values),
-        }
-      );
+      res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/roles/${role.name}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userSession.access_token}`,
+        },
+        body: JSON.stringify(values),
+      });
     } else {
       res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/roles`, {
         method: 'POST',
@@ -225,15 +200,12 @@ function NewModifyRole({ role, setSelectedRole }) {
   }
 
   async function deleteRole(role) {
-    const res = await fetch(
-      `/api/v2/workspaces/${currentWorkspace.id}/roles/${role.name}`,
-      {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${userSession.access_token}`,
-        },
-      }
-    );
+    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/roles/${role.name}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${userSession.access_token}`,
+      },
+    });
 
     if (res.ok) {
       toast('Role deleted successfully');
@@ -250,18 +222,13 @@ function NewModifyRole({ role, setSelectedRole }) {
   return (
     <div className='primary-surface flex flex-col gap-2  overflow-scroll rounded-md border p-4  text-sm'>
       <Form {...form}>
-        <form
-          className=' flex flex-col   gap-4 overflow-scroll pb-4  '
-          onSubmit={form.handleSubmit(saveRole)}
-        >
+        <form className=' flex flex-col   gap-4 overflow-scroll pb-4  ' onSubmit={form.handleSubmit(saveRole)}>
           <FormField
             control={form.control}
             name={'name'}
             render={({ field }) => (
               <FormItem className='flex items-center gap-2'>
-                <FormLabel className='w-32 flex-shrink-0 text-sm  font-semibold'>
-                  Name
-                </FormLabel>
+                <FormLabel className='w-32 flex-shrink-0 text-sm  font-semibold'>Name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -276,9 +243,7 @@ function NewModifyRole({ role, setSelectedRole }) {
             name={'description'}
             render={({ field }) => (
               <FormItem className='flex items-center gap-2'>
-                <FormLabel className='w-32 flex-shrink-0  text-sm  font-semibold'>
-                  Description
-                </FormLabel>
+                <FormLabel className='w-32 flex-shrink-0  text-sm  font-semibold'>Description</FormLabel>
                 <FormControl>
                   <Input {...field} placeholder='optional' />
                 </FormControl>
@@ -288,9 +253,7 @@ function NewModifyRole({ role, setSelectedRole }) {
           />
 
           <div className='flex flex-col gap-4'>
-            <span className='flex flex-wrap gap-2 font-semibold'>
-              Permissions
-            </span>
+            <span className='flex flex-wrap gap-2 font-semibold'>Permissions</span>
             <div className='flex flex-wrap gap-4'>
               {perms.map((perm) => (
                 <div
@@ -299,17 +262,8 @@ function NewModifyRole({ role, setSelectedRole }) {
                 >
                   <input
                     type='checkbox'
-                    checked={form
-                      .watch()
-                      .permissions.includes(
-                        `${perm.entity}:${perm.permission}`
-                      )}
-                    onChange={(e) =>
-                      changeSelectedPermissions(
-                        e.target.checked,
-                        `${perm.entity}:${perm.permission}`
-                      )
-                    }
+                    checked={form.watch().permissions.includes(`${perm.entity}:${perm.permission}`)}
+                    onChange={(e) => changeSelectedPermissions(e.target.checked, `${perm.entity}:${perm.permission}`)}
                   />
                   <p>
                     {perm.entity}:{perm.permission}

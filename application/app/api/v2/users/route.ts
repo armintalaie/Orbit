@@ -12,11 +12,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         jsonArrayFrom(
           eb
             .selectFrom('public.workspaceMember')
-            .innerJoin(
-              'public.workspace',
-              'public.workspaceMember.workspaceId',
-              'public.workspace.id'
-            )
+            .innerJoin('public.workspace', 'public.workspaceMember.workspaceId', 'public.workspace.id')
             .whereRef('public.workspaceMember.userId', '=', 'auth.users.id')
             .select(() => [
               'workspaceId',
@@ -32,8 +28,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not fetch users' },
-      { status: 500 }
+      {
+        error: 'Could not fetch users',
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

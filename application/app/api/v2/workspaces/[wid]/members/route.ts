@@ -2,33 +2,20 @@ import { db } from '@/lib/db/handler';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { wid: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { wid: string } }) {
   const body = await request.json();
   const schema = z.object({
     email: z.string().email(),
-    roles: z.array(z.object({ id: z.string() })).optional(),
   });
 
   try {
     schema.parse(body);
   } catch (error) {
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: (error as Error).message }, { status: 400 });
   }
 
   try {
     const m = await db.transaction().execute(async (trx: any) => {
-      const rolesToVerify = body.roles || [];
-      if (rolesToVerify.length > 0) {
-        await verifyRolesExist(params.wid, rolesToVerify, trx);
-      } else {
-        rolesToVerify.push('member');
-      }
       const { id: userId } = await trx
         .selectFrom('auth.users')
         .select('id')
@@ -44,52 +31,48 @@ export async function POST(
         .returningAll()
         .executeTakeFirstOrThrow();
 
-      await AddUserToWorkspace(
-        params.wid,
-        body.email,
-        userId,
-        rolesToVerify,
-        trx
-      );
+      await addUserToWorkspace(params.wid, body.email, userId, trx);
       return user;
     });
 
-    return NextResponse.json(m);
+    return NextResponse.json({
+      message: 'Member added successfully',
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not add member' },
-      { status: 400 }
+      {
+        error: 'Could not add member',
+      },
+      {
+        status: 400,
+      }
     );
   }
 }
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { wid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+    };
+  }
 ) {
-  const members = await db
-    .withSchema(`workspace_${params.wid}`)
-    .selectFrom('workspaceMember')
-    .selectAll()
-    .execute();
+  const members = await db.withSchema(`workspace_${params.wid}`).selectFrom('workspaceMember').selectAll().execute();
 
   return NextResponse.json(members);
 }
 
-async function AddUserToWorkspace(
-  workspaceId: string,
-  email: string,
-  userId: string,
-  roles: any,
-  trx: any
-) {
+async function addUserToWorkspace(workspaceId: string, email: string, userId: string, trx: any) {
+  const roles = ['member'];
   const member = await trx
     .withSchema(`workspace_${workspaceId}`)
     .insertInto('workspaceMember' as any)
     .values({
       memberId: userId,
-      profile: {},
       username: email,
     })
     .returningAll()
@@ -98,17 +81,12 @@ async function AddUserToWorkspace(
   await trx
     .withSchema(`workspace_${workspaceId}`)
     .insertInto('workspaceMemberRole')
-    .values(roles.map((role: any) => ({ memberId: userId, roleName: role })))
+    .values(
+      roles.map((role: any) => ({
+        memberId: userId,
+        roleName: role,
+      }))
+    )
     .execute();
   return member;
-}
-
-async function verifyRolesExist(workspaceId: string, roles: any, db: any) {
-  const rolesInWorkspace = await db
-    .withSchema(`workspace_${workspaceId}`)
-    .selectFrom('role')
-    .selectAll()
-    .where('name', 'in', roles)
-    .execute();
-  return rolesInWorkspace.length === roles.length;
 }

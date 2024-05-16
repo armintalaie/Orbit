@@ -25,13 +25,7 @@ import { useContext } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue } from '@/lib/types/issue';
 
-export default function IssueMenuContext({
-  issue,
-  reload,
-}: {
-  issue: any;
-  reload?: (issue?: IIssue) => void;
-}) {
+export default function IssueMenuContext({ issue, reload }: { issue: any; reload?: (issue?: IIssue) => void }) {
   const { fetcher } = useContext(OrbitContext);
 
   return (
@@ -51,28 +45,17 @@ export default function IssueMenuContext({
       </ContextMenuItem>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger
-          inset
-          className='flex flex-row items-center gap-3 px-2  text-sm'
-        >
+        <ContextMenuSubTrigger inset className='flex flex-row items-center gap-3 px-2  text-sm'>
           <CircleSlash2Icon className='h-4 w-4' />
           Change status
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className='w-56'>
-          <IssueStatusField
-            issueId={issue.id}
-            statusId={issue.statusid}
-            contentOnly={true}
-            reload={reload}
-          />
+          <IssueStatusField issueId={issue.id} statusId={issue.statusid} contentOnly={true} reload={reload} />
         </ContextMenuSubContent>
       </ContextMenuSub>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger
-          inset
-          className='flex flex-row items-center gap-3 px-2  text-sm'
-        >
+        <ContextMenuSubTrigger inset className='flex flex-row items-center gap-3 px-2  text-sm'>
           <UserCircle2Icon className='h-4 w-4' />
           Assign to...
         </ContextMenuSubTrigger>
@@ -80,7 +63,10 @@ export default function IssueMenuContext({
           <IssueAssigneeField
             issueId={issue.id}
             user={issue.assignees ? issue.assignees[0] : null}
-            team={{ id: issue.teamid, title: issue.team_title }}
+            team={{
+              id: issue.teamid,
+              title: issue.team_title,
+            }}
             contentOnly={true}
             reload={reload}
           />
@@ -88,36 +74,28 @@ export default function IssueMenuContext({
       </ContextMenuSub>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger
-          inset
-          className='flex flex-row items-center gap-3 px-2  text-sm'
-        >
+        <ContextMenuSubTrigger inset className='flex flex-row items-center gap-3 px-2  text-sm'>
           <TagsIcon className='h-4 w-4' />
           Edit labels
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className='w-56'>
-          <IssueLabelField
-            issueId={issue.id}
-            labels={issue.labels}
-            contentOnly={true}
-            reload={reload}
-          />
+          <IssueLabelField issueId={issue.id} labels={issue.labels} contentOnly={true} reload={reload} />
         </ContextMenuSubContent>
       </ContextMenuSub>
       <ContextMenuSeparator />
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger
-          inset
-          className='flex flex-row items-center gap-3 px-2  text-sm'
-        >
+        <ContextMenuSubTrigger inset className='flex flex-row items-center gap-3 px-2  text-sm'>
           <ArrowUpCircleIcon className='h-4 w-4' />
           Move to...
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className='w-60'>
           <IssueProjectField
             issueId={issue.id}
-            project={{ id: issue.projectid, title: issue.project_title }}
+            project={{
+              id: issue.projectid,
+              title: issue.project_title,
+            }}
             contentOnly={true}
             reload={reload}
           />

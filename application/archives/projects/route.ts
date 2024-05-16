@@ -22,29 +22,45 @@ export async function POST(req: Request) {
     const project = projectSchema.parse(newProject);
     const { data, error } = await supabase.from('project').insert(project);
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 400,
+        }
+      );
     }
     return NextResponse.json(data);
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: '' }, { status: 405 });
+    return NextResponse.json(
+      {
+        error: '',
+      },
+      {
+        status: 405,
+      }
+    );
   }
 }
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { pid: string } }
+  {
+    params,
+  }: {
+    params: {
+      pid: string;
+    };
+  }
 ) {
   const user = JSON.parse(getContext(req, 'user'));
   const reqQuery = JSON.parse(getContext(req, 'query'));
   let query = db
     .selectFrom('project')
     .innerJoin(
-      db
-        .selectFrom('team_member')
-        .select(['teamid'])
-        .where('memberid', '=', user.id)
-        .as('teams'),
+      db.selectFrom('team_member').select(['teamid']).where('memberid', '=', user.id).as('teams'),
       'teams.teamid',
       'project.teamid'
     )

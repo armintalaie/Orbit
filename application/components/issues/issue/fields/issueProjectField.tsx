@@ -3,19 +3,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { PencilLine, TargetIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import Link from 'next/link';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue } from '@/lib/types/issue';
@@ -35,17 +24,17 @@ type Project = {
 export function IssueProjectField(props: IssueProjectFieldProps) {
   const { issueId, project, contentOnly = false, reload } = props;
   const { fetcher, projects } = useContext(OrbitContext);
-  const [options, setOptions] = useState<{ [key: string]: Project }>({});
+  const [options, setOptions] = useState<{
+    [key: string]: Project;
+  }>({});
   const [open, setOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(
-    project ? project.id : null
-  );
-  const [selectedTitle, setSelectedTitle] = useState<string | null>(
-    project ? project.title : null
-  );
+  const [selectedId, setSelectedId] = useState<number | null>(project ? project.id : null);
+  const [selectedTitle, setSelectedTitle] = useState<string | null>(project ? project.title : null);
 
   const fetchProjects = async () => {
-    const options: { [key: string]: Project } = {};
+    const options: {
+      [key: string]: Project;
+    } = {};
     for (const proj of projects) {
       options[proj.id] = {
         ...proj,
@@ -70,10 +59,7 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
     if (value == null || !options[value]) {
       return 0;
     }
-    return options[value].title.toLowerCase().indexOf(search.toLowerCase()) !==
-      -1
-      ? 1
-      : 0;
+    return options[value].title.toLowerCase().indexOf(search.toLowerCase()) !== -1 ? 1 : 0;
   };
 
   const onSelectionChange = (value: string) => {
@@ -98,9 +84,15 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          ...(reload ? { 'X-Full-Object': 'true' } : {}),
+          ...(reload
+            ? {
+                'X-Full-Object': 'true',
+              }
+            : {}),
         },
-        body: JSON.stringify({ projectid: pId }),
+        body: JSON.stringify({
+          projectid: pId,
+        }),
       });
       const data = (await res.json()) as IIssue;
       reload && reload(data);
@@ -114,11 +106,7 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
           {Object.entries(options).map(([, option]) => (
-            <CommandItem
-              key={option.id}
-              value={option.id.toString()}
-              onSelect={onSelectionChange}
-            >
+            <CommandItem key={option.id} value={option.id.toString()} onSelect={onSelectionChange}>
               <TargetIcon className='mr-2 h-4 w-4 shrink-0' />
               <span>{option.title}</span>
             </CommandItem>
@@ -153,11 +141,7 @@ export function IssueProjectField(props: IssueProjectFieldProps) {
               )}
             </Link>
           )}
-          <Button
-            variant='ghost'
-            size='sm'
-            className='w-fit items-center justify-start gap-2 p-0 text-xs '
-          >
+          <Button variant='ghost' size='sm' className='w-fit items-center justify-start gap-2 p-0 text-xs '>
             <PencilLine className='h-4 w-4 shrink-0 text-gray-500' />
           </Button>
         </PopoverTrigger>

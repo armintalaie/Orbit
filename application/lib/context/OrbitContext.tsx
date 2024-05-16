@@ -16,10 +16,7 @@ type OrbitType = {
 type ReloadTypes = 'labels' | 'status' | 'projects' | 'teams' | 'profile';
 
 type OrbitContextType = {
-  fetcher: (
-    input: string | URL | Request,
-    init?: any | undefined
-  ) => Promise<Response>;
+  fetcher: (input: string | URL | Request, init?: any | undefined) => Promise<Response>;
   SWRFetcher: (input: string | URL | Request) => Promise<any>;
   reload: (items?: ReloadTypes[]) => Promise<void>;
 } & OrbitType;
@@ -38,11 +35,7 @@ export const OrbitContext = React.createContext<OrbitContextType>({
   ws: null,
 });
 
-export default function OrbitContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OrbitContextProvider({ children }: { children: React.ReactNode }) {
   const user = useContext(UserSessionContext);
   const [loading, setLoading] = useState(true);
   const [orbit, setOrbit] = useState<OrbitType>({
@@ -78,10 +71,7 @@ export default function OrbitContextProvider({
     }
   };
 
-  async function fetcher(
-    input: string | URL | Request,
-    init?: any | undefined
-  ): Promise<Response> {
+  async function fetcher(input: string | URL | Request, init?: any | undefined): Promise<Response> {
     const res = fetch(input, {
       ...init,
       headers: {
@@ -100,19 +90,28 @@ export default function OrbitContextProvider({
   const getLabels = async () => {
     const res = await fetcher('/api/issues/labels');
     const data = await res.json();
-    setOrbit((prev) => ({ ...prev, labels: data as ILabel[] }));
+    setOrbit((prev) => ({
+      ...prev,
+      labels: data as ILabel[],
+    }));
   };
 
   const getStatus = async () => {
     const res = await fetcher('/api/issues/status');
     const data = await res.json();
-    setOrbit((prev) => ({ ...prev, status: data }));
+    setOrbit((prev) => ({
+      ...prev,
+      status: data,
+    }));
   };
 
   const getProjects = async () => {
     const res = await fetcher('/api/projects');
     const data = await res.json();
-    setOrbit((prev) => ({ ...prev, projects: data }));
+    setOrbit((prev) => ({
+      ...prev,
+      projects: data,
+    }));
     // const res = await socket.send('getProjects');
     // const data = await res.json();
     // setOrbit((prev) => ({ ...prev, projects: data }));
@@ -121,23 +120,23 @@ export default function OrbitContextProvider({
   const getTeams = async () => {
     const res = await fetcher('/api/teams');
     const data = await res.json();
-    setOrbit((prev) => ({ ...prev, teams: data }));
+    setOrbit((prev) => ({
+      ...prev,
+      teams: data,
+    }));
   };
 
   const getProfile = async () => {
     const res = await fetcher('/api/profiles/me');
     const data = await res.json();
-    setOrbit((prev) => ({ ...prev, profile: data }));
+    setOrbit((prev) => ({
+      ...prev,
+      profile: data,
+    }));
   };
 
   const setupOrbit = async () => {
-    const p = Promise.all([
-      getLabels(),
-      getStatus(),
-      getProjects(),
-      getTeams(),
-      getProfile(),
-    ]);
+    const p = Promise.all([getLabels(), getStatus(), getProjects(), getTeams(), getProfile()]);
     await p;
     setLoading(false);
   };
@@ -161,9 +160,7 @@ export default function OrbitContextProvider({
   }
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <OrbitContext.Provider value={orbitContext}>
-        {children}
-      </OrbitContext.Provider>
+      <OrbitContext.Provider value={orbitContext}>{children}</OrbitContext.Provider>
     </Suspense>
   );
 }

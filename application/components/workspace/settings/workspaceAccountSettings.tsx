@@ -3,22 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
-import { Button } from '../ui/button';
+import { Button } from '../../ui/button';
 import Image from 'next/image';
-
 import { useContext } from 'react';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
-import { useRouter } from 'next/navigation';
-import { Input } from '../ui/input';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/form';
+import { Input } from '../../ui/input';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { toast } from 'sonner';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 
@@ -38,9 +28,10 @@ export default function WorkspaceAccountSettings() {
   const userSession = useContext(UserSessionContext);
   const { currentWorkspace } = useContext(OrbitContext);
   const user = userSession.user;
-  const profile: { [key: string]: string } = currentWorkspace.member;
-  const { avatar, memberId, addedAt, updatedAt, workspaceId, userId, ...rest } =
-    profile || {};
+  const profile: {
+    [key: string]: string;
+  } = currentWorkspace.member;
+  const { avatar, memberId, addedAt, updatedAt, workspaceId, userId, ...rest } = profile || {};
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -48,17 +39,14 @@ export default function WorkspaceAccountSettings() {
   });
 
   async function updateProfile(values: z.infer<typeof schema>) {
-    const res = await fetch(
-      `/api/v2/workspaces/${currentWorkspace.id}/members/${memberId}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${userSession.access_token}`,
-        },
-        body: JSON.stringify(values),
-      }
-    );
+    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/members/${memberId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userSession.access_token}`,
+      },
+      body: JSON.stringify(values),
+    });
     if (res.ok) {
       toast('Workspace profile updated successfully');
     } else {
@@ -71,13 +59,8 @@ export default function WorkspaceAccountSettings() {
       <section className='flex w-full flex-col gap-4  '>
         <div className='flex flex-col items-center gap-10'>
           <div className='secondary-surface flex w-full flex-col gap-4 rounded border p-4 text-sm'>
-            <p>
-              This is your workspace profile. You can edit your profile details
-              here.
-            </p>
-            <p>
-              Your profile details are visible to all members of this workspace.
-            </p>
+            <p>This is your workspace profile. You can edit your profile details here.</p>
+            <p>Your profile details are visible to all members of this workspace.</p>
           </div>
           <div className='flex items-center gap-2'>
             <Image
@@ -90,20 +73,12 @@ export default function WorkspaceAccountSettings() {
           </div>
 
           <Form {...form}>
-            <form
-              className='flex w-full flex-col gap-2 px-4'
-              onSubmit={form.handleSubmit(updateProfile)}
-            >
+            <form className='flex w-full flex-col gap-2 px-4' onSubmit={form.handleSubmit(updateProfile)}>
               <div className='flex flex-1 items-center gap-2'>
                 <label htmlFor='name' className='w-32 text-sm  font-semibold'>
                   Email
                 </label>
-                <Input
-                  id='name'
-                  name='name'
-                  value={user.email}
-                  disabled={true}
-                />
+                <Input id='name' name='name' value={user.email} disabled={true} />
               </div>
 
               {profile &&
@@ -114,9 +89,7 @@ export default function WorkspaceAccountSettings() {
                     name={key}
                     render={({ field }) => (
                       <FormItem className='flex items-center gap-2'>
-                        <FormLabel className='w-32 text-sm  font-semibold'>
-                          {key.toLocaleUpperCase()}
-                        </FormLabel>
+                        <FormLabel className='w-32 text-sm  font-semibold'>{key.toLocaleUpperCase()}</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -127,12 +100,7 @@ export default function WorkspaceAccountSettings() {
                   />
                 ))}
               <div className='flex flex-1 items-center justify-end gap-2'>
-                <Button
-                  //   disabled={form.getValues().toString() !== profile.toString()}
-                  type='submit'
-                >
-                  Update
-                </Button>
+                <Button type='submit'>Update</Button>
               </div>
             </form>
           </Form>

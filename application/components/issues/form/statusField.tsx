@@ -2,19 +2,8 @@
 
 import { useContext, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { statusIconMapper } from '@/components/statusIconMapper';
 import { CircleSlashIcon } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
@@ -22,19 +11,13 @@ import { OrbitContext } from '@/lib/context/OrbitContext';
 export function StatusField(field: any) {
   const [open, setOpen] = useState(false);
   const { status: statuses } = useContext(OrbitContext);
-  const [selectedStatus, setSelectedStatus] = useState<any>(
-    statuses.find((status) => status.id === field.value)
-  );
+  const [selectedStatus, setSelectedStatus] = useState<any>(statuses.find((status) => status.id === field.value));
 
   return (
     <div className='flex w-fit items-center space-x-4 '>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant='outline'
-            size='sm'
-            className='text-2xs flex h-8 w-fit items-center justify-start gap-1'
-          >
+          <Button variant='outline' size='sm' className='flex h-8 w-fit items-center justify-start gap-1 text-2xs'>
             {selectedStatus ? (
               <>
                 {statusIconMapper(selectedStatus.label, 'h-4 w-4')}
@@ -60,10 +43,7 @@ export function StatusField(field: any) {
                     value={status.id.toString()}
                     onSelect={(value) => {
                       setSelectedStatus(
-                        statuses.find(
-                          (priority) =>
-                            priority.id.toString() === value.toString()
-                        ) || null
+                        statuses.find((priority) => priority.id.toString() === value.toString()) || null
                       );
                       field.onChange(Number(value));
                       setOpen(false);

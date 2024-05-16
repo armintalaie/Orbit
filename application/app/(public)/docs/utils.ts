@@ -23,7 +23,10 @@ function parseFrontmatter(fileContent: string) {
     metadata[key.trim() as keyof Metadata] = value;
   });
 
-  return { metadata: metadata as Metadata, content };
+  return {
+    metadata: metadata as Metadata,
+    content,
+  };
 }
 
 export function getMDXFiles(dir) {
@@ -50,11 +53,7 @@ function getMDXData(dir) {
   });
 }
 
-function getAllPostsMetaDataFromDirectory(
-  directory: string,
-  recursive = false,
-  withContent = false
-) {
+function getAllPostsMetaDataFromDirectory(directory: string, recursive = false, withContent = false) {
   const currDir = directory.split('/').pop();
   const docs = {
     metadata: {
@@ -73,10 +72,7 @@ function getAllPostsMetaDataFromDirectory(
       const { metadata } = parseFrontmatter(fileContent);
       return {
         metadata,
-        slug:
-          cleanRoute(directory) +
-          '/' +
-          cleanRoute(path.basename(file, path.extname(file))),
+        slug: cleanRoute(directory) + '/' + cleanRoute(path.basename(file, path.extname(file))),
         content: withContent ? fileContent : undefined,
       };
     })
@@ -87,12 +83,9 @@ function getAllPostsMetaDataFromDirectory(
   if (recursive) {
     const directories = fs
       .readdirSync(baseDirectory)
-      .filter((file) =>
-        fs.statSync(path.join(baseDirectory, file)).isDirectory()
-      );
+      .filter((file) => fs.statSync(path.join(baseDirectory, file)).isDirectory());
     const subdirs = directories.map((subdirectory) => {
-      const dir =
-        directory.length > 0 ? `${directory}/${subdirectory}` : subdirectory;
+      const dir = directory.length > 0 ? `${directory}/${subdirectory}` : subdirectory;
       return getAllPostsMetaDataFromDirectory(dir, true);
     });
     docs.directories.push(...subdirs);
@@ -113,9 +106,7 @@ export function getBlogPosts(recursive = false, dir, lvl = 1) {
   if (recursive) {
     const directories = fs
       .readdirSync(path.join(process.cwd(), 'app', base))
-      .filter((file) =>
-        fs.statSync(path.join(process.cwd(), 'app', base, file)).isDirectory()
-      );
+      .filter((file) => fs.statSync(path.join(process.cwd(), 'app', base, file)).isDirectory());
     directories.forEach((directory) => {
       const fullDir = dir ? `${dir}/${directory}` : directory;
       const subPosts = getBlogPosts(true, fullDir, lvl + 1);

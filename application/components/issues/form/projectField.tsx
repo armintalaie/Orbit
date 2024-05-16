@@ -3,41 +3,24 @@
 import { useContext, useEffect, useState } from 'react';
 import { TargetIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
-export function ProjectField({
-  field,
-  teamid,
-}: {
-  field: any;
-  teamid: number;
-}) {
+export function ProjectField({ field, teamid }: { field: any; teamid: number }) {
   const { projects: projectsArray, teams } = useContext(OrbitContext);
 
   const [projects, setprojects] = useState<{
     [key: string]: any;
   }>({});
   const [open, setOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(
-    field ? field.value : null
-  );
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(field ? field.value : null);
 
   useEffect(() => {
     async function fetchProjects() {
-      const options: { [key: string]: any } = {};
+      const options: {
+        [key: string]: any;
+      } = {};
       for (const p of projectsArray) {
         if (p.teamid !== teamid) {
           continue;
@@ -57,15 +40,13 @@ export function ProjectField({
           <Button
             variant='outline'
             size='sm'
-            className='text-2xs line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-gray-800'
+            className='line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-2xs text-gray-800'
           >
             {selectedStatus && selectedStatus !== null ? (
               <>
                 <TargetIcon className='mr-2 h-4 w-4 shrink-0 dark:text-neutral-200' />
                 <span className='text-xs dark:text-neutral-200'>
-                  {projects &&
-                    projects[selectedStatus] &&
-                    projects[selectedStatus].title}
+                  {projects && projects[selectedStatus] && projects[selectedStatus].title}
                 </span>
               </>
             ) : (
@@ -101,13 +82,8 @@ export function ProjectField({
                     key={project.id}
                     value={project.id}
                     onSelect={(value) => {
-                      const matchId =
-                        Object.keys(projects).find((m) => m === key) || null;
-                      if (
-                        !matchId ||
-                        !projects[matchId as string] ||
-                        !projects[matchId as string].id
-                      ) {
+                      const matchId = Object.keys(projects).find((m) => m === key) || null;
+                      if (!matchId || !projects[matchId as string] || !projects[matchId as string].id) {
                         setSelectedStatus(null);
                         field.onChange(null);
                       } else {

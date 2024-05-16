@@ -12,22 +12,14 @@ export interface KanbanViewProps {
   onIssueUpdate: (issue: IIssue) => void;
 }
 
-export default function KanbanView({
-  groupedIssues,
-  projectId,
-}: KanbanViewProps) {
+export default function KanbanView({ groupedIssues, projectId }: KanbanViewProps) {
   if (!groupedIssues || !groupedIssues.issues) return <></>;
 
   return (
     <div className='flex h-full w-full flex-1 flex-row gap-12  overflow-hidden  overflow-x-scroll p-2 py-0'>
       <div className='flex h-full flex-grow  gap-4 '>
         {groupedIssues.issues.map((grouping: any) => (
-          <IssueColumn
-            key={grouping.key}
-            grouping={grouping}
-            projectId={projectId}
-            groupedIssues={groupedIssues}
-          />
+          <IssueColumn key={grouping.key} grouping={grouping} projectId={projectId} groupedIssues={groupedIssues} />
         ))}
       </div>
     </div>
@@ -37,10 +29,7 @@ export default function KanbanView({
 function IssueColumn({ grouping, projectId, groupedIssues }) {
   return (
     <div key={grouping.key} className='flex h-full   flex-col  overflow-hidden'>
-      <div
-        key={grouping.label}
-        className='relative flex  h-full w-72 flex-col  rounded-sm p-0'
-      >
+      <div key={grouping.label} className='relative flex  h-full w-72 flex-col  rounded-sm p-0'>
         <CardHeader className='m-0 flex flex-row items-center justify-between space-y-0 px-1'>
           <div className='m-0 flex flex-row items-center gap-2'>
             <p className='flex items-center text-xs text-gray-700 dark:text-gray-200'>
@@ -66,10 +55,26 @@ function IssueColumn({ grouping, projectId, groupedIssues }) {
                 <motion.div
                   key={issue.id}
                   layout={true}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, transition: { duration: 0.5 } }}
-                  exit={{ opacity: 0, transition: { duration: 0.5 } }}
-                  transition={{ type: 'spring', stiffness: 100, damping: 10 }} // Customize the transition
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    transition: {
+                      duration: 0.5,
+                    },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    transition: {
+                      duration: 0.5,
+                    },
+                  }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 100,
+                    damping: 10,
+                  }} // Customize the transition
                 >
                   <IssueCard issue={issue} />
                 </motion.div>

@@ -14,18 +14,8 @@ import {
   XIcon,
 } from 'lucide-react';
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '../ui/button';
 import { statusIconMapper } from '../statusIconMapper';
 import { UserFilter } from '../userFilter';
@@ -33,14 +23,7 @@ import IssueLabel from './label';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
-type FilterType =
-  | 'status'
-  | 'assignee'
-  | 'priority'
-  | 'deadline'
-  | 'project'
-  | 'labels'
-  | 'more';
+type FilterType = 'status' | 'assignee' | 'priority' | 'deadline' | 'project' | 'labels' | 'more';
 
 export default function FilterGroup({
   filters,
@@ -55,9 +38,7 @@ export default function FilterGroup({
 }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
-  const [filterType, setFilterType] = React.useState<FilterType | undefined>(
-    undefined
-  );
+  const [filterType, setFilterType] = React.useState<FilterType | undefined>(undefined);
 
   function setOpenChanged() {
     setOpen(!open);
@@ -77,7 +58,16 @@ export default function FilterGroup({
     relation?: string;
     content?: any;
   }) {
-    setFilters([...filters, { key, value, type, relation, content }]);
+    setFilters([
+      ...filters,
+      {
+        key,
+        value,
+        type,
+        relation,
+        content,
+      },
+    ]);
   }
 
   const filterGroups = {
@@ -147,12 +137,12 @@ export default function FilterGroup({
         variant='outline'
         className='m-0 flex h-6 items-center gap-2 border-dashed p-2 pl-1 text-xs'
         role='combobox'
-        style={{ borderColor: `${pr.content.color}` }}
+        style={{
+          borderColor: `${pr.content.color}`,
+        }}
         aria-expanded={open}
         onClick={() => {
-          setFilters(
-            filters.filter((f) => f.key !== pr.key && f.type !== 'project')
-          );
+          setFilters(filters.filter((f) => f.key !== pr.key && f.type !== 'project'));
         }}
       >
         <BoxIcon className='h-4 w-4' />
@@ -168,18 +158,15 @@ export default function FilterGroup({
         variant='outline'
         className='m-0 flex h-6 items-center gap-2 border-dashed p-2 pl-1 text-xs'
         role='combobox'
-        style={{ borderColor: `${fl.content.color}` }}
+        style={{
+          borderColor: `${fl.content.color}`,
+        }}
         aria-expanded={open}
         onClick={() => {
           setFilters(filters.filter((f) => f.key !== fl.key));
         }}
       >
-        <IssueLabel
-          label={fl.value}
-          id={fl.key}
-          color={fl.content.color}
-          compact={true}
-        />
+        <IssueLabel label={fl.value} id={fl.key} color={fl.content.color} compact={true} />
         <span className='text-xs'>{fl.value}</span>
         <XIcon className='h-3 w-3 text-gray-600' />
       </Button>
@@ -208,13 +195,13 @@ export default function FilterGroup({
             className='m-0 flex h-6 items-center rounded-md border border-dashed border-gray-200 p-[1px] text-xs'
           >
             <ToggleGroupItem
-              className='text-2xs m-0 flex h-full w-8 items-center gap-2 border-dashed p-1  data-[state=on]:bg-neutral-700 '
+              className='m-0 flex h-full w-8 items-center gap-2 border-dashed p-1 text-2xs  data-[state=on]:bg-neutral-700 '
               value='ALL'
             >
               All
             </ToggleGroupItem>
             <ToggleGroupItem
-              className='text-2xs m-0   flex h-full w-8 items-center gap-2 border-dashed p-1  data-[state=on]:bg-neutral-700'
+              className='m-0 flex   h-full w-8 items-center gap-2 border-dashed p-1 text-2xs  data-[state=on]:bg-neutral-700'
               value='ANY'
             >
               Any
@@ -233,11 +220,7 @@ export default function FilterGroup({
                     value={fl.name}
                     onSelect={(currentValue) => {
                       // setValue(currentValue === value ? "" : currentValue)
-                      setFilterType(
-                        currentValue === value
-                          ? undefined
-                          : (currentValue as FilterType)
-                      );
+                      setFilterType(currentValue === value ? undefined : (currentValue as FilterType));
                     }}
                   >
                     <div className='flex items-center gap-2'>
@@ -307,7 +290,11 @@ function StatusFilter({ backBtn, addFilter }: { backBtn: () => void }) {
             key={st.id}
             value={st.label}
             onSelect={(currentValue) => {
-              addFilter({ key: st.id, value: st.label, type: 'status' });
+              addFilter({
+                key: st.id,
+                value: st.label,
+                type: 'status',
+              });
               // setOpen(false)
             }}
           >
@@ -357,12 +344,7 @@ function LabelFilter({ backBtn, addFilter }: { backBtn: () => void }) {
             }}
           >
             <div className='flex w-full items-center gap-2'>
-              <IssueLabel
-                label={label.label}
-                id={label.id}
-                color={label.color}
-                compact={false}
-              />
+              <IssueLabel label={label.label} id={label.id} color={label.color} compact={false} />
             </div>
           </CommandItem>
         ))}

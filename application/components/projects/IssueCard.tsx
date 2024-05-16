@@ -53,22 +53,16 @@ export default function IssueCard({ issue, reload }: IssueCardProps) {
                 <p className='text-2xs text-gray-600 dark:text-gray-400'>
                   {issue.project_title}#{issue.id}
                 </p>
-                <span className='text-2xs line-clamp-1 text-gray-600'>
-                  {dateFormater(issue.deadline)}
-                </span>
+                <span className='line-clamp-1 text-2xs text-gray-600'>{dateFormater(issue.deadline)}</span>
               </div>
-              <p className='pb-2  text-xs text-gray-800 dark:text-gray-200'>
-                {issue.title}
-              </p>
+              <p className='pb-2  text-xs text-gray-800 dark:text-gray-200'>{issue.title}</p>
 
               <div className='flex w-full flex-row justify-between gap-2'>
                 <LabelList labels={issue.labels} />
                 <p className=' text-2xs text-gray-500'>
                   {issue.assignees.length > 0 ? (
                     issue.assignees.map((assignee) => {
-                      return (
-                        <AssigneeAvatar key={assignee.id} assignee={assignee} />
-                      );
+                      return <AssigneeAvatar key={assignee.id} assignee={assignee} />;
                     })
                   ) : (
                     <AssigneeAvatar />

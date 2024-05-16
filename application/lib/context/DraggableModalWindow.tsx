@@ -3,13 +3,7 @@ import { useState, useRef, useEffect, useContext } from 'react';
 import { Rnd } from 'react-rnd';
 import { PreviewModalContext } from './PreviewModalProvider';
 import { useWindowSize } from 'usehooks-ts';
-import {
-  ExternalLinkIcon,
-  Maximize,
-  Maximize2Icon,
-  Minimize2Icon,
-  XIcon,
-} from 'lucide-react';
+import { ExternalLinkIcon, Maximize, Maximize2Icon, Minimize2Icon, XIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export function DraggableModalWindow() {
@@ -19,14 +13,21 @@ export function DraggableModalWindow() {
     x: window.innerWidth - 410,
     y: 10,
   });
-  const [size, setSize] = useState({ width: 400, height: 700 });
-  const [issueComponent, setIssueComponent] = useState<JSX.Element | null>(
-    null
-  );
+  const [size, setSize] = useState({
+    width: 400,
+    height: 700,
+  });
+  const [issueComponent, setIssueComponent] = useState<JSX.Element | null>(null);
 
   const onDragStop = (e, d) => {
-    setCoordinates({ x: d.x, y: d.y });
-    setSize({ width: size.width, height: size.height });
+    setCoordinates({
+      x: d.x,
+      y: d.y,
+    });
+    setSize({
+      width: size.width,
+      height: size.height,
+    });
   };
 
   const toggleMinimize = () => {
@@ -35,9 +36,15 @@ export function DraggableModalWindow() {
 
   useEffect(() => {
     if (isMinimized) {
-      setSize({ width: 400, height: 30 });
+      setSize({
+        width: 400,
+        height: 30,
+      });
     } else {
-      setSize({ width: 400, height: 700 });
+      setSize({
+        width: 400,
+        height: 700,
+      });
     }
   }, [isMinimized]);
 
@@ -80,22 +87,12 @@ export function DraggableModalWindow() {
       {issueid && (
         <div className='flex w-full  flex-row items-center justify-between bg-gray-300  p-1'>
           <div className='flex   flex-row items-center gap-3  bg-gray-300'>
-            <button
-              onClick={close}
-              className='text-sm font-semibold text-black'
-            >
+            <button onClick={close} className='text-sm font-semibold text-black'>
               <XIcon size={15} />
             </button>
 
-            <button
-              onClick={toggleMinimize}
-              className='text-sm font-semibold text-black'
-            >
-              {!isMinimized ? (
-                <Minimize2Icon size={15} />
-              ) : (
-                <Maximize2Icon size={15} />
-              )}
+            <button onClick={toggleMinimize} className='text-sm font-semibold text-black'>
+              {!isMinimized ? <Minimize2Icon size={15} /> : <Maximize2Icon size={15} />}
             </button>
           </div>
 

@@ -9,9 +9,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 
 function Table({ data }) {
-  let headers = data.headers.map((header, index) => (
-    <th key={index}>{header}</th>
-  ));
+  let headers = data.headers.map((header, index) => <th key={index}>{header}</th>);
   let rows = data.rows.map((row, index) => (
     <tr key={index}>
       {row.map((cell, cellIndex) => (
@@ -54,7 +52,14 @@ function RoundedImage(props) {
 
 function Code({ children, ...props }) {
   let codeHTML = highlight(children);
-  return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />;
+  return (
+    <code
+      dangerouslySetInnerHTML={{
+        __html: codeHTML,
+      }}
+      {...props}
+    />
+  );
 }
 
 function slugify(str) {
@@ -73,7 +78,9 @@ function createHeading(level) {
     let slug = slugify(children);
     return React.createElement(
       `h${level}`,
-      { id: slug },
+      {
+        id: slug,
+      },
       [
         React.createElement('a', {
           href: `#${slug}`,

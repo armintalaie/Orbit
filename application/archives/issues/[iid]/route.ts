@@ -5,7 +5,13 @@ import socket, { publishEvent } from '../../../app/api/sync';
 
 export async function GET(
   req: Request,
-  { params }: { params: { iid: string } }
+  {
+    params,
+  }: {
+    params: {
+      iid: string;
+    };
+  }
 ) {
   const { iid } = params;
 
@@ -42,7 +48,14 @@ export async function GET(
     .executeTakeFirst();
 
   if (!issue) {
-    return Response.json({ error: 'Issue not found' }, { status: 404 });
+    return Response.json(
+      {
+        error: 'Issue not found',
+      },
+      {
+        status: 404,
+      }
+    );
   }
 
   return Response.json(issue);
@@ -50,32 +63,45 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { iid: string } }
+  {
+    params,
+  }: {
+    params: {
+      iid: string;
+    };
+  }
 ) {
   const { iid } = params;
-  const deletedIssue = await db
-    .deleteFrom('issue')
-    .where('id', '=', Number(iid))
-    .returningAll()
-    .executeTakeFirst();
+  const deletedIssue = await db.deleteFrom('issue').where('id', '=', Number(iid)).returningAll().executeTakeFirst();
   if (!deletedIssue) {
-    return Response.json({ error: 'Issue not found' }, { status: 404 });
+    return Response.json(
+      {
+        error: 'Issue not found',
+      },
+      {
+        status: 404,
+      }
+    );
   }
   publishEvent(
-    [
-      'project:' + deletedIssue.projectid,
-      'team:' + deletedIssue.teamid,
-      'issue:' + deletedIssue.id,
-    ],
+    ['project:' + deletedIssue.projectid, 'team:' + deletedIssue.teamid, 'issue:' + deletedIssue.id],
     deletedIssue,
     'delete'
   );
-  return Response.json({ message: 'success' });
+  return Response.json({
+    message: 'success',
+  });
 }
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { iid: string } }
+  {
+    params,
+  }: {
+    params: {
+      iid: string;
+    };
+  }
 ) {
   const h = headers().get('X-Full-Object');
 
@@ -85,7 +111,10 @@ export async function PATCH(
     const issue = newIssue;
     await db
       .updateTable('issue')
-      .set({ ...issue, dateupdated: new Date().toISOString() })
+      .set({
+        ...issue,
+        dateupdated: new Date().toISOString(),
+      })
       .where('id', '=', Number(iid))
       .returning(['id'])
       .executeTakeFirst();
@@ -125,12 +154,7 @@ export async function PATCH(
 
     const assigneeSubs = updated.assignees.map((a: any) => 'user:' + a.id);
     publishEvent(
-      [
-        'project:' + updated.projectid,
-        'team:' + updated.teamid,
-        'issue:' + updated.id,
-        ...assigneeSubs,
-      ],
+      ['project:' + updated.projectid, 'team:' + updated.teamid, 'issue:' + updated.id, ...assigneeSubs],
       updated
     );
 
@@ -139,6 +163,13 @@ export async function PATCH(
     // return Response.json({ message: 'success' });
   } catch (error) {
     console.log(error);
-    return Response.json({ error: '' }, { status: 405 });
+    return Response.json(
+      {
+        error: '',
+      },
+      {
+        status: 405,
+      }
+    );
   }
 }

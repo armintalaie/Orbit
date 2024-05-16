@@ -11,15 +11,9 @@ type UserSession = {
   account: any;
 } & Session;
 
-export const UserSessionContext = React.createContext<UserSession>(
-  {} as UserSession
-);
+export const UserSessionContext = React.createContext<UserSession>({} as UserSession);
 
-export default function AuthContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AuthContextProvider({ children }: { children: React.ReactNode }) {
   let supabase = createClient();
   const [session, setSession] = useState<UserSession | null>(null);
   const router = useRouter();
@@ -38,15 +32,15 @@ export default function AuthContextProvider({
             } else {
               console.log(data);
               console.log(data.session);
-              const accountdataCamel = Object.keys(accountdata).reduce(
-                (acc, key) => {
-                  acc[toCamelCase(key)] = accountdata[key];
-                  return acc;
-                },
-                {}
-              );
+              const accountdataCamel = Object.keys(accountdata).reduce((acc, key) => {
+                acc[toCamelCase(key)] = accountdata[key];
+                return acc;
+              }, {});
 
-              setSession({ ...data.session, account: accountdataCamel });
+              setSession({
+                ...data.session,
+                account: accountdataCamel,
+              });
             }
           });
       } else {
@@ -68,9 +62,7 @@ export default function AuthContextProvider({
   }
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <UserSessionContext.Provider value={session}>
-        {children}
-      </UserSessionContext.Provider>
+      <UserSessionContext.Provider value={session}>{children}</UserSessionContext.Provider>
     </Suspense>
   );
 }

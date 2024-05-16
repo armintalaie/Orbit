@@ -5,17 +5,11 @@ type PageWrapperProps = {
 };
 
 const Header = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const SubHeader = ({ children }: { children: React.ReactNode }) => (
-  <>{children}</>
-);
-const Content = ({ children }: { children: React.ReactNode }) => (
-  <>{children}</>
-);
+const SubHeader = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const Content = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
 const PageWrapper = ({ children }: PageWrapperProps) => {
-  const header = React.Children.toArray(children).find(
-    (child) => React.isValidElement(child) && child.type === Header
-  );
+  const header = React.Children.toArray(children).find((child) => React.isValidElement(child) && child.type === Header);
   const subHeader = React.Children.toArray(children).find(
     (child) => React.isValidElement(child) && child.type === SubHeader
   );
@@ -36,9 +30,7 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
               {subHeader}
             </div>
           )}
-          <div className='flex flex-grow flex-col overflow-y-hidden'>
-            {content}
-          </div>
+          <div className='flex flex-grow flex-col overflow-y-hidden'>{content}</div>
         </div>
       </div>
     </div>

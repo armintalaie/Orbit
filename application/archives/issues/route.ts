@@ -21,7 +21,13 @@ const issueSchema = z.object({
 
 export async function POST(
   req: Request,
-  { params }: { params: { pid: string } }
+  {
+    params,
+  }: {
+    params: {
+      pid: string;
+    };
+  }
 ) {
   const h = headers().get('X-Full-Object');
   try {
@@ -30,11 +36,7 @@ export async function POST(
       ...newIssue,
     });
 
-    const { id } = await db
-      .insertInto('issue')
-      .values(issue)
-      .returning(['id'])
-      .executeTakeFirst();
+    const { id } = await db.insertInto('issue').values(issue).returning(['id']).executeTakeFirst();
 
     if (newIssue.labels) {
       const { data: labels, error: labelsError } = await supabase
@@ -48,8 +50,12 @@ export async function POST(
         .select();
       if (labelsError) {
         return NextResponse.json(
-          { error: labelsError.message },
-          { status: 400 }
+          {
+            error: labelsError.message,
+          },
+          {
+            status: 400,
+          }
         );
       }
     }
@@ -98,18 +104,13 @@ export async function POST(
         .where('issue.id', '=', Number(id))
         .executeTakeFirst();
 
-      publishEvent(
-        [
-          'project:' + updated.projectid,
-          'team:' + updated.teamid,
-          'issue:' + updated.id,
-        ],
-        updated
-      );
+      publishEvent(['project:' + updated.projectid, 'team:' + updated.teamid, 'issue:' + updated.id], updated);
       return Response.json(updated);
     }
     return NextResponse.json(
-      { message: `issue with id ${id} is created` },
+      {
+        message: `issue with id ${id} is created`,
+      },
       {
         status: 200,
         headers: {
@@ -119,7 +120,14 @@ export async function POST(
     );
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: '' }, { status: 405 });
+    return NextResponse.json(
+      {
+        error: '',
+      },
+      {
+        status: 405,
+      }
+    );
   }
 }
 
@@ -164,19 +172,11 @@ export async function GET(req: NextRequest) {
     query = query.where('project.teamid', 'in', searchParams.teams.map(Number));
   }
   if (searchParams.statuses && searchParams.statuses.length > 0) {
-    query = query.where(
-      'issue.statusid',
-      'in',
-      searchParams.statuses.map(Number)
-    );
+    query = query.where('issue.statusid', 'in', searchParams.statuses.map(Number));
   }
 
   if (searchParams.projects && searchParams.projects.length > 0) {
-    query = query.where(
-      'issue.projectid',
-      'in',
-      searchParams.projects.map(Number)
-    );
+    query = query.where('issue.projectid', 'in', searchParams.projects.map(Number));
   }
   const issues = await query.execute();
   return NextResponse.json(issues);

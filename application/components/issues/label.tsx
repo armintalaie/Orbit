@@ -1,9 +1,5 @@
 import { TagIcon } from 'lucide-react';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { ILabel } from '@/lib/types/issue';
 
 function getTextColor(color: string) {
@@ -38,7 +34,12 @@ export default function IssueLabel({
         id={id.toString()}
         className={`flex w-fit flex-row items-center gap-2 rounded-full  p-1 ${className} `}
         style={
-          style ? style : { backgroundColor: `${color}`, color: `${textColor}` }
+          style
+            ? style
+            : {
+                backgroundColor: `${color}`,
+                color: `${textColor}`,
+              }
         }
       >
         <TagIcon className='h-3 w-3' />
@@ -50,13 +51,16 @@ export default function IssueLabel({
       id={id.toString()}
       className={`flex w-fit flex-row items-center gap-2 rounded-md  p-1 px-2 ${className} `}
       style={
-        style ? style : { backgroundColor: `${color}`, color: `${textColor}` }
+        style
+          ? style
+          : {
+              backgroundColor: `${color}`,
+              color: `${textColor}`,
+            }
       }
     >
       <TagIcon className='h-3 w-3' />
-      <p className='text-2xs  items-center font-medium leading-tight '>
-        {label}
-      </p>
+      <p className='items-center  text-2xs font-medium leading-tight '>{label}</p>
     </div>
   );
 }
@@ -67,17 +71,8 @@ export function LabelList({ labels }: { labels: ILabel[] }) {
       <HoverCardTrigger>
         <div className='flex flex-row items-center gap-1'>
           {labels.map((label, index) => (
-            <div
-              className={`relative ${index !== 0 ? '-ml-2' : ''}`}
-              key={label.id}
-            >
-              <IssueLabel
-                key={label.id}
-                label={label.label}
-                id={label.id}
-                color={label.color}
-                compact={true}
-              />
+            <div className={`relative ${index !== 0 ? '-ml-2' : ''}`} key={label.id}>
+              <IssueLabel key={label.id} label={label.label} id={label.id} color={label.color} compact={true} />
             </div>
           ))}
         </div>
@@ -85,12 +80,7 @@ export function LabelList({ labels }: { labels: ILabel[] }) {
       <HoverCardContent className='w-fit max-w-sm bg-neutral-100 p-1'>
         <div className='flex flex-row flex-wrap gap-2 p-0'>
           {labels.map((label) => (
-            <IssueLabel
-              key={label.id}
-              label={label.label}
-              id={label.id}
-              color={label.color}
-            />
+            <IssueLabel key={label.id} label={label.label} id={label.id} color={label.color} />
           ))}
         </div>
       </HoverCardContent>

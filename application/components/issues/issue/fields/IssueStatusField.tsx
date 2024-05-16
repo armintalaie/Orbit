@@ -1,18 +1,7 @@
 import { statusIconMapper } from '@/components/statusIconMapper';
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue, IStatus } from '@/lib/types/issue';
 import { useContext, useState } from 'react';
@@ -26,32 +15,32 @@ type IssueStatusFieldProps = {
   reload?: (issue?: IIssue) => void;
 };
 
-export default function IssueStatusField({
-  statusId,
-  issueId,
-  contentOnly = false,
-  reload,
-}: IssueStatusFieldProps) {
+export default function IssueStatusField({ statusId, issueId, contentOnly = false, reload }: IssueStatusFieldProps) {
   const { status: statusOptionsArr, fetcher } = useContext(OrbitContext);
   const statusOptions = groupById(statusOptionsArr);
-  const doneStatusId = Object.keys(statusOptions).find(
-    (m) => statusOptions[Number(m)].label === 'Done'
-  );
+  const doneStatusId = Object.keys(statusOptions).find((m) => statusOptions[Number(m)].label === 'Done');
   const [selectedStatusId, setSelectedStatusId] = useState<number>(statusId);
   const [open, setOpen] = useState(false);
-  const { reward: confettiReward, isAnimating: isConfettiAnimating } =
-    useReward('confettiReward', 'confetti', {
-      zIndex: 1000,
-      elementCount: 100,
-      spread: 150,
-      angle: 90,
-      decay: 0.91,
-      startVelocity: 40,
-      lifetime: 300,
-    });
+  const { reward: confettiReward, isAnimating: isConfettiAnimating } = useReward('confettiReward', 'confetti', {
+    zIndex: 1000,
+    elementCount: 100,
+    spread: 150,
+    angle: 90,
+    decay: 0.91,
+    startVelocity: 40,
+    lifetime: 300,
+  });
 
-  function groupById(array: IStatus[]): { [key: number]: IStatus } {
-    return array.reduce((hash, obj) => ({ ...hash, [obj.id]: obj }), {});
+  function groupById(array: IStatus[]): {
+    [key: number]: IStatus;
+  } {
+    return array.reduce(
+      (hash, obj) => ({
+        ...hash,
+        [obj.id]: obj,
+      }),
+      {}
+    );
   }
 
   async function updateStatus(id: number) {
@@ -73,11 +62,7 @@ export default function IssueStatusField({
     if (!res.ok) throw new Error(res.statusText);
 
     toast('status updated');
-    if (
-      !isConfettiAnimating &&
-      doneStatusId &&
-      data.statusid.toString() === doneStatusId.toString()
-    ) {
+    if (!isConfettiAnimating && doneStatusId && data.statusid.toString() === doneStatusId.toString()) {
       confettiReward();
     }
   }
@@ -87,11 +72,7 @@ export default function IssueStatusField({
       if (!value || !statusOptions[Number(value)]) {
         return 0;
       }
-      return statusOptions[Number(value)].label
-        .toLowerCase()
-        .indexOf(search.toLowerCase()) !== -1
-        ? 1
-        : 0;
+      return statusOptions[Number(value)].label.toLowerCase().indexOf(search.toLowerCase()) !== -1 ? 1 : 0;
     } catch (error) {
       return 0;
     }
@@ -114,11 +95,7 @@ export default function IssueStatusField({
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup>
             {Object.keys(statusOptions).map((id) => (
-              <CommandItem
-                key={id}
-                value={id.toString()}
-                onSelect={onSelectedStatusChange}
-              >
+              <CommandItem key={id} value={id.toString()} onSelect={onSelectedStatusChange}>
                 <div className='flex items-center space-x-2'>
                   {statusIconMapper(statusOptions[Number(id)].label, 'h-4 w-4')}
                   <span>{statusOptions[Number(id)].label}</span>
@@ -140,11 +117,8 @@ export default function IssueStatusField({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant='ghost' className='w-full justify-start p-0'>
-            <div className='text-2xs flex items-center space-x-2'>
-              {statusIconMapper(
-                statusOptions[selectedStatusId].label,
-                'h-4 w-4'
-              )}
+            <div className='flex items-center space-x-2 text-2xs'>
+              {statusIconMapper(statusOptions[selectedStatusId].label, 'h-4 w-4')}
               <span>{statusOptions[selectedStatusId].label}</span>
             </div>
           </Button>

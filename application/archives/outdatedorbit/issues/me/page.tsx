@@ -24,9 +24,7 @@ export default function MyIssuePage() {
   });
 
   const getRoute = () => {
-    return `/api/issues?q=${encodeURIComponent(
-      JSON.stringify(issueQuery.q || {})
-    )}`;
+    return `/api/issues?q=${encodeURIComponent(JSON.stringify(issueQuery.q || {}))}`;
   };
 
   return (
@@ -42,7 +40,9 @@ export default function MyIssuePage() {
         </div>
         <ContentLoader
           route={getRoute()}
-          childProps={{ query: issueQuery }}
+          childProps={{
+            query: issueQuery,
+          }}
           childDataProp='issues'
           syncChannels={[`user:${userId}`]}
         >

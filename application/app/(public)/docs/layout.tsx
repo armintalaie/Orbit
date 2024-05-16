@@ -17,10 +17,7 @@ export default function Layout({ children }) {
             <Link href='/' className='h-8 rounded-md  border p-2  text-sm '>
               <GlobeIcon className='h-full w-fit' />
             </Link>
-            <Link
-              href='https://github.com/armintalaie/Orbit'
-              className='h-8 rounded-md  border p-2  text-sm  '
-            >
+            <Link href='https://github.com/armintalaie/Orbit' className='h-8 rounded-md  border p-2  text-sm  '>
               <GithubIcon className='h-full w-fit' />
             </Link>
           </div>

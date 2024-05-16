@@ -1,13 +1,7 @@
 import * as path from 'path';
 import { Pool } from 'pg';
 import { promises as fs } from 'fs';
-import {
-  Kysely,
-  Migrator,
-  PostgresDialect,
-  FileMigrationProvider,
-  CamelCasePlugin,
-} from 'kysely';
+import { Kysely, Migrator, PostgresDialect, FileMigrationProvider, CamelCasePlugin } from 'kysely';
 import { PublicDatabase } from './schema';
 import dotenv from 'dotenv';
 dotenv.config();

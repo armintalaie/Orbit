@@ -23,9 +23,7 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
   const { projects } = useContext(OrbitContext);
   const initialProject = projects && projects.find((p) => p.id === projectId);
 
-  const project: IProject | undefined | null = initialProject
-    ? initialProject
-    : null;
+  const project: IProject | undefined | null = initialProject ? initialProject : null;
   const issueQuery = {
     tid: params.teamid as string,
     pid: projectId,
@@ -46,15 +44,15 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
   setDocumentMeta(`Project ${project.title}`);
 
   const getRoute = () => {
-    return `/api/issues?q=${encodeURIComponent(
-      JSON.stringify(issueQuery.q || {})
-    )}`;
+    return `/api/issues?q=${encodeURIComponent(JSON.stringify(issueQuery.q || {}))}`;
   };
 
   const issueView = (
     <ContentLoader
       route={getRoute()}
-      childProps={{ query: issueQuery }}
+      childProps={{
+        query: issueQuery,
+      }}
       childDataProp='issues'
       syncChannels={[`project:${project.id}`]}
     >
@@ -66,11 +64,7 @@ export default function ProjectPage({ id, title }: ProjectPageProps) {
     <PageWrapper>
       <PageWrapper.Header>
         <div className='flex flex-row items-center gap-2'>
-          <ProjectTitleField
-            projectTitle={project.title}
-            projectId={project.id}
-            teamid={project.teamid}
-          />
+          <ProjectTitleField projectTitle={project.title} projectId={project.id} teamid={project.teamid} />
         </div>
         <div className='flex h-full items-center justify-center gap-2'></div>
       </PageWrapper.Header>

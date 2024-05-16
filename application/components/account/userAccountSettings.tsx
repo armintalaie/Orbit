@@ -10,14 +10,7 @@ import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { createClient } from '@/lib/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { Input } from '../ui/input';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { toast } from 'sonner';
 
 const schema = z.object({
@@ -31,7 +24,9 @@ export default function UserAccountSettings() {
   const userSession = useContext(UserSessionContext);
   const user = userSession.user;
   const router = useRouter();
-  const profile: { [key: string]: string } = userSession.account;
+  const profile: {
+    [key: string]: string;
+  } = userSession.account;
   const { avatar, id, ...rest } = profile || {};
 
   const form = useForm({
@@ -68,7 +63,9 @@ export default function UserAccountSettings() {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${userSession.access_token}`,
       },
-      body: JSON.stringify({ profile: values }),
+      body: JSON.stringify({
+        profile: values,
+      }),
     });
     if (res.ok) {
       toast('Profile updated successfully');
@@ -82,25 +79,17 @@ export default function UserAccountSettings() {
       <section className='flex w-full flex-col gap-4  '>
         <div className='flex items-center justify-between gap-4'>
           <h2 className='text-lg font-semibold'>Profile</h2>
-          <Button
-            onClick={signout}
-            variant='outline'
-            className='rounded-sm px-2 py-0 text-sm'
-            type='button'
-          >
+          <Button onClick={signout} variant='outline' className='rounded-sm px-2 py-0 text-sm' type='button'>
             Sign out
           </Button>
         </div>
 
         <div className='flex flex-col items-center gap-10'>
           <div className='secondary-surface flex w-full flex-col gap-4 rounded border p-4 text-sm'>
+            <p>This is your main account profile. You can edit your name, avatar, and other information.</p>
             <p>
-              This is your main account profile. You can edit your name, avatar,
-              and other information.
-            </p>
-            <p>
-              For each workspace, you will have a separate profile that you can
-              edit which would only be visible to the members of that workspace.
+              For each workspace, you will have a separate profile that you can edit which would only be visible to the
+              members of that workspace.
             </p>
           </div>
           <div className='flex items-center gap-2'>
@@ -114,20 +103,12 @@ export default function UserAccountSettings() {
           </div>
 
           <Form {...form}>
-            <form
-              className='flex w-full flex-col gap-2 px-4'
-              onSubmit={form.handleSubmit(updateProfile)}
-            >
+            <form className='flex w-full flex-col gap-2 px-4' onSubmit={form.handleSubmit(updateProfile)}>
               <div className='flex flex-1 items-center gap-2'>
                 <label htmlFor='name' className='w-32 text-sm  font-semibold'>
                   Email
                 </label>
-                <Input
-                  id='name'
-                  name='name'
-                  value={user.email}
-                  disabled={true}
-                />
+                <Input id='name' name='name' value={user.email} disabled={true} />
               </div>
 
               {profile &&
@@ -138,9 +119,7 @@ export default function UserAccountSettings() {
                     name={key}
                     render={({ field }) => (
                       <FormItem className='flex items-center gap-2'>
-                        <FormLabel className='w-32 text-sm  font-semibold'>
-                          {key.toLocaleUpperCase()}
-                        </FormLabel>
+                        <FormLabel className='w-32 text-sm  font-semibold'>{key.toLocaleUpperCase()}</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
@@ -159,17 +138,10 @@ export default function UserAccountSettings() {
             <h3 className='text-lg font-semibold'>Danger Zone</h3>
             <div className='primary-surface flex w-full flex-col gap-5 rounded-md border p-5'>
               <p className='text-sm'>
-                Deleting your account will permanently remove all you from all
-                your workspaces and delete all your data. This action cannot be
-                undone. You will have to create a new account to use Orbit
-                again.
+                Deleting your account will permanently remove all you from all your workspaces and delete all your data.
+                This action cannot be undone. You will have to create a new account to use Orbit again.
               </p>
-              <Button
-                type='submit'
-                variant='destructive'
-                className='w-fit'
-                onClick={deleteAccount}
-              >
+              <Button type='submit' variant='destructive' className='w-fit' onClick={deleteAccount}>
                 Delete
               </Button>
             </div>

@@ -13,7 +13,13 @@ const issueSchema = z.object({
 
 export async function POST(
   req: Request,
-  { params }: { params: { pid: string } }
+  {
+    params,
+  }: {
+    params: {
+      pid: string;
+    };
+  }
 ) {
   try {
     const newIssue = await req.json();
@@ -24,18 +30,38 @@ export async function POST(
 
     const { data, error } = await supabase.from('issue').insert(issue);
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: error.message,
+        },
+        {
+          status: 400,
+        }
+      );
     }
     return NextResponse.json(data);
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ error: '' }, { status: 405 });
+    return NextResponse.json(
+      {
+        error: '',
+      },
+      {
+        status: 405,
+      }
+    );
   }
 }
 
 export async function GET(
   req: Request,
-  { params }: { params: { tid: string } }
+  {
+    params,
+  }: {
+    params: {
+      tid: string;
+    };
+  }
 ) {
   const teamMembers = await db
     .selectFrom('profiles')

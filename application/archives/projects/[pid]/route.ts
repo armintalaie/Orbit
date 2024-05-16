@@ -14,7 +14,13 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { pid: string } }
+  {
+    params,
+  }: {
+    params: {
+      pid: string;
+    };
+  }
 ) {
   const authorization = headers().get('authorization');
 
@@ -31,11 +37,7 @@ export async function GET(
   const projects = await db
     .selectFrom('project')
     .innerJoin(
-      db
-        .selectFrom('team_member')
-        .select(['teamid'])
-        .where('memberid', '=', userData.user.id)
-        .as('teams'),
+      db.selectFrom('team_member').select(['teamid']).where('memberid', '=', userData.user.id).as('teams'),
       'teams.teamid',
       'project.teamid'
     )
@@ -55,16 +57,30 @@ export async function GET(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { pid: string } }
+  {
+    params,
+  }: {
+    params: {
+      pid: string;
+    };
+  }
 ) {
   const { pid } = params;
   await supabase.from('project').delete().eq('id', Number(pid));
-  return Response.json({ message: 'success' });
+  return Response.json({
+    message: 'success',
+  });
 }
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { pid: string } }
+  {
+    params,
+  }: {
+    params: {
+      pid: string;
+    };
+  }
 ) {
   try {
     const { pid } = params;
@@ -72,11 +88,21 @@ export async function PATCH(
     const project = newProject;
     const data = await supabase
       .from('project')
-      .update({ ...project, dateupdated: new Date().toISOString() })
+      .update({
+        ...project,
+        dateupdated: new Date().toISOString(),
+      })
       .eq('id', Number(pid));
     return Response.json(data.data);
   } catch (error) {
     console.log(error);
-    return Response.json({ error: '' }, { status: 405 });
+    return Response.json(
+      {
+        error: '',
+      },
+      {
+        status: 405,
+      }
+    );
   }
 }

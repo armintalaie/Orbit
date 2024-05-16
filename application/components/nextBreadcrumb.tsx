@@ -29,11 +29,8 @@ const NextBreadcrumb = ({
         <li className={`${listClasses} flex lg:hidden`}>{homeElement}</li>
         {pathNames.map((link, index) => {
           let href = `/${pathNames.slice(0, index + 1).join('/')}`;
-          let itemClasses =
-            paths === href ? `${listClasses} ${activeClasses}` : listClasses;
-          let itemLink = capitalizeLinks
-            ? link[0].toUpperCase() + link.slice(1, link.length)
-            : link;
+          let itemClasses = paths === href ? `${listClasses} ${activeClasses}` : listClasses;
+          let itemLink = capitalizeLinks ? link[0].toUpperCase() + link.slice(1, link.length) : link;
           return (
             <React.Fragment key={index}>
               <li

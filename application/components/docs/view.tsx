@@ -1,11 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { ArrowUp } from 'lucide-react';
 import Link from 'next/link';
 
@@ -46,15 +41,7 @@ export default function DocView({ children, posts, directories }) {
   );
 }
 
-function SideBarNav({
-  posts,
-  directories,
-  trigger,
-}: {
-  posts: any;
-  directories: any;
-  trigger?: any;
-}) {
+function SideBarNav({ posts, directories, trigger }: { posts: any; directories: any; trigger?: any }) {
   const handleTrigger = () => {
     if (trigger) {
       trigger(false);
@@ -78,9 +65,7 @@ function SideBarNav({
       {directories.map((directory) => {
         return (
           <div className='p-2 pr-0'>
-            <h4 className='text-md border-b p-1 pr-0 font-semibold'>
-              {directory.metadata.title}
-            </h4>
+            <h4 className='text-md border-b p-1 pr-0 font-semibold'>{directory.metadata.title}</h4>
             <ul className='p-1 pr-0 text-sm'>
               {directory.posts.map((post) => {
                 return (
@@ -101,11 +86,7 @@ function SideBarNav({
                 );
               })}
             </ul>
-            <SideBarNav
-              posts={[]}
-              directories={directory.directories}
-              trigger={trigger}
-            />
+            <SideBarNav posts={[]} directories={directory.directories} trigger={trigger} />
           </div>
         );
       })}
@@ -126,11 +107,7 @@ function MobileView({ children, posts, directories }) {
         </DrawerTrigger>
         <DrawerContent className='  max-h-[65vh] overflow-auto '>
           <DrawerTitle className='px-4 text-sm'>Directory</DrawerTitle>
-          <SideBarNav
-            posts={posts}
-            directories={directories}
-            trigger={setIsOpen}
-          />
+          <SideBarNav posts={posts} directories={directories} trigger={setIsOpen} />
         </DrawerContent>
       </Drawer>
     </div>
@@ -143,9 +120,7 @@ const DesktopView = ({ children, posts, directories }) => {
       <aside className=' w-72 overflow-y-scroll text-sm '>
         <SideBarNav posts={posts} directories={directories} />
       </aside>
-      <div className='flex h-full flex-1 justify-center overflow-y-hidden'>
-        {children}
-      </div>
+      <div className='flex h-full flex-1 justify-center overflow-y-hidden'>{children}</div>
     </section>
   );
 };

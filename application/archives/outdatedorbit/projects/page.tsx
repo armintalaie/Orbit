@@ -3,14 +3,7 @@
 import { NewProject } from '@/components/projects/newProject';
 import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
 import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useContext } from 'react';
 import Link from 'next/link';
 import PageWrapper from '@/components/layouts/pageWrapper';
@@ -35,9 +28,7 @@ export default function ProjectPage() {
     <PageWrapper>
       <PageWrapper.Header>
         <div className=' flex w-full flex-row items-center justify-between gap-2'>
-          <h1 className='h-full pr-2 text-sm font-medium leading-tight text-gray-700 dark:text-gray-200'>
-            Projects
-          </h1>
+          <h1 className='h-full pr-2 text-sm font-medium leading-tight text-gray-700 dark:text-gray-200'>Projects</h1>
           <NewProject button={true} reload={() => reload(['projects'])} />
         </div>
       </PageWrapper.Header>
@@ -81,7 +72,9 @@ function TableView({ projects }: { projects: IProject[] }) {
                   <Link
                     href={{
                       pathname: `/teams/${project.teamid}`,
-                      query: { id: project.teamid },
+                      query: {
+                        id: project.teamid,
+                      },
                     }}
                     shallow={true}
                     className='underline'
@@ -95,10 +88,7 @@ function TableView({ projects }: { projects: IProject[] }) {
                   {isOverdue(project.deadline) ? (
                     <Badge color='red'>{dateFormater(project.deadline)}</Badge>
                   ) : (
-                    <Badge color='gray'>
-                      {' '}
-                      {dateFormater(project.deadline)}
-                    </Badge>
+                    <Badge color='gray'> {dateFormater(project.deadline)}</Badge>
                   )}
                 </TableCell>
               </TableRow>

@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useContext } from 'react';
 import Link from 'next/link';
 import { NewTeam } from '@/components/newTeam';
@@ -24,9 +17,7 @@ export default function TeamPage() {
     <PageWrapper>
       <PageWrapper.Header>
         <div className='flex w-full flex-row items-center justify-between gap-2'>
-          <h1 className='h-full pr-2 text-sm font-medium leading-tight text-gray-700 dark:text-neutral-300'>
-            Teams
-          </h1>
+          <h1 className='h-full pr-2 text-sm font-medium leading-tight text-gray-700 dark:text-neutral-300'>Teams</h1>
           <NewTeam button={true} reload={() => reload(['teams'])} />
         </div>
       </PageWrapper.Header>
@@ -46,11 +37,7 @@ function TableView({ teams }: { teams: ITeam[] }) {
           {teams.map((team) => (
             <TableRow key={team.id}>
               <TableCell>
-                <Link
-                  href={`/teams/${team.id}`}
-                  shallow={true}
-                  className='p-1 text-xs underline'
-                >
+                <Link href={`/teams/${team.id}`} shallow={true} className='p-1 text-xs underline'>
                   {team.name}
                 </Link>
               </TableCell>

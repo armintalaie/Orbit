@@ -5,14 +5,24 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { pid: string } }
+  {
+    params,
+  }: {
+    params: {
+      pid: string;
+    };
+  }
 ) {
   const authorization = headers().get('authorization');
 
   if (!authorization) {
     return NextResponse.json(
-      { error: 'Not authenticated (missing header)' },
-      { status: 401 }
+      {
+        error: 'Not authenticated (missing header)',
+      },
+      {
+        status: 401,
+      }
     );
   }
 
@@ -20,15 +30,15 @@ export async function GET(
 
   if (userData.user === null) {
     return NextResponse.json(
-      { error: 'Could not authenticate' },
-      { status: 401 }
+      {
+        error: 'Could not authenticate',
+      },
+      {
+        status: 401,
+      }
     );
   }
 
-  const profile = await db
-    .selectFrom('profiles')
-    .selectAll()
-    .where('id', '=', userData.user.id)
-    .executeTakeFirst();
+  const profile = await db.selectFrom('profiles').selectAll().where('id', '=', userData.user.id).executeTakeFirst();
   return Response.json(profile);
 }

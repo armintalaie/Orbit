@@ -6,8 +6,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = await request.json();
   if (!body.workspaceId) {
     return NextResponse.json(
-      { error: 'Workspace ID is required' },
-      { status: 400 }
+      {
+        error: 'Workspace ID is required',
+      },
+      {
+        status: 400,
+      }
     );
   }
 
@@ -21,8 +25,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       .executeTakeFirst();
     if (workspace) {
       return NextResponse.json(
-        { error: 'Workspace already exists' },
-        { status: 400 }
+        {
+          error: 'Workspace already exists',
+        },
+        {
+          status: 400,
+        }
       );
     }
 
@@ -35,23 +43,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not create workspace' },
-      { status: 400 }
+      {
+        error: 'Could not create workspace',
+      },
+      {
+        status: 400,
+      }
     );
   }
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  const workspaces = await db
-    .selectFrom('public.workspace')
-    .selectAll()
-    .execute();
+  const workspaces = await db.selectFrom('public.workspace').selectAll().execute();
   return NextResponse.json(workspaces);
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { wid: string } }
+  {
+    params,
+  }: {
+    params: {
+      wid: string;
+    };
+  }
 ): Promise<NextResponse> {
   try {
     const body = await request.json();
@@ -71,8 +86,12 @@ export async function PATCH(
     return NextResponse.json(updatedWorkspace);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Could not update workspace' },
-      { status: 400 }
+      {
+        error: 'Could not update workspace',
+      },
+      {
+        status: 400,
+      }
     );
   }
 }

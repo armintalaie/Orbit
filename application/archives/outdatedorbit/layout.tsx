@@ -13,11 +13,7 @@ import {
 } from 'lucide-react';
 import NextBreadcrumb from '@/components/nextBreadcrumb';
 import { Button } from '@/components/ui/button';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import AuthContextProvider from '@/lib/context/AuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CommandMenu } from '@/components/globalCommand';
@@ -32,11 +28,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import PreviewModalProvider from '@/lib/context/PreviewModalProvider';
 import { DraggableModalWindow } from '@/lib/context/DraggableModalWindow';
 
-export default function ProjectLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ProjectLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthContextProvider>
       <OrbitContextProvider>
@@ -47,9 +39,7 @@ export default function ProjectLayout({
           />
           <PreviewModalProvider>
             <SideBarContent className={' w-72 min-w-56'} />
-            <div className='flex w-full  flex-col overflow-hidden md:flex-col'>
-              {children}
-            </div>
+            <div className='flex w-full  flex-col overflow-hidden md:flex-col'>{children}</div>
             <DraggableModalWindow />
           </PreviewModalProvider>
         </div>
@@ -58,19 +48,13 @@ export default function ProjectLayout({
   );
 }
 
-function SideBarContent({
-  className,
-  showLogo = true,
-}: {
-  className?: string;
-  showLogo?: boolean;
-}) {
+function SideBarContent({ className, showLogo = true }: { className?: string; showLogo?: boolean }) {
   const [search, openSearch] = useState(false);
   const { teams } = useContext(OrbitContext);
   return (
     <section
       id='sidebar '
-      className={` flex h-full flex-col border-r border-gray-100 lg:flex dark:border-neutral-800 dark:bg-neutral-900 ${className} justify-between `}
+      className={` flex h-full flex-col border-r border-gray-100 dark:border-neutral-800 dark:bg-neutral-900 lg:flex ${className} justify-between `}
     >
       <div className='flex items-center justify-between gap-2 p-2'>
         <Dialog>
@@ -79,9 +63,7 @@ function SideBarContent({
               className='flex h-8 w-full flex-row items-center  justify-between gap-2 rounded border  border-neutral-200 bg-white p-1  px-3 text-gray-700 shadow-sm dark:border-neutral-800 dark:bg-neutral-800 dark:text-neutral-400'
               variant='ghost'
             >
-              <span className=' text-left text-xs   font-normal dark:text-neutral-300 '>
-                UBC Launch Pad
-              </span>
+              <span className=' text-left text-xs   font-normal dark:text-neutral-300 '>UBC Launch Pad</span>
               <ChevronDownIcon className='h-4 w-4  text-gray-600 dark:text-neutral-400' />
             </Button>
           </DialogTrigger>
@@ -109,12 +91,10 @@ function SideBarContent({
               <Link
                 href={'/teams'}
                 shallow={true}
-                className=' text-2xs flex h-8 w-full   items-center text-left  text-gray-700 dark:text-neutral-400 '
+                className=' flex h-8 w-full items-center   text-left text-2xs  text-gray-700 dark:text-neutral-400 '
               >
                 {/* <div className='h-3 w-3 ' /> */}
-                <span className='flex h-full items-center justify-between p-0'>
-                  My Space
-                </span>
+                <span className='flex h-full items-center justify-between p-0'>My Space</span>
               </Link>
             </div>
             <Link
@@ -123,9 +103,7 @@ function SideBarContent({
               shallow={true}
             >
               <InboxIcon className='h-3 w-3 ' />
-              <span className='flex h-full items-center justify-between pl-2'>
-                My Issues
-              </span>
+              <span className='flex h-full items-center justify-between pl-2'>My Issues</span>
             </Link>
             <Link
               href={'/projects'}
@@ -133,9 +111,7 @@ function SideBarContent({
               className=' flex h-8 w-full items-center p-1  px-2 text-left text-xs text-gray-700 dark:text-neutral-400'
             >
               <LayoutGrid className='h-3 w-3 ' />
-              <span className='flex h-full items-center justify-between pl-2'>
-                Projects
-              </span>
+              <span className='flex h-full items-center justify-between pl-2'>Projects</span>
             </Link>
           </section>
 
@@ -178,21 +154,15 @@ function TeamsSidebarSection({ teams }: { teams: any[] }) {
   const [isOpen, setIsOpen] = React.useState(true);
 
   return (
-    <Collapsible
-      open={isOpen}
-      onOpenChange={setIsOpen}
-      className='w-full p-0  '
-    >
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className='w-full p-0  '>
       <div className='flex items-center justify-between  border-t border-gray-100 pl-2 dark:border-neutral-800'>
         <Link
           href={'/teams'}
           shallow={true}
-          className=' text-2xs flex h-8 w-full   items-center text-left  text-gray-700 dark:text-neutral-400 '
+          className=' flex h-8 w-full items-center   text-left text-2xs  text-gray-700 dark:text-neutral-400 '
         >
           {/* <div className='h-3 w-3 ' /> */}
-          <span className='flex h-full items-center justify-between p-0'>
-            Teams
-          </span>
+          <span className='flex h-full items-center justify-between p-0'>Teams</span>
         </Link>
 
         <CollapsibleTrigger asChild>
@@ -229,11 +199,7 @@ function TeamSection({ team }: { team: any[] }) {
   const [isOpen, setIsOpen] = React.useState(true);
 
   return (
-    <Collapsible
-      open={isOpen}
-      onOpenChange={setIsOpen}
-      className='w-full p-0  '
-    >
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className='w-full p-0  '>
       <div className='flex items-center justify-between '>
         <Link
           href={`/teams/${team.id}`}
@@ -244,9 +210,7 @@ function TeamSection({ team }: { team: any[] }) {
             <FolderClosed className='h-full w-full ' />
           </div>
 
-          <span className='flex h-full items-center justify-between pl-1 text-xs'>
-            {team.name}
-          </span>
+          <span className='flex h-full items-center justify-between pl-1 text-xs'>{team.name}</span>
         </Link>
 
         <CollapsibleTrigger asChild>
@@ -277,23 +241,19 @@ function TeamSection({ team }: { team: any[] }) {
           <section className='flex flex-col border-gray-100 py-1 '>
             <Link
               href={`/teams/${team.id}`}
-              className=' text-2xs flex h-6 w-full    items-center text-left text-gray-700 dark:text-neutral-400'
+              className=' flex h-6 w-full items-center    text-left text-2xs text-gray-700 dark:text-neutral-400'
               shallow={true}
             >
               <div className='h-3 w-3 ' />
-              <span className='flex h-full items-center justify-between pl-2'>
-                Backlog
-              </span>
+              <span className='flex h-full items-center justify-between pl-2'>Backlog</span>
             </Link>
             <Link
               href={`/projects`}
               shallow={true}
-              className=' text-2xs flex h-6 w-full    items-center text-left text-gray-700 dark:text-neutral-400'
+              className=' flex h-6 w-full items-center    text-left text-2xs text-gray-700 dark:text-neutral-400'
             >
               <div className='h-3 w-3 ' />
-              <span className='flex h-full items-center justify-between pl-2'>
-                Active
-              </span>
+              <span className='flex h-full items-center justify-between pl-2'>Active</span>
             </Link>
           </section>
         </Link>
@@ -316,15 +276,9 @@ function TeamSection({ team }: { team: any[] }) {
 
 function UserWorkspaces() {
   const { fetcher, profile } = useContext(OrbitContext);
-  const { data, isLoading, error } = useSWR(
-    `/api/profiles/${profile.id}/workspaces`,
-    {
-      fetcher: () =>
-        fetcher(`/api/profiles/${profile.id}/workspaces`).then((res) =>
-          res.json()
-        ),
-    }
-  );
+  const { data, isLoading, error } = useSWR(`/api/profiles/${profile.id}/workspaces`, {
+    fetcher: () => fetcher(`/api/profiles/${profile.id}/workspaces`).then((res) => res.json()),
+  });
 
   if (isLoading) {
     return <Spinner />;
@@ -332,9 +286,7 @@ function UserWorkspaces() {
 
   return (
     <div className='flex flex-col border-gray-100 pb-5  '>
-      <h2 className='border-b p-3 text-xs font-semibold text-gray-700 dark:text-neutral-300'>
-        Workspaces
-      </h2>
+      <h2 className='border-b p-3 text-xs font-semibold text-gray-700 dark:text-neutral-300'>Workspaces</h2>
       <div className='flex flex-col items-center justify-between gap-4 '>
         {data.map((workspace, index) => (
           <Link
@@ -346,19 +298,11 @@ function UserWorkspaces() {
             <div className='h-5 w-5 rounded-md bg-blue-100 p-1 dark:bg-neutral-800'>
               <FolderClosed className='h-full w-full ' />
             </div>
-            <span className='flex h-full items-center justify-between pl-2'>
-              {workspace.name}
-            </span>
+            <span className='flex h-full items-center justify-between pl-2'>{workspace.name}</span>
           </Link>
         ))}
-        <Button
-          variant='ghost'
-          size='sm'
-          className='h-8 w-full text-left text-sm text-gray-700 dark:text-neutral-400'
-        >
-          <span className='flex h-full items-center justify-between pl-2'>
-            Create Workspace
-          </span>
+        <Button variant='ghost' size='sm' className='h-8 w-full text-left text-sm text-gray-700 dark:text-neutral-400'>
+          <span className='flex h-full items-center justify-between pl-2'>Create Workspace</span>
         </Button>
       </div>
     </div>

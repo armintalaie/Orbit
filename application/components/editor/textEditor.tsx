@@ -23,12 +23,7 @@ import Mention from '@tiptap/extension-mention';
 import suggestion from './suggestion';
 import Youtube from '@tiptap/extension-youtube';
 import Underline from '@tiptap/extension-underline';
-import {
-  FontBoldIcon,
-  FontItalicIcon,
-  ListBulletIcon,
-  UnderlineIcon,
-} from '@radix-ui/react-icons';
+import { FontBoldIcon, FontItalicIcon, ListBulletIcon, UnderlineIcon } from '@radix-ui/react-icons';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   Code2Icon,
@@ -162,29 +157,23 @@ export default function TextEditor({
   }, [content]);
 
   return (
-    <div
-      className={` relative flex flex-grow flex-col overflow-hidden ${className}`}
-    >
+    <div className={` relative flex flex-grow flex-col overflow-hidden ${className}`}>
       <MenuBar editor={editor} issue={issue} />
       <div className='relative flex flex-grow flex-col overflow-scroll'>
-        {editor &&
-          editor.storage &&
-          editor.storage.characterCount.characters() >= LIMIT && (
-            <div
-              className={`absolute bottom-3 left-3 z-20 m-0 flex h-8 w-fit  items-center rounded-md border bg-neutral-100 p-2 text-xs text-neutral-600 ${
-                editor.storage.characterCount.characters() >= LIMIT
-                  ? 'bg-red-100 text-red-600'
-                  : ''
-              }`}
-            >
-              {editor.storage.characterCount.characters()}/{LIMIT} words
-            </div>
-          )}
+        {editor && editor.storage && editor.storage.characterCount.characters() >= LIMIT && (
+          <div
+            className={`absolute bottom-3 left-3 z-20 m-0 flex h-8 w-fit  items-center rounded-md border bg-neutral-100 p-2 text-xs text-neutral-600 ${
+              editor.storage.characterCount.characters() >= LIMIT ? 'bg-red-100 text-red-600' : ''
+            }`}
+          >
+            {editor.storage.characterCount.characters()}/{LIMIT} words
+          </div>
+        )}
 
         {onSave && (
           <Button
             variant='outline'
-            className='text-2xs absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center rounded-md bg-inherit bg-neutral-700 px-2 text-neutral-200 dark:text-neutral-400'
+            className='absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center rounded-md bg-inherit bg-neutral-700 px-2 text-2xs text-neutral-200 dark:text-neutral-400'
             onClick={async () => {
               const content = editor.storage.markdown.getMarkdown();
               await onSave(content);
@@ -212,11 +201,23 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
   }
 
   function whichHeadingIsSelected() {
-    if (editor.isActive('heading', { level: 1 })) {
+    if (
+      editor.isActive('heading', {
+        level: 1,
+      })
+    ) {
       return 'h1';
-    } else if (editor.isActive('heading', { level: 2 })) {
+    } else if (
+      editor.isActive('heading', {
+        level: 2,
+      })
+    ) {
       return 'h2';
-    } else if (editor.isActive('heading', { level: 3 })) {
+    } else if (
+      editor.isActive('heading', {
+        level: 3,
+      })
+    ) {
       return 'h3';
     } else {
       return undefined;
@@ -224,14 +225,7 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
   }
 
   function whichStylingsAreSelected() {
-    const stylings = [
-      'bold',
-      'italic',
-      'strikethrough',
-      'underline',
-      'code',
-      'highlight',
-    ];
+    const stylings = ['bold', 'italic', 'strikethrough', 'underline', 'code', 'highlight'];
     const selectedStylings: string[] = [];
     for (const styling of stylings) {
       if (editor.isActive(styling)) {
@@ -242,13 +236,7 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
   }
 
   function whichContainerIsSelected() {
-    const containers = [
-      'bulletList',
-      'orderedItem',
-      'blockquote',
-      'codeBlock',
-      'taskItem',
-    ];
+    const containers = ['bulletList', 'orderedItem', 'blockquote', 'codeBlock', 'taskItem'];
     for (const container of containers) {
       if (editor.isActive(container)) {
         return container;
@@ -260,16 +248,18 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
   return (
     <div className='h-15 min-h-15  flex w-full flex-row  items-center justify-between overflow-x-scroll border-y  border-gray-100 bg-white dark:border-neutral-800 dark:bg-neutral-900'>
       <div className='sticky  z-10 m-0 flex h-full w-full min-w-fit flex-row items-center justify-center gap-2 p-0  text-xs '>
-        <ToggleGroup
-          type='single'
-          className='h-full min-w-fit overflow-hidden    '
-          value={whichHeadingIsSelected()}
-        >
+        <ToggleGroup type='single' className='h-full min-w-fit overflow-hidden    ' value={whichHeadingIsSelected()}>
           <ToggleGroupItem
             value='h1'
             aria-label='Toggleh1'
             onClick={() =>
-              editor.chain().focus().setHeading({ level: 1 }).run()
+              editor
+                .chain()
+                .focus()
+                .setHeading({
+                  level: 1,
+                })
+                .run()
             }
           >
             H1
@@ -279,7 +269,13 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
             value='h2'
             aria-label='Toggleh2'
             onClick={() =>
-              editor.chain().focus().setHeading({ level: 2 }).run()
+              editor
+                .chain()
+                .focus()
+                .setHeading({
+                  level: 2,
+                })
+                .run()
             }
           >
             H2
@@ -289,17 +285,19 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
             value='h3'
             aria-label='Toggleh3'
             onClick={() =>
-              editor.chain().focus().setHeading({ level: 3 }).run()
+              editor
+                .chain()
+                .focus()
+                .setHeading({
+                  level: 3,
+                })
+                .run()
             }
           >
             H3
           </ToggleGroupItem>
         </ToggleGroup>
-        <ToggleGroup
-          type='multiple'
-          value={whichStylingsAreSelected()}
-          className='h-full min-w-fit overflow-hidden  '
-        >
+        <ToggleGroup type='multiple' value={whichStylingsAreSelected()} className='h-full min-w-fit overflow-hidden  '>
           <ToggleGroupItem
             value='bold'
             aria-label='Toggle bold'
@@ -340,18 +338,20 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
             value='highlight'
             aria-label='Toggle hightlight'
             onClick={() =>
-              editor.chain().focus().toggleHighlight({ color: '#ffcc00' }).run()
+              editor
+                .chain()
+                .focus()
+                .toggleHighlight({
+                  color: '#ffcc00',
+                })
+                .run()
             }
           >
             <HighlighterIcon className='h-4 w-4' />
           </ToggleGroupItem>
         </ToggleGroup>
 
-        <ToggleGroup
-          value={whichContainerIsSelected()}
-          type='single'
-          className='h-full min-w-fit overflow-hidden  '
-        >
+        <ToggleGroup value={whichContainerIsSelected()} type='single' className='h-full min-w-fit overflow-hidden  '>
           <ToggleGroupItem
             value='bulletList'
             aria-label='Toggle unordered list'
@@ -435,9 +435,7 @@ function TemplatePopover({ editor, issue }: { editor: any; issue: any }) {
         </button>
       </SheetTrigger>
       <SheetContent className='flex max-w-full flex-col sm:max-w-2xl'>
-        {issue && issue.teamid && (
-          <IssueTemplates teamid={issue.teamid} sendTemplate={sendTemplate} />
-        )}
+        {issue && issue.teamid && <IssueTemplates teamid={issue.teamid} sendTemplate={sendTemplate} />}
       </SheetContent>
     </Sheet>
   );

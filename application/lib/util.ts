@@ -16,8 +16,12 @@ export function dateFormater(date: string) {
   const diffWeeks = Math.ceil(diffDays / 7);
   const diffMonths = Math.ceil(diffDays / 30);
   const diffYears = Math.ceil(diffDays / 365);
-  const day = dueDate.toLocaleString('default', { weekday: 'short' });
-  const month = dueDate.toLocaleString('default', { month: 'short' });
+  const day = dueDate.toLocaleString('default', {
+    weekday: 'short',
+  });
+  const month = dueDate.toLocaleString('default', {
+    month: 'short',
+  });
   const year = dueDate.getFullYear();
   const dayOfMonth = dueDate.getDate();
   const formattedDate = `${day}, ${month} ${dayOfMonth}`;
@@ -87,9 +91,7 @@ export function setDocumentMeta(title: string, description?: string) {
   'use client';
   document.title = title;
   if (description) {
-    document
-      .querySelector('meta[name="description"]')
-      ?.setAttribute('content', description);
+    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
   }
 }
 

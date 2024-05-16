@@ -11,9 +11,7 @@ import { IssueLabelField } from './fields/issueLabelField';
 import IssueDeadlineField from './fields/IssueDeadlineField';
 
 export function IssueInfo({ refIssue }: { issueId: number; refIssue: IIssue }) {
-  const [IssueInfoFields, setIssueInfoFields] = useState(
-    assignIssueInfoComponent(refIssue)
-  );
+  const [IssueInfoFields, setIssueInfoFields] = useState(assignIssueInfoComponent(refIssue));
 
   useEffect(() => {
     setIssueInfoFields(() => assignIssueInfoComponent(refIssue));
@@ -31,19 +29,13 @@ export function IssueInfo({ refIssue }: { issueId: number; refIssue: IIssue }) {
     return [
       {
         title: 'Status',
-        value: (
-          <IssueStatusField statusId={issue.statusid} issueId={issue.id} />
-        ),
+        value: <IssueStatusField statusId={issue.statusid} issueId={issue.id} />,
       },
       {
         title: 'Deadline',
         value: (
           <IssueDeadlineField
-            date={
-              issue.deadline !== null || issue.deadline
-                ? new Date(issue.deadline)
-                : undefined
-            }
+            date={issue.deadline !== null || issue.deadline ? new Date(issue.deadline) : undefined}
             issueId={issue.id}
           />
         ),
@@ -54,7 +46,10 @@ export function IssueInfo({ refIssue }: { issueId: number; refIssue: IIssue }) {
           <IssueAssigneeField
             issueId={issue.id}
             user={issue.assignees ? issue.assignees[0] : null}
-            team={{ id: issue.teamid, title: issue.team_title }}
+            team={{
+              id: issue.teamid,
+              title: issue.team_title,
+            }}
           />
         ),
       },
@@ -63,7 +58,10 @@ export function IssueInfo({ refIssue }: { issueId: number; refIssue: IIssue }) {
         value: (
           <IssueProjectField
             issueId={issue.id}
-            project={{ id: issue.projectid, title: issue.project_title }}
+            project={{
+              id: issue.projectid,
+              title: issue.project_title,
+            }}
           />
         ),
       },
@@ -77,9 +75,7 @@ export function IssueInfo({ refIssue }: { issueId: number; refIssue: IIssue }) {
           variant='ghost'
           className='p-0 hover:bg-inherit'
           onClick={() => {
-            navigator.clipboard.writeText(
-              `P${refIssue.projectid}-issue${refIssue.id}`
-            );
+            navigator.clipboard.writeText(`P${refIssue.projectid}-issue${refIssue.id}`);
             toast('Copied to clipboard');
           }}
         >
@@ -90,10 +86,10 @@ export function IssueInfo({ refIssue }: { issueId: number; refIssue: IIssue }) {
         <div className='flex  flex-col  gap-6   p-4 py-3'>
           {IssueInfoFields.map(({ title, value }) => (
             <div key={title} className='flex h-6 flex-row items-center  gap-2'>
-              <p className='text-2xs w-16  items-center pr-2 font-medium leading-tight text-gray-700 dark:text-gray-200'>
+              <p className='w-16 items-center  pr-2 text-2xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
                 {title}
               </p>
-              <div className='text-2xs flex-grow   items-center pr-2 font-medium leading-tight text-gray-700 dark:text-gray-200'>
+              <div className='flex-grow items-center   pr-2 text-2xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
                 {value}
               </div>
             </div>
@@ -102,7 +98,7 @@ export function IssueInfo({ refIssue }: { issueId: number; refIssue: IIssue }) {
 
         <div className='flex  flex-col  gap-6   p-4 py-3'>
           <div className='flex  flex-row   gap-2'>
-            <p className='text-2xs w-16  items-center pr-2 font-medium leading-tight text-gray-700 dark:text-gray-200'>
+            <p className='w-16 items-center  pr-2 text-2xs font-medium leading-tight text-gray-700 dark:text-gray-200'>
               Team
             </p>
             <div className='flex-grow items-center   pr-2 text-xs font-medium leading-tight text-gray-700 dark:text-gray-200'>

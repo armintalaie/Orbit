@@ -76,9 +76,7 @@ export default function TeamPage() {
   const params = useParams();
   const projects = getProjects();
   const { teams: cachedTeams } = useContext(OrbitContext);
-  const initialteam =
-    cachedTeams &&
-    cachedTeams.find((t) => t.id.toString() === params.teamid.toString());
+  const initialteam = cachedTeams && cachedTeams.find((t) => t.id.toString() === params.teamid.toString());
   const [issues, setIssues] = useState<IIssue[]>([]);
 
   const [team, setTeam] = useState<ITeam | undefined>(initialteam);
@@ -95,9 +93,7 @@ export default function TeamPage() {
   };
 
   function getProjects() {
-    return projectContext.filter(
-      (p) => p.teamid.toString() === params.teamid.toString()
-    );
+    return projectContext.filter((p) => p.teamid.toString() === params.teamid.toString());
   }
 
   async function fetchTeam() {
@@ -118,9 +114,7 @@ export default function TeamPage() {
   async function reload() {}
 
   const getRoute = () => {
-    return `/api/issues?q=${encodeURIComponent(
-      JSON.stringify(issueQuery.q || {})
-    )}`;
+    return `/api/issues?q=${encodeURIComponent(JSON.stringify(issueQuery.q || {}))}`;
   };
 
   if (!team) return <></>;
@@ -128,7 +122,9 @@ export default function TeamPage() {
   const issueView = (
     <ContentLoader
       route={getRoute()}
-      childProps={{ query: issueQuery }}
+      childProps={{
+        query: issueQuery,
+      }}
       childDataProp='issues'
       syncChannels={[`team:${team.id}`]}
     >
@@ -136,7 +132,9 @@ export default function TeamPage() {
     </ContentLoader>
   );
 
-  const viewMap: { [key in viewTypes]: JSX.Element } = {
+  const viewMap: {
+    [key in viewTypes]: JSX.Element;
+  } = {
     ISSUES: issueView,
     PROJECTS: (
       <>
@@ -160,19 +158,14 @@ export default function TeamPage() {
     <PageWrapper>
       <PageWrapper.Header>
         <div className='flex flex-row items-center'>
-          <h1 className='h-full text-sm  font-medium leading-tight text-gray-700 dark:text-neutral-300'>
-            {team.name}
-          </h1>
+          <h1 className='h-full text-sm  font-medium leading-tight text-gray-700 dark:text-neutral-300'>{team.name}</h1>
 
           <div className='flex items-center pl-2'>
             <TeamOptions teamId={team.id} />
           </div>
         </div>
         <div className='flex h-full items-center justify-center gap-2'>
-          <ToggleTeamViewContents
-            viewType={viewType}
-            setViewType={setViewType}
-          />
+          <ToggleTeamViewContents viewType={viewType} setViewType={setViewType} />
         </div>
       </PageWrapper.Header>
 

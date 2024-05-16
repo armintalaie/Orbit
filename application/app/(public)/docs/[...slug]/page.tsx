@@ -12,23 +12,14 @@ export async function generateStaticParams() {
 }
 
 export function generateMetadata({ params }) {
-  let post = getBlogPosts(true).find(
-    (post) => post.slug === params.slug.join('/')
-  );
+  let post = getBlogPosts(true).find((post) => post.slug === params.slug.join('/'));
 
   if (!post) {
     return;
   }
 
-  let {
-    title,
-    publishedAt: publishedTime,
-    summary: description,
-    image,
-  } = post.metadata;
-  let ogImage = image
-    ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
+  let { title, publishedAt: publishedTime, summary: description, image } = post.metadata;
+  let ogImage = image ? image : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
 
   return {
     title,
@@ -37,9 +28,7 @@ export function generateMetadata({ params }) {
 }
 
 export default function Blog({ params }) {
-  let post = getBlogPosts(true).find(
-    (post) => post.slug === params.slug.join('/')
-  );
+  let post = getBlogPosts(true).find((post) => post.slug === params.slug.join('/'));
 
   if (!post) {
     notFound();
@@ -69,13 +58,11 @@ export default function Blog({ params }) {
           }),
         }}
       />
-      <h1 className='title text-2xl font-semibold tracking-tighter'>
-        {post.metadata.title}
-      </h1>
+      <h1 className='title text-2xl font-semibold tracking-tighter'>{post.metadata.title}</h1>
       <div className='mb-8 mt-2 flex items-center justify-between text-sm'>
         <p className='text-sm'>{formatDate(post.metadata.publishedAt)}</p>
       </div>
-      <article className='prose prose-stone dark:prose-invert h-fit max-w-4xl '>
+      <article className='prose prose-stone h-fit max-w-4xl dark:prose-invert '>
         <CustomMDX source={post.content} />
       </article>
     </section>

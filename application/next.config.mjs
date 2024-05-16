@@ -34,7 +34,9 @@ const nextConfig = {
   },
   webpack(config) {
     config.plugins.push(
-      new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ })
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^pg-native$/,
+      })
     );
     return config;
   },

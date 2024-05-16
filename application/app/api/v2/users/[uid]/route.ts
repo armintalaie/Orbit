@@ -6,7 +6,13 @@ import { z } from 'zod';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { uid: string } }
+  {
+    params,
+  }: {
+    params: {
+      uid: string;
+    };
+  }
 ): Promise<NextResponse> {
   try {
     const user = await db
@@ -32,23 +38,37 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json(
-        { error: 'User does not exist' },
-        { status: 404 }
+        {
+          error: 'User does not exist',
+        },
+        {
+          status: 404,
+        }
       );
     }
     return NextResponse.json(user);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: 'Could not fetch user' },
-      { status: 500 }
+      {
+        error: 'Could not fetch user',
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { uid: string } }
+  {
+    params,
+  }: {
+    params: {
+      uid: string;
+    };
+  }
 ): Promise<NextResponse> {
   const body = await request.json();
   const schema = z.object({
@@ -65,20 +85,33 @@ export async function PATCH(
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 400 }
+      {
+        error: (error as Error).message,
+      },
+      {
+        status: 400,
+      }
     );
   }
 
   const user = await db
     .updateTable('account')
-    .set({ ...body.profile })
+    .set({
+      ...body.profile,
+    })
     .where('id', '=', params.uid)
     .returning('id')
     .executeTakeFirst();
 
   if (!user) {
-    return NextResponse.json({ error: 'User does not exist' }, { status: 404 });
+    return NextResponse.json(
+      {
+        error: 'User does not exist',
+      },
+      {
+        status: 404,
+      }
+    );
   }
 
   return NextResponse.json(user);
@@ -87,16 +120,25 @@ export async function PATCH(
 // TODO: Check if user is the last admin before deleting
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { uid: string } }
+  {
+    params,
+  }: {
+    params: {
+      uid: string;
+    };
+  }
 ): Promise<NextResponse> {
-  const user = await db
-    .deleteFrom('auth.users')
-    .where('id', '=', params.uid)
-    .returning('id')
-    .executeTakeFirst();
+  const user = await db.deleteFrom('auth.users').where('id', '=', params.uid).returning('id').executeTakeFirst();
 
   if (!user) {
-    return NextResponse.json({ error: 'User does not exist' }, { status: 404 });
+    return NextResponse.json(
+      {
+        error: 'User does not exist',
+      },
+      {
+        status: 404,
+      }
+    );
   }
 
   return NextResponse.json(user);

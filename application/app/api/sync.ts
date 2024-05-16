@@ -15,11 +15,7 @@ type WSPubSubMessage = {
 
 export default socket;
 
-export const publishEvent = (
-  channels: string[],
-  data: object,
-  event?: string
-) => {
+export const publishEvent = (channels: string[], data: object, event?: string) => {
   // socket.send(
   //   JSON.stringify({
   //     type: 'publish',

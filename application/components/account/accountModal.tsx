@@ -4,23 +4,15 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
 
 import { useContext, useMemo, useState } from 'react';
-import {
-  Grid2X2,
-  InfoIcon,
-  LockIcon,
-  PaintBucket,
-  SettingsIcon,
-  User2,
-  Users2Icon,
-} from 'lucide-react';
+import { Grid2X2, InfoIcon, LockIcon, PaintBucket, SettingsIcon, User2, Users2Icon } from 'lucide-react';
 import ThemeToggle from '../themeToggle';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-import WorkspaceGeneralSettings from '../workspace/workspaceGeneralSettings';
+import WorkspaceGeneralSettings from '../workspace/settings/workspaceGeneralSettings';
 import AccountWorkspaces from './accountWorkspaces';
-import WorkspaceSecuritySettings from '../workspace/workspaceSecuritySettings';
+import WorkspaceSecuritySettings from '../workspace/settings/workspaceSecuritySettings';
 import UserAccountSettings from './userAccountSettings';
-import WorkspaceAccountSettings from './workspaceAccountSettings';
-import WorkspaceMembers from './workspaceMembersSettings';
+import WorkspaceAccountSettings from '../workspace/settings/workspaceAccountSettings';
+import WorkspaceMembers from '../workspace/settings/workspaceMembersSettings';
 
 export default function AccountModal() {
   const [activeMenu, setActiveMenu] = useState(['account', 'account']);
@@ -91,11 +83,7 @@ export default function AccountModal() {
         <button>Settings</button>
       </DialogTrigger>
       <DialogContent className='flex h-full max-h-[90%] w-full max-w-6xl overflow-hidden p-0'>
-        <ModalSidebar
-          menuOptions={menuOptions}
-          setActiveMenu={setActiveMenu}
-          activeMenu={activeMenu}
-        />
+        <ModalSidebar menuOptions={menuOptions} setActiveMenu={setActiveMenu} activeMenu={activeMenu} />
         <div className='flex flex-1 flex-col gap-4 divide-y overflow-hidden px-6 py-4 '>
           <h1 className='  overflow-scroll text-2xl  font-semibold '>
             {menuOptions[activeMenu[0]].options[activeMenu[1]].label}
@@ -151,14 +139,12 @@ function AppearanceSettings() {
   return (
     <div className='flex h-full w-full flex-col  items-center gap-5'>
       <div className='secondary-surface flex h-full w-full flex-col  gap-5 rounded-md p-5'>
-        At the moment, you can only change the theme of the application between
-        light and dark.
+        At the moment, you can only change the theme of the application between light and dark.
         <ThemeToggle />
       </div>
 
       <div className='secondary-surface flex h-full w-full flex-col  items-center rounded-md p-5'>
-        Your workspace admin can change the theme of the workspace to a custom
-        theme.
+        Your workspace admin can change the theme of the workspace to a custom theme.
       </div>
     </div>
   );

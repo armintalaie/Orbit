@@ -5,31 +5,41 @@ import { headers } from 'next/headers';
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { iid: string } }
+  {
+    params,
+  }: {
+    params: {
+      iid: string;
+    };
+  }
 ) {
   const { iid } = params;
-  await db
-    .deleteFrom('issue_assignee')
-    .where('issue_id', '=', Number(iid))
-    .execute();
+  await db.deleteFrom('issue_assignee').where('issue_id', '=', Number(iid)).execute();
 
-  return Response.json({ message: 'success' });
+  return Response.json({
+    message: 'success',
+  });
 }
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { iid: string } }
+  {
+    params,
+  }: {
+    params: {
+      iid: string;
+    };
+  }
 ) {
   try {
     const { iid } = params;
 
-    await db
-      .deleteFrom('issue_assignee')
-      .where('issue_id', '=', Number(iid))
-      .execute();
+    await db.deleteFrom('issue_assignee').where('issue_id', '=', Number(iid)).execute();
     const body = await req.json();
     if (!body.user_id) {
-      return Response.json({ message: 'success' });
+      return Response.json({
+        message: 'success',
+      });
     }
     const user_id = body.user_id;
     await db
@@ -76,18 +86,20 @@ export async function PATCH(
 
     const assigneeSubs = updated.assignees.map((a: any) => 'user:' + a.id);
     publishEvent(
-      [
-        'project:' + updated.projectid,
-        'team:' + updated.teamid,
-        'issue:' + updated.id,
-        ...assigneeSubs,
-      ],
+      ['project:' + updated.projectid, 'team:' + updated.teamid, 'issue:' + updated.id, ...assigneeSubs],
       updated
     );
     return Response.json(updated);
   } catch (error) {
     console.log(error);
-    return Response.json({ error: '' }, { status: 405 });
+    return Response.json(
+      {
+        error: '',
+      },
+      {
+        status: 405,
+      }
+    );
   }
 }
 
@@ -105,12 +117,17 @@ export async function POST(req: any) {
   return Response.json(query.insertId);
 }
 
-export async function GET(req: any, { params }: { params: { iid: string } }) {
+export async function GET(
+  req: any,
+  {
+    params,
+  }: {
+    params: {
+      iid: string;
+    };
+  }
+) {
   const { iid } = params;
-  const data = await db
-    .selectFrom('issue_assignee')
-    .selectAll()
-    .where('issue_id', '=', Number(iid))
-    .execute();
+  const data = await db.selectFrom('issue_assignee').selectAll().where('issue_id', '=', Number(iid)).execute();
   return Response.json(data);
 }

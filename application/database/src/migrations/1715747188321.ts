@@ -1,11 +1,7 @@
 import { Kysely } from 'kysely';
 
 export async function up(db: Kysely<any>): Promise<void> {
-  const workspaceIds = await db
-    .withSchema('public')
-    .selectFrom('workspace')
-    .select('id')
-    .execute();
+  const workspaceIds = await db.withSchema('public').selectFrom('workspace').select('id').execute();
 
   for (const workspaceId of workspaceIds) {
     await updateWorkspacemembers(db, workspaceId.id);
@@ -25,9 +21,7 @@ function updateWorkspacemembers(db: Kysely<any>, workspaceId: string) {
     .addColumn('first_name', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('last_name', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('pronouns', 'text', (col) => col.notNull().defaultTo(''))
-    .addColumn('avatar', 'text', (col) =>
-      col.notNull().defaultTo(defaultAvatar)
-    )
+    .addColumn('avatar', 'text', (col) => col.notNull().defaultTo(defaultAvatar))
     .addColumn('location', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('timezone', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('status', 'text', (col) => col.notNull().defaultTo(''))

@@ -3,19 +3,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { Users2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 
@@ -26,13 +15,13 @@ export function TeamField({ field }: { field: any }) {
     [key: string]: any;
   }>({});
   const [open, setOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(
-    field ? field.value : null
-  );
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(field ? field.value : null);
 
   useEffect(() => {
     async function fetchTeams() {
-      const options: { [key: string]: any } = {};
+      const options: {
+        [key: string]: any;
+      } = {};
       for (const p of teamArray) {
         options[p.id] = {
           ...p,
@@ -49,12 +38,10 @@ export function TeamField({ field }: { field: any }) {
           <Button
             variant='outline'
             size='sm'
-            className='text-2xs line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-gray-800'
+            className='line-clamp-1 flex h-8 w-fit justify-start overflow-hidden text-2xs text-gray-800'
           >
             {selectedStatus && selectedStatus !== null ? (
-              <>
-                {teams && teams[selectedStatus] && teams[selectedStatus].name}
-              </>
+              <>{teams && teams[selectedStatus] && teams[selectedStatus].name}</>
             ) : (
               <div className=' flex text-xs '>
                 <Users2Icon className='mr-2 h-4 w-4 shrink-0' />
@@ -71,11 +58,7 @@ export function TeamField({ field }: { field: any }) {
               }
               if (!teams[value]) return 0;
 
-              return teams[value].name
-                .toLowerCase()
-                .indexOf(search.toLowerCase()) !== -1
-                ? 1
-                : 0;
+              return teams[value].name.toLowerCase().indexOf(search.toLowerCase()) !== -1 ? 1 : 0;
             }}
           >
             <CommandInput placeholder='Select team...' />
@@ -87,13 +70,8 @@ export function TeamField({ field }: { field: any }) {
                     key={team.id}
                     value={teams.id}
                     onSelect={(value) => {
-                      const matchId =
-                        Object.keys(teams).find((m) => m === key) || null;
-                      if (
-                        !matchId ||
-                        !teams[matchId as string] ||
-                        !teams[matchId as string].id
-                      ) {
+                      const matchId = Object.keys(teams).find((m) => m === key) || null;
+                      if (!matchId || !teams[matchId as string] || !teams[matchId as string].id) {
                         setSelectedStatus(null);
                         field.onChange(null);
                       } else {

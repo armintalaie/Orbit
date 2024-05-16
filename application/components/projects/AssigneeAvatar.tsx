@@ -16,10 +16,7 @@ type AssigneeAvatarProps = {
   };
 };
 
-export default function AssigneeAvatar({
-  assignee,
-  formatting,
-}: AssigneeAvatarProps) {
+export default function AssigneeAvatar({ assignee, formatting }: AssigneeAvatarProps) {
   const avatarFormatting = {
     showFullName: false,
     showEmail: false,
@@ -51,13 +48,9 @@ export default function AssigneeAvatar({
         <AvatarFallback>{getInitials(assignee.full_name)}</AvatarFallback>
       </Avatar>
       <p className='text-[10px]'>
-        {avatarFormatting.showFullName
-          ? assignee.full_name
-          : getFirstNameAndLastInitial(assignee.full_name)}
+        {avatarFormatting.showFullName ? assignee.full_name : getFirstNameAndLastInitial(assignee.full_name)}
       </p>
-      {avatarFormatting.showEmail && assignee.email && (
-        <p className='text-[8px]'>{'<' + assignee.email + '>'}</p>
-      )}
+      {avatarFormatting.showEmail && assignee.email && <p className='text-[8px]'>{'<' + assignee.email + '>'}</p>}
     </div>
   );
 }

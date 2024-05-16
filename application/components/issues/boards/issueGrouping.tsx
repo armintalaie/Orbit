@@ -1,10 +1,4 @@
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue } from '@/lib/types/issue';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -20,7 +14,9 @@ const issueAttributes: {
   [key: string]: {
     id: string;
     label: string;
-    options: { [key: number | string]: AttributeOptions };
+    options: {
+      [key: number | string]: AttributeOptions;
+    };
     configuration?: {
       hideEmpty?: boolean;
     };
@@ -79,38 +75,40 @@ export function IssueGrouping({
   const searchParams = useSearchParams();
 
   const pathname = usePathname();
-  const defaultGrouping =
-    searchParams.get('grouping') || issueAttributes['statusid'].id;
+  const defaultGrouping = searchParams.get('grouping') || issueAttributes['statusid'].id;
   const [selectedGrouping, setSelectedGrouping] = useState(defaultGrouping);
   const { status, projects, teams } = useContext(OrbitContext);
 
   async function updateGrouping() {
     if (selectedGrouping === 'statusid') {
-      (issueAttributes['statusid'] as any).options = status.reduce(
-        (acc, curr) => {
-          acc[curr.id] = { id: curr.id, label: curr.label };
-          return acc;
-        },
-        {}
-      );
+      (issueAttributes['statusid'] as any).options = status.reduce((acc, curr) => {
+        acc[curr.id] = {
+          id: curr.id,
+          label: curr.label,
+        };
+        return acc;
+      }, {});
     }
 
     if (selectedGrouping === 'projectid') {
-      (issueAttributes['projectid'] as any).options = projects.reduce(
-        (acc, project) => {
-          if (teamid && Number(project.teamid) !== Number(teamid)) {
-            return acc;
-          }
-          acc[project.id] = { id: project.id, label: project.title };
+      (issueAttributes['projectid'] as any).options = projects.reduce((acc, project) => {
+        if (teamid && Number(project.teamid) !== Number(teamid)) {
           return acc;
-        },
-        {}
-      );
+        }
+        acc[project.id] = {
+          id: project.id,
+          label: project.title,
+        };
+        return acc;
+      }, {});
     }
 
     if (selectedGrouping === 'teamid') {
       (issueAttributes['teamid'] as any).options = teams.reduce((acc, team) => {
-        acc[team.id] = { id: team.id, label: team.name };
+        acc[team.id] = {
+          id: team.id,
+          label: team.name,
+        };
         return acc;
       }, {});
     }
@@ -129,9 +127,7 @@ export function IssueGrouping({
   );
 
   useEffect(() => {
-    router.push(
-      pathname + '?' + createQueryString('grouping', selectedGrouping)
-    );
+    router.push(pathname + '?' + createQueryString('grouping', selectedGrouping));
   }, [selectedGrouping]);
 
   useEffect(() => {
@@ -151,11 +147,7 @@ export function IssueGrouping({
       <SelectContent className=''>
         <SelectGroup className=''>
           {Object.keys(issueAttributes).map((key) => (
-            <SelectItem
-              key={key}
-              value={issueAttributes[key].id}
-              className='text-xs'
-            >
+            <SelectItem key={key} value={issueAttributes[key].id} className='text-xs'>
               {issueAttributes[key].label}
             </SelectItem>
           ))}
@@ -166,9 +158,7 @@ export function IssueGrouping({
 }
 
 function groupBykey(issues: IIssue[], key: string): Grouping {
-  const groupingKey = issueAttributes[key]
-    ? issueAttributes[key].id
-    : issueAttributes['statusid'].id;
+  const groupingKey = issueAttributes[key] ? issueAttributes[key].id : issueAttributes['statusid'].id;
 
   const groupedIssues: GroupedIssues = [];
 
@@ -207,9 +197,7 @@ function groupBykey(issues: IIssue[], key: string): Grouping {
       groupedIssues.push({
         issues: [issue],
         key: key,
-        label: issueAttributes[groupingKey].options[key]
-          ? issueAttributes[groupingKey].options[key].label
-          : 'invalid',
+        label: issueAttributes[groupingKey].options[key] ? issueAttributes[groupingKey].options[key].label : 'invalid',
       });
     }
   }

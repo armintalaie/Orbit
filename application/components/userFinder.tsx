@@ -1,20 +1,9 @@
 'use client';
 
 import { UserIcon } from 'lucide-react';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { useState, useRef, useEffect } from 'react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useContext } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import AssigneeAvatar from './projects/AssigneeAvatar';
@@ -28,15 +17,7 @@ interface Profile {
   label: string;
 }
 
-export function UserFinder({
-  val,
-  setVal,
-  teamid,
-}: {
-  val: string;
-  setVal: Function;
-  teamid: number;
-}) {
+export function UserFinder({ val, setVal, teamid }: { val: string; setVal: Function; teamid: number }) {
   const [memberOptions, setMemberOptions] = useState<{
     [key: string]: Profile;
   }>({});
@@ -66,7 +47,9 @@ export function UserFinder({
       cache: 'no-store',
     });
     const profiles = await res.json();
-    const options: { [key: string]: Profile } = {};
+    const options: {
+      [key: string]: Profile;
+    } = {};
 
     for (const profile of profiles) {
       options[profile.id] = {
@@ -85,12 +68,7 @@ export function UserFinder({
     <div className='flex w-full items-center space-x-4'>
       <Popover open={open} onOpenChange={setOpen} modal>
         <PopoverTrigger asChild>
-          <Button
-            variant='outline'
-            size='sm'
-            className='w-full justify-start'
-            ref={buttonRef}
-          >
+          <Button variant='outline' size='sm' className='w-full justify-start' ref={buttonRef}>
             {val ? (
               <>
                 <AssigneeAvatar
@@ -126,11 +104,7 @@ export function UserFinder({
               if (!memberOptions[value]) {
                 return 0;
               }
-              return memberOptions[value].full_name
-                .toLowerCase()
-                .indexOf(search.toLowerCase()) !== -1
-                ? 1
-                : 0;
+              return memberOptions[value].full_name.toLowerCase().indexOf(search.toLowerCase()) !== -1 ? 1 : 0;
             }}
           >
             <CommandInput placeholder='search profiles...' />
@@ -170,18 +144,20 @@ export function MentionUserFinder({ val, setVal, teamid }) {
     [key: string]: Profile;
   }>({});
   const [open, setOpen] = React.useState(false);
-  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
-    null
-  );
+  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(null);
   const { fetcher } = useContext(OrbitContext);
 
   React.useEffect(() => {
     async function fetchMembers() {
       const res = await fetcher(`/api/profiles/`, {
-        next: { revalidate: 10 },
+        next: {
+          revalidate: 10,
+        },
       });
       const profiles = await res.json();
-      const options: { [key: string]: Profile } = {};
+      const options: {
+        [key: string]: Profile;
+      } = {};
 
       for (const profile of profiles) {
         options[profile.id] = {
@@ -205,11 +181,7 @@ export function MentionUserFinder({ val, setVal, teamid }) {
           if (!memberOptions[value]) {
             return 0;
           }
-          return memberOptions[value].full_name
-            .toLowerCase()
-            .indexOf(search.toLowerCase()) !== -1
-            ? 1
-            : 0;
+          return memberOptions[value].full_name.toLowerCase().indexOf(search.toLowerCase()) !== -1 ? 1 : 0;
         }}
       >
         <CommandList>
@@ -220,9 +192,7 @@ export function MentionUserFinder({ val, setVal, teamid }) {
                 key={member.id}
                 value={member.id}
                 onSelect={(value) => {
-                  const match = Object.values(memberOptions).find(
-                    (m) => m.id === value
-                  );
+                  const match = Object.values(memberOptions).find((m) => m.id === value);
                   if (match) {
                     setSelectedStatus(match.full_name as string);
                   } else {

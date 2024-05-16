@@ -32,20 +32,14 @@ export function Changelog() {
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>Changelog</DialogTitle>
-          <DialogDescription>
-            View the latest changes to Orbit.
-          </DialogDescription>
+          <DialogDescription>View the latest changes to Orbit.</DialogDescription>
         </DialogHeader>
         <div className='flex items-center space-x-2'>
           <div className='grid flex-1 gap-2'>
             <Label htmlFor='link' className='sr-only'>
               Link
             </Label>
-            <Input
-              id='link'
-              defaultValue='https://github.com/armintalaie/Orbit/blob/main/CHANGELOG.md'
-              readOnly
-            />
+            <Input id='link' defaultValue='https://github.com/armintalaie/Orbit/blob/main/CHANGELOG.md' readOnly />
           </div>
           <Button type='submit' size='sm' className='px-3'>
             <span className='sr-only'>Copy</span>

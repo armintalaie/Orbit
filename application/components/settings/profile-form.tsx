@@ -5,15 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { toast } from 'sonner';
@@ -114,9 +106,7 @@ export function ProfileForm() {
               <FormControl>
                 <Input placeholder={profile.full_name} {...field} />
               </FormControl>
-              <FormDescription>
-                This is your display name. please enter your full name.
-              </FormDescription>
+              <FormDescription>This is your display name. please enter your full name.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -145,8 +135,7 @@ export function ProfileForm() {
                 <Input placeholder={profile.username} {...field} />
               </FormControl>
               <FormDescription>
-                This is your username. A @mentionable name that will be
-                displayed on your profile.
+                This is your username. A @mentionable name that will be displayed on your profile.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -155,19 +144,10 @@ export function ProfileForm() {
 
         <div></div>
         <div className='flex items-center justify-end gap-2 p-1 text-sm'>
-          <Button
-            variant='outline'
-            className='rounded-sm px-2 py-0 text-sm'
-            type='submit'
-          >
+          <Button variant='outline' className='rounded-sm px-2 py-0 text-sm' type='submit'>
             Update profile
           </Button>
-          <Button
-            onClick={signout}
-            variant='outline'
-            className='rounded-sm px-2 py-0 text-sm'
-            type='button'
-          >
+          <Button onClick={signout} variant='outline' className='rounded-sm px-2 py-0 text-sm' type='button'>
             Sign out
           </Button>
         </div>
