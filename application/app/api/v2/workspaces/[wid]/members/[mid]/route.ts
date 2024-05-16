@@ -25,12 +25,14 @@ export async function DELETE(
     };
   }
 ): Promise<NextResponse> {
-  const id = await db
+  await db
     .deleteFrom('public.workspaceMember')
     .where('workspaceId', '=', params.wid)
     .where('userId', '=', params.mid)
     .execute();
-  return NextResponse.json({ id });
+
+  await db.withSchema(`workspace_${params.wid}`).deleteFrom('workspaceMember').where('memberId', '=', params.mid).execute();
+  return NextResponse.json({ message: 'Member deleted successfully' });
 }
 
 export async function PATCH(

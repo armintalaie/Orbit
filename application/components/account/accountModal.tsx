@@ -107,7 +107,7 @@ function ModalSidebar({ menuOptions, setActiveMenu, activeMenu }) {
 
         {Object.entries(menuOptions).map(([menuKey, menu]) => (
           <div className='flex flex-col gap-2 py-5'>
-            <div className='flex items-center gap-2 border-b pb-4 text-sm'>
+            <div className='flex items-center gap-2 border-b pb-4 text-sm text-neutral-600'>
               {menu.info.icon}
               {menu.info.label}
             </div>

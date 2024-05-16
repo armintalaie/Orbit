@@ -3,6 +3,7 @@ import React, { useState, Suspense, useContext, useEffect } from 'react';
 import { UserSessionContext } from './AuthProvider';
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
+
 type OrbitType = {
   currentWorkspace: any | null;
   changeWorkspace: (workspace: any) => void;
@@ -36,6 +37,7 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
       return;
     }
     getWorkspace(id).then((data) => {
+      window.localStorage.setItem('currentWorkspace', JSON.stringify(data));
       setOrbit({
         ...orbit,
         currentWorkspace: data,
@@ -57,7 +59,6 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
   }
 
   async function getWorkspace(id: any) {
-    // setLoading(false);
 
     const res = await fetch(`/api/v2/workspaces/${id}`, {
       method: 'GET',
@@ -99,7 +100,14 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
   };
 
   useEffect(() => {
-    changeWorkspace();
+    if (window.localStorage.getItem('currentWorkspace')) {
+      const workspace = JSON.parse(window.localStorage.getItem('currentWorkspace') || '{}');
+      setOrbit({
+        ...orbit,
+        currentWorkspace: workspace,
+      });
+      changeWorkspace(workspace.id);
+    }
   }, []);
 
   if (!user) {
@@ -109,16 +117,6 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
     <Suspense fallback={<LoadingFallback />}>
       <OrbitContext.Provider value={contextValue}>
         <div className={`relative flex h-full w-full flex-col`}>
-          {/* <div
-            className='  z-100 absolute left-0 top-0 h-screen w-full'
-            style={{
-              display: loading ? 'block' : 'none',
-              zIndex: 50,
-              pointerEvents: loading ? 'none' : 'none',
-              backgroundColor: 'black',
-              opacity: 0.5,
-            }}
-          ></div> */}
           {children}
         </div>
       </OrbitContext.Provider>
