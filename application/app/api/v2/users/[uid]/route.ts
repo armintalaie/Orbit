@@ -83,3 +83,21 @@ export async function PATCH(
 
   return NextResponse.json(user);
 }
+
+// TODO: Check if user is the last admin before deleting
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { uid: string } }
+): Promise<NextResponse> {
+  const user = await db
+    .deleteFrom('auth.users')
+    .where('id', '=', params.uid)
+    .returning('id')
+    .executeTakeFirst();
+
+  if (!user) {
+    return NextResponse.json({ error: 'User does not exist' }, { status: 404 });
+  }
+
+  return NextResponse.json(user);
+}

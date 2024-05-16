@@ -1,46 +1,18 @@
 import { db } from '@/lib/db/handler';
-import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 export const schema = z.object({
-  name: z.string(),
+  name: z.string().optional(),
   description: z.string().optional(),
-  permissions: z.array(z.string()),
+  permissions: z.array(z.string()).optional(),
 });
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { wid: string } }
-): Promise<NextResponse> {
-  try {
-    const workspace = await db
-      .withSchema(`workspace_${params.wid}`)
-      .selectFrom('role')
-      .select((eb) => [
-        'name',
-        'role.description',
-        jsonArrayFrom(
-          eb
-            .selectFrom('rolePermission')
-            .whereRef('rolePermission.roleName', '=', 'role.name')
-            .selectAll()
-        ).as('permissions'),
-      ])
-      .execute();
-    return NextResponse.json(workspace);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: 'Workspace does not exist' },
-      { status: 400 }
-    );
-  }
-}
+const defaultRoles = ['admin', 'member', 'owner'];
 
-export async function POST(
+export async function PATCH(
   request: NextRequest,
-  { params }: { params: { wid: string }; body: { name: string } }
+  { params }: { params: { wid: string; rName: string }; body: any }
 ): Promise<NextResponse> {
   const role = await request.json();
 
@@ -48,6 +20,13 @@ export async function POST(
     schema.parse(role);
   } catch (error) {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+  }
+
+  if (defaultRoles.includes(role.name)) {
+    return NextResponse.json(
+      { error: 'Cannot update default roles' },
+      { status: 400 }
+    );
   }
 
   try {
@@ -85,6 +64,22 @@ export async function POST(
 
     await db
       .withSchema(`workspace_${params.wid}`)
+      .deleteFrom('rolePermission')
+      .where('roleName', '=', role.name);
+
+    if (role.name) {
+      await db
+        .withSchema(`workspace_${params.wid}`)
+        .updateTable('role')
+        .set({
+          name: role.name,
+        })
+        .where('name', '=', role.name)
+        .execute();
+    }
+
+    await db
+      .withSchema(`workspace_${params.wid}`)
       .insertInto('rolePermission')
       .values(
         entityPerms.map(
@@ -108,4 +103,25 @@ export async function POST(
       { status: 500 }
     );
   }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { wid: string; rName: string } }
+): Promise<NextResponse> {
+  if (defaultRoles.includes(params.rName)) {
+    return NextResponse.json(
+      { error: 'Cannot delete default roles' },
+      { status: 400 }
+    );
+  }
+
+  const role = await db
+    .withSchema(`workspace_${params.wid}`)
+    .deleteFrom('role')
+    .where('name', '=', params.rName)
+    .execute();
+  return NextResponse.json({
+    message: 'Role deleted successfully',
+  });
 }

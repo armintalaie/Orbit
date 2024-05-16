@@ -1,0 +1,28 @@
+---
+title: 'Create Role'
+publishedAt: '2024-05-15'
+labels: 'v0.2.5'
+---
+
+`POST workspaces/<workspaceId>/roles`
+
+Body Params
+
+| Name        | Type          | Required? | Description                                    |
+| ----------- | ------------- | --------- | ---------------------------------------------- |
+| name        | string        | yes       | should be unique across workspace              |
+| permissions | array[string] | yes       | list of permissions to associate with the role |
+| description | string        | no        | what the role is                               |
+
+Query Params: N/A
+
+Path Params:
+
+- `workspaceId`: the workspaceid for the role to be created in
+
+### Details
+
+This endpoint is used to create roles across a workspace. Given a unique role name across the workspace, a list of permissions, it will create a new role for
+the workspace. Permissions should be from a list of avalailable permissions. See [permissions endpoint](../../resources/permissions).
+
+This endpoint can be accessed only by workspaces users with `workspace:admin` or `workspace:modify` permissions.

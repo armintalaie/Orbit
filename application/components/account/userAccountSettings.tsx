@@ -3,10 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
 import { Button } from '../ui/button';
 import Image from 'next/image';
-
 import { useContext } from 'react';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { createClient } from '@/lib/utils/supabase/client';
@@ -40,6 +38,22 @@ export default function UserAccountSettings() {
     resolver: zodResolver(schema),
     defaultValues: rest,
   });
+
+  async function deleteAccount() {
+    const res = await fetch(`/api/v2/users/${user.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${userSession.access_token}`,
+      },
+    });
+    if (res.ok) {
+      toast('Account deleted successfully');
+      router.push('/auth/signup');
+    } else {
+      toast('Account deletion failed');
+    }
+  }
 
   async function signout() {
     const supabase = createClient();
@@ -137,15 +151,29 @@ export default function UserAccountSettings() {
                   />
                 ))}
               <div className='flex flex-1 items-center justify-end gap-2'>
-                <Button
-                  //   disabled={form.getValues().toString() !== profile.toString()}
-                  type='submit'
-                >
-                  Update
-                </Button>
+                <Button type='submit'>Update</Button>
               </div>
             </form>
           </Form>
+          <div className='flex w-full flex-1 flex-col items-start gap-2 border-t py-10'>
+            <h3 className='text-lg font-semibold'>Danger Zone</h3>
+            <div className='primary-surface flex w-full flex-col gap-5 rounded-md border p-5'>
+              <p className='text-sm'>
+                Deleting your account will permanently remove all you from all
+                your workspaces and delete all your data. This action cannot be
+                undone. You will have to create a new account to use Orbit
+                again.
+              </p>
+              <Button
+                type='submit'
+                variant='destructive'
+                className='w-fit'
+                onClick={deleteAccount}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     </div>

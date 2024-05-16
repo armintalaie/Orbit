@@ -8,7 +8,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       .selectAll()
       .execute();
 
-    return NextResponse.json(perms);
+    return NextResponse.json(perms, {
+      headers: {
+        'Cache-Control': 's-maxage=3600, stale-while-revalidate',
+      },
+      status: 200,
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
