@@ -31,7 +31,11 @@ export async function DELETE(
     .where('userId', '=', params.mid)
     .execute();
 
-  await db.withSchema(`workspace_${params.wid}`).deleteFrom('workspaceMember').where('memberId', '=', params.mid).execute();
+  await db
+    .withSchema(`workspace_${params.wid}`)
+    .deleteFrom('workspaceMember')
+    .where('memberId', '=', params.mid)
+    .execute();
   return NextResponse.json({ message: 'Member deleted successfully' });
 }
 

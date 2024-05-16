@@ -15,8 +15,11 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function WorkspaceMembers() {
   const [showInvites, setShowInvites] = useState(false);
   const { members, isLoading, error } = useWorkspaceMembers();
-  const [memberProfile , setMemberProfile] = useState<WorkspaceMember | undefined>();
-  const membersComponent = useMemo(() => <MembersSection members={members} isLoading={isLoading} setMemberProfile={setMemberProfile}/>, [members]);
+  const [memberProfile, setMemberProfile] = useState<WorkspaceMember | undefined>();
+  const membersComponent = useMemo(
+    () => <MembersSection members={members} isLoading={isLoading} setMemberProfile={setMemberProfile} />,
+    [members]
+  );
 
   if (isLoading) return <Spinner />;
   if (error) return <div>Error loading members</div>;
@@ -40,7 +43,15 @@ export default function WorkspaceMembers() {
   );
 }
 
-function MembersSection({ members, isLoading, setMemberProfile }: { members: WorkspaceMember[]; isLoading: boolean, setMemberProfile: (member: WorkspaceMember | undefined) => void}) {
+function MembersSection({
+  members,
+  isLoading,
+  setMemberProfile,
+}: {
+  members: WorkspaceMember[];
+  isLoading: boolean;
+  setMemberProfile: (member: WorkspaceMember | undefined) => void;
+}) {
   if (isLoading) return <div>Loading...</div>;
 
   const cleanData = useCallback((data: WorkspaceMember[]) => {
@@ -56,27 +67,26 @@ function MembersSection({ members, isLoading, setMemberProfile }: { members: Wor
 
   const membersinfo = cleanData(members);
 
-
-
-
   return (
     <div className='secondary-surface flex w-full flex-col items-center justify-start overflow-x-scroll rounded border text-xs'>
       <div className='primary-surface flex w-full flex-shrink-0 justify-between gap-2 border-b p-2 font-medium'>
-      <span className='w-6 truncate  flex-shrink-0'></span>
+        <span className='w-6 flex-shrink-0  truncate'></span>
         {Object.entries(membersinfo[0]).map(([key, value]) => (
-          <span className='w-28 truncate  flex-shrink-0'>{key}</span>
+          <span className='w-28 flex-shrink-0  truncate'>{key}</span>
         ))}
       </div>
       {membersinfo?.map((member) => (
-        <div className=' primary-surface flex w-full justify-between gap-2 p-2 border-b  '>
-            <Button className='w-6  p-1 h-fit truncate  flex-shrink-0' variant={"ghost"}
-              onClick={() => setMemberProfile(members.find((m) => m.username === member.username))}
-            >
-              <Contact2Icon size={16} />
-            </Button>
+        <div className=' primary-surface flex w-full justify-between gap-2 border-b p-2  '>
+          <Button
+            className='h-fit  w-6 flex-shrink-0 truncate  p-1'
+            variant={'ghost'}
+            onClick={() => setMemberProfile(members.find((m) => m.username === member.username))}
+          >
+            <Contact2Icon size={16} />
+          </Button>
 
           {Object.entries(member).map(([key, value]) => (
-            <span className='w-28 truncate flex-shrink-0'>{value}</span>
+            <span className='w-28 flex-shrink-0 truncate'>{value}</span>
           ))}
         </div>
       ))}

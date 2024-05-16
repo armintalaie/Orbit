@@ -1,4 +1,5 @@
 import { Kysely, Transaction, sql } from 'kysely';
+import { Database } from '../schema/workspace';
 
 type WorkspaceCreateInput = {
   name: string;
@@ -51,6 +52,7 @@ async function setupWorkspaceTables(db: Transaction<any>, workspaceId: string) {
   await db.schema.createSchema(workspaceSchema).ifNotExists().execute();
   await setupWorkspacePermissionsAndRoles(db, workspaceSchema);
   await setupWorkspaceTeamTable(db, workspaceSchema);
+  await projectTableSetup(db, workspaceSchema);
 }
 
 async function createStarterRoles(db: Transaction<any>, workspaceId: string, ownerId: string) {
@@ -275,3 +277,49 @@ export const DatabaseUtils = {
   setupWorkspace: createWorkspaceTenant,
   destroyWorkspace: destroyWorkspaceTenant,
 };
+
+export async function projectTableSetup(trx: Transaction<any>, workspaceSchema: string) {
+  trx
+    .withSchema(workspaceSchema)
+    .schema.createTable('project_status')
+    .addColumn('id', 'serial', (col) => col.primaryKey())
+    .addColumn('name', 'text', (col) => col.notNull().unique())
+    .execute();
+
+  trx
+    .withSchema(workspaceSchema)
+    .insertInto('project_status')
+    .values([
+      { name: 'backlog' },
+      { name: 'planned' },
+      { name: 'in progress' },
+      { name: 'completed' },
+      { name: 'cancelled' },
+    ])
+    .execute();
+
+  trx
+    .withSchema(workspaceSchema)
+    .schema.createTable('project')
+    .addColumn('id', 'serial', (col) => col.primaryKey())
+    .addColumn('name', 'text', (col) => col.notNull().unique())
+    .addColumn('description', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('status', 'text', (col) =>
+      col.references('project_status.name').onUpdate('cascade').onDelete('set null')
+    )
+    .addColumn('created_at', 'timestamptz', (col) => col.notNull().defaultTo('now()'))
+    .addColumn('updated_at', 'timestamptz', (col) => col.notNull().defaultTo('now()'))
+    .addColumn('target_date', 'timestamptz')
+    .addColumn('start_date', 'timestamptz')
+    .execute();
+
+  trx
+    .withSchema(workspaceSchema)
+    .schema.createTable('project_member')
+    .addColumn('id', 'uuid', (col) =>
+      col.references('workspace_member.member_id').onUpdate('cascade').onDelete('cascade')
+    )
+    .addColumn('project_id', 'serial', (col) => col.references('project.id').onUpdate('cascade').onDelete('cascade'))
+    .addPrimaryKeyConstraint('project_member_pkey', ['id', 'project_id'])
+    .execute();
+}

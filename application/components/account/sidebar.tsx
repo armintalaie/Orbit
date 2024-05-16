@@ -4,6 +4,9 @@ import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { useContext, useEffect, useState } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import useSWR from 'swr';
+import Link from 'next/link';
+import LinearSkeleton from '../general/linearSkeleton';
 
 export default function Sidebar() {
   const UserSession = useContext(UserSessionContext);
@@ -61,10 +64,62 @@ export default function Sidebar() {
           </Select>
         </div>
 
+        <div className='flex flex-1 flex-col gap-2   rounded p-2'>
+          <WorkspaceProjects />
+        </div>
+
         <div className='flex flex-1 flex-col gap-2' />
         <div className='flex  gap-2 '>
           <AccountModal />
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function useWorkspaceProjects() {
+  const { currentWorkspace } = useContext(OrbitContext);
+  const { data, isLoading, error } = useSWR(`/api/v2/workspaces/${currentWorkspace?.id}/projects`, (url) =>
+    fetch(url).then((res) => res.json())
+  );
+
+  return {
+    projects: data,
+    isLoading,
+    error,
+  };
+}
+
+function WorkspaceProjects() {
+  const { currentWorkspace } = useContext(OrbitContext);
+  const { projects, isLoading, error } = useWorkspaceProjects();
+
+  if (error) {
+    return <div>could not fetch projects</div>;
+  }
+
+  return (
+    <div className='flex flex-1 flex-col gap-2 text-sm'>
+      <Link href={`/orbit/workspace/${currentWorkspace.id}/projects`} className='text-xs'>
+        Projects
+      </Link>
+      <div className='flex flex-col '>
+        {isLoading ? (
+          <LinearSkeleton />
+        ) : (
+          <>
+            {projects.map((project) => (
+              <Link
+                className='rounded-md border  border-transparent p-1 hover:border-teal-700 hover:shadow-sm'
+                href={`/orbit/workspace/${currentWorkspace.id}/projects/${project.id}`}
+                shallow
+                key={project.id}
+              >
+                {project.name}
+              </Link>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );

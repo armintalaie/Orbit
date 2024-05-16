@@ -20,15 +20,11 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
   return (
     <div className='flex w-full flex-grow flex-col overflow-hidden'>
       <div className=' flex h-full w-full flex-1 flex-col overflow-hidden '>
-        <div className='flex h-12 w-full items-center justify-between p-4  px-4 dark:border-neutral-800 dark:bg-neutral-900 '>
-          {header}
-        </div>
+        <div className='flex h-12 w-full items-center justify-between p-4  px-4  '>{header}</div>
 
-        <div className=' flex w-full flex-1 flex-grow flex-col overflow-hidden bg-gray-50 dark:border-neutral-800 dark:bg-neutral-900 '>
+        <div className=' flex w-full flex-1 flex-grow flex-col overflow-hidden  '>
           {subHeader && (
-            <div className='h-15 flex flex-row items-center justify-between border-y border-gray-100 bg-white p-4 py-3 dark:border-neutral-800 dark:bg-neutral-900'>
-              {subHeader}
-            </div>
+            <div className='h-15 flex flex-row items-center justify-between border-y   p-4 py-3 '>{subHeader}</div>
           )}
           <div className='flex flex-grow flex-col overflow-y-hidden'>{content}</div>
         </div>
