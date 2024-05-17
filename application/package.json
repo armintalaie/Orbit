@@ -48,6 +48,7 @@
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.1",
     "@tailwindcss/line-clamp": "^0.4.4",
+    "@tailwindcss/nesting": "0.0.0-insiders.565cd3e",
     "@tiptap/extension-blockquote": "^2.1.13",
     "@tiptap/extension-character-count": "^2.1.13",
     "@tiptap/extension-document": "^2.1.13",
