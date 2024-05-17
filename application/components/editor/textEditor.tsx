@@ -37,7 +37,7 @@ import {
   TextQuote,
 } from 'lucide-react';
 import { Button } from '../ui/button';
-import IssueTemplates from '../teams/IssueTemplates';
+import IssueTemplates from '../workspace/teams/IssueTemplates';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { toast } from 'sonner';
 

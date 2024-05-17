@@ -1,11 +1,11 @@
 'use client';
 
-import { NewIssue } from '@/components/newIssue';
+import { NewIssue } from '@/components/workspace/issues/newIssue';
 import { isOverdue, dateFormater } from '@/lib/util';
 import { Badge, Text } from '@radix-ui/themes';
 import AssigneeAvatar from './AssigneeAvatar';
-import { LabelList } from '../../issues/label';
-import IssueMenuContext from '../../issues/boards/issueMenuContext';
+import { LabelList } from '../issues/label';
+import IssueMenuContext from '../issues/boards/issueMenuContext';
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '../../ui/context-menu';
 import Link from 'next/link';
 import { IIssue, IProfile } from '@/lib/types/issue';

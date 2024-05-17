@@ -5,7 +5,7 @@ import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Link from 'next/link';
-import PageWrapper from '@/components/layouts/pageWrapper';
+import PageWrapper from '@/components/general/layouts/pageWrapper';
 import { useWorkspaceProjects } from '@/components/account/sidebar';
 import Spinner from '@/components/general/Spinner';
 interface IProject {

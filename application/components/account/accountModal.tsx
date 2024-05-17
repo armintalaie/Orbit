@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 
 import { useContext, useMemo, useState } from 'react';
 import { Grid2X2, InfoIcon, LockIcon, PaintBucket, SettingsIcon, User2, Users2Icon } from 'lucide-react';
-import ThemeToggle from '../themeToggle';
+import ThemeToggle from '../general/themeToggle';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 import WorkspaceGeneralSettings from '../workspace/settings/workspaceGeneralSettings';
 import AccountWorkspaces from './accountWorkspaces';

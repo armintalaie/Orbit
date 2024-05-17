@@ -1,6 +1,6 @@
 'use client';
 
-import { NewIssue } from '@/components/newIssue';
+import { NewIssue } from '@/components/workspace/issues/newIssue';
 import { CardHeader, CardContent } from '@/components/ui/card';
 import IssueCard from './IssueCard';
 import { IIssue } from '@/lib/types/issue';

@@ -4,7 +4,7 @@ import './globals.css';
 import '@radix-ui/themes/styles.css';
 import React from 'react';
 import { Toaster } from '@/components/ui/sonner';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { ThemeProvider } from '@/lib/context/ThemeProvider';
 
 const poppins = Poppins({
   subsets: ['latin'],

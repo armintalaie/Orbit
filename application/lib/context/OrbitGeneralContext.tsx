@@ -116,7 +116,7 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
     //     changeWorkspace(workspace.id);
     //   } else {
     //     console.log(user);
-        
+
     //   }
     // }
     if (user) {
