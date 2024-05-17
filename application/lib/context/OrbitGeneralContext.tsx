@@ -105,23 +105,26 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
   };
 
   useEffect(() => {
-    if (window.localStorage.getItem('currentWorkspace')) {
-      const workspace = JSON.parse(window.localStorage.getItem('currentWorkspace') || '{}');
-      if (workspace && workspace.id) {
-        setOrbit({
-          ...orbit,
-          currentWorkspace: workspace,
-        });
+    // if (window.localStorage.getItem('currentWorkspace')) {
+    //   const workspace = JSON.parse(window.localStorage.getItem('currentWorkspace') || '{}');
+    //   if (workspace && workspace.id) {
+    //     setOrbit({
+    //       ...orbit,
+    //       currentWorkspace: workspace,
+    //     });
 
-        changeWorkspace(workspace.id);
-      } else {
-        console.log(user);
-        getUserInfo().then((data) => {
-          if (data && data.workspaces.length > 0) {
-            changeWorkspace(data.workspaces[0].workspaceId);
-          }
-        });
-      }
+    //     changeWorkspace(workspace.id);
+    //   } else {
+    //     console.log(user);
+        
+    //   }
+    // }
+    if (user) {
+      getUserInfo().then((data) => {
+        if (data && data.workspaces.length > 0) {
+          changeWorkspace(data.workspaces[0].workspaceId);
+        }
+      });
     }
   }, []);
 
