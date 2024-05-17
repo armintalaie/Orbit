@@ -4,7 +4,6 @@
 //   register: true, // Register the PWA service worker
 //   skipWaiting: true, // Skip waiting for service worker activation
 // });
-import webpack from 'webpack';
 import createMDX from '@next/mdx';
 import remarkGfm from 'remark-gfm';
 
@@ -31,14 +30,6 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true,
-  },
-  webpack(config) {
-    config.plugins.push(
-      new webpack.IgnorePlugin({
-        resourceRegExp: /^pg-native$/,
-      })
-    );
-    return config;
   },
 };
 
