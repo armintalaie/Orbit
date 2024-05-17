@@ -4,12 +4,12 @@ import { NewIssue } from '@/components/newIssue';
 import { isOverdue, dateFormater } from '@/lib/util';
 import { Badge, Text } from '@radix-ui/themes';
 import AssigneeAvatar from './AssigneeAvatar';
-import { LabelList } from '../issues/label';
-import IssueMenuContext from '../issues/boards/issueMenuContext';
-import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '../ui/context-menu';
+import { LabelList } from '../../issues/label';
+import IssueMenuContext from '../../issues/boards/issueMenuContext';
+import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '../../ui/context-menu';
 import Link from 'next/link';
 import { IIssue, IProfile } from '@/lib/types/issue';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '../../ui/alert';
 
 export interface TableViewProps {
   groupedIssues: any;

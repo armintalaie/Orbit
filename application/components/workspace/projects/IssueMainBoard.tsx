@@ -1,11 +1,11 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import KanbanView from '@/components/projects/KanbanBoard';
-import FilterGroup from '../issues/filterGroup';
-import { IssueGrouping } from '../issues/boards/issueGrouping';
+import KanbanView from '@/components/workspace/projects/KanbanBoard';
+import FilterGroup from '../../issues/filterGroup';
+import { IssueGrouping } from '../../issues/boards/issueGrouping';
 import { IIssue } from '@/lib/types/issue';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-import { NewIssue } from '../newIssue';
+import { NewIssue } from '../../newIssue';
 
 interface IssueBoardProps {
   showProject?: boolean;

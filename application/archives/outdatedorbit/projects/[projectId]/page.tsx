@@ -2,9 +2,9 @@
 
 import { useParams } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
-import IssueBoard from '@/components/projects/IssueMainBoard';
+import IssueBoard from '@/components/workspace/projects/IssueMainBoard';
 import PageWrapper from '@/components/layouts/pageWrapper';
-import ProjectTitleField from '@/components/projects/project/projectTitleField';
+import ProjectTitleField from '@/components/workspace/projects/project/projectTitleField';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IIssue, IProject } from '@/lib/types/issue';
 import { TextSelectIcon } from 'lucide-react';

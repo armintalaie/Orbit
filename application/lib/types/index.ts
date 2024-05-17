@@ -38,3 +38,9 @@ export type UserInfoType = {
   email: string;
   workspaces: UserWorkspace[];
 };
+
+export type ProjectStatus = {
+  id: string;
+  name: string;
+  color: string;
+};

@@ -1,6 +1,6 @@
 'use client';
 
-import { NewProject } from '@/components/projects/newProject';
+import { NewProject } from '@/components/workspace/projects/newProject';
 import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -45,13 +45,12 @@ export default function ProjectPage() {
 
 function TableView({ projects }: { projects: IProject[] }) {
   return (
-    <div className='flex w-full flex-grow flex-col overflow-scroll '>
-      <div className='flex w-full flex-col items-center justify-between   text-xs '>
+    <div className='flex w-full flex-grow flex-col overflow-scroll p-2 '>
+      <div className='flex w-full flex-col items-center justify-between   rounded-md   border text-xs '>
         <Table className='w-full  overflow-hidden rounded-sm  shadow-none '>
           <TableHeader>
-            <TableRow className=' text-xs  '>
+            <TableRow className=' primary-surface text-xs '>
               <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Start Date</TableHead>
               <TableHead>Target Date</TableHead>
@@ -65,7 +64,6 @@ function TableView({ projects }: { projects: IProject[] }) {
                     {project.name}
                   </Link>
                 </TableCell>
-                <TableCell>{project.description}</TableCell>
                 <TableCell>
                   <Badge>{project.status}</Badge>
                 </TableCell>

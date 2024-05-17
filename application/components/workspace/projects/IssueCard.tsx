@@ -3,14 +3,14 @@
 import { dateFormater, isOverdue } from '@/lib/util';
 import Link from 'next/link';
 import AssigneeAvatar from './AssigneeAvatar';
-import { LabelList } from '../issues/label';
+import { LabelList } from '../../issues/label';
 import { ContextMenu, ContextMenuTrigger } from '@/components/ui/context-menu';
-import IssueMenuContext from '../issues/boards/issueMenuContext';
+import IssueMenuContext from '../../issues/boards/issueMenuContext';
 import { IIssue } from '@/lib/types/issue';
 import { PreviewModalContext } from '@/lib/context/PreviewModalProvider';
 import { useContext, useState } from 'react';
-import IssuePage from '../issues/issue/IssuePage';
-import { Button } from '../ui/button';
+import IssuePage from '../../issues/issue/IssuePage';
+import { Button } from '../../ui/button';
 import { EyeIcon } from 'lucide-react';
 
 export interface IssueCardProps {

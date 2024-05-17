@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-import AssigneeAvatar from '@/components/projects/AssigneeAvatar';
+import AssigneeAvatar from '@/components/workspace/projects/AssigneeAvatar';
 import { IIssue } from '@/lib/types/issue';
 import { toast } from 'sonner';
 

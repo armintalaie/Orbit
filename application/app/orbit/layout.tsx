@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <AuthContextProvider>
       <OrbitContextProvider>
-        <div className='flex h-[100svh] w-[100svw] flex-row dark:bg-neutral-900 dark:text-neutral-200 '>
+        <div className='flex h-[100svh] w-[100svw] flex-row '>
           <Sidebar />
           <div className='flex w-full  flex-col overflow-hidden md:flex-col'>{children}</div>
         </div>

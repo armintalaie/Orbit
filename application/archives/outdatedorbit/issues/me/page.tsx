@@ -1,6 +1,6 @@
 'use client';
 import ContentLoader from '@/components/general/ContentLoader';
-import IssueBoard from '@/components/projects/IssueMainBoard';
+import IssueBoard from '@/components/workspace/projects/IssueMainBoard';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { useOrbitSync } from '@/lib/hooks/useOrbitSync';
 import { IIssue } from '@/lib/types/issue';

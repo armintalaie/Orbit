@@ -1,5 +1,5 @@
 import { getInitials, getFirstNameAndLastInitial } from '@/lib/util';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar';
 import { CircleUser } from 'lucide-react';
 
 type AssigneeAvatarProps = {

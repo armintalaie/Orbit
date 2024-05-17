@@ -7,7 +7,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { OrbitContext } from '@/lib/context/OrbitContext';
 import { IProfile } from '@/lib/types/issue';
-import AssigneeAvatar from '@/components/projects/AssigneeAvatar';
+import AssigneeAvatar from '@/components/workspace/projects/AssigneeAvatar';
 
 export function AssigneeField({ field }: { field: any }) {
   const { fetcher } = useContext(OrbitContext);

@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useContext } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-import AssigneeAvatar from './projects/AssigneeAvatar';
+import AssigneeAvatar from './workspace/projects/AssigneeAvatar';
 import { Button } from './ui/button';
 
 interface Profile {

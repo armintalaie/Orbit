@@ -22,6 +22,8 @@ export async function POST(request: NextRequest, { params }: { params: { wid: st
   } catch (error) {
     return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
   }
-  const project = await db.withSchema(`workspace_${params.wid}`).insertInto('project').values(body).execute();
-  return NextResponse.json(project);
+  await db.withSchema(`workspace_${params.wid}`).insertInto('project').values(body).execute();
+  return NextResponse.json({
+    message: 'Project created',
+  });
 }

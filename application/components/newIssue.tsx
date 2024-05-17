@@ -20,7 +20,7 @@ import { LabelField } from './issues/form/labelField';
 import { ProjectField } from './issues/form/projectField';
 import { IIssue } from '@/lib/types/issue';
 import { OrbitContext } from '@/lib/context/OrbitContext';
-import { TeamField } from './projects/form/teamField';
+import { TeamField } from './workspace/projects/form/teamField';
 export const issueSchema = z.object({
   title: z.string(),
   contents: z.string(),
