@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import useSWR from 'swr';
 import Link from 'next/link';
 import LinearSkeleton from '../general/linearSkeleton';
+import { Button } from '../ui/button';
+import { PanelLeftIcon } from 'lucide-react';
 
 export default function Sidebar() {
   const UserSession = useContext(UserSessionContext);
@@ -31,49 +33,50 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <div className='secondary-surface flex w-72 min-w-56 flex-col'>
-      <div className='flex flex-1 flex-col gap-2 p-4'>
-        <div className='flex items-center gap-2'>
-          <Select
-            value={currentWorkspace?.id}
-            onValueChange={(e) => {
-              changeWorkspace(e);
-            }}
-          >
-            <SelectTrigger className='primary-surface w-full text-sm'>
-              <SelectValue className='text-xs' placeholder='Select a workspace' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {userInfo &&
-                  userInfo.workspaces.map((workspace) => (
-                    <SelectItem
-                      value={workspace.workspaceId}
-                      key={workspace.workspaceId}
-                      className='flex items-center gap-2  py-2'
-                      onClick={() => changeWorkspace(workspace.workspaceId)}
-                    >
-                      <span>
-                        {workspace.name}
-                        {workspace.id}
-                      </span>
-                    </SelectItem>
-                  ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className='flex flex-1 flex-col gap-2   rounded p-2'>
-          <WorkspaceProjects />
-        </div>
-
-        <div className='flex flex-1 flex-col gap-2' />
-        <div className='flex  gap-2 '>
-          <AccountModal />
-        </div>
+    <>
+      <div className='flex items-center gap-2 p-2'>
+        <Select
+          value={currentWorkspace?.id}
+          onValueChange={(e) => {
+            changeWorkspace(e);
+          }}
+        >
+          <SelectTrigger className='primary-surface h-fit w-full rounded-xl p-1 px-2 text-sm'>
+            <SelectValue className='text-xs' placeholder='Select a workspace' />
+          </SelectTrigger>
+          <SelectContent className='flex w-full flex-col gap-4 border-none bg-transparent shadow-none'>
+            <div className='flex flex-col gap-2 text-sm'>
+              {userInfo &&
+                userInfo.workspaces.map((workspace) => (
+                  <SelectItem
+                    className='primary-surface flex items-center gap-2 rounded-xl border p-1 px-4 shadow-lg '
+                    value={workspace.workspaceId}
+                    key={workspace.workspaceId}
+                    onClick={() => changeWorkspace(workspace.workspaceId)}
+                  >
+                    <span>
+                      {workspace.name}
+                      {workspace.id}
+                    </span>
+                  </SelectItem>
+                ))}
+            </div>
+          </SelectContent>
+        </Select>
+        <Button size={'icon'} onClick={() => {}} variant='ghost' className='rounded-sm px-2 py-0 text-sm' type='button'>
+          <PanelLeftIcon size={14} />
+        </Button>
       </div>
-    </div>
+
+      <div className='flex flex-1 flex-col gap-2   rounded p-2'>
+        <WorkspaceProjects />
+      </div>
+
+      <div className='flex flex-1 flex-col gap-2' />
+      <div className='flex  gap-2 '>
+        <AccountModal />
+      </div>
+    </>
   );
 }
 

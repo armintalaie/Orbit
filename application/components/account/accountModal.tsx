@@ -1,18 +1,19 @@
 'use client';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '../ui/button';
-
 import { useContext, useMemo, useState } from 'react';
 import { Grid2X2, InfoIcon, LockIcon, PaintBucket, SettingsIcon, User2, Users2Icon } from 'lucide-react';
-import ThemeToggle from '../general/themeToggle';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
+
 import WorkspaceGeneralSettings from '../workspace/settings/workspaceGeneralSettings';
 import AccountWorkspaces from './accountWorkspaces';
 import WorkspaceSecuritySettings from '../workspace/settings/workspaceSecuritySettings';
 import UserAccountSettings from './userAccountSettings';
 import WorkspaceAccountSettings from '../workspace/settings/workspaceAccountSettings';
 import WorkspaceMembers from '../workspace/settings/workspaceMembersSettings';
+import AppearanceSettings from './appearanceSettings';
+import ModalSidebar from './accountModalSidebar';
+import { Button } from '../ui/button';
 
 export default function AccountModal() {
   const [activeMenu, setActiveMenu] = useState(['account', 'account']);
@@ -45,7 +46,7 @@ export default function AccountModal() {
       ...(currentWorkspace && {
         workspace: {
           info: {
-            label: currentWorkspace.name,
+            label: 'Workspace',
             icon: <Grid2X2 size={16} />,
           },
 
@@ -80,7 +81,10 @@ export default function AccountModal() {
   return (
     <Dialog>
       <DialogTrigger>
-        <button>Settings</button>
+        <Button variant='ghost' className='flex items-center gap-2'>
+          <SettingsIcon size={16} />
+          Settings
+        </Button>
       </DialogTrigger>
       <DialogContent className='flex h-full max-h-[90%] w-full max-w-6xl overflow-hidden p-0'>
         <ModalSidebar menuOptions={menuOptions} setActiveMenu={setActiveMenu} activeMenu={activeMenu} />
@@ -94,58 +98,5 @@ export default function AccountModal() {
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function ModalSidebar({ menuOptions, setActiveMenu, activeMenu }) {
-  return (
-    <div className='secondary-surface flex w-56 min-w-56 flex-col'>
-      <div className='flex flex-1 flex-col gap-2 p-4'>
-        <div className='flex items-center gap-2'>
-          <h1 className='text-lg font-bold'>Settings</h1>
-        </div>
-
-        {Object.entries(menuOptions).map(([menuKey, menu]) => (
-          <div className='flex flex-col gap-2 py-5'>
-            <div className='flex items-center gap-2 border-b pb-4 text-sm text-neutral-600'>
-              {menu.info.icon}
-              {menu.info.label}
-            </div>
-            {Object.entries(menu.options).map(
-              (
-                [key, option] // Assuming items have an 'options' property to iterate over
-              ) => (
-                <Button
-                  variant='ghost'
-                  className='secondary-surface hover:tertiary-surface flex w-full justify-start gap-4 px-1'
-                  key={option.id}
-                  onClick={() => setActiveMenu([menuKey, key])}
-                >
-                  {option.icon}
-                  {option.label}
-                </Button>
-              )
-            )}
-          </div>
-        ))}
-
-        <div className='flex  gap-2 '></div>
-      </div>
-    </div>
-  );
-}
-
-function AppearanceSettings() {
-  return (
-    <div className='flex h-full w-full flex-col  items-center gap-5'>
-      <div className='secondary-surface flex h-full w-full flex-col  gap-5 rounded-md p-5'>
-        At the moment, you can only change the theme of the application between light and dark.
-        <ThemeToggle />
-      </div>
-
-      <div className='secondary-surface flex h-full w-full flex-col  items-center rounded-md p-5'>
-        Your workspace admin can change the theme of the workspace to a custom theme.
-      </div>
-    </div>
   );
 }

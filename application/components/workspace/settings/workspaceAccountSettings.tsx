@@ -27,7 +27,7 @@ const schema = z.object({
 export default function WorkspaceAccountSettings() {
   const userSession = useContext(UserSessionContext);
   const { currentWorkspace } = useContext(OrbitContext);
-  const user = userSession.user;
+  const user = userSession.session.user;
   const profile: {
     [key: string]: string;
   } = currentWorkspace.member;

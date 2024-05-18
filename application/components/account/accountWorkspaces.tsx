@@ -54,16 +54,21 @@ function NewWorkspace({ onEvent }: { onEvent: (value: boolean) => void }) {
     }
   }
   return (
-    <div className='flex w-full flex-col gap-4 '>
-      <div className='secondary-surface flex w-full flex-col justify-center gap-4 rounded-md p-4'>
-        <div className='flex items-center gap-8 '>
+    <div className='primary-surface flex w-full flex-col gap-4 rounded-md border '>
+      <div className=' flex w-full flex-col justify-center gap-4 rounded-md p-4'>
+        <div className='flex flex-col gap-2 '>
           <Label>Name</Label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <div className='flex flex-1 flex-col gap-2'>
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
+            <p className='pl-2 text-xs  '>
+              Workspace names are be unique, and only contain letters, numbers, and spaces.
+            </p>
+            <p className='pl-2 text-xs  '>You can change this later.</p>
+          </div>
+        </div>
+        <div className='flex w-full justify-end gap-2'>
           <Button onClick={createWorkspace}>Create</Button>
         </div>
-        <p className='text-xs  '>
-          workspace names must be unique, and can only contain letters, numbers, and spaces with at least 3 characters.
-        </p>
       </div>
     </div>
   );
@@ -72,6 +77,7 @@ function NewWorkspace({ onEvent }: { onEvent: (value: boolean) => void }) {
 function UserWorkspaces() {
   const UserSession = useContext(UserSessionContext);
   const { changeWorkspace } = useContext(OrbitContext);
+  const router = useRouter();
 
   const { userInfo, isLoading, error } = useUserInfo();
 
@@ -103,56 +109,60 @@ function UserWorkspaces() {
 
   return (
     <div className=' flex w-full flex-col gap-2   '>
-      <div className='primary-surface flex w-full items-center gap-2 rounded-md border p-4 '>
-        <p className='flex-1 text-sm'>
-          Manage your workspaces here. You can switch between workspaces or respond to invites
-        </p>
-      </div>
-      <div className=' primary-surface flex w-full flex-col gap-1 divide-y rounded-md border'>
-        {userInfo.workspaces.map((workspace) => (
-          <div className='flex w-full items-center gap-2   ' key={workspace.workspaceId}>
-            <div className='flex w-12 items-center gap-2'>
-              {workspace.status === 'active' ? (
-                <Button variant={'ghost'} onClick={() => changeWorkspace(workspace.workspaceId)}>
-                  <LogInIcon size={16} />
-                </Button>
-              ) : (
-                <div className='flex w-full items-center justify-center gap-2  text-sm '>
-                  <HourglassIcon size={16} />
-                </div>
-              )}
-            </div>
-            <p className='flex flex-1 items-center gap-2  py-1'>{workspace.name}</p>
-            <div className='flex  items-center justify-end  gap-2 px-4 py-1 text-sm'>
-              {workspace.status === 'active' ? (
-                <p className='flex w-24 items-center justify-between gap-2 rounded-md border border-transparent  p-2 font-medium'>
-                  <div className='flex  h-3 w-3 items-center gap-2 rounded-full border bg-teal-300'></div>
-                  Active
-                </p>
-              ) : (
-                <div className='flex  items-center justify-end  gap-2  text-sm '>
+      {userInfo.workspaces && userInfo.workspaces.length > 0 && (
+        <div className=' primary-surface flex w-full flex-col gap-1 divide-y rounded-md border '>
+          {userInfo.workspaces.map((workspace) => (
+            <div className='flex w-full items-center gap-2   ' key={workspace.workspaceId}>
+              <div className='flex w-12 items-center gap-2'>
+                {workspace.status === 'active' ? (
                   <Button
-                    className='h-fit w-24 justify-between gap-2 p-2 text-sm'
-                    variant={'default'}
-                    onClick={() => respondToInvite(workspace.workspaceId, 'blocked')}
+                    variant={'ghost'}
+                    onClick={() => {
+                      console.log(workspace.workspaceId);
+                      router.push(`/orbit/workspace/${workspace.workspaceId}`);
+                      changeWorkspace(workspace.workspaceId);
+                    }}
                   >
-                    <XIcon size={16} />
-                    Ignore
+                    <LogInIcon size={16} />
                   </Button>
-                  <Button
-                    className='h-fit w-24 justify-between gap-2 p-2 text-sm'
-                    variant={'default'}
-                    onClick={() => respondToInvite(workspace.workspaceId, 'active')}
-                  >
-                    <CheckIcon size={16} />
-                    Accept
-                  </Button>
-                </div>
-              )}
+                ) : (
+                  <div className='flex w-full items-center justify-center gap-2  text-sm '>
+                    <HourglassIcon size={16} />
+                  </div>
+                )}
+              </div>
+              <p className='flex flex-1 items-center gap-2  py-1'>{workspace.name}</p>
+              <div className='flex  items-center justify-end  gap-2 px-4 py-1 text-sm'>
+                {workspace.status === 'active' ? (
+                  <p className='flex w-24 items-center justify-between gap-2 rounded-md border border-transparent  p-2 font-medium'>
+                    <div className='flex  h-3 w-3 items-center gap-2 rounded-full border bg-teal-300'></div>
+                    Active
+                  </p>
+                ) : (
+                  <div className='flex  items-center justify-end  gap-2  text-sm '>
+                    <Button
+                      className='h-fit w-24 justify-between gap-2 p-2 text-sm'
+                      variant={'default'}
+                      onClick={() => respondToInvite(workspace.workspaceId, 'blocked')}
+                    >
+                      <XIcon size={16} />
+                      Ignore
+                    </Button>
+                    <Button
+                      className='h-fit w-24 justify-between gap-2 p-2 text-sm'
+                      variant={'default'}
+                      onClick={() => respondToInvite(workspace.workspaceId, 'active')}
+                    >
+                      <CheckIcon size={16} />
+                      Accept
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

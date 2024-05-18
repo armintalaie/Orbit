@@ -17,10 +17,15 @@ export async function GET(
   try {
     const user = await db
       .selectFrom('auth.users')
-      .where('id', '=', params.uid)
+      .where('auth.users.id', '=', params.uid)
+      .innerJoin('account', 'auth.users.id', 'account.id')
       .select((eb) => [
-        'id',
+        'auth.users.id',
         'email',
+        'account.firstName',
+        'account.lastName',
+        'account.pronouns',
+        'account.avatar',
         jsonArrayFrom(
           eb
             .selectFrom('public.workspaceMember')

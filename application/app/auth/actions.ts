@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/utils/supabase/server';
+import { db } from '@/lib/db/handler';
 
 export async function signin(formData: FormData) {
   const supabase = createClient();
@@ -42,6 +43,20 @@ export async function signup(formData: FormData) {
     redirect('/error');
   }
 
+  await createUserAccount(data);
+
   revalidatePath('/', 'layout');
-  redirect('/');
+  redirect('/orbit');
+}
+
+async function createUserAccount(data: { email: string }) {
+  const userId = await db.selectFrom('auth.users').where('email', '=', data.email).select('id').executeTakeFirst();
+
+  await db
+    .insertInto('public.account')
+    .values({
+      id: userId.id,
+      avatar: 'https://vzbnqbrfobqivmismxxj.supabase.co/storage/v1/object/public/profile_photos/default/av4.png',
+    })
+    .execute();
 }

@@ -2,6 +2,7 @@
 import React, { useState, Suspense, useContext, useEffect } from 'react';
 import { UserSessionContext } from './AuthProvider';
 import { useParams, usePathname, useRouter } from 'next/navigation';
+import Spinner from '@/components/general/Spinner';
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
 type OrbitType = {
@@ -22,7 +23,6 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
   const user = useContext(UserSessionContext);
   const router = useRouter();
   const pathname = usePathname();
-
   const [loading, setLoading] = useState(true);
   const [orbit, setOrbit] = useState<OrbitType>({
     currentWorkspace: null,
@@ -31,6 +31,7 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
   });
 
   function changeWorkspace(id?: any) {
+    console.log(id);
     setLoading(true);
     if (!id) {
       setOrbit({
@@ -48,6 +49,7 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
         ...orbit,
         currentWorkspace: data,
       });
+      router.push(`/orbit/workspace/${id}`);
       setLoading(false);
     });
   }
@@ -123,6 +125,8 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
       getUserInfo().then((data) => {
         if (data && data.workspaces.length > 0) {
           changeWorkspace(data.workspaces[0].workspaceId);
+        } else {
+          router.push('/orbit/');
         }
       });
     }
@@ -143,6 +147,10 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
 
   if (!user || contextValue.currentWorkspace === null) {
     return <div></div>;
+  }
+
+  if (loading) {
+    return <Spinner />;
   }
   return (
     <Suspense fallback={<LoadingFallback />}>

@@ -27,7 +27,7 @@ export default function UserAccountSettings() {
   const profile: {
     [key: string]: string;
   } = userSession.account;
-  const { avatar, id, ...rest } = profile || {};
+  const { avatar, email, workspaces, id, ...rest } = profile || {};
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -53,6 +53,7 @@ export default function UserAccountSettings() {
   async function signout() {
     const supabase = createClient();
     await supabase.auth.signOut();
+    window.localStorage.removeItem('currentWorkspace');
     router.push('/auth/signin');
   }
 
@@ -93,13 +94,13 @@ export default function UserAccountSettings() {
             </p>
           </div>
           <div className='flex items-center gap-2'>
-            <Image
+            {/* <Image
               src={avatar}
               alt='avatar'
               width={150}
               height={150}
               className='primary-surface rounded-full border-2 p-2 shadow-sm'
-            />
+            /> */}
           </div>
 
           <Form {...form}>
