@@ -38,11 +38,21 @@ export default function Signup() {
 
       <p className='px-8 text-center text-sm text-muted-foreground'>
         By clicking continue, you agree to our{' '}
-        <Link href='/terms' className='pointer-events-none underline underline-offset-4 hover:text-primary'>
+        <Link
+          href='/docs/Using-Orbit/Terms-of-Service'
+          target='_blank'
+          rel='noopener noreferrer'
+          className=' underline underline-offset-4 hover:text-primary'
+        >
           Terms of Service
         </Link>{' '}
         and{' '}
-        <Link href='/privacy' className='pointer-events-none underline underline-offset-4 hover:text-primary'>
+        <Link
+          href='/docs/Using-Orbit/Privacy-Policy'
+          target='_blank'
+          rel='noopener noreferrer'
+          className=' underline underline-offset-4 hover:text-primary'
+        >
           Privacy Policy
         </Link>
         .
