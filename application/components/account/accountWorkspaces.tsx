@@ -121,6 +121,7 @@ function UserWorkspaces() {
                     <Button
                       variant={'ghost'}
                       onClick={() => {
+                        router.push(`/orbit/workspace/${workspace.workspaceId}`);
                         changeWorkspace(workspace.workspaceId);
                       }}
                     >
