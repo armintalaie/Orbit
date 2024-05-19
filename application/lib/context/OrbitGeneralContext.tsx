@@ -9,6 +9,7 @@ type OrbitType = {
   currentWorkspace: any | null;
   changeWorkspace: (workspace: any) => void;
   fetcher: (input: string | URL | Request) => Promise<any>;
+  swrFetcher: (url: string) => Promise<any>;
 };
 
 type OrbitContextType = {} & OrbitType;
@@ -17,6 +18,7 @@ export const OrbitContext = React.createContext<OrbitContextType>({
   currentWorkspace: {},
   changeWorkspace: async () => {},
   fetcher: async () => {},
+  swrFetcher: async () => {},
 });
 
 export default function OrbitContextProvider({ children }: { children: React.ReactNode }) {
@@ -28,16 +30,18 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
     currentWorkspace: null,
     changeWorkspace: async () => {},
     fetcher: async () => {},
+    swrFetcher: async () => {},
   });
 
   function changeWorkspace(id?: any) {
-    console.log(id);
     setLoading(true);
     if (!id) {
       setOrbit({
         ...orbit,
         currentWorkspace: null,
       });
+      window.localStorage.removeItem('currentWorkspace');
+      router.push('/orbit/');
       return;
     }
     getWorkspace(id).then((data) => {
@@ -65,6 +69,8 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
 
     return res;
   }
+
+  const swrFetcher = (url: string) => fetcher(url).then((res) => res.json());
 
   async function getWorkspace(id: any) {
     const res = await fetch(`/api/v2/workspaces/${id}`, {
@@ -104,23 +110,10 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
     currentWorkspace: orbit.currentWorkspace,
     changeWorkspace,
     fetcher,
+    swrFetcher,
   };
 
   useEffect(() => {
-    // if (window.localStorage.getItem('currentWorkspace')) {
-    //   const workspace = JSON.parse(window.localStorage.getItem('currentWorkspace') || '{}');
-    //   if (workspace && workspace.id) {
-    //     setOrbit({
-    //       ...orbit,
-    //       currentWorkspace: workspace,
-    //     });
-
-    //     changeWorkspace(workspace.id);
-    //   } else {
-    //     console.log(user);
-
-    //   }
-    // }
     if (user) {
       getUserInfo().then((data) => {
         if (data && data.workspaces.length > 0) {

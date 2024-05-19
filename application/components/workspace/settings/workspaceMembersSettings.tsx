@@ -58,7 +58,6 @@ function MembersSection({
     return data.map((member) => {
       return {
         avatar: member.avatar,
-
         firstName: member.firstName,
         lastName: member.lastName,
         status: member.status,
@@ -72,10 +71,42 @@ function MembersSection({
 
   const membersinfo = cleanData(members);
 
+  const acitveMembers = membersinfo.filter((member) => member.status === 'active');
+  const pendingMembers = membersinfo.filter((member) => member.status === 'pending');
+
+  return (
+    <div className=' flex w-full flex-col  justify-start   gap-20 text-xs'>
+      <div className=' flex w-full flex-col justify-start gap-4 overflow-x-scroll p-2  text-xs'>
+        <h2 className='text-lg font-semibold'>Active Members</h2>
+        <MembersTableView members={acitveMembers} setMemberProfile={setMemberProfile} />
+      </div>
+      <div className=' flex w-full flex-col justify-start gap-4 overflow-x-scroll p-2  text-xs'>
+        <h2 className='text-lg font-semibold'>Pending Invitations</h2>
+        <MembersTableView members={pendingMembers} setMemberProfile={setMemberProfile} />
+      </div>
+    </div>
+  );
+}
+
+function useWorkspaceMembers() {
+  const { currentWorkspace } = useContext(OrbitContext);
+  const { data, error, isLoading } = useSWR(`/api/v2/workspaces/${currentWorkspace.id}/members`, fetcher);
+
+  return {
+    members: data as WorkspaceMember[],
+    isLoading,
+    error,
+  };
+}
+
+function MembersTableView({ members, setMemberProfile }: { members: WorkspaceMember[]; setMemberProfile: any }) {
+  if (!members || members.length === 0) {
+    return <div className='flex w-full justify-center p-4'>No members</div>;
+  }
   return (
     <div className='secondary-surface flex w-full flex-col items-center justify-start overflow-x-scroll rounded border text-xs'>
       <div className='primary-surface flex w-full flex-shrink-0 justify-between gap-2 border-b p-2 text-left font-medium'>
-        {Object.entries(membersinfo[0]).map(([key, value]) =>
+        {Object.entries(members[0]).map(([key, value]) =>
           key === 'avatar' ? (
             <span className='w-8 flex-shrink-0 truncate'></span>
           ) : (
@@ -83,7 +114,7 @@ function MembersSection({
           )
         )}
       </div>
-      {membersinfo?.map((member) => (
+      {members?.map((member) => (
         <Button
           variant={'ghost'}
           className=' primary-surface flex w-full justify-between gap-2 border-b p-2 text-2xs  '
@@ -102,15 +133,4 @@ function MembersSection({
       ))}
     </div>
   );
-}
-
-function useWorkspaceMembers() {
-  const { currentWorkspace } = useContext(OrbitContext);
-  const { data, error, isLoading } = useSWR(`/api/v2/workspaces/${currentWorkspace.id}/members`, fetcher);
-
-  return {
-    members: data as WorkspaceMember[],
-    isLoading,
-    error,
-  };
 }

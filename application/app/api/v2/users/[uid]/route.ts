@@ -140,6 +140,8 @@ export async function DELETE(
         .returning('workspaceId')
         .execute();
 
+      console.log(userWorkspaces);
+
       if (userWorkspaces.length > 0) {
         const workspaceIds = userWorkspaces.map((w) => w.workspaceId);
         const workspacesToKeep = await trx
@@ -149,11 +151,14 @@ export async function DELETE(
           .execute();
         const workspacesToDelete = workspaceIds.filter((w) => !workspacesToKeep.map((w) => w.workspaceId).includes(w));
 
+        console.log(workspacesToDelete);
         for (const workspace of workspacesToDelete) {
           await trx.schema.dropSchema(`workspace_${workspace}`).cascade().execute();
         }
-        await trx.deleteFrom('public.workspaceMember').where('workspaceId', 'in', workspacesToDelete).execute();
-        await trx.deleteFrom('public.workspace').where('id', 'in', workspacesToDelete).execute();
+        if (workspacesToDelete.length > 0) {
+          await trx.deleteFrom('public.workspaceMember').where('workspaceId', 'in', workspacesToDelete).execute();
+          await trx.deleteFrom('public.workspace').where('id', 'in', workspacesToDelete).execute();
+        }
       }
       await trx.deleteFrom('auth.users').where('id', '=', params.uid).execute();
     });

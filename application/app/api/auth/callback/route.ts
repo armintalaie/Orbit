@@ -11,8 +11,6 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get('code');
 
-  console.log('code', code);
-
   if (code) {
     await supabase.auth.exchangeCodeForSession(code);
   }

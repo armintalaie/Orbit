@@ -61,6 +61,7 @@ export async function GET(
     };
   }
 ) {
+  const schema = `workspace_${params.wid}.workspaceMember`;
   const members = await db
     .selectFrom('workspaceMember')
     .where('workspaceId', '=', params.wid)
@@ -69,10 +70,22 @@ export async function GET(
       `workspace_${params.wid}.workspaceMember.memberId`,
       'public.workspaceMember.userId'
     )
-    .selectAll()
-    .execute();
+    .innerJoin('auth.users', 'auth.users.id', 'public.workspaceMember.userId')
+    .where('public.workspaceMember.status', 'in', ['active', 'pending'])
+    .select([
+      'auth.users.id',
+      'auth.users.email',
+      'public.workspaceMember.status',
+      `${schema}.firstName`,
+      `${schema}.lastName`,
+      `${schema}.username`,
+      `${schema}.avatar`,
+      `${schema}.location`,
+      `${schema}.timezone`,
+      `${schema}.pronouns`,
+    ])
 
-  console.log(members);
+    .execute();
 
   return NextResponse.json(members);
 }

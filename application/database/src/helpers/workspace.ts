@@ -167,7 +167,9 @@ async function setupWorkspacePermissionsAndRoles(db: Kysely<any>, workspaceSchem
   await db
     .withSchema(workspaceSchema)
     .schema.createTable('workspace_member')
-    .addColumn('member_id', 'uuid', (col) => col.references('auth.users.id').notNull().primaryKey())
+    .addColumn('member_id', 'uuid', (col) =>
+      col.references('auth.users.id').notNull().primaryKey().onUpdate('cascade').onDelete('cascade')
+    )
     .addColumn('added_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo(sql`now()`).notNull())
     .addColumn('username', 'varchar', (col) => col.notNull().unique())
@@ -177,10 +179,8 @@ async function setupWorkspacePermissionsAndRoles(db: Kysely<any>, workspaceSchem
     .addColumn('avatar', 'text', (col) => col.notNull().defaultTo(defaultAvatar))
     .addColumn('location', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('timezone', 'text', (col) => col.notNull().defaultTo(''))
-    .addColumn('status', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('notes', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('display_name', 'text', (col) => col.notNull().defaultTo(''))
-
     .execute();
 
   await db

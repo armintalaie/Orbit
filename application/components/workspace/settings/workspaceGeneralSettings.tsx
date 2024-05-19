@@ -12,7 +12,6 @@ export default function WorkspaceGeneralSettings() {
   const { currentWorkspace, changeWorkspace } = useContext(OrbitContext);
   const userSession = useContext(UserSessionContext);
   const [name, setName] = useState(currentWorkspace?.name);
-  const router = useRouter();
 
   async function renameWorkspace(name: string) {
     const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}`, {
@@ -44,10 +43,11 @@ export default function WorkspaceGeneralSettings() {
 
     if (res.ok) {
       toast('Workspace deleted successfully');
-      router.refresh();
-      changeWorkspace(null);
+      changeWorkspace(undefined);
     } else {
-      toast('Failed to delete workspace');
+      toast('Failed to delete workspace', {
+        description: 'Please try again later',
+      });
     }
   }
 
@@ -61,8 +61,7 @@ export default function WorkspaceGeneralSettings() {
 
     if (res.ok) {
       toast('Left workspace successfully');
-      router.refresh();
-      changeWorkspace(null);
+      changeWorkspace(undefined);
     } else {
       toast('Failed to leave workspace');
     }

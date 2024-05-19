@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Link from 'next/link';
 import PageWrapper from '@/components/general/layouts/pageWrapper';
-import { useWorkspaceProjects } from '@/components/account/sidebar';
+import { useWorkspaceProjects } from '@/components/account/workspacesidebarProjects';
 import Spinner from '@/components/general/Spinner';
 interface IProject {
   id: number;

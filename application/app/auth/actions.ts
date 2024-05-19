@@ -69,7 +69,7 @@ async function createUserAccount(data: { email: string }) {
 export async function signinAction(prevState: any, formData: FormData) {
   const res = await signin(formData);
 
-  if (res.message) {
+  if (res.message && res.message !== 'Success') {
     return {
       ...prevState,
       message: res.message,

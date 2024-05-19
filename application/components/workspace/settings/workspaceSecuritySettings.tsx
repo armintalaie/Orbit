@@ -171,7 +171,6 @@ function NewModifyRole({ role, setSelectedRole }) {
 
   async function saveRole(values: z.infer<typeof schema>) {
     let res;
-    console.log(values);
     if (role) {
       res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/roles/${role.name}`, {
         method: 'PATCH',

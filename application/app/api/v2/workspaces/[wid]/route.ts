@@ -13,7 +13,6 @@ export async function DELETE(
     };
   }
 ): Promise<NextResponse> {
-  console.log('params', params);
   const id = await DatabaseUtils.destroyWorkspace(db, params.wid);
   return NextResponse.json({ id });
 }
