@@ -20,11 +20,14 @@ export async function signin(formData: FormData) {
   console.log(error);
 
   if (error) {
-    redirect('/error');
+    return {
+      message: error.message,
+    };
   }
 
-  revalidatePath('/', 'layout');
-  redirect('/orbit');
+  return {
+    message: 'Success',
+  };
 }
 
 export async function signup(formData: FormData) {
@@ -40,7 +43,9 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
-    redirect('/error');
+    return {
+      message: error.message,
+    };
   }
 
   await createUserAccount(data);
@@ -59,4 +64,32 @@ async function createUserAccount(data: { email: string }) {
       avatar: 'https://vzbnqbrfobqivmismxxj.supabase.co/storage/v1/object/public/profile_photos/default/av4.png',
     })
     .execute();
+}
+
+export async function signinAction(prevState: any, formData: FormData) {
+  const res = await signin(formData);
+
+  if (res.message) {
+    return {
+      ...prevState,
+      message: res.message,
+    };
+  }
+
+  revalidatePath('/', 'layout');
+  redirect('/orbit');
+}
+
+export async function signupAction(prevState: any, formData: FormData) {
+  const res = await signup(formData);
+
+  if (res.message) {
+    return {
+      ...prevState,
+      message: res.message,
+    };
+  }
+
+  revalidatePath('/', 'layout');
+  redirect('/auth/signin');
 }

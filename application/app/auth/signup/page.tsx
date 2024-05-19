@@ -1,15 +1,15 @@
-import { Metadata } from 'next';
+'use client';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { signup } from '../actions';
-
-export const metadata: Metadata = {
-  title: 'Orbit',
-  description: 'Project management app for teams',
-};
+import { signupAction } from '../actions';
+import { useFormState } from 'react-dom';
+import useAuthEvent from '@/components/general/auth/authNotification';
 
 export default function Signup() {
+  const [formState, formAction] = useFormState(signupAction, undefined);
+  useAuthEvent(formState);
+
   return (
     <div className=' mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]'>
       <div className='flex flex-col space-y-2 text-center'>
@@ -22,7 +22,7 @@ export default function Signup() {
         <Input id='email' name='email' type='email' required />
         <label htmlFor='password'>Password:</label>
         <Input id='password' name='password' type='password' required />
-        <Button formAction={signup}>Sign up</Button>
+        <Button formAction={formAction}>Sign up</Button>
       </form>
 
       <div className='flex flex-col space-y-2 text-center '>

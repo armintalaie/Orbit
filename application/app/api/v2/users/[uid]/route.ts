@@ -122,7 +122,6 @@ export async function PATCH(
   return NextResponse.json(user);
 }
 
-// TODO: Check if user is the last admin before deleting
 export async function DELETE(
   request: NextRequest,
   {
@@ -133,18 +132,44 @@ export async function DELETE(
     };
   }
 ): Promise<NextResponse> {
-  const user = await db.deleteFrom('auth.users').where('id', '=', params.uid).returning('id').executeTakeFirst();
+  try {
+    await db.transaction().execute(async (trx) => {
+      const userWorkspaces = await trx
+        .deleteFrom('public.workspaceMember')
+        .where('userId', '=', params.uid)
+        .returning('workspaceId')
+        .execute();
 
-  if (!user) {
+      if (userWorkspaces.length > 0) {
+        const workspaceIds = userWorkspaces.map((w) => w.workspaceId);
+        const workspacesToKeep = await trx
+          .selectFrom('public.workspaceMember')
+          .where('workspaceId', 'in', workspaceIds)
+          .select('workspaceId')
+          .execute();
+        const workspacesToDelete = workspaceIds.filter((w) => !workspacesToKeep.map((w) => w.workspaceId).includes(w));
+
+        for (const workspace of workspacesToDelete) {
+          await trx.schema.dropSchema(`workspace_${workspace}`).cascade().execute();
+        }
+        await trx.deleteFrom('public.workspaceMember').where('workspaceId', 'in', workspacesToDelete).execute();
+        await trx.deleteFrom('public.workspace').where('id', 'in', workspacesToDelete).execute();
+      }
+      await trx.deleteFrom('auth.users').where('id', '=', params.uid).execute();
+    });
+
+    return NextResponse.json({
+      message: 'User deleted successfully - all workspaces and data have been removed',
+    });
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
       {
-        error: 'User does not exist',
+        error: 'Could not delete user',
       },
       {
-        status: 404,
+        status: 500,
       }
     );
   }
-
-  return NextResponse.json(user);
 }

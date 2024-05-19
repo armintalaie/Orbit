@@ -61,7 +61,18 @@ export async function GET(
     };
   }
 ) {
-  const members = await db.withSchema(`workspace_${params.wid}`).selectFrom('workspaceMember').selectAll().execute();
+  const members = await db
+    .selectFrom('workspaceMember')
+    .where('workspaceId', '=', params.wid)
+    .innerJoin(
+      `workspace_${params.wid}.workspaceMember` as any,
+      `workspace_${params.wid}.workspaceMember.memberId`,
+      'public.workspaceMember.userId'
+    )
+    .selectAll()
+    .execute();
+
+  console.log(members);
 
   return NextResponse.json(members);
 }

@@ -42,11 +42,12 @@ export default function UserAccountSettings() {
         Authorization: `Bearer ${userSession.access_token}`,
       },
     });
+    const data = await res.json();
     if (res.ok) {
-      toast('Account deleted successfully');
+      toast(data.message);
       router.push('/auth/signup');
     } else {
-      toast('Account deletion failed');
+      toast(data.error);
     }
   }
 

@@ -76,7 +76,6 @@ export default function WorkspaceInvites() {
           </form>
         </Form>
         <p className='text-xs'>Invited users must have an account on Orbit to accept the invite.</p>
-        <p className='text-xs'>You can assign roles to the members you invite after they accept the invite.</p>
       </div>
     </div>
   );

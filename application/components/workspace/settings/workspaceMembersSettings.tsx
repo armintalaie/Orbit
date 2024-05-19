@@ -7,8 +7,8 @@ import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 import { WorkspaceMember } from '@/lib/types';
 import Spinner from '@/components/general/Spinner';
 import WorkspaceInvites from './workspaceInvite';
-import { Contact2Icon } from 'lucide-react';
 import WorkspaceMemberProfile from './workspaceMemberProfile';
+import Image from 'next/image';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -57,10 +57,15 @@ function MembersSection({
   const cleanData = useCallback((data: WorkspaceMember[]) => {
     return data.map((member) => {
       return {
+        avatar: member.avatar,
+
         firstName: member.firstName,
         lastName: member.lastName,
-        displayName: member.displayName,
+        status: member.status,
         username: member.username,
+        location: member.location,
+        timezone: member.timezone,
+        pronouns: member.pronouns,
       };
     });
   }, []);
@@ -69,26 +74,31 @@ function MembersSection({
 
   return (
     <div className='secondary-surface flex w-full flex-col items-center justify-start overflow-x-scroll rounded border text-xs'>
-      <div className='primary-surface flex w-full flex-shrink-0 justify-between gap-2 border-b p-2 font-medium'>
-        <span className='w-6 flex-shrink-0  truncate'></span>
-        {Object.entries(membersinfo[0]).map(([key, value]) => (
-          <span className='w-28 flex-shrink-0  truncate'>{key}</span>
-        ))}
+      <div className='primary-surface flex w-full flex-shrink-0 justify-between gap-2 border-b p-2 text-left font-medium'>
+        {Object.entries(membersinfo[0]).map(([key, value]) =>
+          key === 'avatar' ? (
+            <span className='w-8 flex-shrink-0 truncate'></span>
+          ) : (
+            <span className='min-w-24 flex-1 flex-shrink-0 truncate text-left'>{key}</span>
+          )
+        )}
       </div>
       {membersinfo?.map((member) => (
-        <div className=' primary-surface flex w-full justify-between gap-2 border-b p-2  '>
-          <Button
-            className='h-fit  w-6 flex-shrink-0 truncate  p-1'
-            variant={'ghost'}
-            onClick={() => setMemberProfile(members.find((m) => m.username === member.username))}
-          >
-            <Contact2Icon size={16} />
-          </Button>
-
-          {Object.entries(member).map(([key, value]) => (
-            <span className='w-28 flex-shrink-0 truncate'>{value}</span>
-          ))}
-        </div>
+        <Button
+          variant={'ghost'}
+          className=' primary-surface flex w-full justify-between gap-2 border-b p-2 text-2xs  '
+          onClick={() => setMemberProfile(members.find((m) => m.username === member.username))}
+        >
+          {Object.entries(member).map(([key, value]) =>
+            key === 'avatar' ? (
+              <span className='w-8 flex-shrink-0 truncate'>
+                <Image src={value} alt='avatar' width={24} height={24} className='rounded-full' />
+              </span>
+            ) : (
+              <span className='min-w-24 flex-1 flex-shrink-0 truncate text-left'>{value}</span>
+            )
+          )}
+        </Button>
       ))}
     </div>
   );

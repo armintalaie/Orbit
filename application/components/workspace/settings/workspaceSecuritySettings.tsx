@@ -27,11 +27,8 @@ export default function WorkspaceSecuritySettings() {
   return (
     <div className='flex flex-col gap-4 overflow-scroll'>
       <div className='secondary-surface flex flex-1 flex-col gap-4  rounded border p-4'>
-        <p className='text-sm'>Manage your workspace security settings.
-        </p>
-        <p className='text-sm'>
-        Note, currently role permissions are not enforced.
-        </p>
+        <p className='text-sm'>Manage your workspace security settings.</p>
+        <p className='text-sm'>Note, currently role permissions are not enforced.</p>
       </div>
       <div className='flex w-full flex-col gap-4 pb-10 pt-5'>
         <div className='flex w-full  justify-between gap-4 '>

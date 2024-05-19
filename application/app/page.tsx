@@ -134,12 +134,12 @@ const components: {
 
 export function NavigationMenuDemo() {
   return (
-    <nav className='flex w-full  items-center p-2'>
-      <div className='flex items-center gap-4'>
+    <nav className='dark flex w-full  items-center p-2'>
+      <div className='flex w-full items-center gap-4 '>
         {/* <Image src='/icons/icon.png' alt='Orbit' width={40} height={200} /> */}
         <h1 className='text-3xl font-bold'>Orbit</h1>
       </div>
-      <NavigationMenu className='dark absolute left-1/2 flex-1 -translate-x-1/2 transform'>
+      <NavigationMenu className='flex  w-full flex-1 justify-end'>
         <NavigationMenuList>
           {/* <NavigationMenuItem>
             <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
@@ -191,9 +191,15 @@ export function NavigationMenuDemo() {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>*/}
-          <NavigationMenuItem>
+          <NavigationMenuItem className='flex gap-1'>
             <Link href='/docs' legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Documentation</NavigationMenuLink>
+            </Link>
+            <Link href='/auth/signup' legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Sign up</NavigationMenuLink>
+            </Link>
+            <Link href='/auth/signin' legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Sign in</NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
         </NavigationMenuList>
