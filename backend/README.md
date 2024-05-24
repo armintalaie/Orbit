@@ -1,4 +1,4 @@
-# orbitsync
+# orbit-server
 
 To install dependencies:
 
