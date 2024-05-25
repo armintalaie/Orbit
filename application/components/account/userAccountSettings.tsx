@@ -1,25 +1,13 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { Button } from '../ui/button';
-import Image from 'next/image';
 import { useContext } from 'react';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { createClient } from '@/lib/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { Input } from '../ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { toast } from 'sonner';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-
-const schema = z.object({
-  firstName: z.string().nullable().optional(),
-  lastName: z.string().nullable().optional(),
-  pronouns: z.string().nullable().optional(),
-  avatar: z.string().nullable().optional(),
-});
 
 export default function UserAccountSettings() {
   const { session } = useContext(UserSessionContext);
