@@ -1,8 +1,10 @@
 'use client';
 import React, { useState, Suspense, useContext, useEffect } from 'react';
 import { UserSessionContext } from './AuthProvider';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Spinner from '@/components/general/Spinner';
+import { useQuery, gql } from '@apollo/client';
+
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
 type OrbitType = {
@@ -10,100 +12,79 @@ type OrbitType = {
   changeWorkspace: (workspace: any) => void;
   fetcher: (input: string | URL | Request) => Promise<any>;
   swrFetcher: (url: string) => Promise<any>;
+  user: any;
 };
 
 type OrbitContextType = {} & OrbitType;
 
 export const OrbitContext = React.createContext<OrbitContextType>({
-  currentWorkspace: {},
+  currentWorkspace: null,
   changeWorkspace: async () => {},
   fetcher: async () => {},
   swrFetcher: async () => {},
+  user: {},
 });
 
 export default function OrbitContextProvider({ children }: { children: React.ReactNode }) {
-  const user = useContext(UserSessionContext);
+  const { session } = useContext(UserSessionContext);
   const router = useRouter();
-  const pathname = usePathname();
-  const [loading, setLoading] = useState(true);
+  const { user, loading: userLoading, error: userError } = getUserInfo();
   const [orbit, setOrbit] = useState<OrbitType>({
     currentWorkspace: null,
     changeWorkspace: async () => {},
     fetcher: async () => {},
     swrFetcher: async () => {},
+    user: {},
   });
 
   function changeWorkspace(id?: any) {
-    setLoading(true);
-    if (!id) {
-      setOrbit({
-        ...orbit,
-        currentWorkspace: null,
-      });
-      window.localStorage.removeItem('currentWorkspace');
-      router.push('/orbit/');
-      return;
-    }
-    getWorkspace(id).then((data) => {
-      window.localStorage.setItem('currentWorkspace', JSON.stringify(data));
-      if (!pathname.includes(`/workspace/${id}`)) {
-        router.replace(`/orbit/workspace/${id}`);
-      }
-      setOrbit({
-        ...orbit,
-        currentWorkspace: data,
-      });
-      router.push(`/orbit/workspace/${id}`);
-      setLoading(false);
+    setOrbit({
+      ...orbit,
+      currentWorkspace: id,
     });
   }
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem('currentWorkspace');
+    if (stored) {
+      setOrbit({
+        ...orbit,
+        currentWorkspace: JSON.parse(stored),
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const currentWorkspace = orbit.currentWorkspace;
+
+    if (currentWorkspace) {
+      window.localStorage.setItem('currentWorkspace', JSON.stringify(currentWorkspace));
+      router.push(`/orbit/workspace/${currentWorkspace}`);
+    } else {
+      window.localStorage.removeItem('currentWorkspace');
+      router.push('/orbit/');
+    }
+  }, [orbit]);
 
   async function fetcher(input: string | URL | Request, init?: any | undefined): Promise<Response> {
     const res = fetch(input, {
       ...init,
       headers: {
         ...init?.headers,
-        Authorization: user?.access_token,
+        Authorization: session.access_token,
       },
     });
-
     return res;
   }
 
   const swrFetcher = (url: string) => fetcher(url).then((res) => res.json());
 
-  async function getWorkspace(id: any) {
-    const res = await fetch(`/api/v2/workspaces/${id}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${user.access_token}`,
-      },
-    });
-    let data = {};
-    if (res.ok) {
-      const result = await res.json();
-      data = {
-        ...result,
-      };
-    } else {
-      return null;
-    }
+  if (userLoading) {
+    return <Spinner />;
+  }
 
-    const memberRes = await fetch(`/api/v2/workspaces/${id}/members/${user.user.id}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${user.access_token}`,
-      },
-    });
-    let member = null;
-    if (memberRes.ok) {
-      member = await memberRes.json();
-    }
-
-    return {
-      ...data,
-      member: member,
-    };
+  if (userError) {
+    return <div>Error! {userError.message}</div>;
   }
 
   const contextValue = {
@@ -111,40 +92,9 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
     changeWorkspace,
     fetcher,
     swrFetcher,
+    user: user.me,
   };
 
-  useEffect(() => {
-    if (user) {
-      getUserInfo().then((data) => {
-        if (data && data.workspaces.length > 0) {
-          changeWorkspace(data.workspaces[0].workspaceId);
-        } else {
-          router.push('/orbit/');
-        }
-      });
-    }
-  }, []);
-
-  async function getUserInfo() {
-    const res = await fetch(`/api/v2/users/${user.user.id}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${user.access_token}`,
-      },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data;
-    }
-  }
-
-  if (!user || contextValue.currentWorkspace === null) {
-    return <div></div>;
-  }
-
-  if (loading) {
-    return <Spinner />;
-  }
   return (
     <Suspense fallback={<LoadingFallback />}>
       <OrbitContext.Provider value={contextValue}>
@@ -152,4 +102,27 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
       </OrbitContext.Provider>
     </Suspense>
   );
+}
+
+const userQuery = gql`
+  query {
+    me {
+      id
+      email
+      workspaces {
+        id
+        name
+        status
+      }
+    }
+  }
+`;
+
+function getUserInfo(): { user: { me: any }; loading: boolean; error: any } {
+  const { data, loading, error } = useQuery(userQuery);
+  return {
+    user: data,
+    loading,
+    error,
+  };
 }

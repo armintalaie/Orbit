@@ -6,9 +6,6 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import useSWR from 'swr';
-import { UserInfoType } from '@/lib/types';
-import Spinner from '../general/Spinner';
 import { CheckIcon, HourglassIcon, LogInIcon, XIcon } from 'lucide-react';
 
 export default function AccountWorkspaces() {
@@ -33,25 +30,24 @@ function NewWorkspace({ onEvent }: { onEvent: (value: boolean) => void }) {
   const [name, setName] = useState('');
 
   async function createWorkspace() {
-    const res = await fetch('/api/v2/workspaces', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${UserSession.access_token}`,
-      },
-      body: JSON.stringify({
-        workspaceId: name,
-      }),
-    });
-
-    if (res.ok) {
-      toast('Workspace created');
-      onEvent(false);
-      router.refresh();
-    } else {
-      const data = await res.json();
-      toast(data.error);
-    }
+    // const res = await fetch('/api/v2/workspaces', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `Bearer ${UserSession.access_token}`,
+    //   },
+    //   body: JSON.stringify({
+    //     workspaceId: name,
+    //   }),
+    // });
+    // if (res.ok) {
+    //   toast('Workspace created');
+    //   onEvent(false);
+    //   router.refresh();
+    // } else {
+    //   const data = await res.json();
+    //   toast(data.error);
+    // }
   }
   return (
     <div className='primary-surface flex w-full flex-col gap-4 rounded-md border '>
@@ -75,54 +71,45 @@ function NewWorkspace({ onEvent }: { onEvent: (value: boolean) => void }) {
 }
 
 function UserWorkspaces() {
+  const { user } = useContext(OrbitContext);
+
   const UserSession = useContext(UserSessionContext);
   const { changeWorkspace } = useContext(OrbitContext);
   const router = useRouter();
 
-  const { userInfo, isLoading, error } = useUserInfo();
-
   async function respondToInvite(workspaceId: string, status: string) {
-    const res = await fetch(`/api/v2/users/${UserSession.user.id}/invites/${workspaceId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${UserSession.access_token}`,
-      },
-      body: JSON.stringify({
-        status: status,
-      }),
-    });
-    if (res.ok) {
-      toast('Invite responded');
-    } else {
-      toast('Failed to respond to invite');
-    }
+    // const res = await fetch(`/api/v2/users/${UserSession.user.id}/invites/${workspaceId}`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `Bearer ${UserSession.access_token}`,
+    //   },
+    //   body: JSON.stringify({
+    //     status: status,
+    //   }),
+    // });
+    // if (res.ok) {
+    //   toast('Invite responded');
+    // } else {
+    //   toast('Failed to respond to invite');
+    // }
   }
 
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  if (error) {
-    return <div>Failed to load workspaces</div>;
-  }
-
-  const visibleStatuses = ['active', 'pending', ''];
+  const visibleStatuses = ['ACTIVE', 'PENDING', ''];
   return (
     <div className=' flex w-full flex-col gap-2   '>
-      {userInfo.workspaces && userInfo.workspaces.length > 0 && (
+      {user.workspaces && (
         <div className=' primary-surface flex w-full flex-col gap-1 divide-y rounded-md border '>
-          {userInfo.workspaces
-            .filter((w) => visibleStatuses.includes(w.status))
+          {user.workspaces
+            // .filter((w) => visibleStatuses.includes(w.status))
             .map((workspace) => (
-              <div className='flex w-full items-center gap-2   ' key={workspace.workspaceId}>
+              <div className='flex w-full items-center gap-2   ' key={workspace.id}>
                 <div className='flex w-12 items-center gap-2'>
-                  {workspace.status === 'active' ? (
+                  {workspace.status === 'ACTIVE' ? (
                     <Button
                       variant={'ghost'}
                       onClick={() => {
-                        router.push(`/orbit/workspace/${workspace.workspaceId}`);
-                        changeWorkspace(workspace.workspaceId);
+                        changeWorkspace(workspace.id);
                       }}
                     >
                       <LogInIcon size={16} />
@@ -135,7 +122,7 @@ function UserWorkspaces() {
                 </div>
                 <p className='flex flex-1 items-center gap-2  py-1'>{workspace.name}</p>
                 <div className='flex  items-center justify-end  gap-2 px-4 py-1 text-sm'>
-                  {workspace.status === 'active' ? (
+                  {workspace.status === 'ACTIVE' ? (
                     <p className='flex w-24 items-center justify-between gap-2 rounded-md border border-transparent  p-2 font-medium'>
                       <div className='flex  h-3 w-3 items-center gap-2 rounded-full border bg-teal-300'></div>
                       Active
@@ -167,25 +154,4 @@ function UserWorkspaces() {
       )}
     </div>
   );
-}
-
-function useUserInfo() {
-  const UserSession = useContext(UserSessionContext);
-  const { data, error, isLoading } = useSWR(`/api/v2/users/${UserSession.user.id}`, async (url: string) => {
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${UserSession.access_token}`,
-      },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data;
-    }
-  });
-  return {
-    userInfo: data as UserInfoType,
-    isLoading,
-    error,
-  };
 }

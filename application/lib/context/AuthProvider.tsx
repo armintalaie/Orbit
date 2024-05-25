@@ -4,10 +4,11 @@ import { Session } from '@supabase/supabase-js';
 import { createClient } from '../utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/general/Spinner';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 type UserSession = {
-  account: any;
-} & Session;
+  session: Session;
+};
 
 export const UserSessionContext = createContext<UserSession>({} as UserSession);
 
@@ -16,38 +17,11 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
   const [sessionInfo, setSessionInfo] = useState<UserSession | null>(null);
   const router = useRouter();
 
-  async function getUserInfo({ userid, token }: { userid: string; token: string }) {
-    const res = await fetch(`/api/v2/users/${userid}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    let data = null;
-    if (res.ok) {
-      data = await res.json();
-    }
-    return data;
-  }
-
-  async function addUserInfo({ userid, token, authdata }: { userid: string; token: string; authdata: any }) {
-    const data = await getUserInfo({ userid: userid, token: token });
-    if (!data) {
-      router.push('/auth/signin');
-    }
-    setSessionInfo({
-      ...authdata,
-      account: data,
-      user: data,
-    });
-  }
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data && data.session) {
-        addUserInfo({ userid: data.session.user.id, token: data.session.access_token, authdata: data });
+        setSessionInfo({ session: data.session });
       } else {
-        setSessionInfo(null);
         router.push('/auth/signin');
       }
     });
@@ -55,21 +29,32 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSessionInfo(session);
+      if (session) {
+        setSessionInfo({ session });
+      } else {
+        router.push('/auth/signin');
+      }
     });
     return () => subscription.unsubscribe();
   }, []);
 
   if (!sessionInfo || !sessionInfo.session || !sessionInfo.session.user || sessionInfo === null) {
-    return (
-      <>
-        <Spinner />
-      </>
-    );
+    return <Spinner />;
   }
+
+  const client = new ApolloClient({
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_URL,
+    cache: new InMemoryCache(),
+    headers: {
+      authorization: `${sessionInfo.session.access_token}`,
+    },
+  });
+
   return (
     <Suspense fallback={<Spinner />}>
-      <UserSessionContext.Provider value={sessionInfo}>{children}</UserSessionContext.Provider>
+      <UserSessionContext.Provider value={sessionInfo}>
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </UserSessionContext.Provider>
     </Suspense>
   );
 }

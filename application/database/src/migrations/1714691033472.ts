@@ -3,13 +3,11 @@ import { Kysely } from 'kysely';
 export async function up(db: Kysely<any>): Promise<void> {
   await db.schema.createSchema('public').ifNotExists().execute();
 
- await db.withSchema('public').schema
-  .createType('workspace_status')
-  .asEnum(['active', 'inactive'])
-  .execute();
+  await db.withSchema('public').schema.createType('workspace_status').asEnum(['active', 'inactive']).execute();
 
-  await db.withSchema('public').schema
-    .createType('member_status')
+  await db
+    .withSchema('public')
+    .schema.createType('member_status')
     .asEnum(['active', 'inactive', 'pending', 'ignored'])
     .execute();
 }

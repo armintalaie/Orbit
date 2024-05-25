@@ -43,38 +43,37 @@ export default function AccountModal() {
           },
         },
       },
-      ...(currentWorkspace &&
-        currentWorkspace.id && {
-          workspace: {
-            info: {
-              label: 'Workspace',
-              icon: <Grid2X2 size={16} />,
-            },
+      ...(currentWorkspace && {
+        workspace: {
+          info: {
+            label: 'Workspace',
+            icon: <Grid2X2 size={16} />,
+          },
 
-            options: {
-              general: {
-                label: 'General',
-                icon: <InfoIcon size={16} />,
-                content: <WorkspaceGeneralSettings />,
-              },
-              profile: {
-                label: 'Profile',
-                icon: <User2 size={16} />,
-                content: <WorkspaceAccountSettings />,
-              },
-              members: {
-                label: 'Members',
-                icon: <Users2Icon size={16} />,
-                content: <WorkspaceMembers />,
-              },
-              security: {
-                label: 'Security and Roles',
-                icon: <LockIcon size={16} />,
-                content: <WorkspaceSecuritySettings />,
-              },
+          options: {
+            general: {
+              label: 'General',
+              icon: <InfoIcon size={16} />,
+              content: <WorkspaceGeneralSettings />,
+            },
+            profile: {
+              label: 'Profile',
+              icon: <User2 size={16} />,
+              content: <WorkspaceAccountSettings />,
+            },
+            members: {
+              label: 'Members',
+              icon: <Users2Icon size={16} />,
+              content: <WorkspaceMembers />,
+            },
+            security: {
+              label: 'Security and Roles',
+              icon: <LockIcon size={16} />,
+              content: <WorkspaceSecuritySettings />,
             },
           },
-        }),
+        },
+      }),
     }),
     [currentWorkspace]
   );
