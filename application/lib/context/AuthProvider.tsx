@@ -44,7 +44,9 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
 
   const client = new ApolloClient({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_URL,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      addTypename: false,
+    }),
     headers: {
       authorization: `${sessionInfo.session.access_token}`,
     },

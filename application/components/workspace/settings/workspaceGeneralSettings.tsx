@@ -6,11 +6,10 @@ import { Input } from '../../ui/input';
 import { Button } from '../../ui/button';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 
 export default function WorkspaceGeneralSettings() {
   const { currentWorkspace, changeWorkspace } = useContext(OrbitContext);
-  const userSession = useContext(UserSessionContext);
+  const { session } = useContext(UserSessionContext);
   const [name, setName] = useState(currentWorkspace?.name);
 
   async function renameWorkspace(name: string) {
@@ -18,7 +17,7 @@ export default function WorkspaceGeneralSettings() {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userSession.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
       body: JSON.stringify({
         name,
@@ -37,7 +36,7 @@ export default function WorkspaceGeneralSettings() {
     const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${userSession.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
     });
 
@@ -52,10 +51,10 @@ export default function WorkspaceGeneralSettings() {
   }
 
   async function leaveWorkspace() {
-    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/members/${userSession.user.id}`, {
+    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/members/${session.user.id}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${userSession.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
     });
 
@@ -72,7 +71,7 @@ export default function WorkspaceGeneralSettings() {
       <div className='secondary-surface flex flex-col gap-4 rounded p-4'>
         <p className='text-sm'>Manage your workspace settings</p>
       </div>
-      <div className='flex w-full flex-col gap-4 pb-10 pt-5'>
+      {/* <div className='flex w-full flex-col gap-4 pb-10 pt-5'>
         <h2 className='text-lg  font-semibold'>Workspace</h2>
         <div className='flex  w-full items-end gap-4'>
           <div className='flex items-center gap-4 '>
@@ -83,7 +82,7 @@ export default function WorkspaceGeneralSettings() {
             Save
           </Button>
         </div>
-      </div>
+      </div> */}
       <div className='flex flex-col gap-4 border-t py-4'>
         <h3 className='text-md  font-medium'>Workspace Member</h3>
         <div className='secondary-surface flex flex-col items-end gap-4 rounded-md p-4 py-4'>

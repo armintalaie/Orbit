@@ -23,15 +23,15 @@ export interface MemberRole {
 }
 
 export interface Project {
-  created_at: Generated<Timestamp>;
+  createdAt: Generated<Timestamp>;
   description: string | null;
   id: Generated<number>;
   meta: Generated<Json>;
   name: string;
-  start_date: Timestamp | null;
+  startDate: Timestamp | null;
   status: string | null;
-  target_date: Timestamp | null;
-  updated_at: Generated<Timestamp>;
+  targetDate: Timestamp | null;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface ProjectMember {

@@ -1,6 +1,6 @@
 import AccountModal from '@/components/account/accountModal';
 import WorkspaceSwitcher from './workspaceSwitcher';
-// import WorkspaceProjects from './workspacesidebarProjects';
+import WorkspaceProjects from './workspacesidebarProjects';
 
 export default function Sidebar() {
   return (
@@ -9,7 +9,9 @@ export default function Sidebar() {
         <WorkspaceSwitcher />
       </div>
 
-      <div className='flex flex-1 flex-col gap-2   rounded p-2'>{/* <WorkspaceProjects /> */}</div>
+      <div className='flex flex-1 flex-col gap-2   rounded p-2'>
+        <WorkspaceProjects />
+      </div>
 
       <div className='flex flex-1 flex-col gap-2' />
       <div className='flex  gap-2 '>

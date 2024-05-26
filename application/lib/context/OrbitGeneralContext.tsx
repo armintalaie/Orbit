@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, Suspense, useContext, useEffect } from 'react';
 import { UserSessionContext } from './AuthProvider';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Spinner from '@/components/general/Spinner';
 import { useQuery, gql } from '@apollo/client';
 
@@ -28,7 +28,9 @@ export const OrbitContext = React.createContext<OrbitContextType>({
 export default function OrbitContextProvider({ children }: { children: React.ReactNode }) {
   const { session } = useContext(UserSessionContext);
   const router = useRouter();
+  const pathname = usePathname();
   const { user, loading: userLoading, error: userError } = getUserInfo();
+  const [checkedCache, setCheckedCache] = useState(false);
   const [orbit, setOrbit] = useState<OrbitType>({
     currentWorkspace: null,
     changeWorkspace: async () => {},
@@ -52,19 +54,23 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
         currentWorkspace: JSON.parse(stored),
       });
     }
+    setCheckedCache(true);
   }, []);
 
   useEffect(() => {
+    if (!checkedCache) return;
     const currentWorkspace = orbit.currentWorkspace;
-
     if (currentWorkspace) {
       window.localStorage.setItem('currentWorkspace', JSON.stringify(currentWorkspace));
-      router.push(`/orbit/workspace/${currentWorkspace}`);
+      if (!pathname.startsWith(`/orbit/workspace/${currentWorkspace}`)) {
+        router.push(`/orbit/workspace/${currentWorkspace}`);
+      }
     } else {
+      alert('No workspace selected');
       window.localStorage.removeItem('currentWorkspace');
       router.push('/orbit/');
     }
-  }, [orbit]);
+  }, [orbit, checkedCache]);
 
   async function fetcher(input: string | URL | Request, init?: any | undefined): Promise<Response> {
     const res = fetch(input, {

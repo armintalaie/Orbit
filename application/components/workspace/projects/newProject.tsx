@@ -4,33 +4,34 @@ import { PlusIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from '../../ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { DeadlineField } from '../issues/form/deadlineField';
 import { StatusField } from '../issues/form/statusField';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
+import { gql, useMutation } from '@apollo/client';
 
-export const projectSchema = z.object({
-  name: z.string(),
-  statusid: z.any(),
-  startDate: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .optional(),
-  targetDate: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .optional(),
-});
+const NEW_PROJECT = gql`
+  mutation CreateProject($workspaceId: String!, $project: NewProjectInput!) {
+    createProject(workspaceId: $workspaceId, project: $project) {
+      id
+      name
+      description
+      status
+      targetDate
+      startDate
+    }
+  }
+`;
 
 export const formSchema = z.object({
   name: z.string(),
-  statusid: z.any(),
+  description: z.string().optional(),
+  statusid: z.any().optional(),
   startDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -50,6 +51,8 @@ export function NewProject({
 }) {
   const { currentWorkspace } = useContext(OrbitContext);
   const [open, setOpen] = useState(false);
+  const [createProject, { data, loading, error }] = useMutation(NEW_PROJECT);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,26 +67,19 @@ export function NewProject({
       name: formVals.name,
       // statusid: formVals.statusid,
     };
+    console.log(project);
 
-    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/projects`, {
-      body: JSON.stringify(project),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    });
-
-    if (!res.ok) {
-      toast('Project not created', {
-        description: 'something went wrong',
-      });
-    } else {
-      toast('Project created', {
-        description: `Project successfully created`,
-      });
-      setOpen(false);
-    }
+    createProject({ variables: { workspaceId: currentWorkspace, project: project } });
   }
+
+  console.log(data);
+  console.log(loading);
+  console.log(error);
+  useEffect(() => {
+    if (data) {
+      form.reset();
+    }
+  }, [data]);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -123,8 +119,23 @@ export function NewProject({
               )}
             />
 
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem className='w-full'>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder='some details about this grand idea' {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className='flex w-full flex-col items-center gap-4 space-x-2 border-y py-8'>
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name='statusid'
                 render={({ field }) => (
@@ -137,7 +148,7 @@ export function NewProject({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FormField
                 control={form.control}

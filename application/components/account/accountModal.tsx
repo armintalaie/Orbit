@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useContext, useMemo, useState } from 'react';
 import { Grid2X2, InfoIcon, LockIcon, PaintBucket, SettingsIcon, User2, Users2Icon } from 'lucide-react';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-
 import WorkspaceGeneralSettings from '../workspace/settings/workspaceGeneralSettings';
 import AccountWorkspaces from './accountWorkspaces';
 import WorkspaceSecuritySettings from '../workspace/settings/workspaceSecuritySettings';
@@ -49,7 +48,6 @@ export default function AccountModal() {
             label: 'Workspace',
             icon: <Grid2X2 size={16} />,
           },
-
           options: {
             general: {
               label: 'General',
@@ -66,11 +64,11 @@ export default function AccountModal() {
               icon: <Users2Icon size={16} />,
               content: <WorkspaceMembers />,
             },
-            security: {
-              label: 'Security and Roles',
-              icon: <LockIcon size={16} />,
-              content: <WorkspaceSecuritySettings />,
-            },
+            // security: {
+            //   label: 'Security and Roles',
+            //   icon: <LockIcon size={16} />,
+            //   content: <WorkspaceSecuritySettings />,
+            // },
           },
         },
       }),

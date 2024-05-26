@@ -15,15 +15,16 @@ export default function WorkspaceMemberProfile({
   setMemberProfile: (member: WorkspaceMember | undefined) => void;
 }) {
   const { currentWorkspace } = useContext(OrbitContext);
-  const userSession = useContext(UserSessionContext);
-  const { avatar, ...rest } = member;
+  const { session } = useContext(UserSessionContext);
+  const { email, profile } = member;
+  const { avatar, ...rest } = profile;
 
   async function removeMember() {
     const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/members/${member.memberId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userSession.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
     });
     if (res.ok) {
@@ -58,7 +59,7 @@ export default function WorkspaceMemberProfile({
         <div className=' flex w-full flex-col items-center justify-start gap-4 overflow-x-scroll text-xs'>
           <div className='flex items-center gap-2'>
             <Image
-              src={avatar}
+              src={profile.avatar}
               alt='avatar'
               width={150}
               height={150}

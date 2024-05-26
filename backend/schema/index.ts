@@ -1,6 +1,6 @@
-import { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLList } from "graphql";
+import { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLList, GraphQLNonNull } from "graphql";
 import * as types from './typeDefs';
-import { userResolver, workspaceResolver, workspacesResolver} from "./resolvers";
+import { createProjectResolver, deleteProjectResolver, meResolver, projectsResolver, updateProjectResolver, userResolver, workspaceResolver, workspacesResolver} from "./resolvers";
 
 export const schema = new GraphQLSchema({
     query: new GraphQLObjectType({
@@ -21,7 +21,7 @@ export const schema = new GraphQLSchema({
                 type: types.workspaceType,
                 resolve: workspaceResolver,
                 args: {
-                    workspaceId: { type: GraphQLString }
+                    id: { type: GraphQLString }
                 }
             },
             user: {
@@ -32,7 +32,58 @@ export const schema = new GraphQLSchema({
                     email: { type: GraphQLString },
                     id: { type: GraphQLString }
                 }
-            }      
+            },
+            me: {
+                description: 'The current user',
+                type: types.userType,
+                resolve: meResolver,
+            },
+            projects: {
+                description: 'List of projects',
+                type: new GraphQLList(types.projectType),
+                resolve: projectsResolver,
+                args: {
+                    workspaceId: { type: GraphQLString }
+                }
+            },  
+        },
+    }),
+    mutation: new GraphQLObjectType({
+        name: 'Mutation',
+        fields: {
+            hello: {
+                description: 'A simple hello world',
+                type: GraphQLString,
+                resolve: () => 'Hello World from Orbit!',
+            },
+            createProject: {
+                description: 'Create a project',
+                type: types.projectType,
+                resolve: createProjectResolver,
+                args: {
+                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                    project: { type: new GraphQLNonNull(types.newProjectInputType)}
+                }
+            },
+            updateProject: {
+                description: 'Update a project',
+                type: types.projectType,
+                resolve: updateProjectResolver,
+                args: {
+                    id: { type: new GraphQLNonNull(GraphQLString) },
+                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                    project: { type: new GraphQLNonNull(types.updateProjectInputType) }
+                }
+            },
+            deleteProject: {
+                description: 'Delete a project',
+                type: types.projectType,
+                resolve: deleteProjectResolver,
+                args: {
+                    id: { type: new GraphQLNonNull(GraphQLString) },
+                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                }
+            },
         },
     }),
     types: [
@@ -40,5 +91,9 @@ export const schema = new GraphQLSchema({
         types.WorkspaceStatus, 
         types.workspaceType, 
         types.memberType, 
+        types.profileType,
+        types.projectType,
+        types.newProjectInputType,
+        types.updateProjectInputType,
         types.userType],
 })

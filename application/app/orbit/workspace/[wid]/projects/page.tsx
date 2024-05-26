@@ -1,13 +1,16 @@
 'use client';
 
 import { NewProject } from '@/components/workspace/projects/newProject';
-import { dateFormater, isOverdue, setDocumentMeta } from '@/lib/util';
+import { dateFormater, setDocumentMeta } from '@/lib/util';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Link from 'next/link';
 import PageWrapper from '@/components/general/layouts/pageWrapper';
-import { useWorkspaceProjects } from '@/components/account/workspacesidebarProjects';
 import Spinner from '@/components/general/Spinner';
+import { useWorkspaceProjects } from '@/lib/hooks/useWorkspaceProjects';
+import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
+import { useContext } from 'react';
+import { toast } from 'sonner';
 interface IProject {
   id: number;
   name: string;
@@ -21,10 +24,19 @@ interface IProject {
 
 export default function ProjectPage() {
   setDocumentMeta(`Projects`);
-  const { projects, isLoading } = useWorkspaceProjects();
+  const { currentWorkspace } = useContext(OrbitContext);
+  const { projects, loading, error } = useWorkspaceProjects({
+    workspaceId: currentWorkspace,
+    fields: ['id', 'name', 'status', 'startDate', 'targetDate'],
+  });
 
-  if (isLoading) {
+  if (loading) {
     return <Spinner />;
+  }
+
+  if (error) {
+    toast('Could not fetch projects');
+    return <div>{`:(`}</div>;
   }
 
   return (
@@ -49,7 +61,7 @@ function TableView({ projects }: { projects: IProject[] }) {
       <div className='flex w-full flex-col items-center justify-between   rounded-md   border text-xs '>
         <Table className='w-full  overflow-hidden rounded-sm  shadow-none '>
           <TableHeader>
-            <TableRow className=' primary-surface text-xs '>
+            <TableRow className=' secondary-surface text-xs '>
               <TableHead>Name</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Start Date</TableHead>
@@ -65,7 +77,7 @@ function TableView({ projects }: { projects: IProject[] }) {
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <Badge>{project.status}</Badge>
+                  <Badge className='h-6 text-2xs'>{project.status ?? 'No status'}</Badge>
                 </TableCell>
                 <TableCell>{dateFormater(project.startDate)}</TableCell>
                 <TableCell>{dateFormater(project.targetDate)}</TableCell>
