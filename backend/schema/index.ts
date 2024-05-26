@@ -1,6 +1,6 @@
 import { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLList, GraphQLNonNull } from "graphql";
 import * as types from './typeDefs';
-import { createProjectResolver, deleteProjectResolver, meResolver, projectsResolver, updateProjectResolver, userResolver, workspaceResolver, workspacesResolver} from "./resolvers";
+import { createProjectResolver, deleteProjectResolver, meResolver, projectResolver, projectsResolver, updateProjectResolver, userResolver, workspaceResolver, workspacesResolver} from "./resolvers";
 
 export const schema = new GraphQLSchema({
     query: new GraphQLObjectType({
@@ -45,7 +45,16 @@ export const schema = new GraphQLSchema({
                 args: {
                     workspaceId: { type: GraphQLString }
                 }
-            },  
+            },
+            project: {
+                description: 'A project',
+                type: types.projectType,
+                resolve: projectResolver,
+                args: {
+                    id: { type: GraphQLString },
+                    workspaceId: { type: GraphQLString }
+                }
+            }  
         },
     }),
     mutation: new GraphQLObjectType({

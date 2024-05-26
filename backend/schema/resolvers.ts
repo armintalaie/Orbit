@@ -89,3 +89,9 @@ export const deleteProjectResolver : GraphQLFieldResolver<any,{db: Kysely<Worksp
     const {workspaceId, id} = args;
     return d2.withSchema(`workspace_${workspaceId}`).deleteFrom('project').where('id', '=', id).returningAll().executeTakeFirstOrThrow();
 }
+
+export const projectResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const {workspaceId, id} = args;
+    return d2.withSchema(`workspace_${workspaceId}`).selectFrom('project').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
+
+}
