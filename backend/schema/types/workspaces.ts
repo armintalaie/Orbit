@@ -1,5 +1,8 @@
-import { GraphQLEnumType, GraphQLID, GraphQLInputObjectType, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
-import { membersResolver, workspaceProjectsResolver } from "./resolvers";
+import { GraphQLEnumType, GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
+import { issueStatusType } from "./issues";
+import { projectType } from "./projects";
+import { workspaceProjectsResolver } from "../resolvers/projects";
+import { membersResolver, workspaceConfigResolver } from "../resolvers/workspaces";
 
 export const MemberStatus = new GraphQLEnumType({
     name: 'MemberStatus',
@@ -24,23 +27,7 @@ export const workspaceType = new GraphQLObjectType({
         status: { type: new GraphQLNonNull(WorkspaceStatus) },
         members: { type: (new GraphQLList (memberType)), resolve: membersResolver },
         projects: { type: (new GraphQLList (projectType)), resolve: workspaceProjectsResolver },
-    }),
-});
-
-
-export const projectType = new GraphQLObjectType({
-    name: 'Project',
-    description: 'A project in a workspace',
-    fields: () => ({
-        id: { type: new GraphQLNonNull(GraphQLID) },
-        name: { type: new GraphQLNonNull(GraphQLString) },
-        createdAt: { type: new GraphQLNonNull(GraphQLString) },
-        updatedAt: { type: new GraphQLNonNull(GraphQLString) },
-        description: { type: GraphQLString },
-        status: { type: GraphQLString },
-        targetDate: { type: GraphQLString },
-        startDate: { type: GraphQLString },
-        meta: { type: GraphQLString },
+        config: { type: workspaceConfigType , resolve: workspaceConfigResolver},
     }),
 });
 
@@ -56,6 +43,7 @@ export const memberType = new GraphQLObjectType({
         updatedAt: { type: new GraphQLNonNull(GraphQLString) },
         status: { type: new GraphQLNonNull(MemberStatus) },
         profile: { type: new GraphQLNonNull(profileType) },
+    
     })
 });
 
@@ -96,33 +84,29 @@ export const profileType = new GraphQLObjectType({
         avatar: { type: GraphQLString },
         bio: { type: GraphQLString },      
     }),
-    
 });
 
 
 
-export const newProjectInputType = new GraphQLInputObjectType({
-    name: 'NewProjectInput',
-    description: 'Input for creating a new project',
+
+
+export const workspaceConfigType = new GraphQLObjectType({
+    name: 'WorkspaceConfig',
+    description: 'Configuration for a workspace',
     fields: () => ({
-        name: { type: new GraphQLNonNull(GraphQLString) },
-        description: { type: GraphQLString },
-        status: { type: GraphQLString },
-        targetDate: { type: GraphQLString },
-        startDate: { type: GraphQLString },
-        meta: { type: GraphQLString },
+        issueStatus: { type: new GraphQLList (issueStatusType) },
+        projectStatus: { type: new GraphQLList (issueStatusType) },
     }),
 });
 
-export const updateProjectInputType = new GraphQLInputObjectType({
-    name: 'UpdateProjectInput',
-    description: 'Input for updating a project',
-    fields: () => ({
-        name: { type: GraphQLString },
-        description: { type: GraphQLString },
-        status: { type: GraphQLString },
-        targetDate: { type: GraphQLString },
-        startDate: { type: GraphQLString },
-        meta: { type: GraphQLString },
-    }),
-});
+
+
+export const WorkspaceGraphqlTypes = {
+    workspaceType,
+    memberType,
+    userType,
+    profileType,
+    workspaceConfigType,
+    MemberStatus,
+    WorkspaceStatus
+}

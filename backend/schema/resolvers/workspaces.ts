@@ -1,8 +1,8 @@
 import type { Kysely } from "kysely";
-import type { WorkspaceSchema } from "../database/schema/workspace";
-import { getDb } from "../utils/db";
+import type { WorkspaceSchema } from "../../database/schema/workspace";
+import { getDb } from "../../utils/db";
 import type { GraphQLFieldResolver } from "graphql";
-import { jsonArrayFrom } from "kysely/helpers/postgres";
+import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
 
 const d2 = await getDb();
 
@@ -37,20 +37,6 @@ export const meResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}
     return getUserName({db: d2, id: context.user.id});
 }
 
-export const projectsResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
-    const {workspaceId} = args;
-    return getProjects({wid: workspaceId, db: d2});
-}
-
-export const workspaceProjectsResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
-    const workspaceId  = parent.id;
-    return getProjects({wid: workspaceId, db: d2});
-}
-
-const getProjects = async ({wid, db}: {wid: string, db: Kysely<WorkspaceSchema>}) => {
-    return db.withSchema(`workspace_${wid}`).selectFrom('project').selectAll().execute();
-}
-
 
 const getUserName = async ({id, email, db}: {id?: string, email?: string, db: Kysely<WorkspaceSchema>}) => {
     let query = d2.selectFrom('auth.users').select((eb) => [
@@ -74,24 +60,23 @@ const getUserName = async ({id, email, db}: {id?: string, email?: string, db: Ky
 }
 
 
+export const workspaceConfigResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const {id} = parent;
+    const config = await d2.withSchema(`workspace_${id}`).selectNoFrom((eb)=> [
+        jsonArrayFrom(eb.selectFrom('issue_status').selectAll()).as('issueStatus'),
+        jsonArrayFrom(eb.selectFrom('project_status').selectAll()).as('projectStatus'),
+    ]).executeTakeFirstOrThrow();
 
-export const createProjectResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
-    const {workspaceId, project} = args;
-    return d2.withSchema(`workspace_${workspaceId}`).insertInto('project').values({...project}).returningAll().executeTakeFirstOrThrow();
+    return config;
 }
 
-export const updateProjectResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
-    const {workspaceId, id, project} = args;
-    return d2.withSchema(`workspace_${workspaceId}`).updateTable('project').set({...project}).where('id', '=', id).returningAll().executeTakeFirstOrThrow();
-}
 
-export const deleteProjectResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
-    const {workspaceId, id} = args;
-    return d2.withSchema(`workspace_${workspaceId}`).deleteFrom('project').where('id', '=', id).returningAll().executeTakeFirstOrThrow();
-}
 
-export const projectResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
-    const {workspaceId, id} = args;
-    return d2.withSchema(`workspace_${workspaceId}`).selectFrom('project').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
-
+export const workspaceResolvers = {
+    workspaceResolver,
+    workspacesResolver,
+    membersResolver,
+    userResolver,
+    meResolver,
+    workspaceConfigResolver
 }

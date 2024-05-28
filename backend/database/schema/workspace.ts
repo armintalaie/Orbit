@@ -76,10 +76,45 @@ export interface TeamMember {
   user_id: string;
 }
 
+export interface Issue {
+  id: number;
+  title: string;
+  content: string;
+  status_id: number;
+  targetDate?: string;
+  startDate?: string;
+  datecreated: string;
+  dateupdated: string;
+  assignees: Member[];
+  metadata: Json;
+}
+
+export interface IssueStatus {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface IssueAssignee {
+  issue_id: number;
+  user_id: string;
+}
+
+export interface ProjectIssue {
+  project_id: number;
+  issue_id: number;
+}
+
+
+
 export interface WorkspaceSchema {
+  issue: Issue;
+  issue_status: IssueStatus;
+  issue_assignee: IssueAssignee;
   member: Member;
   member_role: MemberRole;
   project: Project;
+  project_issue: ProjectIssue;
   project_member: ProjectMember;
   project_status: ProjectStatus;
   project_team: ProjectTeam;
