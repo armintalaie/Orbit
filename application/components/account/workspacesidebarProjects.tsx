@@ -14,8 +14,8 @@ export default function WorkspaceProjects() {
   }
 
   return (
-    <div className='flex flex-1 flex-col gap-2 text-sm'>
-      <Link href={`/orbit/workspace/${currentWorkspace}/projects`} className='text-xs'>
+    <div className='flex flex-1 flex-col gap-2 text-xs'>
+      <Link href={`/orbit/workspace/${currentWorkspace}/projects`} className='text-xs font-medium'>
         Projects
       </Link>
       <div className='flex flex-col '>
@@ -23,10 +23,10 @@ export default function WorkspaceProjects() {
           <LinearSkeleton />
         ) : (
           <>
-            {projects.map((project) => (
+            {projects.map((project: { id: string; name: string }) => (
               <Link
                 className='rounded-md border  border-transparent p-1 hover:border-teal-700 hover:shadow-sm'
-                href={`/orbit/workspace/${currentWorkspace.id}/projects/${project.id}`}
+                href={`/orbit/workspace/${currentWorkspace}/projects/${project.id}`}
                 shallow
                 key={project.id}
               >

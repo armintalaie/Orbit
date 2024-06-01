@@ -17,7 +17,10 @@ interface IProject {
   description: string;
   createdAt: string;
   updatedAt: string;
-  status: string;
+  status: {
+    id: number;
+    name: string;
+  };
   targetDate: string;
   startDate: string;
 }
@@ -27,7 +30,7 @@ export default function ProjectPage() {
   const { currentWorkspace } = useContext(OrbitContext);
   const { projects, loading, error } = useWorkspaceProjects({
     workspaceId: currentWorkspace,
-    fields: ['id', 'name', 'status', 'startDate', 'targetDate'],
+    fields: ['id', 'name', 'startDate', 'targetDate', { status: ['id', 'name'] }],
   });
 
   if (loading) {
@@ -77,7 +80,7 @@ function TableView({ projects }: { projects: IProject[] }) {
                   </Link>
                 </TableCell>
                 <TableCell>
-                  <Badge className='h-6 text-2xs'>{project.status ?? 'No status'}</Badge>
+                  <Badge className='h-6 text-2xs'>{project.status?.name ?? 'No status'}</Badge>
                 </TableCell>
                 <TableCell>{dateFormater(project.startDate)}</TableCell>
                 <TableCell>{dateFormater(project.targetDate)}</TableCell>

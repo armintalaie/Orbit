@@ -1,26 +1,21 @@
-import './styles.css';
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, { useEffect } from 'react';
+import React, { useContext, useRef } from 'react';
 import Document from '@tiptap/extension-document';
-import Heading from '@tiptap/extension-heading';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
 import TaskItem from '@tiptap/extension-task-item';
 import TaskList from '@tiptap/extension-task-list';
 import Placeholder from '@tiptap/extension-placeholder';
-import TextAlign from '@tiptap/extension-text-align';
 import Highlight from '@tiptap/extension-highlight';
 import { Markdown } from 'tiptap-markdown';
 import Blockquote from '@tiptap/extension-blockquote';
 import CharacterCount from '@tiptap/extension-character-count';
 import Link from '@tiptap/extension-link';
-import Mention from '@tiptap/extension-mention';
-import suggestion from './suggestion';
 import Youtube from '@tiptap/extension-youtube';
 import Underline from '@tiptap/extension-underline';
 import { FontBoldIcon, FontItalicIcon, ListBulletIcon, UnderlineIcon } from '@radix-ui/react-icons';
@@ -31,15 +26,16 @@ import {
   FilePlus,
   HighlighterIcon,
   ListOrderedIcon,
-  ListTodoIcon,
-  SaveIcon,
   StrikethroughIcon,
   TextQuote,
 } from 'lucide-react';
-import { Button } from '../ui/button';
-import IssueTemplates from '../workspace/teams/IssueTemplates';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { toast } from 'sonner';
+import { useMutation } from '@apollo/client';
+import { UPDATE_ISSUE } from '@/lib/hooks/Issues/useMutateIssue';
+import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
+import useInterval from '@/lib/hooks/useInterval';
+import moment from 'moment';
 
 const LIMIT = 500 * 10;
 const CustomTableCell = TableCell.extend({
@@ -60,32 +56,56 @@ const CustomTableCell = TableCell.extend({
   },
 });
 
-export default function TextEditor({
-  onSave,
-  content,
-  className,
-  onUpdate,
-  issue,
-}: {
-  onSave?: (content: string) => Promise<void>;
-  content?: string;
-  className?: string;
-  onUpdate?: (content: string) => Promise<void>;
-  issue: any;
-}) {
+export default function TextEditor({ issue }: { issue: any }) {
+  const intervalId = useRef(null);
+  const { workspace } = useContext(OrbitContext);
+  const [draft, setDraft] = React.useState(issue.content);
+  const [srcContent, setSrcContent] = React.useState(issue.content);
+  const [state, setState] = React.useState<string>(moment(issue.updatedAt, 'x').format('HH:mm:ss').toString());
+  const [updateIssue, { error, data }] = useMutation(UPDATE_ISSUE);
+  async function submitPatch(data: any) {
+    await updateIssue({
+      variables: {
+        workspaceId: workspace.id,
+        issue: data,
+        id: issue.id,
+      },
+    });
+  }
+
+  function runContentUpdate() {
+    if (draft !== srcContent) {
+      updateIssue({
+        variables: {
+          workspaceId: workspace.id,
+          issue: { content: draft },
+          id: issue.id,
+        },
+      }).then((value) => {
+        setState(`${moment().format('HH:mm:ss')}`);
+        setSrcContent(draft);
+      });
+    } else {
+    }
+  }
+
+  useInterval(runContentUpdate, 5000);
+
   const editor = useEditor({
     editorProps: {
       attributes: {
-        class:
-          '  w-full focus:outline-none p-2 text-neutral-800 border-b-gray-200 dark:text-neutral-300 border-b-gray-200 dark:border-b-neutral-600',
+        id: 'editor',
+        class: ' prose-sm dark:prose-invert p-6 w-full max-w-6xl h-full outline-none text-xs',
       },
     },
     onUpdate: ({ editor }) => {
-      if (onUpdate) {
-        const html = editor.getHTML();
-        const content = editor.storage.markdown.getMarkdown();
-        onUpdate(content, html);
-      }
+      setDraft(editor.storage.markdown.getMarkdown());
+    },
+    onFocus: ({ editor, event }) => {
+      console.log('focus', event);
+    },
+    onTransaction: ({ editor, transaction }) => {
+      // console.log('transaction', transaction);
     },
     extensions: [
       StarterKit,
@@ -94,28 +114,16 @@ export default function TextEditor({
       }),
       TableRow,
       TableHeader,
-
       Blockquote,
       CustomTableCell,
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-      Heading.configure({
-        HTMLAttributes: {
-          class: 'text-xl',
-        },
-      }),
       Highlight,
       Document,
       Markdown,
       Youtube,
       Link.configure({
         HTMLAttributes: {
-          // Change rel to different value
-          // Allow search engines to follow links(remove nofollow)
           rel: 'noopener noreferrer',
-          // Remove target entirely so links open in current tab
-          target: null,
+          target: '_blank',
         },
       }),
       Underline,
@@ -132,37 +140,23 @@ export default function TextEditor({
           if (node.type.name === 'heading') {
             return 'Whats the title?';
           }
-
           return 'Start writing...';
         },
       }),
       CharacterCount.configure({
         limit: LIMIT,
       }),
-      Mention.configure({
-        HTMLAttributes: {
-          class: 'mention',
-        },
-        suggestion: suggestion,
-        // <UserFinder teamid={1}/>
-      }),
     ],
-    content: content,
+    content: srcContent,
   });
 
-  useEffect(() => {
-    if (content && editor) {
-      editor.commands.setContent(content);
-    }
-  }, [content]);
-
   return (
-    <div className={` relative flex flex-grow flex-col overflow-hidden ${className}`}>
+    <div className={` relative flex flex-grow flex-col overflow-hidden`}>
       <MenuBar editor={editor} issue={issue} />
       <div className='relative flex flex-grow flex-col overflow-scroll'>
         {editor && editor.storage && editor.storage.characterCount.characters() >= LIMIT && (
           <div
-            className={`absolute bottom-3 left-3 z-20 m-0 flex h-8 w-fit  items-center rounded-md border bg-neutral-100 p-2 text-xs text-neutral-600 ${
+            className={`absolute bottom-3 left-3 z-20 m-0 flex h-8 w-fit  items-center rounded-md border p-2 text-xs ${
               editor.storage.characterCount.characters() >= LIMIT ? 'bg-red-100 text-red-600' : ''
             }`}
           >
@@ -170,25 +164,12 @@ export default function TextEditor({
           </div>
         )}
 
-        {onSave && (
-          <Button
-            variant='outline'
-            className='absolute right-3 top-3 z-20 m-0 flex h-8 w-fit items-center rounded-md bg-inherit bg-neutral-700 px-2 text-2xs text-neutral-200 dark:text-neutral-400'
-            onClick={async () => {
-              const content = editor.storage.markdown.getMarkdown();
-              await onSave(content);
-              toast('Your changes have been saved');
-            }}
-          >
-            <SaveIcon className='mr-1 h-3 w-3' />
-            Save
-          </Button>
-        )}
-        <div className=' relative h-full w-full flex-1 justify-center overflow-scroll bg-gray-50 dark:bg-neutral-900'>
-          <EditorContent
-            editor={editor}
-            className='flex h-full w-full flex-grow flex-col items-center  bg-gray-50 dark:bg-neutral-900'
-          />
+        <span className='absolute right-2 top-0 z-20 m-0 flex h-6 w-fit items-center rounded-md bg-inherit  px-2 text-2xs '>
+          {`Last saved: ${state}`}
+          {draft === srcContent ? ' (no new changes)' : ' (to be saved)'}
+        </span>
+        <div className=' relative h-full w-full flex-1 justify-center overflow-scroll '>
+          <EditorContent editor={editor} className='flex h-full w-full flex-grow flex-col items-center  ' />
         </div>
       </div>
     </div>
@@ -246,7 +227,7 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
   }
 
   return (
-    <div className='h-15 min-h-15  flex w-full flex-row  items-center justify-between overflow-x-scroll border-y  border-gray-100 bg-white dark:border-neutral-800 dark:bg-neutral-900'>
+    <div className='f flex  h-12 w-full flex-shrink-0  flex-row items-center justify-between overflow-x-scroll border-y  '>
       <div className='sticky  z-10 m-0 flex h-full w-full min-w-fit flex-row items-center justify-center gap-2 p-0  text-xs '>
         <ToggleGroup type='single' className='h-full min-w-fit overflow-hidden    ' value={whichHeadingIsSelected()}>
           <ToggleGroupItem
@@ -368,13 +349,13 @@ export function MenuBar({ editor, issue }: { editor: any; issue: any }) {
             <ListOrderedIcon className='h-4 w-4' />
           </ToggleGroupItem>
 
-          <ToggleGroupItem
-            value='taskItem'
-            aria-label='Toggle task list'
-            onClick={() => editor.chain().focus().toggleTaskList().run()}
-          >
-            <ListTodoIcon className='h-4 w-4' />
-          </ToggleGroupItem>
+          {/*<ToggleGroupItem*/}
+          {/*  value='taskItem'*/}
+          {/*  aria-label='Toggle task list'*/}
+          {/*  onClick={() => editor.chain().focus().toggleTaskList().run()}*/}
+          {/*>*/}
+          {/*  <ListTodoIcon className='h-4 w-4' />*/}
+          {/*</ToggleGroupItem>*/}
 
           <ToggleGroupItem
             value='blockquote'
@@ -430,12 +411,12 @@ function TemplatePopover({ editor, issue }: { editor: any; issue: any }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className='e flex h-8 w-full items-center rounded-sm p-1 px-2 text-left text-xs  dark:border-neutral-800 dark:bg-neutral-800'>
+        <button className='e flex h-8 w-full items-center rounded-sm p-1 px-2 text-left text-xs  '>
           <FilePlus className='h-4 w-4' />
         </button>
       </SheetTrigger>
       <SheetContent className='flex max-w-full flex-col sm:max-w-2xl'>
-        {issue && issue.teamid && <IssueTemplates teamid={issue.teamid} sendTemplate={sendTemplate} />}
+        {/* {issue && issue.teamid && <IssueTemplates teamid={issue.teamid} sendTemplate={sendTemplate} />} */}
       </SheetContent>
     </Sheet>
   );

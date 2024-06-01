@@ -1,9 +1,10 @@
 'use client';
-import React, { useState, Suspense, useContext, useEffect } from 'react';
+import React, { useState, Suspense, useContext, useEffect, useMemo } from 'react';
 import { UserSessionContext } from './AuthProvider';
 import { useRouter, usePathname } from 'next/navigation';
 import Spinner from '@/components/general/Spinner';
 import { useQuery, gql } from '@apollo/client';
+import { IWorspace } from '../types';
 
 const LoadingFallback = () => <div className='loading-fallback'></div>;
 
@@ -13,6 +14,7 @@ type OrbitType = {
   fetcher: (input: string | URL | Request) => Promise<any>;
   swrFetcher: (url: string) => Promise<any>;
   user: any;
+  workspace: IWorspace;
 };
 
 type OrbitContextType = {} & OrbitType;
@@ -23,6 +25,7 @@ export const OrbitContext = React.createContext<OrbitContextType>({
   fetcher: async () => {},
   swrFetcher: async () => {},
   user: {},
+  workspace: {} as IWorspace,
 });
 
 export default function OrbitContextProvider({ children }: { children: React.ReactNode }) {
@@ -31,19 +34,33 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
   const pathname = usePathname();
   const { user, loading: userLoading, error: userError } = getUserInfo();
   const [checkedCache, setCheckedCache] = useState(false);
+
   const [orbit, setOrbit] = useState<OrbitType>({
     currentWorkspace: null,
     changeWorkspace: async () => {},
     fetcher: async () => {},
     swrFetcher: async () => {},
     user: {},
+    workspace: {} as IWorspace,
   });
+  const workspaceDetails = useMemo(() => {
+    return getWorkspace();
+  }, [user]);
 
   function changeWorkspace(id?: any) {
     setOrbit({
       ...orbit,
       currentWorkspace: id,
     });
+  }
+
+  function getWorkspace(id?: string) {
+    const wid = id || orbit.currentWorkspace;
+    try {
+      return user.me.workspaces.find((workspace: any) => workspace.id === wid);
+    } catch (error) {
+      return null;
+    }
   }
 
   useEffect(() => {
@@ -70,7 +87,7 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
       window.localStorage.removeItem('currentWorkspace');
       router.push('/orbit/');
     }
-  }, [orbit, checkedCache]);
+  }, [orbit.currentWorkspace, checkedCache]);
 
   async function fetcher(input: string | URL | Request, init?: any | undefined): Promise<Response> {
     const res = fetch(input, {
@@ -99,6 +116,7 @@ export default function OrbitContextProvider({ children }: { children: React.Rea
     fetcher,
     swrFetcher,
     user: user.me,
+    workspace: workspaceDetails,
   };
 
   return (
@@ -119,6 +137,18 @@ const userQuery = gql`
         id
         name
         status
+        config {
+          issueStatus {
+            id
+            name
+            description
+          }
+          projectStatus {
+            id
+            name
+            description
+          }
+        }
       }
     }
   }

@@ -21,7 +21,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
-import { OrbitContext } from '@/lib/context/OrbitContext';
 
 export const issueSchema = z.object({
   title: z.string(),
@@ -47,23 +46,21 @@ export function NewTemplate({ teamid, button, reload }: { teamid: string; button
       contents: '',
     },
   });
-  const { fetcher } = useContext(OrbitContext);
 
   async function save(contents: string) {
     form.setValue('contents', contents);
   }
 
   async function submit(data: any) {
-    const res = await fetcher(`/api/teams/${teamid}/templates/`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-
-    if (res.ok) {
-      toast('Template created', {
-        description: 'Template created successfully',
-      });
-    }
+    // const res = await fetcher(`/api/teams/${teamid}/templates/`, {
+    //   method: 'POST',
+    //   body: JSON.stringify(data),
+    // });
+    // if (res.ok) {
+    //   toast('Template created', {
+    //     description: 'Template created successfully',
+    //   });
+    // }
   }
 
   return (

@@ -3,262 +3,132 @@
 import { PlusIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { useMediaQuery } from '@uidotdev/usehooks';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
-import { useContext, useState } from 'react';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from '../../ui/form';
+import { useContext, useEffect, useState } from 'react';
+import { FormField, FormItem, FormControl, FormMessage, Form } from '../../ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { DeadlineField } from './form/deadlineField';
-import { StatusField } from './form/statusField';
+import { DeadlineField } from '../fields/deadlineField';
+import { StatusField } from '../fields/statusField';
+import { usePathname, useRouter } from 'next/navigation';
+
+import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
-import { AssigneeField } from './form/assigneeField';
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from '@/components/ui/drawer';
-import { LabelField } from './form/labelField';
-import { ProjectField } from './form/projectField';
-import { IIssue } from '@/lib/types/issue';
-import { OrbitContext } from '@/lib/context/OrbitContext';
-import { TeamField } from '../projects/form/teamField';
-export const issueSchema = z.object({
-  title: z.string(),
-  contents: z.string(),
-  statusid: z.number(),
-  deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  assignee: z.array(z.string()),
-});
+import { gql, useMutation } from '@apollo/client';
+import { toast } from 'sonner';
+import { formatUrl } from 'next/dist/shared/lib/router/utils/format-url';
+import useLinkCreator from '@/lib/hooks/useLinkCreator';
+// import IssueStatusField from './issue/fields/IssueStatusField';
+
+const NEW_ISSUE = gql`
+  mutation CreateIssue($workspaceId: String!, $issue: NewIssueInput!) {
+    createIssue(workspaceId: $workspaceId, issue: $issue) {
+      id
+      title
+      status {
+        id
+        name
+      }
+      targetDate
+      startDate
+      assignees {
+        id
+        email
+        profile {
+          firstName
+          lastName
+          avatar
+        }
+      }
+    }
+  }
+`;
 
 export const formSchema = z.object({
-  title: z.string(),
-  contents: z.string(),
-  statusid: z.number(),
-  deadline: z.date().nullable(),
-  labels: z.array(z.string()),
-  assignee: z.string().nullable(),
-  projectid: z.number().optional(),
-  teamid: z.number(),
+  title: z.string().min(3).default(''),
+  statusId: z.any().optional(),
+  startDate: z.string().optional(),
+  targetDate: z.string().optional(),
+  assignees: z.array(z.string()).optional(),
+  projects: z.array(z.number()).optional(),
+  content: z.string().optional().default(''),
 });
 
 export function NewIssue({
-  onIssueUpdate,
   defaultValues,
   button,
 }: {
-  defaultValues?: object;
   button?: boolean;
-  onIssueUpdate?: (issue: IIssue) => void;
+  defaultValues?: Partial<z.infer<typeof formSchema>>;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { currentWorkspace } = useContext(OrbitContext);
   const [open, setOpen] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
-  function close() {
-    setOpen(false);
+  const [createIssue, { data, loading, error }] = useMutation(NEW_ISSUE);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      ...defaultValues,
+      statusId: '1',
+    },
+  });
+
+  async function onSubmit() {
+    const formVals = form.getValues();
+    createIssue({ variables: { workspaceId: currentWorkspace, issue: formVals } }).then((value) => {
+      setOpen(false);
+      toast.success('Issue created successfully', {
+        action: {
+          label: 'View',
+          onClick: () => {
+            // navigate to the issue
+            const destination = `issues/${value.data.createIssue.id}`;
+            router.push(`${pathname}/${destination}`);
+          },
+        },
+      });
+    });
   }
 
-  if (isDesktop) {
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild className='m-0 p-0'>
-          {button ? (
-            <Button
-              variant='outline'
-              className='m-0 h-6 p-2 text-xs font-normal dark:border-neutral-900 dark:bg-neutral-800 dark:text-neutral-300 '
-            >
-              New Issue
-            </Button>
-          ) : (
-            <Button className='m-0 mt-0 flex h-fit w-fit items-center space-y-0 p-0' variant='outline'>
-              <PlusIcon className='h-4 w-4' />
-            </Button>
-          )}
-        </DialogTrigger>
-        <DialogContent className='sm:max-w-xl'>
-          <DialogHeader></DialogHeader>
-          <NewIssueForm defaultValues={defaultValues} onIssueUpdate={onIssueUpdate} close={close} />
-
-          <DialogFooter className='sm:justify-start'>
-            <DialogClose asChild></DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  useEffect(() => {
+    if (data) {
+      form.reset();
+    }
+  }, [data]);
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild className='m-0 p-0'>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger>
         {button ? (
           <Button variant='outline' className='m-0 h-6 p-2 text-xs font-normal'>
             New Issue
           </Button>
         ) : (
-          <button className='m-0 flex h-fit w-fit items-center p-0'>
+          <button>
             <PlusIcon className='h-4 w-4' />
           </button>
         )}
-      </DrawerTrigger>
-      <DrawerContent className='max-h-[90%] px-3 '>
-        <DrawerHeader className='text-left'></DrawerHeader>
-        <NewIssueForm defaultValues={defaultValues} onIssueUpdate={onIssueUpdate} close={close} />
-        <DrawerFooter className='pt-2'>
-          <DrawerClose asChild>
-            <Button variant='outline'>Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  );
-}
+      </SheetTrigger>
+      <SheetContent className='w-full flex-1 '>
+        <SheetHeader>
+          <SheetTitle>New Issue</SheetTitle>
+        </SheetHeader>
 
-function NewIssueForm({
-  defaultValues,
-  onIssueUpdate,
-  close,
-}: {
-  defaultValues?: object;
-  close: Function;
-  onIssueUpdate?: (issue: IIssue) => void;
-}) {
-  const [labels, setLabels] = useState([]);
-  const { fetcher } = useContext(OrbitContext);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: '',
-      statusid: 1,
-      contents: '',
-      deadline: null,
-      assignee: null,
-      labels: [],
-      ...defaultValues,
-    },
-  });
-  const chosenTeam = form.watch('teamid');
-  async function onSubmit() {
-    form.getFieldState('title').isTouched = true;
-    const formVals = form.getValues();
-    const issue = {
-      title: formVals.title,
-      contents: formVals.contents,
-      statusid: formVals.statusid,
-      deadline: formVals.deadline ? formVals.deadline.toISOString().split('T')[0] : undefined,
-      assignees: formVals.assignee ? [formVals.assignee] : [],
-      labels: labels,
-      projectid: formVals.projectid || undefined,
-      teamid: formVals.teamid,
-    };
-    const URL = `/api/issues`;
-    const res = await fetcher(`${URL}`, {
-      body: JSON.stringify(issue),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Full-Object': 'true',
-      },
-      method: 'POST',
-    });
-
-    if (!res.ok) {
-      toast('Issue not created', {
-        description: 'something went wrong',
-      });
-    } else {
-      close();
-      const issue = (await res.json()) as IIssue;
-      onIssueUpdate && onIssueUpdate(issue);
-      toast('Issue created', {
-        description: `Issue successfully created`,
-      });
-    }
-  }
-
-  return (
-    <div className='flex flex-col gap-4 overflow-y-scroll px-4'>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-          <FormField
-            control={form.control}
-            name='title'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder='Next big thing start with the little things...' {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='contents'
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Textarea
-                    placeholder='Add some details about the issue or add them later...'
-                    id='message-2'
-                    className='h-30 resize-none'
-                    {...field}
-                  />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className='flex flex-row flex-wrap gap-1'>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className='flex h-full w-full flex-1 flex-col gap-1 space-y-4 overflow-hidden px-2 py-4   '
+          >
             <FormField
               control={form.control}
-              name='teamid'
+              name='title'
               render={({ field }) => (
-                <FormItem className='p-0'>
+                <FormItem className='w-full'>
                   <FormControl>
-                    <TeamField field={field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {chosenTeam && (
-              <FormField
-                control={form.control}
-                name='projectid'
-                render={({ field }) => (
-                  <FormItem className='p-0'>
-                    <FormControl>
-                      <ProjectField field={field} teamid={chosenTeam} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-          </div>
-
-          <div className='flex flex-row flex-wrap gap-1'>
-            <FormField
-              control={form.control}
-              name='statusid'
-              render={({ field }) => (
-                <FormItem className='p-0'>
-                  <FormControl>
-                    <StatusField {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='assignee'
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <AssigneeField field={field} />
+                    <Input placeholder='issue title' {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -266,31 +136,18 @@ function NewIssueForm({
               )}
             />
 
+            <div className='flex w-full flex-col items-center gap-2  '></div>
+
             <FormField
               control={form.control}
-              name='deadline'
+              name='content'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='h-full w-full'>
                   <FormControl>
-                    <DeadlineField field={field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className='flex flex-row flex-wrap gap-1'>
-            <FormField
-              control={form.control}
-              name='labels'
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <LabelField
+                    <Textarea
+                      className='h-full resize-none'
+                      placeholder='some details about this grand idea'
                       {...field}
-                      setFields={(val: any) => {
-                        setLabels(val);
-                      }}
                     />
                   </FormControl>
 
@@ -298,13 +155,15 @@ function NewIssueForm({
                 </FormItem>
               )}
             />
-          </div>
 
-          <Button type='submit' className='w-full'>
-            Create
-          </Button>
-        </form>
-      </Form>
-    </div>
+            <div className='flex w-full flex-1 flex-col items-end justify-end '>
+              <Button type='submit' className='w-full' onSubmit={form.handleSubmit(onSubmit)} onClick={onSubmit}>
+                Create
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </SheetContent>
+    </Sheet>
   );
 }

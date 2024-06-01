@@ -8,8 +8,8 @@ import { useContext, useEffect, useState } from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, Form } from '../../ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { DeadlineField } from '../issues/form/deadlineField';
-import { StatusField } from '../issues/form/statusField';
+import { DeadlineField } from '../fields/deadlineField';
+import { StatusField } from '../fields/statusField';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,7 +21,10 @@ const NEW_PROJECT = gql`
       id
       name
       description
-      status
+      status {
+        id
+        name
+      }
       targetDate
       startDate
     }
@@ -150,33 +153,33 @@ export function NewProject({
                 )}
               /> */}
 
-              <FormField
-                control={form.control}
-                name='startDate'
-                render={({ field }) => (
-                  <FormItem className='w-full'>
-                    <FormLabel>Start Date</FormLabel>
-                    <FormControl className='w-full'>
-                      <DeadlineField field={field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/*<FormField*/}
+              {/*  control={form.control}*/}
+              {/*  name='startDate'*/}
+              {/*  render={({ field }) => (*/}
+              {/*    <FormItem className='w-full'>*/}
+              {/*      <FormLabel>Start Date</FormLabel>*/}
+              {/*      <FormControl className='w-full'>*/}
+              {/*        <DeadlineField field={field} />*/}
+              {/*      </FormControl>*/}
+              {/*      <FormMessage />*/}
+              {/*    </FormItem>*/}
+              {/*  )}*/}
+              {/*/>*/}
 
-              <FormField
-                control={form.control}
-                name='targetDate'
-                render={({ field }) => (
-                  <FormItem className='w-full'>
-                    <FormLabel>Target Date</FormLabel>
-                    <FormControl className='w-full'>
-                      <DeadlineField field={field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/*<FormField*/}
+              {/*  control={form.control}*/}
+              {/*  name='targetDate'*/}
+              {/*  render={({ field }) => (*/}
+              {/*    <FormItem className='w-full'>*/}
+              {/*      <FormLabel>Target Date</FormLabel>*/}
+              {/*      <FormControl className='w-full'>*/}
+              {/*        <DeadlineField field={field} />*/}
+              {/*      </FormControl>*/}
+              {/*      <FormMessage />*/}
+              {/*    </FormItem>*/}
+              {/*  )}*/}
+              {/*/>*/}
             </div>
 
             <div className='flex w-full flex-1 flex-col items-end justify-end '>

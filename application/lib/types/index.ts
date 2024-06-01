@@ -1,3 +1,5 @@
+import { IIssueStatus } from './issue';
+
 export type WorkspaceMember = {
   memberId: string;
   addedAt: Date;
@@ -43,4 +45,12 @@ export type ProjectStatus = {
   id: string;
   name: string;
   color: string;
+};
+
+export type IWorspace = {
+  id: string;
+  name: string;
+  config: {
+    issueStatus: IIssueStatus[];
+  };
 };

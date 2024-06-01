@@ -2,6 +2,7 @@ import type { Kysely } from "kysely";
 import type { WorkspaceSchema } from "../../database/schema/workspace";
 import { getDb } from "../../utils/db";
 import type { GraphQLFieldResolver } from "graphql";
+import {jsonBuildObject} from "kysely/helpers/postgres";
 
 const d2 = await getDb();
 
@@ -25,11 +26,13 @@ export const deleteProjectResolver : GraphQLFieldResolver<any,{db: Kysely<Worksp
 export const projectResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
     try {
         const {workspaceId, id} = args;
-        await d2.withSchema(`workspace_${workspaceId}`).selectFrom('project').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
-        return {
-            message: 'Project deleted successfully',
-            status: 'success'
-        }
+        return d2.withSchema(`workspace_${workspaceId}`).selectFrom('project').selectAll(['project']).where('project.id', '=', id).leftJoin('project_status', 'project_status.name', 'project.status')
+            .select((eb) => [
+                jsonBuildObject({
+                    id: eb.ref('project_status.id'),
+                    name: eb.ref('project_status.name'),
+                }).as('status'),
+            ]).executeTakeFirstOrThrow();
 
     } catch(e) {
         console.error(e);

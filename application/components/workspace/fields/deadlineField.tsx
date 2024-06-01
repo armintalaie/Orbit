@@ -1,32 +1,37 @@
 'use client';
 
 import * as React from 'react';
-import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import moment from 'moment';
 
-export function DeadlineField({ className, field }: { className?: string; field: any }) {
-  const [date, setDate] = React.useState<Date | undefined>(field.value);
-
+export function DeadlineField({
+  className,
+  field,
+  placeholder = 'select a date',
+}: {
+  className?: string;
+  field: any;
+  placeholder: string;
+}) {
+  const date = field.value ? moment(field.value, 'x').toDate() : undefined;
   const footer = (
-    <div className='flex items-center justify-between'>
+    <div className='flex items-center justify-end'>
       <Button
         variant='ghost'
         onClick={() => {
-          setDate(undefined);
-          field.onChange(undefined);
+          field.onChange(null);
         }}
       >
         Clear
       </Button>
       <Button
-        variant='ghost'
+        variant='outline'
         onClick={() => {
-          setDate(new Date());
-          field.onChange(new Date());
+          field.onChange(moment(date).valueOf().toString());
         }}
       >
         Today
@@ -38,30 +43,28 @@ export function DeadlineField({ className, field }: { className?: string; field:
       <Popover>
         <PopoverTrigger asChild>
           <Button
-            id='date'
-            variant={'outline'}
+            variant={'ghost'}
             className={cn(
-              ' h-8 w-full justify-start text-left text-2xs text-xs font-normal ',
+              ' h-8 w-full justify-start text-left text-2xs  font-normal ',
               !date && 'text-muted-foreground'
             )}
           >
-            <CalendarIcon className='mr-2 h-4 w-4' />
-            {date ? <>{format(date, 'LLL dd, y')}</> : <span>Pick a date</span>}
+            <CalendarIcon className='mr-2 h-3 w-3' />
+            {date ? moment(date).format('YYYY-MM-DD') : placeholder}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='w-auto p-0' align='start'>
+        <PopoverContent className='flex w-auto flex-col p-1' align='start'>
           <Calendar
-            initialFocus
+            // initialFocus
             mode='single'
             defaultMonth={date}
             selected={date}
             onSelect={(date) => {
-              setDate(date);
-              field.onChange(date);
+              field.onChange(moment(date).valueOf().toString());
             }}
-            footer={footer}
-            numberOfMonths={1}
+            numberOfMonths={2}
           />
+          {footer}
         </PopoverContent>
       </Popover>
     </div>

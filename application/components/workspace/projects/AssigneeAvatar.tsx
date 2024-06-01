@@ -45,10 +45,11 @@ export default function AssigneeAvatar({ assignee, formatting }: AssigneeAvatarP
     >
       <Avatar className='flex  h-5 w-5 items-center gap-4 '>
         <AvatarImage src={assignee.avatar_url} className='aspect-square ' />
-        <AvatarFallback>{getInitials(assignee.full_name)}</AvatarFallback>
+        {/* <AvatarFallback>{getInitials(assignee.full_name)}</AvatarFallback> */}
       </Avatar>
       <p className='text-[10px]'>
-        {avatarFormatting.showFullName ? assignee.full_name : getFirstNameAndLastInitial(assignee.full_name)}
+        {/* {avatarFormatting.showFullName ? assignee.firstName : getFirstNameAndLastInitial(assignee.firstName)} */}
+        {assignee.profile.firstName}
       </p>
       {avatarFormatting.showEmail && assignee.email && <p className='text-[8px]'>{'<' + assignee.email + '>'}</p>}
     </div>

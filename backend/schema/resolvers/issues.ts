@@ -2,7 +2,7 @@ import type { Kysely } from "kysely";
 import type { WorkspaceSchema } from "../../database/schema/workspace";
 import { getDb } from "../../utils/db";
 import type { GraphQLFieldResolver } from "graphql";
-import { jsonArrayFrom } from "kysely/helpers/postgres";
+import { jsonArrayFrom, jsonBuildObject, jsonObjectFrom } from "kysely/helpers/postgres";
 
 const d2 = await getDb();
 
@@ -23,7 +23,13 @@ export const getIssues = async ({wid, db, pid}: {wid: string, db: Kysely<Workspa
         query = query.innerJoin(`project_issue`, `project_issue.issue_id`, `issue.id`).where('project_id', '=', Number(pid))
     }
 
-    const issues = await query.selectAll(['issue']).select(['issue_status.name as status']).select((eb) => [
+    const issues = await query.selectAll(['issue'])
+    .select((eb) => [
+        jsonBuildObject({
+            id: eb.ref('issue_status.id'),
+            name: eb.ref('issue_status.name'),
+        }).as('status'),
+    ]).select((eb) => [
         jsonArrayFrom(eb.selectFrom('issue_assignee').selectAll().whereRef('issue_id', '=', 'issue.id').innerJoin('member', 'member.id', 'issue_assignee.user_id')).as('assignees'),
     ]).execute();
 
@@ -43,21 +49,77 @@ export const getIssues = async ({wid, db, pid}: {wid: string, db: Kysely<Workspa
 }
 
 
+function getIssue({wid, db, id}: {wid: string, db: Kysely<WorkspaceSchema>, id: number}): any {
+    return db.withSchema(`workspace_${wid}`).selectFrom('issue').leftJoin('issue_status', 'issue_status.id', 'issue.status_id').selectAll(["issue"]).where('issue.id', '=', id).select((eb) => [
+        jsonBuildObject({
+            id: eb.ref('issue_status.id'),
+            name: eb.ref('issue_status.name'),
+        }).as('status'),
+    ]).select((eb) => [
+        jsonArrayFrom(eb.selectFrom('issue_assignee').selectAll().whereRef('issue_id', '=', 'issue.id').innerJoin('member', 'member.id', 'issue_assignee.user_id')).as('assignees'),
+        jsonArrayFrom(eb.selectFrom('project_issue').selectAll().whereRef('issue_id', '=', 'issue.id').innerJoin('project', 'project.id', 'project_issue.project_id')).as('projects')
+    ]).executeTakeFirstOrThrow();
+}
 
 export const issueResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
     const {workspaceId, id} = args;
-    return d2.withSchema(`workspace_${workspaceId}`).selectFrom('issue').leftJoin('issue_status', 'issue_status.id', 'issue.status_id').selectAll().where('issue.id', '=', id).executeTakeFirstOrThrow();
+    return getIssue({wid: workspaceId, db: d2, id});
 }
+
 
 export const updateIssueResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
     const {workspaceId, id, issue} = args;
-    return d2.withSchema(`workspace_${workspaceId}`).updateTable('issue').set({...issue}).where('id', '=', id).returningAll().executeTakeFirstOrThrow();
+    const { assignees, projects, ...issueInput} = issue;
+    if ( issueInput['targetDate'] !== undefined) {
+        issueInput['targetDate'] = issueInput['targetDate'] == null? null: new Date(Number(issueInput['targetDate'])).toISOString();
+    }
+
+    return await d2.withSchema(`workspace_${workspaceId}`).transaction().execute(async (trx) => {
+        await trx.updateTable('issue').set({...issueInput}).where('id', '=', id).returningAll().executeTakeFirstOrThrow();
+        if (assignees ) {
+            await trx.deleteFrom('issue_assignee').where('issue_id', '=', id).execute();
+         if (assignees.length > 0) {
+        await trx.insertInto('issue_assignee').values(assignees.map((assignee: any) => ({issue_id: id, user_id: assignee.id}))).execute();
+         }
+        }
+        if (projects ) {
+            if (projects) {
+                await trx.deleteFrom('project_issue').where('issue_id', '=', id).execute();
+
+            }
+
+            if (projects.length > 0) {
+
+        await trx.insertInto('project_issue').values(projects.map((project: any) => ({issue_id: id, project_id: project.id}))).execute();
+            }
+        }
+        return await getIssue({wid: workspaceId, db: trx, id});
+    });
+
 }
 
 export const createIssueResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
     const {workspaceId, issue} = args;
-    const { issueInput, assignees, projects} = issue;
-    return d2.withSchema(`workspace_${workspaceId}`).insertInto('issue').values({...issue}).returningAll().executeTakeFirstOrThrow();
+    const { assignees, projects, startDate, ...issueInput} = issue;
+    try {
+    return  d2.withSchema(`workspace_${workspaceId}`).transaction().execute(async (trx) => {
+        const newIssue = await trx.insertInto('issue').values({...issueInput}).returningAll().executeTakeFirstOrThrow();
+        if (assignees && assignees.length > 0) {
+        await trx.insertInto('issue_assignee').values(assignees.map((assignee: any) => ({issue_id: newIssue.id, user_id: assignee.id}))).execute();
+        }
+        if (projects && projects.length > 0) {
+        await trx.insertInto('project_issue').values(projects.map((project: any) => ({issue_id: newIssue.id, project_id: project}))).execute();
+        }
+        return await getIssue({wid: workspaceId, db: trx, id: newIssue.id});
+
+    });
+} catch(e) {
+    console.error(e);
+    return {
+        message: 'Error creating issue',
+        status: 'error'
+    }
+}
 }
 
 /**

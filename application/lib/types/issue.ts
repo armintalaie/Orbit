@@ -1,16 +1,13 @@
 export interface IIssue {
   id: number;
   title: string;
-  contents: string;
-  statusid: number;
+  content: string;
+  status: IStatus;
   deadline: string;
-  projectid: number;
-  project_title: string;
-  datecreated: string;
-  dateupdated: string;
-  teamid: number;
-  team_title: string;
-  labels: ILabel[];
+  startDate: string;
+  targetDate: string;
+  dateCreated: string;
+  dateUpdated: string;
   assignees: IProfile[];
 }
 
@@ -47,10 +44,9 @@ export interface IProfile {
   team_title: string;
 }
 
-export interface ITeam {
-  id: number;
+export interface IIssueStatus {
+  id: string | number;
   name: string;
-  description: string;
-  datecreated: string;
-  dateupdated: string;
+  color?: string;
+  description?: string;
 }
