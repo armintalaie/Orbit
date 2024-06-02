@@ -2,7 +2,7 @@
 import React, { useState, Suspense, useContext, useEffect, useMemo } from 'react';
 import { UserSessionContext } from './AuthProvider';
 import { useRouter, usePathname } from 'next/navigation';
-import Spinner from '@/components/general/Spinner';
+import Spinner from '@/components/general/skeletons/Spinner';
 import { useQuery, gql } from '@apollo/client';
 import { IWorspace } from '../types';
 

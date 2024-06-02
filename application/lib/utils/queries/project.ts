@@ -1,19 +1,17 @@
-import {gql} from "@apollo/client";
-
+import { gql } from '@apollo/client';
 
 export const UPDATE_PROJECT = gql`
-    mutation UpdateProject($workspaceId: String!, $id: String!, $project: UpdateProjectInput!) {
-        updateProject(project: $project, id: $id, workspaceId: $workspaceId) {
+  mutation UpdateProject($workspaceId: String!, $id: String!, $project: UpdateProjectInput!) {
+    updateProject(project: $project, id: $id, workspaceId: $workspaceId) {
+      id
+      name
+      description
+      status {
         id
         name
-        description
-        status {
-            id
-            name
-        }
-        targetDate
-        startDate
-        
-        }
+      }
+      targetDate
+      startDate
     }
-    `;
+  }
+`;

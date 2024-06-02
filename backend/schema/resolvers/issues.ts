@@ -7,8 +7,8 @@ import { jsonArrayFrom, jsonBuildObject, jsonObjectFrom } from "kysely/helpers/p
 const d2 = await getDb();
 
 export const issuesResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
-    const {workspaceId, projectId} = args
-    return getIssues({wid: workspaceId, db: d2, pid: projectId});
+    const {workspaceId, projectId, teamId} = args
+    return getIssues({wid: workspaceId, db: d2, pid: projectId, tid: teamId});
 }
 
 export const projectIssuesResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, info) => {
@@ -17,10 +17,20 @@ export const projectIssuesResolver : GraphQLFieldResolver<any,{db: Kysely<Worksp
 }
 
 
-export const getIssues = async ({wid, db, pid}: {wid: string, db: Kysely<WorkspaceSchema>, pid?: string}) => {
+export const getIssues = async ({wid, db, pid, tid}: {wid: string, db: Kysely<WorkspaceSchema>, pid?: string, tid?: string}) => {
     let query = db.withSchema(`workspace_${wid}`).selectFrom('issue').innerJoin('issue_status', 'issue_status.id', 'issue.status_id')
-    if(pid) {
-        query = query.innerJoin(`project_issue`, `project_issue.issue_id`, `issue.id`).where('project_id', '=', Number(pid))
+    let projects = pid? [pid]: [null];
+
+    if(tid) {
+        const teamProjects = await db.withSchema(`workspace_${wid}`).selectFrom('project')
+            .innerJoin('project_team', 'project_team.project_id', 'project.id')
+               .where('project_team.team_id', '=', Number(tid)).selectAll(['project']).execute();
+        const addedProjects = teamProjects.map((project: any) => project.id);
+        projects = [...projects, ...addedProjects];
+    }
+
+    if(projects.length > 0) {
+        query = query.innerJoin(`project_issue`, `project_issue.issue_id`, `issue.id`).where('project_id', 'in', projects.map((p) => Number(p)));
     }
 
     const issues = await query.selectAll(['issue'])

@@ -5,8 +5,8 @@ import React, { useContext, useEffect } from 'react';
 import { toast } from 'sonner';
 import { ControllerRenderProps } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
-import {UPDATE_PROJECT} from "@/lib/utils/queries/project";
-import {useProjectTitleField} from "@/lib/context/projects/projectFields";
+import { UPDATE_PROJECT } from '@/lib/utils/queries/project';
+import { useProjectTitleField } from '@/lib/context/projects/projectFields';
 
 type ProjectTitleFieldProps = {
   field: ControllerRenderProps<{ name: string }, 'name'>;

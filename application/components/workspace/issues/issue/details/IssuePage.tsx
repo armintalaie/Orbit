@@ -2,12 +2,12 @@
 
 import { useCallback, useContext } from 'react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import TextEditor from '@/components/editor/textEditor';
+import TextEditor from '@/components/general/editor/textEditor';
 import { IssueInfo } from './IssueInfo';
 import { setDocumentMeta } from '@/lib/util';
 import { gql, useQuery } from '@apollo/client';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-import Spinner from '@/components/general/Spinner';
+import Spinner from '@/components/general/skeletons/Spinner';
 import { IIssue } from '@/lib/types/issue';
 import { IssueTitleInput } from '@/components/workspace/issues/issue/standaloneFields/IssueTitleField';
 

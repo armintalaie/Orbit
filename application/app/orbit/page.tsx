@@ -3,7 +3,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
 import AccountWorkspaces from '@/components/account/accountWorkspaces';
-import AccountModal from '@/components/account/accountModal';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useQuery, gql } from '@apollo/client';

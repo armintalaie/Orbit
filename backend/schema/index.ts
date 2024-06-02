@@ -61,7 +61,8 @@ export const schema = new GraphQLSchema({
                 resolve: Resolvers.issuesResolver,
                 args: {
                     projectId: { type: GraphQLString },
-                    workspaceId: { type: GraphQLString }
+                    workspaceId: { type: GraphQLString },
+                    teamId: { type: GraphQLString }
                 }
             },
             issue: {
@@ -73,7 +74,24 @@ export const schema = new GraphQLSchema({
                     projectId: { type: GraphQLString },
                     workspaceId: { type: GraphQLString }
                 }
-            }
+            },
+            teams:{
+                description: 'List of teams',
+                type: new GraphQLList(GqlTypes.teamType),
+                resolve: Resolvers.teamsResolver,
+                args: {
+                    workspaceId: { type: GraphQLString }
+                }
+            },
+            team: {
+                description: 'A team',
+                type: GqlTypes.teamType,
+                resolve: Resolvers.teamResolver,
+                args: {
+                    id: { type: new GraphQLNonNull(GraphQLString) },
+                    workspaceId: { type: new GraphQLNonNull(GraphQLString) }
+                }
+            },
         },
     }),
     mutation: new GraphQLObjectType({
@@ -139,7 +157,35 @@ export const schema = new GraphQLSchema({
                     id: { type: new GraphQLNonNull(GraphQLString) },
                     workspaceId: { type: new GraphQLNonNull(GraphQLString) },
                 }
-            }
+            },
+            createTeam: {
+                description: 'Create a team',
+                type: GqlTypes.teamType,
+                resolve: Resolvers.createTeamResolver,
+                args: {
+                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                    team: { type: new GraphQLNonNull(GqlTypes.newTeamInputType)}
+                }
+            },
+            updateTeam: {
+                description: 'Update a team',
+                type: GqlTypes.teamType,
+                resolve: Resolvers.updateTeamResolver,
+                args: {
+                    id: { type: new GraphQLNonNull(GraphQLString) },
+                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                    team: { type: new GraphQLNonNull(GqlTypes.updateTeamInputType) }
+                }
+            },
+            deleteTeam: {
+                description: 'Delete a team',
+                type: GqlTypes.standardResponseType,
+                resolve: Resolvers.deleteTeamResolver,
+                args: {
+                    id: { type: new GraphQLNonNull(GraphQLString) },
+                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                }
+            },
         },
     }),
 })

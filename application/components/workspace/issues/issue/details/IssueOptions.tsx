@@ -8,19 +8,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import {gql, useMutation} from "@apollo/client";
-import {OrbitContext} from "@/lib/context/OrbitGeneralContext";
-import {useContext} from "react";
-import {useRouter} from "next/navigation";
+import { gql, useMutation } from '@apollo/client';
+import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
+import { useContext } from 'react';
+import { useRouter } from 'next/navigation';
 
 const DELETE_ISSUE = gql`
-    mutation DeleteIssue($workspaceId: String!, $id: String!) {
-        deleteIssue(workspaceId: $workspaceId, id: $id) {
-          message
-          status
-        }
+  mutation DeleteIssue($workspaceId: String!, $id: String!) {
+    deleteIssue(workspaceId: $workspaceId, id: $id) {
+      message
+      status
     }
-    `;
+  }
+`;
 
 export default function IssueOptions({ issueId }: { issueId: number }) {
   const [deleteIssue, { data, loading, error }] = useMutation(DELETE_ISSUE);
@@ -28,15 +28,14 @@ export default function IssueOptions({ issueId }: { issueId: number }) {
   const router = useRouter();
 
   async function deleteIssueMutation() {
-     deleteIssue({
+    deleteIssue({
       variables: {
         workspaceId: currentWorkspace,
         id: issueId.toString(),
       },
     }).then(() => {
-        router.push(`/orbit/workspace/${currentWorkspace}`);
-     });
-
+      router.push(`/orbit/workspace/${currentWorkspace}`);
+    });
   }
 
   return (

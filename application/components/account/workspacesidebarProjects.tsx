@@ -1,7 +1,7 @@
 'use client';
 import { useContext } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-import LinearSkeleton from '../general/linearSkeleton';
+import LinearSkeleton from '../general/skeletons/linearSkeleton';
 import Link from 'next/link';
 import { useWorkspaceProjects } from '@/lib/hooks/useWorkspaceProjects';
 

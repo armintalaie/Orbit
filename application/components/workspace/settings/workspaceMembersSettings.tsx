@@ -8,7 +8,7 @@ import WorkspaceInvites from './workspaceInvite';
 import WorkspaceMemberProfile from './workspaceMemberProfile';
 import Image from 'next/image';
 import { gql, useQuery } from '@apollo/client';
-import LinearSkeleton from '@/components/general/linearSkeleton';
+import LinearSkeleton from '@/components/general/skeletons/linearSkeleton';
 
 export default function WorkspaceMembers() {
   const [showInvites, setShowInvites] = useState(false);

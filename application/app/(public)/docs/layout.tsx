@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getAllBlogPostMetadata } from './utils';
 import { GithubIcon, GlobeIcon } from 'lucide-react';
-import DocView from '@/components/docs/view';
+import DocView from '@/components/general/docs/view';
 
 export default function Layout({ children }) {
   const { posts, directories } = getAllBlogPostMetadata();

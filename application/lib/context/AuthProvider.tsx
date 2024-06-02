@@ -3,7 +3,7 @@ import { useEffect, useState, Suspense, ReactNode, createContext } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { createClient } from '../utils/supabase/client';
 import { useRouter } from 'next/navigation';
-import Spinner from '@/components/general/Spinner';
+import Spinner from '@/components/general/skeletons/Spinner';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 type UserSession = {
