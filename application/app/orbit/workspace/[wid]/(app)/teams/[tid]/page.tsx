@@ -20,7 +20,7 @@ export default function TeamPage({ params }: { params: { wid: string; tid: strin
           <TeamNameInput teamId={team.id} defaultValue={team.name} />
         </div>
         <div className='flex h-full items-center justify-center gap-2'>
-          <NewIssue button={true} teamId={team.id} workspaceId={params.wid} />
+          <NewIssue button={true} />
         </div>
       </PageWrapper.Header>
       <PageWrapper.Content>

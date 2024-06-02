@@ -8,12 +8,6 @@ import { usePathname } from 'next/navigation';
 import { useQuery, gql } from '@apollo/client';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 
-const CHECK = gql`
-  query GetWorkspaces {
-    hello
-  }
-`;
-
 export default function OrbitPage() {
   const router = useRouter();
   const pathname = usePathname();
