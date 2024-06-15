@@ -18,7 +18,11 @@ export const updateTeamResolver : GraphQLFieldResolver<any,{db: Kysely<Workspace
 
 export const deleteTeamResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
     const {workspaceId, id} = args;
-    return d2.withSchema(`workspace_${workspaceId}`).deleteFrom('team').where('id', '=', id).returningAll().executeTakeFirstOrThrow();
+    await d2.withSchema(`workspace_${workspaceId}`).deleteFrom('team').where('id', '=', id).returningAll().executeTakeFirstOrThrow();
+    return {
+        status: 'success',
+        message: 'Team deleted'
+    }
 }
 
 export const teamResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
@@ -41,7 +45,16 @@ export const teamResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>
 
                     }).as('profile')
                 ])
-            ).as('members')
+            ).as('members'),
+            jsonArrayFrom(eb.selectFrom('project_team')
+                .leftJoin('project', 'project.id', 'project_team.project_id')
+                .selectAll(['project_team'])
+                .select((eb) => [
+                    "project.id",
+                    "project.name",
+                    "project.description"
+                ])
+            ).as('projects')
             ]).executeTakeFirstOrThrow();
     } catch(e) {
         console.error(e);
@@ -55,6 +68,12 @@ export const teamResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>
 export const teamsResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
     const {workspaceId} = args;
     return getTeams({wid: workspaceId, db: d2});
+}
+
+export const workspaceTeamsResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const workspaceId = parent.id
+    return getTeams({wid: workspaceId, db: d2});
+
 }
 
 async function getTeams({wid, db}: {wid: string, db: Kysely<WorkspaceSchema>}) {

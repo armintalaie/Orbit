@@ -6,6 +6,7 @@ import TeamTabs from '@/components/workspace/teams/team/pageSections/teamTabs';
 import { TeamNameInput } from '@/components/workspace/teams/team/standaloneFields/TeamNameField';
 import TeamPageContent from '@/components/workspace/teams/team/pageSections/teamPageContent';
 import { NewIssue } from '@/components/workspace/issues/newIssue';
+import PageWrapperComponent from '@/components/general/layouts/pageWrapperHeader';
 
 export default function TeamPage({ params }: { params: { wid: string; tid: string } }) {
   const { team, loading } = useTeam({ tid: params.tid, wid: params.wid });
@@ -15,22 +16,22 @@ export default function TeamPage({ params }: { params: { wid: string; tid: strin
 
   return (
     <PageWrapper>
-      <PageWrapper.Header>
-        <div className='flex flex-1 flex-row items-center gap-2'>
+      <PageWrapperComponent type={'header'}>
+        <div className='flex  flex-row items-center gap-2'>
           <TeamNameInput teamId={team.id} defaultValue={team.name} />
         </div>
         <div className='flex h-full items-center justify-center gap-2'>
           <NewIssue button={true} />
         </div>
-      </PageWrapper.Header>
-      <PageWrapper.Content>
+      </PageWrapperComponent>
+      <PageWrapperComponent type={'content'}>
         <TeamPageContent params={params} />
-      </PageWrapper.Content>
-      <PageWrapper.SideContent>
+      </PageWrapperComponent>
+      <PageWrapperComponent type={'sideContent'}>
         <div className='flex flex-col gap-4'>
           <TeamTabs team={team} workspaceId={params.wid} />
         </div>
-      </PageWrapper.SideContent>
+      </PageWrapperComponent>
     </PageWrapper>
   );
 }
@@ -51,6 +52,11 @@ function useTeam({ tid, wid }: { tid: string; wid: string }) {
             avatar
             username
           }
+        }
+        projects {
+          id
+          name
+          description
         }
         updatedAt
         createdAt

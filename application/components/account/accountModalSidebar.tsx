@@ -5,9 +5,24 @@ import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 import { useContext, useMemo } from 'react';
 import { ArrowLeftIcon, Grid2X2, InfoIcon, PaintBucket, SettingsIcon, User2, Users2Icon } from 'lucide-react';
 
+type MenuOptions = {
+  [key: string]: {
+    info: {
+      label: string;
+      icon: JSX.Element;
+    };
+    options: {
+      [key: string]: {
+        label: string;
+        icon: JSX.Element;
+        route: string;
+      };
+    };
+  };
+};
 export default function ModalSidebar() {
   const { currentWorkspace } = useContext(OrbitContext);
-  const menuOptions = useMemo(
+  const menuOptions: MenuOptions = useMemo(
     () => ({
       account: {
         info: {
@@ -19,6 +34,11 @@ export default function ModalSidebar() {
             label: 'Account',
             icon: <User2 size={16} />,
             route: '/account',
+          },
+          workspaces: {
+            label: 'Workspaces',
+            icon: <Grid2X2 size={16} />,
+            route: '/account/workspaces',
           },
           appearance: {
             label: 'Appearance',
@@ -67,7 +87,7 @@ export default function ModalSidebar() {
         </div>
 
         {Object.entries(menuOptions).map(([menuKey, menu]) => (
-          <div className='flex flex-col gap-2 py-5 '>
+          <div className='flex flex-col gap-2 py-5 ' key={menuKey}>
             <div className='flex items-center gap-2 border-b pb-4 text-sm text-neutral-600'>
               {menu.info.icon}
               {menu.info.label}
@@ -79,7 +99,7 @@ export default function ModalSidebar() {
                 ) => (
                   <Link
                     className='secondary-surface hover:tertiary-surface flex h-10 w-full items-center justify-start gap-4 rounded px-1 text-xs'
-                    key={option.id}
+                    key={option.label}
                     href={`/orbit/workspace/${currentWorkspace}/settings/${option.route}`}
                   >
                     {option.icon}

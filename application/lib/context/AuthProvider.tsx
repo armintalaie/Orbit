@@ -38,7 +38,7 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
     return () => subscription.unsubscribe();
   }, []);
 
-  if (!sessionInfo || !sessionInfo.session || !sessionInfo.session.user || sessionInfo === null) {
+  if (!sessionInfo || !sessionInfo.session || !sessionInfo.session.user) {
     return <Spinner />;
   }
 
@@ -47,6 +47,11 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
     cache: new InMemoryCache({
       addTypename: false,
     }),
+    defaultOptions: {
+      mutate: {
+        errorPolicy: 'all',
+      },
+    },
     headers: {
       authorization: `${sessionInfo.session.access_token}`,
     },

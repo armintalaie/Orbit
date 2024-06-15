@@ -1,21 +1,21 @@
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-import { useIssueTitleField } from '@/lib/context/issues/issueFields';
+import { useIssueProjectField } from '@/lib/context/issues/issueFields';
 import { UPDATE_ISSUE } from '@/lib/hooks/Issues/useMutateIssue';
 import { useMutation } from '@apollo/client';
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { toast } from 'sonner';
 import { ControllerRenderProps } from 'react-hook-form';
-import { Input } from '@/components/ui/input';
-import IssueOptions from '@/components/workspace/issues/issue/details/IssueOptions';
+import {ProjectField} from "@/components/workspace/fields/projectField";
 
-type IssueTitleFieldProps = {
-  field: ControllerRenderProps<{ title: string }, 'title'>;
-  issueId: number;
+type IssueStatusFieldProps = {
+  field: ControllerRenderProps<{ projectId: string | number }, 'projectId'>;
+  compact?: boolean;
+  projectOptions?: { id: string | number; name: string }[];
 };
 
-export function IssueTitleInput({ issueId, defaultValue }: { issueId: number; defaultValue?: string }) {
-  const { form } = useIssueTitleField({ defaultValue });
+export function IssueProjectInput({ projectId, defaultValue }: { projectId: string; defaultValue?: string }) {
+  const { form } = useIssueProjectField({ defaultValue });
   const { workspace } = useContext(OrbitContext);
   const [updateIssue, { error }] = useMutation(UPDATE_ISSUE);
   async function submitPatch(data: any) {
@@ -23,14 +23,14 @@ export function IssueTitleInput({ issueId, defaultValue }: { issueId: number; de
       variables: {
         workspaceId: workspace.id,
         issue: data,
-        id: issueId.toString(),
+        id: projectId,
       },
     });
   }
 
   useEffect(() => {
     if (error) {
-      toast.error('Failed to update issue title');
+      toast.error('Failed to update issue project');
     }
   }, [error]);
 
@@ -45,27 +45,28 @@ export function IssueTitleInput({ issueId, defaultValue }: { issueId: number; de
 
   return (
     <Form {...form}>
-      <form className={'w-full'}>
+      <form>
         <FormField
           control={form.control}
-          name='title'
-          render={({ field }) => <IssueTitlePropertyField field={field} issueId={Number(issueId)} />}
+          name='projectId'
+          render={({ field }) => <IssueProjectPropertyField field={field} />}
         />
       </form>
     </Form>
   );
 }
 
-function IssueTitlePropertyField({ field, issueId }: IssueTitleFieldProps) {
+export function IssueProjectPropertyField({ field, compact = false, projectOptions }: IssueStatusFieldProps) {
+  const projects = projectOptions || [];
+
   return (
     <FormItem className='flex w-full flex-col  gap-2 '>
-      <div className='flex w-full items-center gap-2'>
+      <div className={`flex w-full items-center gap-2 ${compact ? 'rounded-lg border' : ''}`}>
+        {!compact && <span className='w-20 text-2xs font-normal'>Project</span>}
         <FormControl className='w-full'>
-          <Input {...field} value={field.value} className='w-full border-transparent bg-inherit' />
+          <ProjectField field={field} placeholder='select a project' projectOptions={projects} />
         </FormControl>
-        <div className='flex h-full items-center justify-center gap-2'>
-          <IssueOptions issueId={issueId} />
-        </div>
+        <FormMessage />
       </div>
     </FormItem>
   );

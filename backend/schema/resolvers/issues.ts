@@ -19,19 +19,15 @@ export const projectIssuesResolver : GraphQLFieldResolver<any,{db: Kysely<Worksp
 
 export const getIssues = async ({wid, db, pid, tid}: {wid: string, db: Kysely<WorkspaceSchema>, pid?: string, tid?: string}) => {
     let query = db.withSchema(`workspace_${wid}`).selectFrom('issue').innerJoin('issue_status', 'issue_status.id', 'issue.status_id')
-    let projects = pid? [pid]: [null];
+    // let projects = pid? [pid]: [null];
 
     if(tid) {
-        const teamProjects = await db.withSchema(`workspace_${wid}`).selectFrom('project')
-            .innerJoin('project_team', 'project_team.project_id', 'project.id')
-               .where('project_team.team_id', '=', Number(tid)).selectAll(['project']).execute();
-        const addedProjects = teamProjects.map((project: any) => project.id);
-        projects = [...projects, ...addedProjects];
+        query = query.where('teamId', '=', tid);
     }
 
-    if(projects.length > 0) {
-        query = query.innerJoin(`project_issue`, `project_issue.issue_id`, `issue.id`).where('project_id', 'in', projects.map((p) => Number(p)));
-    }
+    // if(projects.length > 0) {
+    //     query = query.innerJoin(`project_issue`, `project_issue.issue_id`, `issue.id`).where('project_id', 'in', projects.map((p) => Number(p)));
+    // }
 
     const issues = await query.selectAll(['issue'])
     .select((eb) => [
@@ -111,6 +107,7 @@ export const updateIssueResolver: GraphQLFieldResolver<any,{db: Kysely<Workspace
 export const createIssueResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
     const {workspaceId, issue} = args;
     const { assignees, projects, startDate, ...issueInput} = issue;
+    console.log(issueInput, assignees, projects, startDate)
     try {
     return  d2.withSchema(`workspace_${workspaceId}`).transaction().execute(async (trx) => {
         const newIssue = await trx.insertInto('issue').values({...issueInput}).returningAll().executeTakeFirstOrThrow();

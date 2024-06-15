@@ -10,7 +10,7 @@
     "clean": "rm -rf .next && rm -rf node_modules",
     "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint",
     "start:server": "node --loader ts-node/esm server/index.ts",
     "format": "prettier --check --ignore-path .gitignore .",

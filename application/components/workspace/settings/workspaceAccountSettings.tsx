@@ -5,63 +5,79 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../../ui/button';
 import Image from 'next/image';
-import { useContext } from 'react';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
+import { useContext, useEffect } from 'react';
 import { Input } from '../../ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
-import { toast } from 'sonner';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { toast } from 'sonner';
 
 const schema = z.object({
   firstName: z.string().nullable().optional(),
   lastName: z.string().nullable().optional(),
   pronouns: z.string().nullable().optional(),
   avatar: z.string().nullable().optional(),
+  username: z.string().nullable().optional(),
   location: z.string().nullable().optional(),
-  notes: z.string().nullable().optional(),
-  displayName: z.string().nullable().optional(),
   timezone: z.string().nullable().optional(),
   status: z.string().nullable().optional(),
 });
 
-export default function WorkspaceAccountSettings() {
-  const userSession = useContext(UserSessionContext);
-  const { currentWorkspace } = useContext(OrbitContext);
-  const user = userSession.session.user;
-  const profile: {
-    [key: string]: string;
-  } = currentWorkspace.member;
-  const { avatar, memberId, addedAt, updatedAt, workspaceId, userId, ...rest } = profile || {};
+const UPDATE_PROFILE = gql`
+  mutation updateWorkspaceMember($workspaceId: String!, $userId: String!, $profile: UpdateMemberInput!) {
+    updateWorkspaceMember(profile: $profile, userId: $userId, workspaceId: $workspaceId) {
+      profile {
+        firstName
+        lastName
+        pronouns
+        avatar
+        location
+      }
+    }
+  }
+`;
 
+export default function WorkspaceAccountSettings() {
+  const { currentWorkspace } = useContext(OrbitContext);
+  const { member, loading, error } = useWorkspaceMember();
+  const [updateProfileRequest] = useMutation(UPDATE_PROFILE);
+  const profile = member?.profile;
+  const avatar = profile?.avatar;
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: rest,
+    defaultValues: profile,
   });
 
   async function updateProfile(values: z.infer<typeof schema>) {
-    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/members/${memberId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${userSession.access_token}`,
+    updateProfileRequest({
+      variables: {
+        workspaceId: currentWorkspace,
+        userId: member.id,
+        profile: {
+          ...values,
+        },
       },
-      body: JSON.stringify(values),
+    }).then((res) => {
+      if (res.data?.updateWorkspaceMember?.profile) {
+        toast('Profile updated');
+        form.reset(res.data.updateWorkspaceMember?.profile);
+      } else {
+        toast('Failed to update profile');
+      }
     });
-    if (res.ok) {
-      toast('Workspace profile updated successfully');
-    } else {
-      toast('Profile update failed');
-    }
   }
+
+  useEffect(() => {
+    form.reset(profile);
+  }, [member]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading member</div>;
 
   return (
     <div className='flex w-full flex-col items-center  gap-5 '>
       <section className='flex w-full flex-col gap-4  '>
         <div className='flex flex-col items-center gap-10'>
-          <div className='secondary-surface flex w-full flex-col gap-4 rounded border p-4 text-sm'>
-            <p>This is your workspace profile. You can edit your profile details here.</p>
-            <p>Your profile details are visible to all members of this workspace.</p>
-          </div>
           <div className='flex items-center gap-2'>
             <Image
               src={avatar}
@@ -78,11 +94,11 @@ export default function WorkspaceAccountSettings() {
                 <label htmlFor='name' className='w-32 text-sm  font-semibold'>
                   Email
                 </label>
-                <Input id='name' name='name' value={user.email} disabled={true} />
+                <Input id='name' name='name' value={member.email} disabled={true} />
               </div>
 
               {profile &&
-                Object.entries(rest).map(([key, value]) => (
+                Object.entries(profile).map(([key, value]) => (
                   <FormField
                     key={key}
                     control={form.control}
@@ -100,7 +116,9 @@ export default function WorkspaceAccountSettings() {
                   />
                 ))}
               <div className='flex flex-1 items-center justify-end gap-2'>
-                <Button type='submit'>Update</Button>
+                <Button size={'sm'} type='submit'>
+                  Update
+                </Button>
               </div>
             </form>
           </Form>
@@ -108,4 +126,35 @@ export default function WorkspaceAccountSettings() {
       </section>
     </div>
   );
+}
+
+function useWorkspaceMember() {
+  const memberQuery = gql`
+    query ($id: String!) {
+      workspace(id: $id) {
+        member {
+          id
+          email
+          profile {
+            firstName
+            lastName
+            avatar
+            username
+            pronouns
+            location
+          }
+        }
+      }
+    }
+  `;
+  const { currentWorkspace } = useContext(OrbitContext);
+  const { data, error, loading } = useQuery(memberQuery, {
+    variables: { id: currentWorkspace },
+  });
+
+  return {
+    member: data?.workspace?.member,
+    loading,
+    error,
+  };
 }

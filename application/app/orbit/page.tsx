@@ -2,7 +2,7 @@
 
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { UserSessionContext } from '@/lib/context/AuthProvider';
-import AccountWorkspaces from '@/components/account/accountWorkspaces';
+import AccountWorkspacesPage from '@/components/account/accountWorkspacesPage';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useQuery, gql } from '@apollo/client';
@@ -58,7 +58,7 @@ export default function OrbitPage() {
           {user.email}
         </div>
         <div className='flex flex-1 flex-col justify-center gap-4 p-6'>
-          <AccountWorkspaces />
+          <AccountWorkspacesPage />
           {/* <AccountModal /> */}
         </div>
       </div>

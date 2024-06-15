@@ -4,14 +4,12 @@ import { Button } from '../../ui/button';
 import { useContext, useMemo, useState } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 import { WorkspaceMember } from '@/lib/types';
-import WorkspaceInvites from './workspaceInvite';
 import WorkspaceMemberProfile from './workspaceMemberProfile';
-import Image from 'next/image';
 import { gql, useQuery } from '@apollo/client';
 import LinearSkeleton from '@/components/general/skeletons/linearSkeleton';
+import WorkspaceMemberInviteModal from './workspaceInvite';
 
 export default function WorkspaceMembers() {
-  const [showInvites, setShowInvites] = useState(false);
   const { members, loading, error } = useWorkspaceMembers();
   const [memberProfile, setMemberProfile] = useState<WorkspaceMember | undefined>();
   const membersComponent = useMemo(
@@ -31,12 +29,10 @@ export default function WorkspaceMembers() {
       <div className=' flex w-full flex-col gap-5'>
         <div className=' flex w-full justify-between gap-5'>
           <div></div>
-          <Button onClick={() => setShowInvites((prev) => !prev)}>
-            {showInvites ? 'View Members' : 'View Invites'}
-          </Button>
+          <WorkspaceMemberInviteModal members={members} />
         </div>
 
-        {showInvites ? <WorkspaceInvites /> : membersComponent}
+        {membersComponent}
       </div>
     </div>
   );
@@ -52,13 +48,10 @@ function MembersSection({
   setMemberProfile: (member: WorkspaceMember | undefined) => void;
 }) {
   if (isLoading) return <LinearSkeleton />;
-  const acitveMembers = members;
   return (
     <div className=' flex w-full flex-col  justify-start   gap-20 text-xs'>
       <div className=' flex w-full flex-col justify-start gap-4 overflow-x-scroll p-2  text-xs'>
-        <h2 className='text-lg font-semibold'>Active Members</h2>
-
-        <MembersTableView members={acitveMembers} setMemberProfile={setMemberProfile} />
+        <MembersTableView members={members} setMemberProfile={setMemberProfile} />
       </div>
     </div>
   );
@@ -75,6 +68,9 @@ function useWorkspaceMembers() {
             firstName
             lastName
             avatar
+            username
+            pronouns
+            location
           }
         }
       }
@@ -98,30 +94,31 @@ function MembersTableView({ members, setMemberProfile }: { members: WorkspaceMem
   }
 
   return (
-    <div className='secondary-surface flex w-full flex-col items-center justify-start overflow-x-scroll rounded border text-xs'>
-      <div className='primary-surface flex w-full flex-shrink-0 justify-between gap-2 border-b p-2 text-left font-medium'>
-        {Object.entries(members[0].profile).map(([key, value]) =>
-          key === 'avatar' ? (
-            <span className='w-8 flex-shrink-0 truncate'></span>
-          ) : (
-            <span className='min-w-24 flex-1 flex-shrink-0 truncate text-left'>{key}</span>
-          )
+    <div className='tertiary-surface flex w-full flex-col items-center justify-start overflow-y-hidden overflow-x-scroll rounded border text-xs'>
+      <div className=' flex w-full flex-shrink-0 justify-between gap-2 border-b p-2 text-left font-medium'>
+        {Object.entries(members[0].profile).map(
+          ([key, value]) =>
+            key !== 'avatar' && (
+              <span className='min-w-24 flex-1 flex-shrink-0 truncate text-left' key={key}>
+                {key}
+              </span>
+            )
         )}
       </div>
       {members?.map((member) => (
         <Button
+          key={member.id}
           variant={'ghost'}
-          className=' primary-surface flex w-full justify-between gap-2 border-b p-2 text-2xs  '
-          onClick={() => setMemberProfile(members.find((m) => m.username === member.username))}
+          className=' secondary-surface flex w-full justify-between gap-2 rounded-none border-b p-2 text-2xs  '
+          onClick={() => setMemberProfile(members.find((m) => m.id === member.id))}
         >
-          {Object.entries(member.profile).map(([key, value]) =>
-            key === 'avatar' ? (
-              <span className='w-8 flex-shrink-0 truncate'>
-                <Image src={value} alt='avatar' width={24} height={24} className='rounded-full' />
-              </span>
-            ) : (
-              <span className='min-w-24 flex-1 flex-shrink-0 truncate text-left'>{value}</span>
-            )
+          {Object.entries(member.profile).map(
+            ([key, value]) =>
+              key !== 'avatar' && (
+                <span className='min-w-24 flex-1 flex-shrink-0 truncate text-left' key={key}>
+                  {value}
+                </span>
+              )
           )}
         </Button>
       ))}

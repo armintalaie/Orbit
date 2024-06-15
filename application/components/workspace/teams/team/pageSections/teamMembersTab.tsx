@@ -2,8 +2,10 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { UserFinder } from '@/components/workspace/util/userFinder';
 import AddMember from '@/components/workspace/teams/team/members/addMember';
+import { useContext } from 'react';
+import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 
-function MemberCard(props: { member: any }) {
+export function MemberCard(props: { member: any }) {
   return (
     <div className='flex flex-row items-center gap-4 text-2xs'>
       <span className='w-8 flex-shrink-0 truncate'>
@@ -20,7 +22,7 @@ function MemberCard(props: { member: any }) {
 }
 
 export default function TeamMembersTab({ team }: { team: any }) {
-  const { members } = team;
+  const { members: teamMembers } = team;
   return (
     <div className='flex flex-col gap-4 p-1 px-4'>
       <div className='flex flex-row items-center justify-between'>
@@ -28,10 +30,9 @@ export default function TeamMembersTab({ team }: { team: any }) {
         <AddMember team={team} />
       </div>
       <div className='flex flex-col gap-4'>
-        {members.map((member: any) => (
+        {teamMembers.map((member: any) => (
           <MemberCard key={member.id} member={member} />
         ))}
-        <UserFinder field={{}} users={[]} />
       </div>
     </div>
   );

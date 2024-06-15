@@ -2,6 +2,7 @@ import { Kysely, Transaction } from 'kysely';
 import { projectTableSetup } from './project';
 import { teamTableSetup } from './team';
 import { setupWorkspaceMembersAndRoles } from './member';
+import {createIssueTables} from "../migrations/1716687527788.ts";
 
 type WorkspaceCreateInput = {
   name: string;
@@ -11,6 +12,11 @@ type WorkspaceCreateInput = {
 
 export async function createWorkspaceTenant(db: Kysely<any>, input: WorkspaceCreateInput) {
   const workspace = await db.transaction().execute(async (trx) => {
+    const user = await trx.selectFrom('auth.users').select(['id', 'email']).where('id', '=', input.ownerId)
+        .executeTakeFirst();
+    if (!user) {
+        throw new Error('User not found');
+    }
     let workspace = await trx
       .withSchema('public')
       .insertInto('workspace')
@@ -18,7 +24,7 @@ export async function createWorkspaceTenant(db: Kysely<any>, input: WorkspaceCre
         name: input.name,
         config: input.config,
       })
-      .returning('id')
+      .returningAll()
       .executeTakeFirstOrThrow();
 
     console.log('LOG: Workspace entry created');
@@ -28,7 +34,7 @@ export async function createWorkspaceTenant(db: Kysely<any>, input: WorkspaceCre
       .insertInto('workspace_member')
       .values({
         workspace_id: workspace.id,
-        user_id: input.ownerId,
+        user_id: user.id,
         status: 'active',
       })
       .execute();
@@ -36,6 +42,12 @@ export async function createWorkspaceTenant(db: Kysely<any>, input: WorkspaceCre
     console.log('LOG: Workspace member added');
 
     await setupWorkspaceTables(trx, workspace.id);
+
+    await trx.withSchema(`workspace_${workspace.id}`).insertInto('member').values({
+        id: input.ownerId,
+        email: user.email,
+        username: user.email
+        }).execute();
     console.log('LOG: Workspace tables setup');
     return workspace;
   });
@@ -51,6 +63,7 @@ async function setupWorkspaceTables(db: Transaction<any>, workspaceId: string) {
   await setupWorkspaceMembersAndRoles(db, workspaceSchema);
   await projectTableSetup(db, workspaceSchema);
   await teamTableSetup(db, workspaceSchema);
+  await createIssueTables(db, workspaceSchema);
 }
 
 

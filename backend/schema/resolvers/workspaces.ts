@@ -3,6 +3,7 @@ import type { WorkspaceSchema } from "../../database/schema/workspace";
 import { getDb } from "../../utils/db";
 import type { GraphQLFieldResolver } from "graphql";
 import { jsonArrayFrom, jsonObjectFrom } from "kysely/helpers/postgres";
+import {createWorkspaceTenant, destroyWorkspaceTenant} from "../../database/helpers/workspace.ts";
 
 const d2 = await getDb();
 
@@ -26,6 +27,20 @@ export const membersResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSch
             }
         }
     });
+}
+
+export const memberResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const workspaceId  = parent.id;
+    const userId = context.user.id;
+    const m = await d2.withSchema(`workspace_${workspaceId}`).selectFrom('member')
+        .selectAll().where('id', '=', userId).executeTakeFirstOrThrow()
+    return {
+        ...m,
+        profile: {
+            ...m
+        }
+    }
+
 }
 
 export const userResolver : GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
@@ -70,7 +85,79 @@ export const workspaceConfigResolver: GraphQLFieldResolver<any,{db: Kysely<Works
     return config;
 }
 
+export const createWorkspaceResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const {workspace} = args;
+    const {name} = workspace;
+    console.log("Creating workspace with name: ", name);
+    const creatorId = context.user.id as string;
+    const workspaceInfo = await  createWorkspaceTenant(d2, {name, ownerId: creatorId, config: {}});
+    const workspaceId = workspaceInfo.id;
+    return workspaceInfo;
+}
 
+export const updateWorkspaceResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const {id, workspace} = args;
+    return d2.updateTable('public.workspace').set({...workspace}).where('id', '=', id).execute();
+
+}
+
+export const deleteWorkspaceResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const {id} = args;
+    await destroyWorkspaceTenant(d2, id);
+}
+
+
+export const newWorkspaceMemberResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const {workspaceId, member} = args;
+    return  await d2.transaction().execute(async (trx) => {
+        const user = await trx.selectFrom('auth.users').select('id').where('email', '=', member.email).executeTakeFirst();
+        if (!user) {
+            throw new Error('User not found');
+        }
+        await trx.insertInto('public.workspace_member').values({
+            user_id: user.id,
+            workspace_id: workspaceId,
+            status: 'active'
+        }).execute();
+
+        await trx.withSchema(`workspace_${workspaceId}`).insertInto('member').values({
+            id: user.id,
+            email: member.email,
+            username: member.email
+        }).execute();
+
+        return {
+            id : user.id,
+            email: member.email,
+            username: member.email
+        }
+    });
+}
+
+export const removeWorkspaceMemberResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const {workspaceId, userId, email} = args;
+    let id = userId;
+    if (!id) {
+        if (!email) {
+            throw new Error('Either email or userId is required');
+        }
+        id = await d2.selectFrom('auth.users').select('id').where('email', '=', email).executeTakeFirstOrThrow();
+    }
+    const user = await d2.deleteFrom('public.workspace_member').where('workspace_id', '=', workspaceId).where('user_id', '=', id).returningAll().execute();
+    console.log(user);
+    return {
+        status: 'success',
+        message: 'Member removed'
+    }
+}
+
+export const updateWorkspaceMemberResolver: GraphQLFieldResolver<any,{db: Kysely<WorkspaceSchema>}> = async (parent: any, args: any, context, _) => {
+    const {workspaceId, userId, profile} = args;
+    const profileRes = await d2.withSchema(`workspace_${workspaceId}`).updateTable('member').set({...profile}).where('id', '=', userId).returningAll().executeTakeFirstOrThrow();
+    return {
+        profile: profileRes
+    }
+}
 
 export const workspaceResolvers = {
     workspaceResolver,
@@ -78,5 +165,13 @@ export const workspaceResolvers = {
     membersResolver,
     userResolver,
     meResolver,
-    workspaceConfigResolver
+    workspaceConfigResolver,
+    createWorkspaceResolver,
+    updateWorkspaceResolver,
+    deleteWorkspaceResolver,
+    newWorkspaceMemberResolver,
+    removeWorkspaceMemberResolver,
+    memberResolver,
+    updateWorkspaceMemberResolver
+
 }

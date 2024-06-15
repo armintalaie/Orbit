@@ -10,10 +10,10 @@ export const updateIssueInputType = new GraphQLInputObjectType({
         title: { type: GraphQLString },
         content: { type: GraphQLString },
         statusId: { type: GraphQLID },
-        startDate: { type: GraphQLString },
         targetDate: { type: GraphQLString },
         assigness: { type: new GraphQLList(GraphQLID) },
         projects: { type: new GraphQLList(GraphQLID) },
+        teamId: { type: GraphQLID },
     }),
 });
 
@@ -44,10 +44,10 @@ export const newIssueInputType = new GraphQLInputObjectType({
         title: { type: new GraphQLNonNull(GraphQLString) },
         content: { type: new GraphQLNonNull(GraphQLString) },
         statusId: { type: new GraphQLNonNull(GraphQLString) },
-        startDate: { type: GraphQLString },
         targetDate: { type: GraphQLString },
         assignees: { type: new GraphQLList(GraphQLID) },
         projects: { type: new GraphQLList(GraphQLString) },
+        teamId: { type: new GraphQLNonNull(GraphQLID) },
     }),
 });
 
@@ -59,11 +59,11 @@ export const issueType = new GraphQLObjectType({
         title: { type: new GraphQLNonNull(GraphQLString) },
         content: { type: new GraphQLNonNull(GraphQLString) },
         status: { type: new GraphQLNonNull(issueStatusType) },
-        startDate: { type: GraphQLString },
         targetDate: { type: GraphQLString },
         dateCreated: { type: new GraphQLNonNull(GraphQLString) },
         updatedAt: { type: new GraphQLNonNull(GraphQLString) },
         assignees: { type: new GraphQLList (memberType) },
+        teamId: { type: new GraphQLNonNull(GraphQLID) },
     }),
 });
 

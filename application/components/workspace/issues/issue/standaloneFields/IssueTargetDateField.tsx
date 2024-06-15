@@ -1,4 +1,4 @@
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 import { useIssueTargetDateField } from '@/lib/context/issues/issueFields';
 import { UPDATE_ISSUE } from '@/lib/hooks/Issues/useMutateIssue';
@@ -49,14 +49,16 @@ export function IssueTargetDateInput({ issueId, defaultValue }: { issueId: numbe
   );
 }
 
-function IssueTargetDatePropertyField({ field }: { field: any }) {
+export function IssueTargetDatePropertyField({ field, compact = false }: { field: any; compact?: boolean }) {
   return (
     <FormItem className='flex w-full items-center gap-2 '>
-      <span className='w-20 text-2xs font-normal'>Target date</span>
-      <FormControl className='w-full'>
-        <DeadlineField field={field} placeholder='target date' />
-      </FormControl>
-      <FormMessage />
+      <div className={`flex w-full items-center gap-2 ${compact ? 'rounded-lg border' : ''}`}>
+        {!compact && <span className='w-20 text-2xs font-normal'>Target Date</span>}
+        <FormControl className='w-full'>
+          <DeadlineField field={field} placeholder='target date' />
+        </FormControl>
+      </div>
+      {/*<FormMessage />*/}
     </FormItem>
   );
 }

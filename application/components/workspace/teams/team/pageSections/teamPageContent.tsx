@@ -18,7 +18,6 @@ function TeamIssues({ teamId, workspaceId }: { teamId: any; workspaceId: string 
           name
         }
         targetDate
-        startDate
         assignees {
           id
           email

@@ -137,6 +137,26 @@ const userQuery = gql`
         id
         name
         status
+        members {
+          id
+          email
+          profile {
+            firstName
+            lastName
+            avatar
+            username
+          }
+        }
+        teams {
+          id
+          name 
+          identifier
+        }
+        projects {
+            id
+            name
+            
+         }
         config {
           issueStatus {
             id

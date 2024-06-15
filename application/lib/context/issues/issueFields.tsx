@@ -59,3 +59,26 @@ export function useIssueTargetDateField({ defaultValue }: { defaultValue?: strin
     form,
   };
 }
+
+export function useIssueProjectField({ defaultValue }: { defaultValue?: string }) {
+  const { workspace } = useContext(OrbitContext);
+  const projects = workspace.projects || [];
+  const schema = z.object({
+    projectId: z
+      .union([z.string(), z.number()])
+      .refine((projectId) => projects.some((project) => project.id === projectId), {
+        message: 'Invalid project',
+      }),
+  });
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      projectId: defaultValue ?? projects[0].id,
+    },
+  });
+
+  return {
+    form,
+    projects,
+  };
+}

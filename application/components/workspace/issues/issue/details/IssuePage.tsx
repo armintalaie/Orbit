@@ -22,8 +22,8 @@ const ISSUE_QUERY = gql`
         id
         name
       }
+      teamId
       targetDate
-      startDate
       assignees {
         id
         email

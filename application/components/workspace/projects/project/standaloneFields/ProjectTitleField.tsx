@@ -66,7 +66,7 @@ function ProjectTitlePropertyField({ field, projectId }: ProjectTitleFieldProps)
           {/*<IssueOptions projectId={projectId} />*/}
         </div>
       </div>
-      <FormMessage className='text-2xs' />
+      {/*<FormMessage className='text-2xs' />*/}
     </FormItem>
   );
 }

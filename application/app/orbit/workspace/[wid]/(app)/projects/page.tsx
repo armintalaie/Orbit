@@ -11,6 +11,7 @@ import { useWorkspaceProjects } from '@/lib/hooks/useWorkspaceProjects';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
 import { useContext } from 'react';
 import { toast } from 'sonner';
+import PageWrapperComponent from '@/components/general/layouts/pageWrapperHeader';
 interface IProject {
   id: number;
   name: string;
@@ -44,16 +45,16 @@ export default function ProjectPage() {
 
   return (
     <PageWrapper>
-      <PageWrapper.Header>
+      <PageWrapperComponent type={'header'}>
         <div className=' flex w-full flex-row items-center justify-between gap-2'>
           <h1 className='h-full pr-2 text-sm font-medium leading-tight text-gray-700 dark:text-gray-200'>Projects</h1>
           <NewProject button={true} />
         </div>
-      </PageWrapper.Header>
+      </PageWrapperComponent>
 
-      <PageWrapper.Content>
+      <PageWrapperComponent type={'content'}>
         <TableView projects={projects} />
-      </PageWrapper.Content>
+      </PageWrapperComponent>
     </PageWrapper>
   );
 }

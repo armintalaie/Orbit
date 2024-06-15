@@ -7,8 +7,8 @@ import TeamSettingsTab from '@/components/workspace/teams/team/pageSections/team
 
 export default function TeamTabs({ team }: { team: any; workspaceId: string }) {
   return (
-    <Tabs defaultValue='members' className='w-full'>
-      <TabsList className='grid h-12 w-full grid-cols-4 rounded-none border-b bg-inherit p-0 shadow-none'>
+    <Tabs defaultValue='members' className='h-scree  flex w-full flex-col overflow-y-scroll'>
+      <TabsList className='sticky top-0 grid h-12 w-full grid-cols-4 rounded-none border-b bg-inherit p-0 shadow-none'>
         <TabsTrigger value='info'>
           <InfoIcon size={16} />
         </TabsTrigger>
@@ -31,7 +31,7 @@ export default function TeamTabs({ team }: { team: any; workspaceId: string }) {
       <TabsContent value='projects'>
         <TeamProjectsTab team={team} />
       </TabsContent>
-      <TabsContent value='settings'>
+      <TabsContent value='settings' className={''}>
         <TeamSettingsTab team={team} />
       </TabsContent>
     </Tabs>

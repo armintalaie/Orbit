@@ -5,6 +5,8 @@ import ProjectPageContent from '@/components/workspace/projects/project/projectP
 import { gql, useQuery } from '@apollo/client';
 import { NewIssue } from '@/components/workspace/issues/newIssue';
 import { ProjectTitleInput } from '@/components/workspace/projects/project/standaloneFields/ProjectTitleField';
+import PageWrapperComponent from '@/components/general/layouts/pageWrapperHeader';
+import ProjectInfoContent from '@/components/workspace/projects/project/projectInfoContent';
 
 export default function ProjectPage({ params }: { params: { wid: string; pid: string } }) {
   const { project, loading } = useProject({
@@ -20,20 +22,20 @@ export default function ProjectPage({ params }: { params: { wid: string; pid: st
     );
   return (
     <PageWrapper>
-      <PageWrapper.Header>
+      <PageWrapperComponent type={'header'}>
         <div className='flex flex-1 flex-row items-center gap-2'>
           {project && <ProjectTitleInput defaultValue={project.name} projectId={project.id} />}
         </div>
         <div className='flex h-full items-center justify-center gap-2'>
           <NewIssue button={true} defaultValues={{ projects: [params.pid] }} />
         </div>
-      </PageWrapper.Header>
-      <PageWrapper.Content>
+      </PageWrapperComponent>
+      <PageWrapperComponent type={'content'}>
         <ProjectPageContent params={{ wid: params.wid, pid: params.pid }} />
-      </PageWrapper.Content>
-      {/*<PageWrapper.SideContent>*/}
-      {/*  <ProjectInfoContent project={project} pid={params.pid} wid={params.wid} />*/}
-      {/*</PageWrapper.SideContent>*/}
+      </PageWrapperComponent>
+      <PageWrapperComponent type={'sideContent'}>
+        <ProjectInfoContent project={project} pid={params.pid} wid={params.wid} />
+      </PageWrapperComponent>
     </PageWrapper>
   );
 }

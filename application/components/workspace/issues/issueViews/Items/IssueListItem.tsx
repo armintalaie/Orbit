@@ -7,14 +7,17 @@ import { IProfile } from '@/lib/types/issue';
 import AssigneeChip from './issueChips/assigneeChip';
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from '@/components/ui/context-menu';
 import IssueMenuContext from '../../boards/issueMenuContext';
+import {OrbitContext} from "@/lib/context/OrbitGeneralContext";
+import {useContext} from "react";
 
 export default function IssueItem({ issue }: { issue: any }) {
+    const { currentWorkspace } = useContext(OrbitContext);
   return (
     <ContextMenu>
       <ContextMenuTrigger className='hover:secondary-surface flex w-full items-center justify-between gap-3 p-2'>
         <Link
           className='line-clamp-1 flex w-fit border-b   text-xs '
-          href={useLinkCreator({ destination: `issues/${issue.id}` }).href}
+          href={`/orbit/workspace/${currentWorkspace}/issue/${issue.id}`}
         >
           {issue.title}
         </Link>

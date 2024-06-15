@@ -1,5 +1,4 @@
 import { SettingsContent, SettingsHeader } from '@/app/orbit/workspace/[wid]/settings/(settingsContent)/layout';
-import React from 'react';
 import WorkspaceGeneralSettings from '@/components/workspace/settings/workspaceGeneralSettings';
 
 export default function Page() {

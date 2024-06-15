@@ -1,14 +1,15 @@
-import { SettingsContent, SettingsHeader } from '@/app/orbit/workspace/[wid]/settings/(settingsContent)/layout';
-import WorkspaceAccountSettings from '@/components/workspace/settings/workspaceAccountSettings';
+'use client';
 
-// TODO: fetch user data
+import { SettingsContent, SettingsHeader } from '@/app/orbit/workspace/[wid]/settings/(settingsContent)/layout';
+import AccountWorkspacesPage from '@/components/account/accountWorkspacesPage';
+
 export default function Page() {
   return (
     <>
-      <SettingsHeader>Profile</SettingsHeader>
+      <SettingsHeader>Workspaces</SettingsHeader>
       <SettingsContent>
         <div className='flex h-full w-full flex-col items-center  gap-10 overflow-y-scroll '>
-          <WorkspaceAccountSettings />
+          <AccountWorkspacesPage />
         </div>
       </SettingsContent>
     </>

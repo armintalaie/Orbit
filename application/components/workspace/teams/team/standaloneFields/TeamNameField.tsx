@@ -64,7 +64,6 @@ function TeamTitlePropertyField({ field, teamId }: TeamTitleFieldProps) {
         </FormControl>
         <div className='flex h-full items-center justify-center gap-2'></div>
       </div>
-      <FormMessage className='text-2xs' />
     </FormItem>
   );
 }

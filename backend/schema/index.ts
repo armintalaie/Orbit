@@ -7,7 +7,7 @@ export const schema = new GraphQLSchema({
         name: 'Query',
         fields: {
             hello: {
-                description: 'A simple hello world',
+                description: 'hello world',
                 type: GraphQLString,
                 resolve: () => 'Hello World from Orbit!',
             },
@@ -107,8 +107,8 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.projectType,
                 resolve: Resolvers.createProjectResolver,
                 args: {
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
-                    project: { type: new GraphQLNonNull(GqlTypes.newProjectInputType)}
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    project: {type: new GraphQLNonNull(GqlTypes.newProjectInputType)}
                 }
             },
             updateProject: {
@@ -116,9 +116,9 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.projectType,
                 resolve: Resolvers.updateProjectResolver,
                 args: {
-                    id: { type: new GraphQLNonNull(GraphQLString) },
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
-                    project: { type: new GraphQLNonNull(GqlTypes.updateProjectInputType) }
+                    id: {type: new GraphQLNonNull(GraphQLString)},
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    project: {type: new GraphQLNonNull(GqlTypes.updateProjectInputType)}
                 }
             },
             deleteProject: {
@@ -126,8 +126,8 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.standardResponseType,
                 resolve: Resolvers.deleteProjectResolver,
                 args: {
-                    id: { type: new GraphQLNonNull(GraphQLString) },
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                    id: {type: new GraphQLNonNull(GraphQLString)},
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
                 }
             },
             createIssue: {
@@ -135,8 +135,8 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.issueType,
                 resolve: Resolvers.createIssueResolver,
                 args: {
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
-                    issue: { type: new GraphQLNonNull(GqlTypes.newIssueInputType)}
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    issue: {type: new GraphQLNonNull(GqlTypes.newIssueInputType)}
                 }
             },
             updateIssue: {
@@ -144,9 +144,9 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.issueType,
                 resolve: Resolvers.updateIssueResolver,
                 args: {
-                    id: { type: new GraphQLNonNull(GraphQLString) },
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
-                    issue: { type: new GraphQLNonNull(GqlTypes.updateIssueInputType) }
+                    id: {type: new GraphQLNonNull(GraphQLString)},
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    issue: {type: new GraphQLNonNull(GqlTypes.updateIssueInputType)}
                 }
             },
             deleteIssue: {
@@ -154,8 +154,8 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.standardResponseType,
                 resolve: Resolvers.deleteIssueResolver,
                 args: {
-                    id: { type: new GraphQLNonNull(GraphQLString) },
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                    id: {type: new GraphQLNonNull(GraphQLString)},
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
                 }
             },
             createTeam: {
@@ -163,8 +163,8 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.teamType,
                 resolve: Resolvers.createTeamResolver,
                 args: {
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
-                    team: { type: new GraphQLNonNull(GqlTypes.newTeamInputType)}
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    team: {type: new GraphQLNonNull(GqlTypes.newTeamInputType)}
                 }
             },
             updateTeam: {
@@ -172,9 +172,9 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.teamType,
                 resolve: Resolvers.updateTeamResolver,
                 args: {
-                    id: { type: new GraphQLNonNull(GraphQLString) },
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
-                    team: { type: new GraphQLNonNull(GqlTypes.updateTeamInputType) }
+                    id: {type: new GraphQLNonNull(GraphQLString)},
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    team: {type: new GraphQLNonNull(GqlTypes.updateTeamInputType)}
                 }
             },
             deleteTeam: {
@@ -182,10 +182,64 @@ export const schema = new GraphQLSchema({
                 type: GqlTypes.standardResponseType,
                 resolve: Resolvers.deleteTeamResolver,
                 args: {
-                    id: { type: new GraphQLNonNull(GraphQLString) },
-                    workspaceId: { type: new GraphQLNonNull(GraphQLString) },
+                    id: {type: new GraphQLNonNull(GraphQLString)},
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
                 }
             },
-        },
-    }),
+            createWorkspace: {
+                description: 'Create a workspace',
+                type: GqlTypes.workspaceType,
+                resolve: Resolvers.createWorkspaceResolver,
+                args: {
+                    workspace: {type: new GraphQLNonNull(GqlTypes.newWorkspaceInputType)}
+                }
+            },
+            updateWorkspace: {
+                description: 'Update a workspace',
+                type: GqlTypes.workspaceType,
+                resolve: Resolvers.updateWorkspaceResolver,
+                args: {
+                    id: {type: new GraphQLNonNull(GraphQLString)},
+                    workspace: {type: new GraphQLNonNull(GqlTypes.updateWorkspaceInputType)}
+                }
+            },
+            deleteWorkspace: {
+                description: 'Delete a workspace',
+                type: GqlTypes.standardResponseType,
+                resolve: Resolvers.deleteWorkspaceResolver,
+                args: {
+                    id: {type: new GraphQLNonNull(GraphQLString)},
+                }
+            },
+            newWorkspaceMember: {
+                description: 'Add a new member to a workspace',
+                type: GqlTypes.memberType,
+                resolve: Resolvers.newWorkspaceMemberResolver,
+                args: {
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    member: {type: new GraphQLNonNull(GqlTypes.newMemberInputType)}
+                }
+            },
+            removeWorkspaceMember: {
+                description: 'Remove a member from a workspace',
+                type: GqlTypes.standardResponseType,
+                resolve: Resolvers.removeWorkspaceMemberResolver,
+                args: {
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    userId: {type: GraphQLString},
+                    email: {type: GraphQLString}
+                }
+            },
+            updateWorkspaceMember: {
+                description: 'Update a member in a workspace',
+                type: GqlTypes.memberType,
+                resolve: Resolvers.updateWorkspaceMemberResolver,
+                args: {
+                    workspaceId: {type: new GraphQLNonNull(GraphQLString)},
+                    userId: {type: new GraphQLNonNull(GraphQLString)},
+                    profile: {type: new GraphQLNonNull(GqlTypes.updateMemberInputType)}
+                }
+            }
+        }
+    })
 })

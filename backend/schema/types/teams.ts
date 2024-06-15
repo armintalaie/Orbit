@@ -1,5 +1,6 @@
 import { GraphQLInputObjectType, GraphQLString, GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType } from "graphql";
 import {memberType} from "./workspaces.ts";
+import {projectType} from "./projects.ts";
 
 export const teamType = new GraphQLObjectType({
     name: 'Team',
@@ -12,6 +13,7 @@ export const teamType = new GraphQLObjectType({
         updatedAt: { type: new GraphQLNonNull(GraphQLString) },
         description: { type: GraphQLString },
         members: { type: new GraphQLList(memberType) },
+        projects: { type: new GraphQLNonNull(new GraphQLList(projectType)) },
     }),
 });
 
@@ -34,6 +36,7 @@ export const updateTeamInputType = new GraphQLInputObjectType({
         name: { type: GraphQLString },
         description: { type: GraphQLString },
         members: { type: new GraphQLList(GraphQLID) },
+
     }),
 });
 

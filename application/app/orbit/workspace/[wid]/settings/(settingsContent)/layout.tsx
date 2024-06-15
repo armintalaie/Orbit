@@ -5,11 +5,11 @@ type WrapperProps = {
 };
 
 export default function SettingsLayout({ children }: WrapperProps) {
-  return <div className='flex flex-1 flex-col gap-4 divide-y overflow-hidden px-6 py-4 '>{children}</div>;
+  return <div className='flex flex-1 flex-col gap-2 divide-y overflow-hidden px-6 py-4 '>{children}</div>;
 }
 
 export const SettingsHeader = ({ children }: { children: ReactNode }) => {
-  return <h1 className='  h-12  text-2xl  font-semibold '>{children}</h1>;
+  return <h1 className='  h-8  text-lg  font-semibold '>{children}</h1>;
 };
 
 export const SettingsContent = ({ children }: { children: ReactNode }) => {

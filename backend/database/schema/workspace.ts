@@ -85,6 +85,7 @@ export interface Issue {
   startDate?: string;
   datecreated: string;
   dateupdated: string;
+  teamId: number | string;
   assignees: Member[];
   metadata: Json;
 }

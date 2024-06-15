@@ -1,26 +1,26 @@
 'use client';
+
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import React from 'react';
-
 type PageWrapperProps = {
   children: React.ReactNode;
 };
 
-const Header = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const SubHeader = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const Content = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const SideContent = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-
 const PageWrapper = ({ children }: PageWrapperProps) => {
-  const header = React.Children.toArray(children).find((child) => React.isValidElement(child) && child.type === Header);
+  React.Children.toArray(children).map((child) => {
+    console.log(child);
+  });
+  const header = React.Children.toArray(children).find(
+    (child) => React.isValidElement(child) && (child.key === '.$header' || child.props.type === 'header')
+  );
   const subHeader = React.Children.toArray(children).find(
-    (child) => React.isValidElement(child) && child.type === SubHeader
+    (child) => React.isValidElement(child) && (child.key === '.$subHeader' || child.props.type === 'subHeader')
   );
   const content = React.Children.toArray(children).find(
-    (child) => React.isValidElement(child) && child.type === Content
+    (child) => React.isValidElement(child) && (child.key === '.$content' || child.props.type === 'content')
   );
   const sideContent = React.Children.toArray(children).find(
-    (child) => React.isValidElement(child) && child.type === SideContent
+    (child) => React.isValidElement(child) && (child.key === '.$sideContent' || child.props.type === 'sideContent')
   );
 
   return (
@@ -47,10 +47,5 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
     </ResizablePanelGroup>
   );
 };
-
-PageWrapper.Header = Header;
-PageWrapper.SubHeader = SubHeader;
-PageWrapper.Content = Content;
-PageWrapper.SideContent = SideContent;
 
 export default PageWrapper;

@@ -1,8 +1,18 @@
-import { GraphQLEnumType, GraphQLID, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
+import {
+    GraphQLEnumType,
+    GraphQLID,
+    GraphQLInputObjectType,
+    GraphQLList,
+    GraphQLNonNull,
+    GraphQLObjectType,
+    GraphQLString
+} from "graphql";
 import { issueStatusType } from "./issues";
 import { projectType } from "./projects";
 import { workspaceProjectsResolver } from "../resolvers/projects";
-import { membersResolver, workspaceConfigResolver } from "../resolvers/workspaces";
+import {memberResolver, membersResolver, workspaceConfigResolver} from "../resolvers/workspaces";
+import {teamType} from "./teams.ts";
+import {teamsResolver, workspaceTeamsResolver} from "../resolvers/teams.ts";
 
 export const MemberStatus = new GraphQLEnumType({
     name: 'MemberStatus',
@@ -28,6 +38,8 @@ export const workspaceType = new GraphQLObjectType({
         members: { type: (new GraphQLList (memberType)), resolve: membersResolver },
         projects: { type: (new GraphQLList (projectType)), resolve: workspaceProjectsResolver },
         config: { type: workspaceConfigType , resolve: workspaceConfigResolver},
+        member: { type: memberType, resolve: memberResolver },
+        teams: { type: (new GraphQLList (teamType)) , resolve: workspaceTeamsResolver},
     }),
 });
 
@@ -87,9 +99,6 @@ export const profileType = new GraphQLObjectType({
 });
 
 
-
-
-
 export const workspaceConfigType = new GraphQLObjectType({
     name: 'WorkspaceConfig',
     description: 'Configuration for a workspace',
@@ -100,6 +109,45 @@ export const workspaceConfigType = new GraphQLObjectType({
 });
 
 
+export const newWorkspaceInputType = new GraphQLInputObjectType({
+    name: 'NewWorkspaceInput',
+    description: 'Input for creating a new workspace',
+    fields: () => ({
+        name: { type: new GraphQLNonNull(GraphQLString) },
+    }),
+});
+
+export const updateWorkspaceInputType = new GraphQLInputObjectType({
+    name: 'UpdateWorkspaceInput',
+    description: 'Input for updating a workspace',
+    fields: () => ({
+        name: { type: GraphQLString },
+    }),
+});
+
+export const newMemberInputType = new GraphQLInputObjectType({
+    name: 'NewMemberInput',
+    description: 'Input for adding a new member to a workspace',
+    fields: () => ({
+        email: { type: new GraphQLNonNull(GraphQLString) },
+    }),
+});
+
+
+export const updateMemberInputType = new GraphQLInputObjectType({
+    name: 'UpdateMemberInput',
+    description: 'Input for updating a member in a workspace',
+    fields: () => ({
+        username: { type: (GraphQLString) },
+        firstName: { type: (GraphQLString) },
+        lastName: { type: (GraphQLString) },
+        pronouns: { type: (GraphQLString) },
+        location: { type: GraphQLString },
+        avatar: { type: GraphQLString },
+        bio: { type: GraphQLString },
+    })
+});
+
 
 export const WorkspaceGraphqlTypes = {
     workspaceType,
@@ -108,5 +156,9 @@ export const WorkspaceGraphqlTypes = {
     profileType,
     workspaceConfigType,
     MemberStatus,
-    WorkspaceStatus
+    WorkspaceStatus,
+    newWorkspaceInputType,
+    updateWorkspaceInputType,
+    newMemberInputType,
+    updateMemberInputType,
 }

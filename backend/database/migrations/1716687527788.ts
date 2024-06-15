@@ -43,7 +43,11 @@ export async function createIssueTables(trx: Transaction<any>, workspaceSchema: 
     .addColumn('updated_at', 'timestamptz', (col) => col.defaultTo('now()').notNull())
     .addColumn('status_id', 'integer', (col) => col.references(`${workspaceSchema}.issue_status.id`).notNull().onUpdate('cascade').onDelete('cascade'))
     .addColumn('target_date', 'timestamptz')
+      .addColumn('team_id', 'serial', (col) => col.references('team.id').notNull().onUpdate('cascade').onDelete('cascade'))
+
     .addColumn('metadata', 'jsonb', (col) => col.notNull().defaultTo('{}'))
+      .addForeignKeyConstraint('issue_status_fk', ['status_id'], `issue_status`, ['id'])
+      .addForeignKeyConstraint('team_fk', ['team_id'], 'team', ['id'])
     .execute();
 
   await trx.withSchema(workspaceSchema).schema.createTable('issue_assignee')

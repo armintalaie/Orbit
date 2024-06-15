@@ -10,6 +10,7 @@ import { ControllerRenderProps } from 'react-hook-form';
 
 type IssueStatusFieldProps = {
   field: ControllerRenderProps<{ statusId: string | number }, 'statusId'>;
+  compact?: boolean;
 };
 
 export function IssueStatusInput({ issueId, defaultValue }: { issueId: string; defaultValue?: string }) {
@@ -54,19 +55,19 @@ export function IssueStatusInput({ issueId, defaultValue }: { issueId: string; d
   );
 }
 
-function IssueStatusPropertyField({ field }: IssueStatusFieldProps) {
+export function IssueStatusPropertyField({ field, compact = false }: IssueStatusFieldProps) {
   const { workspace } = useContext(OrbitContext);
   const statuses = workspace?.config.issueStatus || [];
 
   return (
     <FormItem className='flex w-full flex-col  gap-2 '>
-      <div className='flex w-full items-center gap-2'>
-        <span className='w-20 text-2xs font-normal'>Status</span>
+      <div className={`flex w-full items-center gap-2 ${compact ? 'rounded-lg border' : ''}`}>
+        {!compact && <span className='w-20 text-2xs font-normal'>Status</span>}
         <FormControl className='w-full'>
           <StatusField field={field} statusOptions={statuses} placeholder='Select a status' />
         </FormControl>
       </div>
-      <FormMessage className='text-2xs' />
+      {/*<FormMessage className='text-2xs' />*/}
     </FormItem>
   );
 }
