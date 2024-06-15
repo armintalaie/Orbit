@@ -1,0 +1,25 @@
+---
+title: 'Delete Role'
+publishedAt: '2024-05-15'
+labels: 'v0.2.5'
+---
+
+`DELETE workspaces/<workspaceId>/role/<roleName>`
+
+Body Params: N/A
+
+Query Params: N/A
+
+Path Params:
+
+- `workspaceId`: the workspaceid for the role to be created i
+- `roleName`: the role name
+
+---
+
+### Details
+
+This endpoint is used to delete a role for a workspace. This endpoint can be accessed only by workspaces users with `workspace:admin` or `workspace:modify` permissions.
+exception: default workspace roles, i.e. admin, member, owner cannot be deleted.
+
+---

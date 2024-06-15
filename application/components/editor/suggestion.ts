@@ -1,6 +1,6 @@
 import { ReactRenderer } from '@tiptap/react';
 import tippy from 'tippy.js';
-import { MentionUserFinder } from '../userFinder';
+import { MentionUserFinder } from '../workspace/teams/userFinder';
 
 const suggestion = {
   items: async ({ query }) => {

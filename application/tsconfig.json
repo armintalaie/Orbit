@@ -16,12 +16,12 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "next",
-      },
+        "name": "next"
+      }
     ],
     "paths": {
-      "@/*": ["./*"],
-    },
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -29,6 +29,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "./middleware.ts",
+    "app/docs/API Reference/Resources/Permissions.mdx",
+    "app/auth/error"
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }

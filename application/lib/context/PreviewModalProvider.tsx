@@ -11,11 +11,7 @@ export const PreviewModalContext = React.createContext<PreviewModalType>({
   setIssueId: () => {},
 });
 
-export default function PreviewModalContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PreviewModalContextProvider({ children }: { children: React.ReactNode }) {
   const [issueid, setIssueId] = useState<number | undefined>(undefined);
 
   const updatedIssueId = (issueid?: number) => {
@@ -28,11 +24,15 @@ export default function PreviewModalContextProvider({
 
   const closeFunction = () => {
     setIssueId(undefined);
-  }
+  };
 
   return (
     <PreviewModalContext.Provider
-      value={{ close: closeFunction, setIssueId: updatedIssueId, issueid: issueid }}
+      value={{
+        close: closeFunction,
+        setIssueId: updatedIssueId,
+        issueid: issueid,
+      }}
     >
       <div className='relative flex h-full w-full'>{children}</div>
     </PreviewModalContext.Provider>

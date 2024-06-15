@@ -1,0 +1,71 @@
+---
+title: 'Remove Member'
+publishedAt: '2024-05-12'
+labels: 'v0.2.5'
+---
+
+Users can be removed from a workspace at anytime as long as the initiator has proper access. [Learn about roles and permission.](../../../Auth/Authentication)
+
+---
+
+`DELETE workspaces/{workspaceid}/members/{userid}`
+
+Body Params: N/A
+
+Query Params: N/A
+
+Path Params:
+
+- `workspaceid`: id of the workspace (uuid or name)
+- `userid`: id of the user to be removed (uuid)
+
+### Scenarios
+
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+- [Bad Request](#bad-request)
+
+---
+
+#### Successful request
+
+Response: 200
+
+```json
+{
+  "message": "User has been invited to join your workspace"
+}
+```
+
+#### Unauthenticated Request
+
+Response: 401
+
+```json
+{
+  "message": "Not authenticated."
+}
+```
+
+#### Unauthorized Request
+
+Response: 403
+
+```json
+{
+  "message": "Not authorized to access resource."
+}
+```
+
+#### Bad Request
+
+Response: 400
+
+```json
+{
+  "message": "user not a member"
+}
+```
+
+---

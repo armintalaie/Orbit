@@ -1,0 +1,44 @@
+---
+title: 'Authorization'
+publishedAt: '2024-05-09'
+summary: 'Authorization with Orbit"
+labels: 'v0.2'
+---
+
+All of the APIs are controlled with another layer of access. Authorization allows Orbit to cater different levels of access to different roles and permissions. Based on roles and permissions, authenticated users will be able to access resources based on their associated access control.
+
+## Roles and Permissions
+
+Permissions are a list of accesses to entites which are pre-defined. On the other hand roles are customized per workspace and can contain multiple permissions. Workspaces have two uneditable roles, Admin and Default. Both are vital for a workspace.
+Workspaces users with the correct permissions can create and modify roles based on their needs.
+
+### Permissions
+
+permissions follow the following pair values: `permission type` and `permission entity`.
+
+_Check the [Permissions API endpoint](../API-Reference/Resources/Permissions). Workspaces can will be able to apply a subset of those to their custom roles._
+
+- These types and entities can change in the future that might cause breaking changes until a `v1` release.
+
+---
+
+#### List of permission types:
+
+- read
+- write
+- delete
+- invite
+- remove
+- admin
+- share
+
+#### List of permission enities:
+
+- workspace
+- team
+- project
+- issue
+
+Workspace admins, i.e. ones with the `<workspace,admin>` permissions can create roles that refer to one or more type and permission combination. For example, a workspace admin can make a role with `<team,admin>` permission to assign team owners.
+
+---

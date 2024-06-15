@@ -1,0 +1,69 @@
+---
+title: 'Get Workspaces'
+publishedAt: '2024-04-07'
+labels: 'v0.2'
+---
+
+`GET workspaces/`
+
+Query Params: N/A
+
+### Scenarios
+
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+
+---
+
+#### Successful request
+
+Request: No body
+
+Response: 200
+
+```
+{
+  "workspaces": [
+    {
+      "id": "123",
+      "name": "acme",
+      "config": {
+        // Configuration details
+      }
+    },
+    {
+      "id": "124",
+      "name": "example",
+      "config": {
+        // Configuration details
+      }
+    },
+    // Additional workspaces...
+  ]
+}
+```
+
+#### Unauthenticated Request
+
+Request: No body
+
+Response: 401
+
+```json
+{
+  "message": "Not authenticated."
+}
+```
+
+#### Unauthorized Request
+
+Request: No body
+
+Response: 403
+
+```
+{
+  "message": "Not authorized to access resource."
+}
+```

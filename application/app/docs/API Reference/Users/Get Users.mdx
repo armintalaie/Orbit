@@ -1,0 +1,67 @@
+---
+title: 'Get Users'
+publishedAt: '2024-05-09'
+labels: 'v0.2'
+---
+
+`GET users`
+
+Query Params: N/A
+
+### Scenarios
+
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+
+---
+
+#### Successful request
+
+Request: No body
+
+Response: 200
+
+```
+{
+  [
+    {
+      "id": "111111111-e225-476b-8e3e-9d528296be81",
+      "email": "user@email.com",
+      "workspaces": [
+          {
+              "workspaceId": "1111111-5c76-40ed-a0cc-7f4a4aba8386",
+              "name": "workspace",
+              "username": "user",
+              "updatedAt": "2024-05-05T00:00:16.722679+00:00"
+          }
+      ]
+    },
+    ...
+  ]
+}
+```
+
+#### Unauthenticated Request
+
+Request: No body
+
+Response: 401
+
+```json
+{
+  "message": "Not authenticated."
+}
+```
+
+#### Unauthorized Request
+
+Request: No body
+
+Response: 403
+
+```
+{
+  "message": "Not authorized to access resource."
+}
+```

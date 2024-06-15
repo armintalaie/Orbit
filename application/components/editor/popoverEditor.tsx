@@ -17,14 +17,7 @@ import { useContext, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import TextEditor from './textEditor';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
@@ -44,15 +37,7 @@ export const formSchema = z.object({
   contents: z.string(),
 });
 
-export function NewTemplate({
-  teamid,
-  button,
-  reload,
-}: {
-  teamid: string;
-  button?: boolean;
-  reload: Function;
-}) {
+export function NewTemplate({ teamid, button, reload }: { teamid: string; button?: boolean; reload: Function }) {
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -97,15 +82,10 @@ export function NewTemplate({
       <DialogContent className='flex h-[800px] max-h-full w-[750px] max-w-full flex-col overflow-hidden p-4  '>
         <DialogHeader className=' pt-2'>
           <DialogTitle>New Template</DialogTitle>
-          <DialogDescription>
-            Create a new template for issues
-          </DialogDescription>
+          <DialogDescription>Create a new template for issues</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            className='flex flex-grow flex-col space-y-8'
-            onSubmit={form.handleSubmit((data) => submit(data))}
-          >
+          <form className='flex flex-grow flex-col space-y-8' onSubmit={form.handleSubmit((data) => submit(data))}>
             <div className='flex flex-col  gap-4'>
               <FormField
                 control={form.control}

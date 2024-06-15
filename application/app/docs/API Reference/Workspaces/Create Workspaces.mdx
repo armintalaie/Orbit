@@ -1,0 +1,125 @@
+---
+title: 'Create Workspace'
+publishedAt: '2024-04-07'
+labels: 'v0.2'
+---
+
+`POST workspaces/`
+
+Body Params
+
+| Name   | Type   | Required? | Description                                                         |
+| ------ | ------ | --------- | ------------------------------------------------------------------- |
+| name   | string | yes       |                                                                     |
+| config | object | no        | Customization configurations - if undefined will use default config |
+
+Query Params: N/A
+
+### Scenarios
+
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+- [Bad Request - Existing Name](#bad-request---existing-name)
+- [Bad Request - Missing Name](#bad-request---missing-name)
+
+---
+
+#### Successful request
+
+Request:
+
+```json
+{
+  "name": "acme"
+}
+```
+
+Response: 200
+
+```json
+{
+  "message": "Workspace acme successfully created."
+}
+```
+
+#### Unauthenticated Request
+
+Request:
+
+```json
+{
+  "name": "acme"
+}
+```
+
+Response: 401
+
+```json
+{
+  "message": "Not authenticated."
+}
+```
+
+#### Unauthorized Request
+
+Request:
+
+```json
+{
+  "name": "acme"
+}
+```
+
+Response: 403
+
+```json
+{
+  "message": "Not authorized to access resource."
+}
+```
+
+#### Bad Request - Existing Name
+
+Request:
+
+```json
+{
+  "name": "acme"
+}
+```
+
+Response: 400
+
+```json
+{
+  "message": "Workspace with name acme already exists."
+}
+```
+
+#### Bad Request - Missing Name
+
+Request:
+
+```json
+{}
+```
+
+Response: 400
+
+```json
+{
+  "message": "Missing workspace name"
+}
+```
+
+---
+
+## What happens when workspace is created
+
+1. Tenant resources allocated.
+
+- All information about a workspace is kept in isolation
+
+2. Roles and default values added
+3. Creator is given owner, admin, member roles

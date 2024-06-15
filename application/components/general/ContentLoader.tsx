@@ -1,11 +1,4 @@
-import {
-  ReactNode,
-  isValidElement,
-  cloneElement,
-  useContext,
-  useState,
-  useEffect,
-} from 'react';
+import { ReactNode, isValidElement, cloneElement, useContext, useState, useEffect } from 'react';
 import Spinner from './Spinner';
 import useSWR from 'swr';
 import { OrbitContext } from '@/lib/context/OrbitContext';
@@ -68,21 +61,14 @@ function ErrorDisplay({ error }: { error: Error }) {
   return (
     <div className='flex h-full items-center justify-center bg-zinc-100'>
       <div className='w-full max-w-md rounded-lg bg-zinc-50 p-3 px-5 text-center shadow'>
-        <h1 className='text-lg font-semibold text-red-300'>
-          An error occurred
-        </h1>
+        <h1 className='text-lg font-semibold text-red-300'>An error occurred</h1>
         <div className='text-gray-500'>Please try again later.</div>
       </div>
     </div>
   );
 }
 
-function issueSyncEvent(
-  issue: any,
-  issues: IIssue[],
-  setIssues: Function,
-  event: any
-) {
+function issueSyncEvent(issue: any, issues: IIssue[], setIssues: Function, event: any) {
   if (event === 'delete') {
     const newIssues = issues.filter((i) => i.id !== issue.id);
     setIssues(newIssues);

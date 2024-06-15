@@ -1,0 +1,74 @@
+---
+title: 'Get Workspace'
+publishedAt: '2024-04-07'
+labels: 'v0.2'
+---
+
+`GET workspace/{workspaceid}`
+
+Query Params: N/A
+
+Path Params:
+
+- `workspaceid`: id of the workspace (uuid or name)
+
+### Scenarios
+
+- [Successful request](#successful-request)
+- [Unauthenticated Request](#unauthenticated-request)
+- [Unauthorized Request](#unauthorized-request)
+- [Not Found](#not-found)
+
+---
+
+#### Successful request
+
+Request: No body
+
+Response: 200
+
+```
+{
+  "id": "123",
+  "name": "acme",
+  "config": {
+    // Configuration details
+  }
+}
+```
+
+#### Unauthenticated Request
+
+Request: No body
+
+Response: 401
+
+```json
+{
+  "message": "Not authenticated."
+}
+```
+
+#### Unauthorized Request
+
+Request: No body
+
+Response: 403
+
+```
+{
+  "message": "Not authorized to access resource."
+}
+```
+
+#### Not Found
+
+Request: No body
+
+Response: 404
+
+```
+{
+  "message": "Workspace does not exist"
+}
+```

@@ -2,14 +2,8 @@ import React from 'react';
 import { useWindowSize } from 'usehooks-ts';
 
 export const ShortcutKeyboardContext = React.createContext<any | null>(null);
-export default function ShortcutKeyboardProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [shortcutKeyboard, setShortcutKeyboard] = React.useState<any | null>(
-    null
-  );
+export default function ShortcutKeyboardProvider({ children }: { children: React.ReactNode }) {
+  const [shortcutKeyboard, setShortcutKeyboard] = React.useState<any | null>(null);
 
   const ref = React.useRef<any | null>(null);
   const { width, height } = useWindowSize();
@@ -31,9 +25,7 @@ export default function ShortcutKeyboardProvider({
     // }}
     // tabIndex={0}
     >
-      <ShortcutKeyboardContext.Provider value={shortcutKeyboard}>
-        {children}
-      </ShortcutKeyboardContext.Provider>
+      <ShortcutKeyboardContext.Provider value={shortcutKeyboard}>{children}</ShortcutKeyboardContext.Provider>
     </div>
   );
 }

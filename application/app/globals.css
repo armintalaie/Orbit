@@ -33,6 +33,10 @@
     --ring: 0 0% 3.9%;
 
     --radius: 0.5rem;
+
+    --surface-primary: theme('colors.gray.50');
+    --surface-secondary: theme('colors.gray.100');
+    --surface-tertiary: theme('colors.gray.200');
   }
 
   .dark {
@@ -63,10 +67,17 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+
+    --surface-primary: theme('colors.zinc.900');
+    --surface-secondary: theme('colors.zinc.800');
+    --surface-tertiary: theme('colors.zinc.700');
   }
 }
 
 @layer base {
+  html {
+    background-color: var(--surface-primary);
+  }
   * {
     @apply border-border;
 
@@ -76,5 +87,18 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  .primary-surface {
+    background-color: var(--surface-primary);
+    color: var(--foreground);
+  }
+  .secondary-surface {
+    background-color: var(--surface-secondary);
+    color: var(--foreground);
+  }
+
+  .tertiary-surface {
+    background-color: var(--surface-tertiary);
+    color: var(--foreground);
   }
 }

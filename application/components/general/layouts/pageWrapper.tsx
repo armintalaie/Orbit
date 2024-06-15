@@ -1,0 +1,40 @@
+import React from 'react';
+
+type PageWrapperProps = {
+  children: React.ReactNode;
+};
+
+const Header = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const SubHeader = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const Content = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+
+const PageWrapper = ({ children }: PageWrapperProps) => {
+  const header = React.Children.toArray(children).find((child) => React.isValidElement(child) && child.type === Header);
+  const subHeader = React.Children.toArray(children).find(
+    (child) => React.isValidElement(child) && child.type === SubHeader
+  );
+  const content = React.Children.toArray(children).find(
+    (child) => React.isValidElement(child) && child.type === Content
+  );
+
+  return (
+    <div className='flex w-full flex-grow flex-col overflow-hidden'>
+      <div className=' flex h-full w-full flex-1 flex-col overflow-hidden '>
+        <div className='flex h-12 w-full items-center justify-between p-4  px-4  '>{header}</div>
+
+        <div className=' flex w-full flex-1 flex-grow flex-col overflow-hidden  '>
+          {subHeader && (
+            <div className='h-15 flex flex-row items-center justify-between border-y   p-4 py-3 '>{subHeader}</div>
+          )}
+          <div className='flex flex-grow flex-col overflow-y-hidden'>{content}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+PageWrapper.Header = Header;
+PageWrapper.SubHeader = SubHeader;
+PageWrapper.Content = Content;
+
+export default PageWrapper;
