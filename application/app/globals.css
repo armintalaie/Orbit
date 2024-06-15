@@ -77,6 +77,7 @@
 @layer base {
   html {
     background-color: var(--surface-primary);
+    font-family: theme('fontFamily.sans');
   }
   * {
     @apply border-border;

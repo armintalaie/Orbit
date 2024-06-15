@@ -1,45 +1,32 @@
 'use client';
 import { useContext } from 'react';
 import { OrbitContext } from '@/lib/context/OrbitGeneralContext';
-import useSWR from 'swr';
-import LinearSkeleton from '../general/linearSkeleton';
+import LinearSkeleton from '../general/skeletons/linearSkeleton';
 import Link from 'next/link';
-
-export function useWorkspaceProjects() {
-  const { currentWorkspace } = useContext(OrbitContext);
-  const { data, isLoading, error } = useSWR(`/api/v2/workspaces/${currentWorkspace?.id}/projects`, (url) =>
-    fetch(url).then((res) => res.json())
-  );
-
-  return {
-    projects: data,
-    isLoading,
-    error,
-  };
-}
+import { useWorkspaceProjects } from '@/lib/hooks/useWorkspaceProjects';
 
 export default function WorkspaceProjects() {
   const { currentWorkspace } = useContext(OrbitContext);
-  const { projects, isLoading, error } = useWorkspaceProjects();
+  const { projects, loading, error } = useWorkspaceProjects({ workspaceId: currentWorkspace, fields: ['id', 'name'] });
 
   if (error) {
     return <div>could not fetch projects</div>;
   }
 
   return (
-    <div className='flex flex-1 flex-col gap-2 text-sm'>
-      <Link href={`/orbit/workspace/${currentWorkspace.id}/projects`} className='text-xs'>
+    <div className='flex flex-1 flex-col gap-2 text-xs'>
+      <Link href={`/orbit/workspace/${currentWorkspace}/projects`} className='text-xs font-medium'>
         Projects
       </Link>
       <div className='flex flex-col '>
-        {isLoading ? (
+        {loading ? (
           <LinearSkeleton />
         ) : (
           <>
-            {projects.map((project) => (
+            {projects.map((project: { id: string; name: string }) => (
               <Link
                 className='rounded-md border  border-transparent p-1 hover:border-teal-700 hover:shadow-sm'
-                href={`/orbit/workspace/${currentWorkspace.id}/projects/${project.id}`}
+                href={`/orbit/workspace/${currentWorkspace}/projects/${project.id}`}
                 shallow
                 key={project.id}
               >

@@ -9,7 +9,7 @@ import IssueMenuContext from '../issues/boards/issueMenuContext';
 import { IIssue } from '@/lib/types/issue';
 import { PreviewModalContext } from '@/lib/context/PreviewModalProvider';
 import { useContext, useState } from 'react';
-import IssuePage from '../issues/issue/IssuePage';
+import IssuePage from '../issues/issue/details/IssuePage';
 import { Button } from '../../ui/button';
 import { EyeIcon } from 'lucide-react';
 

@@ -4,82 +4,27 @@ import { useContext, useState } from 'react';
 import { Label } from '../../ui/label';
 import { Input } from '../../ui/input';
 import { Button } from '../../ui/button';
-import { UserSessionContext } from '@/lib/context/AuthProvider';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 
 export default function WorkspaceGeneralSettings() {
-  const { currentWorkspace, changeWorkspace } = useContext(OrbitContext);
-  const userSession = useContext(UserSessionContext);
-  const [name, setName] = useState(currentWorkspace?.name);
+  const { currentWorkspace, changeWorkspace, workspace } = useContext(OrbitContext);
+  const [name, setName] = useState(workspace.name);
 
-  async function renameWorkspace(name: string) {
-    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${userSession.access_token}`,
-      },
-      body: JSON.stringify({
-        name,
-      }),
-    });
+  async function renameWorkspace(name: string) {}
 
-    if (res.ok) {
-      toast('Workspace renamed successfully');
-      changeWorkspace(currentWorkspace.id);
-    } else {
-      toast('Failed to rename workspace');
-    }
-  }
+  async function deleteWorkspace() {}
 
-  async function deleteWorkspace() {
-    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${userSession.access_token}`,
-      },
-    });
-
-    if (res.ok) {
-      toast('Workspace deleted successfully');
-      changeWorkspace(undefined);
-    } else {
-      toast('Failed to delete workspace', {
-        description: 'Please try again later',
-      });
-    }
-  }
-
-  async function leaveWorkspace() {
-    const res = await fetch(`/api/v2/workspaces/${currentWorkspace.id}/members/${userSession.user.id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${userSession.access_token}`,
-      },
-    });
-
-    if (res.ok) {
-      toast('Left workspace successfully');
-      changeWorkspace(undefined);
-    } else {
-      toast('Failed to leave workspace');
-    }
-  }
+  async function leaveWorkspace() {}
 
   return (
     <div className='flex w-full flex-col gap-4'>
-      <div className='secondary-surface flex flex-col gap-4 rounded p-4'>
-        <p className='text-sm'>Manage your workspace settings</p>
-      </div>
       <div className='flex w-full flex-col gap-4 pb-10 pt-5'>
-        <h2 className='text-lg  font-semibold'>Workspace</h2>
+        <h2 className='text-lg  font-semibold'>Configuration</h2>
         <div className='flex  w-full items-end gap-4'>
-          <div className='flex items-center gap-4 '>
+          <div className='flex w-full items-center gap-4 '>
             <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
+            <Input className={'w-full'} disabled={true} value={name} onChange={(e) => setName(e.target.value)} />
           </div>
-          <Button onClick={() => renameWorkspace(name)} disabled={name === currentWorkspace?.name}>
+          <Button onClick={() => renameWorkspace(name)} disabled={true}>
             Save
           </Button>
         </div>
